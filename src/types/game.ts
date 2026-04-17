@@ -17,6 +17,7 @@ export interface Artist {
   avatar: string;
   gender: 'male' | 'female';
   initialStats: GameStats;
+  initialAppearance: number;
   specialTrait: string;
   backstory: string;
 }
@@ -281,4 +282,46 @@ export interface RivalAction {
   minAggression?: number;
   generatesTrend: boolean;
   trendTitle?: string; // {rivalName} / {playerName} 占位
+}
+
+// ===== Cosmetic / Appearance System =====
+export type CosmeticProcedureId =
+  | 'skincare_facial'
+  | 'micro_injection'
+  | 'nose_filler'
+  | 'jaw_botox'
+  | 'double_eyelid'
+  | 'nose_job'
+  | 'facial_contour';
+
+export type CosmeticCategory = 'light' | 'medium' | 'major';
+export type AppearanceTier = 'plain' | 'fresh' | 'refined' | 'star' | 'top';
+
+export interface CosmeticProcedure {
+  id: CosmeticProcedureId;
+  name: string;
+  emoji: string;
+  category: CosmeticCategory;
+  description: string;
+  cost: number;
+  appearanceGain: number;
+  failChance: number;        // 0-1
+  discoveryChance: number;   // 0-1
+  recoveryDays: number;      // 0=无恢复期, >0=占用行程槽
+  failAppearanceLoss: number;
+}
+
+export interface CosmeticRecord {
+  procedureId: CosmeticProcedureId;
+  day: number;
+  succeeded: boolean;
+  wasDiscovered: boolean;
+}
+
+export interface CosmeticState {
+  appearance: number;             // 0-100
+  procedureHistory: CosmeticRecord[];
+  stiffFaceActive: boolean;
+  stiffFaceDaysRemaining: number;
+  recoveryDaysRemaining: number;
 }

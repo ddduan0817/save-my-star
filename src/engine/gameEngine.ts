@@ -90,7 +90,9 @@ export function resolveChoice(
   artistId: string,
   day: number,
   activeTags: string[],
-  peakRisk: number
+  peakRisk: number,
+  appearanceMultiplier?: number,
+  stiffFaceActive?: boolean,
 ): ChoiceResult {
   // 1. 检查是否有条件分支匹配
   const conditionalOutcome = resolveConditionalOutcome(
@@ -106,7 +108,7 @@ export function resolveChoice(
   // 加随机波动，让同一选项每次结果不同
   const statChanges = randomizeStatChanges(baseStatChanges);
 
-  const newStats = applyStatChanges(currentStats, statChanges, artistId);
+  const newStats = applyStatChanges(currentStats, statChanges, artistId, appearanceMultiplier, stiffFaceActive);
 
   // Singer special: can survive one critical crisis
   if (artistId === 'singer' && newStats.prRisk >= GAME_CONFIG.CANCELLATION_THRESHOLD) {

@@ -19,6 +19,8 @@ import type {
   FanComment,
   WeiboPostRecord,
   RivalState,
+  CosmeticState,
+  CosmeticProcedureId,
 } from '@/types/game';
 import { artists } from '@/data/artists';
 import { startNewDay, resolveChoice, checkDayEnd } from '@/engine/gameEngine';
@@ -35,6 +37,8 @@ import { weiboPostTemplates } from '@/data/weiboPosts';
 import { resolveWeiboPost } from '@/engine/weiboPostEngine';
 import { initializeRival, selectRivalAction, resolveRivalAction } from '@/engine/rivalEngine';
 import { applyStatChanges as applyStatChangesEngine } from '@/engine/outcomeCalculator';
+import { cosmeticProcedures } from '@/data/cosmetics';
+import { resolveProcedure, tickCosmeticState, getAppearanceMultiplier } from '@/engine/cosmeticEngine';
 import {
   checkAchievements,
   loadUnlockedAchievements,
@@ -103,6 +107,12 @@ interface GameStore {
   rivalActionNarration: string;
   showRivalAction: boolean;
 
+  // Cosmetic / Appearance system
+  cosmeticState: CosmeticState;
+  lastCosmeticNarration: string;
+  lastCosmeticStatChanges: StatChange | null;
+  showCosmeticResult: boolean;
+
   // Actions
   startGame: (artistId: ArtistArchetype) => void;
   setActiveTab: (tab: TabId) => void;
@@ -117,6 +127,8 @@ interface GameStore {
   postWeibo: (templateId: string) => void;
   dismissPostResult: () => void;
   dismissRivalAction: () => void;
+  performProcedure: (procedureId: CosmeticProcedureId) => void;
+  dismissCosmeticResult: () => void;
   dismissAchievement: () => void;
   dismissDayBanner: () => void;
   resetGame: () => void;
@@ -129,7 +141,7 @@ const MAX_CARRYOVER_MESSAGES = 2;
 
 // 成就检查 helper
 function runAchievementCheck(get: () => GameStore, set: (partial: Partial<GameStore>) => void) {
-  const { stats, currentDay, artist, activeTags, decisionHistory, peakRisk } = get();
+  const { stats, currentDay, artist, activeTags, decisionHistory, peakRisk, cosmeticState } = get();
   if (!artist) return;
   const newAchs = checkAchievements({
     stats,
@@ -138,6 +150,7 @@ function runAchievementCheck(get: () => GameStore, set: (partial: Partial<GameSt
     activeTags,
     decisionHistory,
     peakRisk,
+    cosmeticState,
   });
   if (newAchs.length > 0) {
     set({
@@ -241,6 +254,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
   rivalActionNarration: '',
   showRivalAction: false,
 
+  cosmeticState: {
+    appearance: 50,
+    procedureHistory: [],
+    stiffFaceActive: false,
+    stiffFaceDaysRemaining: 0,
+    recoveryDaysRemaining: 0,
+  },
+  lastCosmeticNarration: '',
+  lastCosmeticStatChanges: null,
+  showCosmeticResult: false,
+
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
@@ -258,6 +282,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const trends = generateWeiboTrends(stats, artist, [], activeTags);
     const comments = generateFanComments(stats, artist);
     const rival = initializeRival(artistId);
+    const cosmeticState: CosmeticState = {
+      appearance: artist.initialAppearance,
+      procedureHistory: [],
+      stiffFaceActive: false,
+      stiffFaceDaysRemaining: 0,
+      recoveryDaysRemaining: 0,
+    };
 
     set({
       gamePhase: 'playing',
@@ -291,6 +322,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       rival,
       rivalActionNarration: '',
       showRivalAction: false,
+      cosmeticState,
+      lastCosmeticNarration: '',
+      lastCosmeticStatChanges: null,
+      showCosmeticResult: false,
     });
   },
 
@@ -335,10 +370,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   selectChoice: (choice: EventChoice) => {
-    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId } = get();
+    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState } = get();
     const event = currentEvents[currentEventIndex];
 
-    const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk);
+    const appMultiplier = getAppearanceMultiplier(cosmeticState.appearance);
+    const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk, appMultiplier, cosmeticState.stiffFaceActive);
 
     const newTags = [...activeTags];
     if (result.unlockTag) newTags.push(result.unlockTag);
@@ -444,7 +480,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const {
       messages, currentDay, stats, activeTags, peakRisk, artist,
       eventUsageMap, pendingFollowUpEventIds, decisionHistory,
-      artistSchedule, companyUpgrades, rival,
+      artistSchedule, companyUpgrades, rival, cosmeticState,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -471,6 +507,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // 2. Apply daily passive effects (with upgrade bonuses)
     newStats = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team);
 
+    // 2.1 Tick cosmetic state (recovery & stiff face countdown)
+    let newCosmeticState = tickCosmeticState(cosmeticState);
+    // Manage stiff_face_active tag
+    let newActiveTags = [...activeTags];
+    if (newCosmeticState.stiffFaceActive && !newActiveTags.includes('stiff_face_active')) {
+      newActiveTags.push('stiff_face_active');
+    } else if (!newCosmeticState.stiffFaceActive) {
+      newActiveTags = newActiveTags.filter(t => t !== 'stiff_face_active');
+    }
+
     // 2.5 Rival daily action
     let newRival = rival;
     let rivalNarration = '';
@@ -490,7 +536,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 3. Check for endings
     const newPeakRisk = Math.max(peakRisk, newStats.prRisk);
-    const dayEndEnding = checkDayEnd(currentDay, newStats, activeTags, newPeakRisk);
+    const dayEndEnding = checkDayEnd(currentDay, newStats, newActiveTags, newPeakRisk);
     if (dayEndEnding) {
       const unlocked = saveUnlockedEnding(dayEndEnding.id);
       set({
@@ -500,6 +546,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         unlockedEndings: unlocked,
         peakRisk: newPeakRisk,
         artistSchedule: newSchedule,
+        cosmeticState: newCosmeticState,
+        activeTags: newActiveTags,
       });
       return true;
     }
@@ -509,7 +557,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 5. Generate new events for next day
     const { events, newUsageMap } = generateEventsForDay(
-      nextDay, newStats, eventUsageMap, activeTags, artist?.id, pendingFollowUpEventIds
+      nextDay, newStats, eventUsageMap, newActiveTags, artist?.id, pendingFollowUpEventIds
     );
 
     const newMessages = createMessages(events, nextDay);
@@ -520,7 +568,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       .slice(0, MAX_CARRYOVER_MESSAGES);
 
     // 6. Regenerate social feed
-    let trends = generateWeiboTrends(newStats, artist!, decisionHistory, activeTags);
+    let trends = generateWeiboTrends(newStats, artist!, decisionHistory, newActiveTags);
     const comments = generateFanComments(newStats, artist!);
 
     // Inject rival trend if any
@@ -549,15 +597,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
       rival: newRival,
       rivalActionNarration: rivalNarration,
       showRivalAction: !!rivalNarration,
+      cosmeticState: newCosmeticState,
+      activeTags: newActiveTags,
     });
 
     return true;
   },
 
   setArtistSchedule: (activityId: ScheduleActivityId) => {
-    const { artistSchedule, currentDay } = get();
-    // Can't change schedule while one is in progress
+    const { artistSchedule, currentDay, cosmeticState } = get();
+    // Can't change schedule while one is in progress or during cosmetic recovery
     if (artistSchedule && artistSchedule.remainingDays > 0) return;
+    if (cosmeticState.recoveryDaysRemaining > 0) return;
 
     const activity = scheduleActivities.find(a => a.id === activityId);
     if (!activity) return;
@@ -632,6 +683,61 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ showPostResult: false });
   },
 
+  performProcedure: (procedureId: CosmeticProcedureId) => {
+    const { cosmeticState, stats, artist, currentDay, activeTags } = get();
+    if (!artist) return;
+
+    // Can't do procedures during recovery
+    if (cosmeticState.recoveryDaysRemaining > 0) return;
+
+    const procedure = cosmeticProcedures.find(p => p.id === procedureId);
+    if (!procedure) return;
+
+    // Check money
+    if (stats.money < procedure.cost) return;
+
+    // Deduct cost
+    const afterCost = { ...stats, money: stats.money - procedure.cost };
+
+    // Resolve procedure
+    const result = resolveProcedure(procedure, cosmeticState, currentDay);
+
+    // Apply stat changes from procedure through engine
+    const appearanceMultiplier = getAppearanceMultiplier(result.newCosmeticState.appearance);
+    const newStats = applyStatChangesEngine(
+      afterCost,
+      result.statChanges,
+      artist.id,
+      appearanceMultiplier,
+      result.newCosmeticState.stiffFaceActive,
+    );
+
+    // Manage tags
+    const newTags = [...activeTags];
+    if (result.wasDiscovered && !newTags.includes('cosmetic_discovered')) {
+      newTags.push('cosmetic_discovered');
+    }
+    if (result.newCosmeticState.stiffFaceActive && !newTags.includes('stiff_face_active')) {
+      newTags.push('stiff_face_active');
+    }
+
+    set({
+      cosmeticState: result.newCosmeticState,
+      stats: newStats,
+      activeTags: newTags,
+      lastCosmeticNarration: result.narration,
+      lastCosmeticStatChanges: { ...result.statChanges, money: -(procedure.cost + Math.abs(result.statChanges.money ?? 0)) },
+      showCosmeticResult: true,
+      peakRisk: Math.max(get().peakRisk, newStats.prRisk),
+    });
+
+    runAchievementCheck(get, set);
+  },
+
+  dismissCosmeticResult: () => {
+    set({ showCosmeticResult: false });
+  },
+
   dismissDayBanner: () => {
     set({ showDayBanner: false });
   },
@@ -670,6 +776,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
       rival: null,
       rivalActionNarration: '',
       showRivalAction: false,
+      cosmeticState: {
+        appearance: 50,
+        procedureHistory: [],
+        stiffFaceActive: false,
+        stiffFaceDaysRemaining: 0,
+        recoveryDaysRemaining: 0,
+      },
+      lastCosmeticNarration: '',
+      lastCosmeticStatChanges: null,
+      showCosmeticResult: false,
     });
   },
 

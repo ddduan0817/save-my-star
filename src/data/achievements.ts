@@ -1,4 +1,4 @@
-import type { GameStats, DecisionRecord, ArtistArchetype } from '@/types/game';
+import type { GameStats, DecisionRecord, ArtistArchetype, CosmeticState } from '@/types/game';
 
 export interface Achievement {
   id: string;
@@ -17,6 +17,7 @@ export interface AchievementContext {
   activeTags: string[];
   decisionHistory: DecisionRecord[];
   peakRisk: number;
+  cosmeticState?: CosmeticState;
 }
 
 export const achievements: Achievement[] = [
@@ -294,6 +295,52 @@ export const achievements: Achievement[] = [
     emoji: '💀',
     rarity: 'rare',
     check: ({ stats, day }) => day >= 15 && stats.money < 0,
+  },
+
+  // ===== 医美/颜值类 =====
+  {
+    id: 'beauty_queen',
+    title: '人间芭比',
+    description: '颜值达到90以上',
+    emoji: '👸',
+    rarity: 'rare',
+    check: ({ cosmeticState }) => (cosmeticState?.appearance ?? 0) >= 90,
+  },
+  {
+    id: 'cosmetic_addict',
+    title: '整形上瘾',
+    description: '累计做过5次以上医美',
+    emoji: '💉',
+    rarity: 'common',
+    check: ({ cosmeticState }) => (cosmeticState?.procedureHistory.length ?? 0) >= 5,
+  },
+  {
+    id: 'stiff_face_king',
+    title: '僵脸天王',
+    description: '触发了僵脸debuff',
+    emoji: '😶',
+    rarity: 'common',
+    check: ({ cosmeticState }) => cosmeticState?.stiffFaceActive === true,
+  },
+  {
+    id: 'natural_beauty',
+    title: '天生丽质',
+    description: '0次医美且颜值≥50撑到第20天',
+    emoji: '🌸',
+    rarity: 'legendary',
+    check: ({ cosmeticState, day }) =>
+      day >= 20 &&
+      (cosmeticState?.procedureHistory.length ?? 0) === 0 &&
+      (cosmeticState?.appearance ?? 0) >= 50,
+  },
+  {
+    id: 'cosmetic_disaster',
+    title: '翻车现场',
+    description: '医美同时失败+被发现',
+    emoji: '🤡',
+    rarity: 'rare',
+    check: ({ cosmeticState }) =>
+      cosmeticState?.procedureHistory.some(r => !r.succeeded && r.wasDiscovered) ?? false,
   },
 ];
 

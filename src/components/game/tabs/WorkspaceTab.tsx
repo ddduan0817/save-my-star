@@ -5,6 +5,8 @@ import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { companyUpgradesData } from '@/data/upgrades';
 import { sfxClick, sfxMoney } from '@/lib/sounds';
+import { cosmeticProcedures } from '@/data/cosmetics';
+import type { CosmeticCategory } from '@/types/game';
 
 const FAME_LABELS: Record<string, { text: string; color: string }> = {
   low: { text: '低迷', color: 'text-gray-400' },
@@ -18,6 +20,8 @@ export default function WorkspaceTab() {
   const companyUpgrades = useGameStore(s => s.companyUpgrades);
   const purchaseUpgrade = useGameStore(s => s.purchaseUpgrade);
   const rival = useGameStore(s => s.rival);
+  const cosmeticState = useGameStore(s => s.cosmeticState);
+  const performProcedure = useGameStore(s => s.performProcedure);
 
   // Active buffs
   const activeBuffs: string[] = [];
@@ -25,6 +29,15 @@ export default function WorkspaceTab() {
   if (companyUpgrades.data_analysis > 0) activeBuffs.push('📊 数值预览已开启');
   if (companyUpgrades.network > 0) activeBuffs.push(`🤝 商务加成Lv${companyUpgrades.network}`);
   if (companyUpgrades.legal > 0) activeBuffs.push('💼 危机减伤30%');
+  if (cosmeticState.stiffFaceActive) activeBuffs.push(`😶 僵脸中(${cosmeticState.stiffFaceDaysRemaining}天)`);
+
+  const CATEGORY_LABELS: Record<CosmeticCategory, { label: string; color: string }> = {
+    light: { label: '轻度', color: 'text-green-500' },
+    medium: { label: '中度', color: 'text-amber-500' },
+    major: { label: '大型', color: 'text-red-500' },
+  };
+
+  const isRecovering = cosmeticState.recoveryDaysRemaining > 0;
 
   return (
     <div className="flex-1 px-4 py-4 space-y-4 pb-24">
@@ -128,6 +141,86 @@ export default function WorkspaceTab() {
           )}
         </motion.div>
       )}
+
+      {/* 医美中心 */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.08 }}
+        className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-medium text-gray-400 tracking-wider">医美中心</div>
+          <div className="text-[10px] text-purple-500 bg-purple-50 px-2 py-0.5 rounded-full">
+            颜值 {cosmeticState.appearance}
+          </div>
+        </div>
+
+        {isRecovering && (
+          <div className="mb-3 p-2.5 bg-blue-50/60 rounded-lg ring-1 ring-blue-100/60 text-[10px] text-blue-500 text-center">
+            🏥 术后恢复中，还剩 {cosmeticState.recoveryDaysRemaining} 天
+          </div>
+        )}
+
+        <div className="space-y-3">
+          {(['light', 'medium', 'major'] as CosmeticCategory[]).map(cat => {
+            const procs = cosmeticProcedures.filter(p => p.category === cat);
+            const catLabel = CATEGORY_LABELS[cat];
+            return (
+              <div key={cat}>
+                <div className={cn("text-[10px] font-semibold mb-1.5", catLabel.color)}>
+                  {catLabel.label}项目
+                </div>
+                <div className="grid grid-cols-1 gap-2">
+                  {procs.map(proc => {
+                    const canAfford = stats.money >= proc.cost;
+                    const disabled = isRecovering || !canAfford;
+                    return (
+                      <motion.button
+                        key={proc.id}
+                        whileHover={!disabled ? { scale: 1.01 } : undefined}
+                        whileTap={!disabled ? { scale: 0.98 } : undefined}
+                        onClick={() => {
+                          if (disabled) return;
+                          sfxClick();
+                          performProcedure(proc.id);
+                        }}
+                        disabled={disabled}
+                        className={cn(
+                          "text-left p-3 rounded-xl border transition-all",
+                          disabled
+                            ? "border-gray-100/60 opacity-50 cursor-not-allowed"
+                            : "border-gray-100/60 hover:border-purple-200/60 hover:bg-purple-50/30",
+                        )}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <span className="text-lg">{proc.emoji}</span>
+                          <span className="text-xs font-semibold text-gray-700 flex-1">{proc.name}</span>
+                          <span className={cn(
+                            "text-[10px] font-bold",
+                            canAfford ? "text-purple-500" : "text-gray-400"
+                          )}>
+                            ¥{formatMoney(proc.cost)}
+                          </span>
+                        </div>
+                        <div className="text-[10px] text-gray-400 mb-1">{proc.description}</div>
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[10px] text-green-500">颜值+{proc.appearanceGain}</span>
+                          <span className="text-[10px] text-red-400">失败率{Math.round(proc.failChance * 100)}%</span>
+                          <span className="text-[10px] text-orange-400">暴露率{Math.round(proc.discoveryChance * 100)}%</span>
+                          {proc.recoveryDays > 0 && (
+                            <span className="text-[10px] text-blue-400">恢复{proc.recoveryDays}天</span>
+                          )}
+                        </div>
+                      </motion.button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </motion.div>
 
       {/* Company Upgrades */}
       <motion.div

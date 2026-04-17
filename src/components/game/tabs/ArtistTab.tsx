@@ -6,6 +6,7 @@ import { cn, formatMoney } from '@/lib/utils';
 import { scheduleActivities } from '@/data/schedules';
 import { sfxClick } from '@/lib/sounds';
 import StoryTracker from '@/components/game/StoryTracker';
+import { getAppearanceTier } from '@/engine/cosmeticEngine';
 
 const moodEmojis = [
   { min: 0, emoji: '😰', label: '焦虑' },
@@ -31,17 +32,21 @@ export default function ArtistTab() {
   const artistSchedule = useGameStore(s => s.artistSchedule);
   const setArtistSchedule = useGameStore(s => s.setArtistSchedule);
   const decisionHistory = useGameStore(s => s.decisionHistory);
+  const cosmeticState = useGameStore(s => s.cosmeticState);
 
   if (!artist) return null;
 
   const mood = getMood(stats);
   const isScheduleBusy = artistSchedule && artistSchedule.remainingDays > 0;
+  const isRecovering = cosmeticState.recoveryDaysRemaining > 0;
   const recentDecisions = decisionHistory.slice(-5).reverse();
+  const appearanceTier = getAppearanceTier(cosmeticState.appearance);
 
   const statBars = [
     { label: '商业价值', value: stats.commercialValue, color: 'bg-amber-400', track: 'bg-amber-100' },
     { label: '粉丝忠诚', value: stats.fanLoyalty, color: 'bg-pink-400', track: 'bg-pink-100' },
     { label: '舆论风险', value: stats.prRisk, color: 'bg-red-400', track: 'bg-red-100' },
+    { label: '颜值', value: cosmeticState.appearance, color: 'bg-purple-400', track: 'bg-purple-100' },
   ];
 
   return (
@@ -91,6 +96,23 @@ export default function ArtistTab() {
             </div>
           ))}
         </div>
+
+        {/* Appearance tier & cosmetic badges */}
+        <div className="mt-3 flex items-center gap-2 flex-wrap">
+          <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 ring-1 ring-purple-100/60", appearanceTier.color)}>
+            {appearanceTier.label}
+          </span>
+          {cosmeticState.stiffFaceActive && (
+            <span className="text-[10px] font-semibold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full ring-1 ring-orange-100/60">
+              😶 僵脸中 ({cosmeticState.stiffFaceDaysRemaining}天)
+            </span>
+          )}
+          {isRecovering && (
+            <span className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full ring-1 ring-blue-100/60">
+              🏥 术后恢复 ({cosmeticState.recoveryDaysRemaining}天)
+            </span>
+          )}
+        </div>
       </motion.div>
 
       {/* Schedule Section */}
@@ -113,6 +135,19 @@ export default function ArtistTab() {
             </div>
             <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
               <span className="text-xs font-bold text-orange-500">{artistSchedule.remainingDays}天</span>
+            </div>
+          </div>
+        ) : isRecovering ? (
+          <div className="flex items-center gap-3 p-3 bg-blue-50/60 rounded-xl ring-1 ring-blue-100/60">
+            <span className="text-2xl">🏥</span>
+            <div className="flex-1">
+              <div className="text-sm font-semibold text-gray-800">术后恢复中</div>
+              <div className="text-[10px] text-blue-500 mt-0.5">
+                还剩 {cosmeticState.recoveryDaysRemaining} 天 · 无法安排行程
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+              <span className="text-xs font-bold text-blue-500">{cosmeticState.recoveryDaysRemaining}天</span>
             </div>
           </div>
         ) : (

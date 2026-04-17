@@ -13,7 +13,9 @@ function applyDiminishingReturns(currentValue: number, change: number): number {
 export function applyStatChanges(
   stats: GameStats,
   changes: StatChange,
-  artistId?: string
+  artistId?: string,
+  appearanceMultiplier?: number,
+  stiffFaceActive?: boolean,
 ): GameStats {
   let { commercialValue, fanLoyalty, prRisk, money } = stats;
 
@@ -21,6 +23,18 @@ export function applyStatChanges(
   let fl = changes.fanLoyalty ?? 0;
   let pr = changes.prRisk ?? 0;
   let mn = changes.money ?? 0;
+
+  // 颜值倍率：正向 cv/fl 乘以 appearance multiplier
+  if (appearanceMultiplier && appearanceMultiplier !== 1.0) {
+    if (cv > 0) cv = Math.max(1, Math.round(cv * appearanceMultiplier));
+    if (fl > 0) fl = Math.max(1, Math.round(fl * appearanceMultiplier));
+  }
+
+  // 僵脸 debuff：正向 cv/fl 打8折
+  if (stiffFaceActive) {
+    if (cv > 0) cv = Math.max(1, Math.round(cv * 0.8));
+    if (fl > 0) fl = Math.max(1, Math.round(fl * 0.8));
+  }
 
   // 递减收益（对正面增长打折）
   cv = applyDiminishingReturns(commercialValue, cv);
