@@ -38,7 +38,7 @@ export default function HomePage() {
         <p className="text-xs text-gray-400 leading-relaxed max-w-xs mx-auto">
           你是一名娱乐经纪人。你的艺人每天都在塌房的边缘疯狂试探。
           <br />
-          你能撑过30天吗？
+          你能撑过20天吗？
         </p>
       </motion.div>
 
