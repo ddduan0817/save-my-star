@@ -6,11 +6,19 @@ import { cn } from '@/lib/utils';
 import { achievements, loadUnlockedAchievements } from '@/data/achievements';
 import { useMemo } from 'react';
 
-function getManagerTitle(day: number, stats: { commercialValue: number; fanLoyalty: number; prRisk: number }): { title: string; emoji: string } {
+function getManagerTitle(day: number, stats: { commercialValue: number; fanLoyalty: number; prRisk: number }, money: number): { title: string; emoji: string } {
+  // 彩蛋称号优先
+  if (stats.prRisk > 90) return { title: '走钢丝的疯子', emoji: '🤡' };
+  if (money < -50000) return { title: '负债经纪人', emoji: '💀' };
+  if (stats.fanLoyalty <= 5) return { title: '全网最惨经纪人', emoji: '🪦' };
+  if (stats.commercialValue >= 80 && stats.fanLoyalty >= 70 && stats.prRisk < 20) return { title: '传奇经纪人', emoji: '👑' };
+  if (money > 300000 && stats.fanLoyalty < 20) return { title: '黑心资本家', emoji: '🦈' };
   if (stats.prRisk > 70) return { title: '危机经纪人', emoji: '🔥' };
-  if (day >= 15 && stats.commercialValue >= 60 && stats.fanLoyalty >= 60) return { title: '金牌经纪人', emoji: '🏆' };
-  if (day >= 8) return { title: '资深经纪人', emoji: '💼' };
-  if (day >= 4) return { title: '初级经纪人', emoji: '👔' };
+  if (stats.commercialValue >= 70 && stats.fanLoyalty >= 60) return { title: '金牌经纪人', emoji: '🏆' };
+  if (day >= 15 && stats.prRisk < 30) return { title: '稳健经纪人', emoji: '🛡️' };
+  if (day >= 12) return { title: '资深经纪人', emoji: '💼' };
+  if (day >= 6) return { title: '初级经纪人', emoji: '👔' };
+  if (day >= 3) return { title: '见习经纪人', emoji: '📝' };
   return { title: '实习经纪人', emoji: '🐣' };
 }
 
@@ -21,7 +29,7 @@ export default function MeTab() {
   const fanComments = useGameStore(s => s.fanComments);
   const artist = useGameStore(s => s.artist);
 
-  const manager = getManagerTitle(currentDay, stats);
+  const manager = getManagerTitle(currentDay, stats, stats.money);
 
   const unlockedIds = useMemo(() => {
     if (typeof window === 'undefined') return new Set<string>();
