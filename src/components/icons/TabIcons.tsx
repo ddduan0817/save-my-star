@@ -115,7 +115,7 @@ export function IconWorkspace({ active, size = 26, ...props }: TabIconProps) {
 /**
  * 我的 Tab — 居中头像 + 小皇冠，active 时橙色渐变
  */
-export function IconMe({ active, size = 28, ...props }: TabIconProps) {
+export function IconMe({ active, size = 26, ...props }: TabIconProps) {
   const id = 'ic-me';
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
@@ -124,22 +124,22 @@ export function IconMe({ active, size = 28, ...props }: TabIconProps) {
           <stop stopColor={active ? '#FB923C' : '#B0B0B0'} />
           <stop offset="1" stopColor={active ? '#EA580C' : '#9CA3AF'} />
         </linearGradient>
-        <linearGradient id={`${id}-crown`} x1="14" y1="0" x2="34" y2="12" gradientUnits="userSpaceOnUse">
+        <linearGradient id={`${id}-crown`} x1="16" y1="4" x2="32" y2="14" gradientUnits="userSpaceOnUse">
           <stop stopColor={active ? '#FDE68A' : '#D1D5DB'} />
           <stop offset="1" stopColor={active ? '#F59E0B' : '#9CA3AF'} />
         </linearGradient>
       </defs>
-      {/* 皇冠 */}
+      {/* 小皇冠 */}
       <path
-        d="M14 13L18 4L24 11L30 4L34 13H14Z"
+        d="M17 14L20 8L24 12L28 8L31 14H17Z"
         fill={`url(#${id}-crown)`}
       />
-      <rect x="14" y="11" width="20" height="3" rx="1" fill={`url(#${id}-crown)`} />
+      <rect x="17" y="12.5" width="14" height="2" rx="1" fill={`url(#${id}-crown)`} />
       {/* 头 */}
       <circle cx="24" cy="24" r="9" fill={`url(#${id}-g)`} />
       {/* 身体 */}
       <path
-        d="M8 48C8 40 14.27 34 22 34H26C33.73 34 40 40 40 48H8Z"
+        d="M8 46C8 38.27 14.27 32 22 32H26C33.73 32 40 38.27 40 46H8Z"
         fill={`url(#${id}-g)`}
       />
     </svg>
