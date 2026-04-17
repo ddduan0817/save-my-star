@@ -209,3 +209,29 @@ export interface FanComment {
   likes: number;
   sentiment: 'supportive' | 'angry' | 'hate' | 'neutral';
 }
+
+// ===== Weibo Posting System =====
+export interface WeiboPostTemplate {
+  id: string;
+  title: string;
+  emoji: string;
+  description: string;
+  baseEffects: StatChange;
+  backfireConditions?: {
+    minPrRisk?: number;
+    maxFanLoyalty?: number;
+    maxCommercialValue?: number;
+    forArtist?: ArtistArchetype;
+  };
+  backfireEffects?: StatChange;
+  backfireNarration?: string;
+  successNarration: string;
+  trendTitle: string; // 用 {name} 占位
+  unlockTag?: string;
+}
+
+export interface WeiboPostRecord {
+  templateId: string;
+  day: number;
+  wasBackfire: boolean;
+}

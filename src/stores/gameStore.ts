@@ -17,6 +17,7 @@ import type {
   UpgradeId,
   WeiboTrend,
   FanComment,
+  WeiboPostRecord,
 } from '@/types/game';
 import { artists } from '@/data/artists';
 import { startNewDay, resolveChoice, checkDayEnd } from '@/engine/gameEngine';
@@ -28,6 +29,9 @@ import { createMessages } from '@/engine/messageFactory';
 import { scheduleActivities } from '@/data/schedules';
 import { companyUpgradesData } from '@/data/upgrades';
 import { generateWeiboTrends, generateFanComments } from '@/engine/socialGenerator';
+import { weiboPostTemplates } from '@/data/weiboPosts';
+import { resolveWeiboPost } from '@/engine/weiboPostEngine';
+import { applyStatChanges as applyStatChangesEngine } from '@/engine/outcomeCalculator';
 import {
   checkAchievements,
   loadUnlockedAchievements,
@@ -84,6 +88,13 @@ interface GameStore {
   // Day transition banner
   showDayBanner: boolean;
 
+  // Weibo posting system
+  dailyPostUsed: boolean;
+  weiboPostHistory: WeiboPostRecord[];
+  lastPostNarration: string;
+  lastPostStatChanges: StatChange | null;
+  showPostResult: boolean;
+
   // Actions
   startGame: (artistId: ArtistArchetype) => void;
   setActiveTab: (tab: TabId) => void;
@@ -95,6 +106,8 @@ interface GameStore {
   endDay: () => boolean; // returns false if blocked by urgent messages
   setArtistSchedule: (activityId: ScheduleActivityId) => void;
   purchaseUpgrade: (upgradeId: UpgradeId) => void;
+  postWeibo: (templateId: string) => void;
+  dismissPostResult: () => void;
   dismissAchievement: () => void;
   dismissDayBanner: () => void;
   resetGame: () => void;
@@ -207,6 +220,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   showDayBanner: false,
 
+  dailyPostUsed: false,
+  weiboPostHistory: [],
+  lastPostNarration: '',
+  lastPostStatChanges: null,
+  showPostResult: false,
+
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
@@ -248,6 +267,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       weiboTrends: trends,
       fanComments: comments,
       showDayBanner: true,
+      dailyPostUsed: false,
+      weiboPostHistory: [],
+      lastPostNarration: '',
+      lastPostStatChanges: null,
+      showPostResult: false,
     });
   },
 
@@ -477,6 +501,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       weiboTrends: trends,
       fanComments: comments,
       showDayBanner: true,
+      dailyPostUsed: false,
+      showPostResult: false,
     });
 
     return true;
@@ -514,6 +540,52 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
+  postWeibo: (templateId: string) => {
+    const { dailyPostUsed, stats, artist, activeTags, weiboTrends, weiboPostHistory, currentDay } = get();
+    if (dailyPostUsed || !artist) return;
+
+    const template = weiboPostTemplates.find(t => t.id === templateId);
+    if (!template) return;
+
+    const result = resolveWeiboPost(template, stats, artist.id, artist.name);
+
+    // Apply stat changes through engine (artist modifiers apply)
+    const newStats = applyStatChangesEngine(stats, result.statChanges, artist.id);
+
+    // Inject trend at #1, re-rank others
+    const updatedTrends = [
+      result.trendEntry,
+      ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })),
+    ];
+
+    const newTags = [...activeTags];
+    if (!result.isBackfire && template.unlockTag) {
+      newTags.push(template.unlockTag);
+    }
+
+    set({
+      stats: newStats,
+      dailyPostUsed: true,
+      weiboPostHistory: [...weiboPostHistory, {
+        templateId,
+        day: currentDay,
+        wasBackfire: result.isBackfire,
+      }],
+      weiboTrends: updatedTrends,
+      lastPostNarration: result.narration,
+      lastPostStatChanges: result.statChanges,
+      showPostResult: true,
+      activeTags: newTags,
+      peakRisk: Math.max(get().peakRisk, newStats.prRisk),
+    });
+
+    runAchievementCheck(get, set);
+  },
+
+  dismissPostResult: () => {
+    set({ showPostResult: false });
+  },
+
   dismissDayBanner: () => {
     set({ showDayBanner: false });
   },
@@ -544,6 +616,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       weiboTrends: [],
       fanComments: [],
       showDayBanner: false,
+      dailyPostUsed: false,
+      weiboPostHistory: [],
+      lastPostNarration: '',
+      lastPostStatChanges: null,
+      showPostResult: false,
     });
   },
 

@@ -5,6 +5,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
 import { achievements, loadUnlockedAchievements } from '@/data/achievements';
 import { useMemo } from 'react';
+import WeiboCompose from '@/components/game/WeiboCompose';
 
 function getManagerTitle(day: number, stats: { commercialValue: number; fanLoyalty: number; prRisk: number }, money: number): { title: string; emoji: string } {
   // 彩蛋称号优先
@@ -50,6 +51,9 @@ export default function MeTab() {
           {artist?.name}的经纪人 · 第{currentDay}天
         </div>
       </motion.div>
+
+      {/* Weibo Compose */}
+      <WeiboCompose />
 
       {/* Weibo Trending */}
       <motion.div
