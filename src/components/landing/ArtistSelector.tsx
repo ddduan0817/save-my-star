@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import type { Artist } from '@/types/game';
 import { cn, formatMoney } from '@/lib/utils';
+import { artistAvatarMap } from '@/components/icons';
 
 interface ArtistSelectorProps {
   artists: Artist[];
@@ -25,11 +26,11 @@ export default function ArtistSelector({ artists, onSelect }: ArtistSelectorProp
         >
           <div className="flex items-start gap-3.5">
             <motion.div
-              className="text-3xl mt-0.5"
+              className="mt-0.5"
               whileHover={{ rotate: [0, -10, 10, 0] }}
               transition={{ duration: 0.4 }}
             >
-              {artist.avatar}
+              {(() => { const Avatar = artistAvatarMap[artist.id]; return Avatar ? <Avatar size={44} /> : artist.avatar; })()}
             </motion.div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1.5">

@@ -115,37 +115,31 @@ export function IconWorkspace({ active, size = 26, ...props }: TabIconProps) {
 /**
  * 我的 Tab — 居中头像 + 小皇冠，active 时橙色渐变
  */
-export function IconMe({ active, size = 26, ...props }: TabIconProps) {
+export function IconMe({ active, size = 28, ...props }: TabIconProps) {
   const id = 'ic-me';
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <defs>
-        <linearGradient id={`${id}-g`} x1="8" y1="6" x2="40" y2="44" gradientUnits="userSpaceOnUse">
+        <linearGradient id={`${id}-g`} x1="8" y1="6" x2="40" y2="46" gradientUnits="userSpaceOnUse">
           <stop stopColor={active ? '#FB923C' : '#B0B0B0'} />
           <stop offset="1" stopColor={active ? '#EA580C' : '#9CA3AF'} />
         </linearGradient>
-        <linearGradient id={`${id}-crown`} x1="14" y1="2" x2="34" y2="14" gradientUnits="userSpaceOnUse">
+        <linearGradient id={`${id}-crown`} x1="14" y1="0" x2="34" y2="12" gradientUnits="userSpaceOnUse">
           <stop stopColor={active ? '#FDE68A' : '#D1D5DB'} />
           <stop offset="1" stopColor={active ? '#F59E0B' : '#9CA3AF'} />
         </linearGradient>
       </defs>
       {/* 皇冠 */}
       <path
-        d="M15 15L19 7L24 13L29 7L33 15H15Z"
+        d="M14 13L18 4L24 11L30 4L34 13H14Z"
         fill={`url(#${id}-crown)`}
       />
-      <rect x="15" y="13" width="18" height="3" rx="1" fill={`url(#${id}-crown)`} />
-      {/* 皇冠宝石 */}
-      <circle cx="19" cy="12.5" r="1" fill={active ? '#EA580C' : '#9CA3AF'} />
-      <circle cx="24" cy="10.5" r="1" fill={active ? '#EA580C' : '#9CA3AF'} />
-      <circle cx="29" cy="12.5" r="1" fill={active ? '#EA580C' : '#9CA3AF'} />
+      <rect x="14" y="11" width="20" height="3" rx="1" fill={`url(#${id}-crown)`} />
       {/* 头 */}
-      <circle cx="24" cy="26" r="8" fill={`url(#${id}-g)`} />
-      {/* 头高光 */}
-      <ellipse cx="24" cy="24" rx="4.5" ry="2.5" fill="white" fillOpacity="0.2" />
+      <circle cx="24" cy="24" r="9" fill={`url(#${id}-g)`} />
       {/* 身体 */}
       <path
-        d="M10 46C10 39.37 15.37 34 22 34H26C32.63 34 38 39.37 38 46V48H10V46Z"
+        d="M8 48C8 40 14.27 34 22 34H26C33.73 34 40 40 40 48H8Z"
         fill={`url(#${id}-g)`}
       />
     </svg>
