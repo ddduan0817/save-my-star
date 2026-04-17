@@ -52,6 +52,26 @@ function resolveTwist(twist: Twist | undefined): boolean {
   return Math.random() < twist.chance;
 }
 
+// 给数值变动加随机波动（±30%，money ±20%），增加重玩性
+function randomizeStatChanges(changes: StatChange): StatChange {
+  const result: StatChange = {};
+  for (const [key, value] of Object.entries(changes)) {
+    if (value === undefined || value === 0) {
+      (result as Record<string, number>)[key] = value as number;
+      continue;
+    }
+    const rate = key === 'money' ? 0.2 : 0.3;
+    const variance = Math.max(1, Math.round(Math.abs(value as number) * rate));
+    const delta = Math.floor(Math.random() * (variance * 2 + 1)) - variance;
+    let newValue = (value as number) + delta;
+    // 保持正负号不变
+    if ((value as number) > 0 && newValue <= 0) newValue = 1;
+    if ((value as number) < 0 && newValue >= 0) newValue = -1;
+    (result as Record<string, number>)[key] = newValue;
+  }
+  return result;
+}
+
 export function startNewDay(
   day: number,
   stats: GameStats,
@@ -80,8 +100,11 @@ export function resolveChoice(
 
   // 使用条件分支或默认结局
   const narration = conditionalOutcome?.narration ?? choice.outcome.narration;
-  const statChanges = conditionalOutcome?.statChanges ?? choice.outcome.statChanges;
+  const baseStatChanges = conditionalOutcome?.statChanges ?? choice.outcome.statChanges;
   const unlockTag = conditionalOutcome?.unlockTag ?? choice.outcome.unlockTag;
+
+  // 加随机波动，让同一选项每次结果不同
+  const statChanges = randomizeStatChanges(baseStatChanges);
 
   const newStats = applyStatChanges(currentStats, statChanges, artistId);
 

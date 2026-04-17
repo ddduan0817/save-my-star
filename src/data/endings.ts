@@ -32,7 +32,7 @@ export const endings: Ending[] = [
     rarity: 'rare',
     color: 'from-green-800 to-emerald-500',
     priority: 80,
-    conditions: (stats) => stats.money >= 500000 && stats.fanLoyalty < 30,
+    conditions: (stats) => stats.money >= 400000 && stats.fanLoyalty < 30,
   },
   {
     id: 'top_star',
@@ -43,7 +43,7 @@ export const endings: Ending[] = [
     rarity: 'legendary',
     color: 'from-amber-400 to-yellow-600',
     priority: 70,
-    conditions: (stats) => stats.commercialValue >= 90 && stats.fanLoyalty >= 80 && stats.prRisk < 30,
+    conditions: (stats) => stats.commercialValue >= 80 && stats.fanLoyalty >= 70 && stats.prRisk < 30,
   },
   {
     id: 'fan_favorite',
@@ -54,7 +54,7 @@ export const endings: Ending[] = [
     rarity: 'rare',
     color: 'from-pink-500 to-rose-400',
     priority: 60,
-    conditions: (stats, _tags, day) => stats.fanLoyalty >= 90 && day >= 30,
+    conditions: (stats, _tags, day) => stats.fanLoyalty >= 80 && day >= 20,
   },
   {
     id: 'comeback',
@@ -65,7 +65,7 @@ export const endings: Ending[] = [
     rarity: 'legendary',
     color: 'from-orange-500 to-red-500',
     priority: 55,
-    conditions: (stats, _tags, _day, peakRisk) => peakRisk >= 80 && stats.prRisk < 30 && stats.commercialValue >= 60,
+    conditions: (stats, _tags, _day, peakRisk) => peakRisk >= 70 && stats.prRisk < 30 && stats.commercialValue >= 50,
   },
   {
     id: 'transformed',
@@ -88,9 +88,9 @@ export const endings: Ending[] = [
     color: 'from-blue-500 to-cyan-400',
     priority: 30,
     conditions: (stats, _tags, day) =>
-      day >= 30 &&
-      stats.commercialValue >= 40 && stats.commercialValue <= 80 &&
-      stats.fanLoyalty >= 40 &&
+      day >= 20 &&
+      stats.commercialValue >= 35 && stats.commercialValue <= 70 &&
+      stats.fanLoyalty >= 35 &&
       stats.prRisk < 50,
   },
   {
@@ -113,7 +113,7 @@ export const endings: Ending[] = [
     rarity: 'common',
     color: 'from-stone-600 to-stone-400',
     priority: 10,
-    conditions: (_stats, _tags, day) => day >= 30,
+    conditions: (_stats, _tags, day) => day >= 20,
   },
 ];
 

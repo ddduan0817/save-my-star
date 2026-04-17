@@ -18,7 +18,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '用创作过程证明原创',
         outcome: {
           narration: '你让高八度放出了从demo到成品的全部创作记录，时间线完整到无法反驳。"纯属巧合"的结论被大多数人接受了。音乐博主也改了口。',
-          statChanges: { prRisk: -3, fanLoyalty: 5, commercialValue: 3 },
+          statChanges: { prRisk: -3, fanLoyalty: 3, commercialValue: 3 },
         },
       },
       {
@@ -27,7 +27,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '协商解决',
         outcome: {
           narration: '你安排高八度和那位音乐人见了面。两人聊完发现确实是巧合，对方还成了高八度的粉丝。最后一起录了一首合作曲，反转得很漂亮。',
-          statChanges: { fanLoyalty: 7, commercialValue: 5, prRisk: -5, money: -14000 },
+          statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: -3, money: -14000 },
         },
       },
       {
@@ -36,7 +36,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '维护名誉权',
         outcome: {
           narration: '律师函一出，对方粉丝和音乐圈都站到了对面。"以大欺小""不讲武德"的评价满天飞。这步棋走错了。',
-          statChanges: { prRisk: 9, fanLoyalty: -5, money: -20000 },
+          statChanges: { prRisk: 5, fanLoyalty: -3, money: -20000 },
         },
       },
     ],
@@ -57,7 +57,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '给主办方面子',
         outcome: {
           narration: '高八度在开场表演中直接炸场，现场观众从第一首歌就开始疯了。"开场比压轴炸"成了当天最大的新闻。有时候亏吃了反而是赚的。',
-          statChanges: { fanLoyalty: 6, commercialValue: 3 },
+          statChanges: { fanLoyalty: 4, commercialValue: 3 },
         },
       },
       {
@@ -66,7 +66,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '"既然不尊重，那就不去了"',
         outcome: {
           narration: '退出的消息引发大量讨论。粉丝觉得"有骨气"，但主办方把你拉进了黑名单，以后的音乐节邀约可能会减少。',
-          statChanges: { fanLoyalty: 5, commercialValue: -5, prRisk: 3 },
+          statChanges: { fanLoyalty: 3, commercialValue: -3, prRisk: 3 },
         },
       },
       {
@@ -75,7 +75,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '要一个solo acoustic段',
         outcome: {
           narration: '你争取到了一个15分钟的不插电环节。高八度一把吉他一个话筒，全场万人合唱。视频在全网传疯了，比压轴还出圈。',
-          statChanges: { fanLoyalty: 9, commercialValue: 7, prRisk: -3 },
+          statChanges: { fanLoyalty: 5, commercialValue: 4, prRisk: -3 },
         },
       },
     ],
@@ -96,7 +96,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '约出来吃饭聊聊',
         outcome: {
           narration: '一顿火锅解决了所有矛盾。两人合发了一条微博："新专辑已经在写了，敬请期待。"粉丝和圈内人都松了一口气。',
-          statChanges: { fanLoyalty: 3, commercialValue: 5, prRisk: -3 },
+          statChanges: { fanLoyalty: 3, commercialValue: 3, prRisk: -3 },
         },
       },
       {
@@ -105,7 +105,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '"以后的音乐我自己做"',
         outcome: {
           narration: '高八度宣布下张专辑全部自己制作。这个决定很勇敢也很冒险——没有金牌制作人的加持，作品质量是个问号。但音乐圈对这份勇气表示尊重。',
-          statChanges: { fanLoyalty: 6, commercialValue: -3, prRisk: 3 },
+          statChanges: { fanLoyalty: 4, commercialValue: -3, prRisk: 3 },
           unlockTag: 'independent_music',
         },
       },
@@ -126,7 +126,7 @@ export const singerSpecificEvents: GameEvent[] = [
         subtext: '"就当是给粉丝的礼物"',
         outcome: {
           narration: '你花了十分钟说服他。最终高八度在节目上即兴写了一首，写得真的很好。"被逼营业但才华压不住"成了当期最佳片段。',
-          statChanges: { fanLoyalty: 5, commercialValue: 5, money: 40000 },
+          statChanges: { fanLoyalty: 3, commercialValue: 3, money: 40000 },
         },
       },
       {

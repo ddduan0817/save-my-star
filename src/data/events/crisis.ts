@@ -15,12 +15,12 @@ export const crisisEvents: GameEvent[] = [
         subtext: '声明只是普通朋友',
         outcome: {
           narration: '工作室紧急发声明否认恋情。但网友扒出更多细节，"此地无银三百两"的评论占满了评论区。',
-          statChanges: { prRisk: 9, fanLoyalty: -3 },
+          statChanges: { prRisk: 5, fanLoyalty: -3 },
           unlockTag: 'denied_relationship',
           twist: {
             chance: 0.35,
             narration: '更多约会照曝光了！这次是正脸高清图，否认都否认不了了。"打脸来得太快"冲上热搜，品牌方开始考虑解约。',
-            statChanges: { prRisk: 9, commercialValue: -6, fanLoyalty: -6 },
+            statChanges: { prRisk: 5, commercialValue: -4, fanLoyalty: -4 },
           },
         },
       },
@@ -30,19 +30,19 @@ export const crisisEvents: GameEvent[] = [
         subtext: '直接公开恋情',
         outcome: {
           narration: '艺人亲自发微博："是的，我恋爱了，谢谢大家关心。"一部分粉丝送祝福，但脱粉的也不少。不过路人好感度倒是上来了。',
-          statChanges: { prRisk: -3, fanLoyalty: -9, commercialValue: -6 },
+          statChanges: { prRisk: -3, fanLoyalty: -5, commercialValue: -4 },
           unlockTag: 'public_relationship',
           conditionalOutcomes: [
             {
               condition: { minFanLoyalty: 70 },
               narration: '艺人官宣恋情。因为粉丝忠诚度极高，脱粉的人意外地少。"我家哥哥/姐姐幸福就好"刷屏了，路人也被这份成熟的粉丝关系感动。',
-              statChanges: { prRisk: -6, fanLoyalty: -3, commercialValue: 3 },
+              statChanges: { prRisk: -4, fanLoyalty: -3, commercialValue: 3 },
               unlockTag: 'public_relationship',
             },
             {
               condition: { maxFanLoyalty: 30 },
               narration: '官宣恋情后，本来就不多的粉丝跑了一大半。"连粉丝都留不住还谈恋爱"的讽刺满天飞。',
-              statChanges: { prRisk: 3, fanLoyalty: -12, commercialValue: -9 },
+              statChanges: { prRisk: 3, fanLoyalty: -7, commercialValue: -5 },
               unlockTag: 'public_relationship',
             },
           ],
@@ -64,7 +64,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '放出新歌/新戏的物料',
         outcome: {
           narration: '紧急发布了新歌MV预告，粉丝们的注意力被成功转移了一部分。但八卦博主可不会这么轻易放过...',
-          statChanges: { prRisk: 5, commercialValue: 3 },
+          statChanges: { prRisk: 3, commercialValue: 3 },
         },
       },
     ],
@@ -84,7 +84,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '承认过去不成熟',
         outcome: {
           narration: '艺人手写了一封道歉信，承认年少无知。大部分路人接受了，但"道歉有用要警察干嘛"的声音也不小。',
-          statChanges: { prRisk: 6, fanLoyalty: -3, commercialValue: -6 },
+          statChanges: { prRisk: 4, fanLoyalty: -3, commercialValue: -4 },
           conditionalOutcomes: [
             {
               condition: { maxPrRisk: 20 },
@@ -100,7 +100,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '说不是本人发的',
         outcome: {
           narration: '"盗号"的说法没人信，反而被群嘲"娱乐圈盗号宇宙"。事情进一步发酵，你现在是互联网笑话了。',
-          statChanges: { prRisk: 15, fanLoyalty: -6 },
+          statChanges: { prRisk: 9, fanLoyalty: -4 },
         },
       },
       {
@@ -109,7 +109,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '冷处理，等热度过去',
         outcome: {
           narration: '沉默被解读为"心虚"。但好消息是，三天后新的瓜出来了，注意力转移了。坏消息是，这颗雷还埋着。',
-          statChanges: { prRisk: 9 },
+          statChanges: { prRisk: 5 },
           unlockTag: 'silent_on_scandal',
         },
       },
@@ -130,7 +130,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '解释是音响故障导致的',
         outcome: {
           narration: '发了一条长微博解释当天音响出了问题，并宣布免费重办一场。大部分粉丝买账了，但"花钱买假唱"的梗已经传开了。',
-          statChanges: { prRisk: 6, money: -70000, fanLoyalty: 3 },
+          statChanges: { prRisk: 4, money: -70000, fanLoyalty: 3 },
         },
       },
       {
@@ -139,7 +139,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '发律师函警告造谣者',
         outcome: {
           narration: '律师函一发，网友更来劲了："怎么，被说中了急了？"舆论进一步发酵。',
-          statChanges: { prRisk: 12, money: -40000 },
+          statChanges: { prRisk: 7, money: -40000 },
         },
       },
       {
@@ -148,11 +148,11 @@ export const crisisEvents: GameEvent[] = [
         subtext: '开直播唱一段证明实力',
         outcome: {
           narration: '艺人开了一场直播清唱，高音稳得一批。"打脸来得太快"刷屏弹幕，风评逆转！',
-          statChanges: { prRisk: -6, fanLoyalty: 6, commercialValue: 3 },
+          statChanges: { prRisk: -4, fanLoyalty: 4, commercialValue: 3 },
           twist: {
             chance: 0.25,
             narration: '直播清唱炸了！一个音乐制作人在线下单："就凭这个live水平，我要给TA出专辑！"一份价值百万的音乐合约正在路上。',
-            statChanges: { commercialValue: 6, money: 70000, fanLoyalty: 3 },
+            statChanges: { commercialValue: 4, money: 70000, fanLoyalty: 3 },
           },
         },
       },
@@ -182,7 +182,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '法律团队全面介入 (-10万)',
         outcome: {
           narration: '律师团队介入后发现确实有问题，但及时补救了。不过"请得起顶级律师说明赚得够多"的讨论又起来了。',
-          statChanges: { money: -70000, prRisk: 6 },
+          statChanges: { money: -70000, prRisk: 4 },
         },
       },
       {
@@ -191,11 +191,11 @@ export const crisisEvents: GameEvent[] = [
         subtext: '声明从未逃税',
         outcome: {
           narration: '否认之后，举报人放出了更多证据。这下连官媒都点名了。你正在走一条非常危险的路。',
-          statChanges: { prRisk: 18, commercialValue: -9 },
+          statChanges: { prRisk: 11, commercialValue: -5 },
           twist: {
             chance: 0.4,
             narration: '税务部门正式介入调查。三个品牌连夜解约，工作全面停摆。这可能是职业生涯最黑暗的时刻。',
-            statChanges: { prRisk: 12, money: -110000, commercialValue: -12 },
+            statChanges: { prRisk: 7, money: -110000, commercialValue: -7 },
           },
         },
       },
@@ -215,12 +215,12 @@ export const crisisEvents: GameEvent[] = [
         subtext: '呼吁理性追星',
         outcome: {
           narration: '艺人发长文谴责暴力行为，呼吁大家理性追星。官媒点赞，路人好感上升，但一部分激进粉丝觉得"偶像不向着我们"。',
-          statChanges: { prRisk: -3, fanLoyalty: -5, commercialValue: 3 },
+          statChanges: { prRisk: -3, fanLoyalty: -3, commercialValue: 3 },
           conditionalOutcomes: [
             {
               condition: { minFanLoyalty: 80 },
               narration: '艺人公开谴责暴力。由于粉丝忠诚度极高，连激进粉都说"偶像说的对"。这种正面引导让官媒专门发文表扬，你的艺人成了"饭圈正能量"代表。',
-              statChanges: { prRisk: -9, fanLoyalty: 3, commercialValue: 6 },
+              statChanges: { prRisk: -5, fanLoyalty: 3, commercialValue: 4 },
             },
           ],
         },
@@ -231,7 +231,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '让粉丝觉得被支持',
         outcome: {
           narration: '粉丝们觉得被偶像撑腰了，战斗力更强了。但对方粉丝和路人都在骂你拉偏架。',
-          statChanges: { prRisk: 9, fanLoyalty: 6 },
+          statChanges: { prRisk: 5, fanLoyalty: 4 },
         },
       },
       {
@@ -240,7 +240,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '冷处理',
         outcome: {
           narration: '沉默被解读为默许。官媒批评"艺人有责任引导粉丝"，热度持续了三天才消退。',
-          statChanges: { prRisk: 6 },
+          statChanges: { prRisk: 4 },
         },
       },
     ],
@@ -269,7 +269,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '强硬回应',
         outcome: {
           narration: '路人觉得说得对，粉丝觉得不够在乎他们的感受。一场"偶像到底该不该有私生活"的大讨论开始了。',
-          statChanges: { prRisk: 5, fanLoyalty: -6, commercialValue: 3 },
+          statChanges: { prRisk: 3, fanLoyalty: -4, commercialValue: 3 },
         },
       },
     ],
@@ -298,7 +298,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '否认真实性',
         outcome: {
           narration: '原视频的完整版被放了出来...更尴尬了。"越描越黑"成了热搜联想词。',
-          statChanges: { prRisk: 11, fanLoyalty: -5 },
+          statChanges: { prRisk: 7, fanLoyalty: -3 },
         },
       },
       {
@@ -327,7 +327,7 @@ export const crisisEvents: GameEvent[] = [
         subtext: '走法律途径',
         outcome: {
           narration: '报警后艺人发了长文呼吁理性追星。大部分粉丝支持，但私生饭的朋友们开始在网上造谣"XX耍大牌报警抓粉丝"。',
-          statChanges: { prRisk: 5, fanLoyalty: -3, money: -10000 },
+          statChanges: { prRisk: 3, fanLoyalty: -3, money: -10000 },
         },
       },
       {

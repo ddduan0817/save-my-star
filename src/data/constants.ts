@@ -1,5 +1,5 @@
 export const GAME_CONFIG = {
-  MAX_DAYS: 30,
+  MAX_DAYS: 20,
   EVENTS_PER_DAY: { min: 1, max: 3 },
 
   // Daily passive effects
@@ -12,10 +12,10 @@ export const GAME_CONFIG = {
   BANKRUPTCY_DAYS: 3,
 
   // Difficulty scaling
-  EARLY_GAME: [1, 5] as const,
-  MID_GAME: [6, 15] as const,
-  LATE_GAME: [16, 25] as const,
-  ENDGAME: [26, 30] as const,
+  EARLY_GAME: [1, 3] as const,
+  MID_GAME: [4, 10] as const,
+  LATE_GAME: [11, 17] as const,
+  ENDGAME: [18, 20] as const,
 
   // Event weights by stat state
   CRISIS_WEIGHT_HIGH_RISK: 3.0,

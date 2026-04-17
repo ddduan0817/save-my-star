@@ -24,11 +24,11 @@ export const prEvents: GameEvent[] = [
         subtext: '真实互动，展现个性',
         outcome: {
           narration: '艺人放飞自我，爆了好几个金句！"今天的发布会太好笑了"刷屏热搜。路人纷纷路转粉，这波赚大了。',
-          statChanges: { fanLoyalty: 6, commercialValue: 3, prRisk: 3 },
+          statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: 3 },
           twist: {
             chance: 0.25,
             narration: '发布会上的金句被营销号断章取义了！"XX公开嘲讽同行"的标题满天飞，虽然不是原意，但解释的成本太高了。',
-            statChanges: { prRisk: 6, fanLoyalty: -3 },
+            statChanges: { prRisk: 4, fanLoyalty: -3 },
           },
         },
       },
@@ -38,7 +38,7 @@ export const prEvents: GameEvent[] = [
         subtext: '发布会上宣布重磅消息',
         outcome: {
           narration: '艺人在发布会上宣布了一个谁都没想到的合作。全场记者都疯了，热搜直接爆了。话题度拉满，但也把同行得罪了不少。',
-          statChanges: { commercialValue: 7, fanLoyalty: 3, prRisk: 5 },
+          statChanges: { commercialValue: 4, fanLoyalty: 3, prRisk: 3 },
         },
       },
     ],
@@ -57,7 +57,7 @@ export const prEvents: GameEvent[] = [
         subtext: '投入时间和资金 (-5万)',
         outcome: {
           narration: '艺人亲自去了山区小学，和孩子们一起上课的照片温暖了全网。"这不是作秀，是真的在做"成了热评第一。',
-          statChanges: { money: -40000, fanLoyalty: 9, prRisk: -6, commercialValue: 3 },
+          statChanges: { money: -40000, fanLoyalty: 5, prRisk: -4, commercialValue: 3 },
         },
       },
       {
@@ -66,7 +66,7 @@ export const prEvents: GameEvent[] = [
         subtext: '拍几张照就走',
         outcome: {
           narration: '照片拍得挺好，但有人扒出艺人全程只待了20分钟。"公益作秀"的质疑声出来了。',
-          statChanges: { prRisk: 5, fanLoyalty: -3 },
+          statChanges: { prRisk: 3, fanLoyalty: -3 },
         },
       },
       {
@@ -104,7 +104,7 @@ export const prEvents: GameEvent[] = [
         requireMinMoney: 84000,
         outcome: {
           narration: '热搜+控评+超话打卡，数据漂亮得像假的（确实有点假）。但品牌方看数据决定合作，所以...值了？',
-          statChanges: { money: -84000, commercialValue: 5, prRisk: 3 },
+          statChanges: { money: -84000, commercialValue: 3, prRisk: 3 },
         },
       },
       {
@@ -142,12 +142,12 @@ export const prEvents: GameEvent[] = [
         subtext: '正面回应质疑',
         outcome: {
           narration: '"说实话，刚出道的时候确实需要公司支持，但现在的成绩我觉得还是有我自己的努力在的。"这个回答被剪成短视频，好评如潮。',
-          statChanges: { fanLoyalty: 6, commercialValue: 3, prRisk: 3 },
+          statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: 3 },
           conditionalOutcomes: [
             {
               condition: { minCommercialValue: 60 },
               narration: '真诚回答+强大的商业数据做后盾，路人直接被圈粉。"这个人说的是实话，数据摆在那"成了最佳防守。好几个品牌方看到采访后主动联系你谈合作。',
-              statChanges: { fanLoyalty: 7, commercialValue: 6, money: 40000 },
+              statChanges: { fanLoyalty: 4, commercialValue: 4, money: 40000 },
             },
           ],
         },
@@ -158,7 +158,7 @@ export const prEvents: GameEvent[] = [
         subtext: '经纪人上场打断',
         outcome: {
           narration: '你冲上去说"今天的采访到此结束"。虽然保护了艺人，但"经纪人强势打断采访"的视频已经在传了。',
-          statChanges: { prRisk: 7, fanLoyalty: 3 },
+          statChanges: { prRisk: 4, fanLoyalty: 3 },
         },
       },
     ],
@@ -177,7 +177,7 @@ export const prEvents: GameEvent[] = [
         subtext: '发微博逐一感谢',
         outcome: {
           narration: '艺人发了一条长微博，挨个感谢了粉丝的应援。"认真看了每一条留言"的话让粉丝们感动哭了。',
-          statChanges: { fanLoyalty: 5 },
+          statChanges: { fanLoyalty: 3 },
         },
       },
       {
@@ -186,7 +186,7 @@ export const prEvents: GameEvent[] = [
         subtext: '回馈粉丝 (-3万)',
         outcome: {
           narration: '300个名额秒空！见面会上艺人和粉丝一起切蛋糕、玩游戏，现场直拍播放量破千万。',
-          statChanges: { money: -20000, fanLoyalty: 12, commercialValue: 3 },
+          statChanges: { money: -20000, fanLoyalty: 7, commercialValue: 3 },
         },
       },
       {
@@ -215,7 +215,7 @@ export const prEvents: GameEvent[] = [
         subtext: '据理力争好位置',
         outcome: {
           narration: '主办方给调到了第二排。粉丝们欢天喜地，但被挤走的那位的团队开始记恨你了。',
-          statChanges: { fanLoyalty: 5, prRisk: 3 },
+          statChanges: { fanLoyalty: 3, prRisk: 3 },
         },
       },
       {
@@ -233,7 +233,7 @@ export const prEvents: GameEvent[] = [
         subtext: '用"档期冲突"推掉',
         outcome: {
           narration: '缺席微博之夜的消息传出，"XX是不是被封杀了"的猜测满天飞。虽然不是真的，但造成了一些不必要的恐慌。',
-          statChanges: { prRisk: 6, fanLoyalty: -3 },
+          statChanges: { prRisk: 4, fanLoyalty: -3 },
         },
       },
     ],
@@ -252,7 +252,7 @@ export const prEvents: GameEvent[] = [
         subtext: '发日常、发素颜、发碎碎念',
         outcome: {
           narration: '第一条接地气的微博——一张没化妆在家吃泡面的照片——居然成了近期互动最高的一条。"原来你也吃泡面啊"成了出圈热评。',
-          statChanges: { fanLoyalty: 6, commercialValue: 3 },
+          statChanges: { fanLoyalty: 4, commercialValue: 3 },
         },
       },
       {

@@ -40,18 +40,18 @@ export const achievements: Achievement[] = [
   {
     id: 'max_fan',
     title: '万人迷',
-    description: '粉丝忠诚度达到 100',
+    description: '粉丝忠诚度达到 90',
     emoji: '💕',
     rarity: 'rare',
-    check: ({ stats }) => stats.fanLoyalty >= 100,
+    check: ({ stats }) => stats.fanLoyalty >= 90,
   },
   {
     id: 'max_commercial',
     title: '行走的ATM',
-    description: '商业价值达到 100',
+    description: '商业价值达到 90',
     emoji: '💎',
     rarity: 'rare',
-    check: ({ stats }) => stats.commercialValue >= 100,
+    check: ({ stats }) => stats.commercialValue >= 90,
   },
   {
     id: 'high_risk_survivor',
@@ -131,14 +131,6 @@ export const achievements: Achievement[] = [
     rarity: 'common',
     check: ({ day }) => day >= 20,
   },
-  {
-    id: 'survive_30',
-    title: '经纪人之神',
-    description: '坚持到第30天',
-    emoji: '👑',
-    rarity: 'rare',
-    check: ({ day }) => day >= 30,
-  },
 
   // ===== 艺人类 =====
   {
@@ -153,10 +145,10 @@ export const achievements: Achievement[] = [
   {
     id: 'idol_master',
     title: '饭圈教父',
-    description: '用甄帅把粉丝忠诚打到90+',
+    description: '用甄帅把粉丝忠诚打到80+',
     emoji: '🌟',
     rarity: 'rare',
-    check: ({ stats, artistId }) => artistId === 'idol' && stats.fanLoyalty >= 90,
+    check: ({ stats, artistId }) => artistId === 'idol' && stats.fanLoyalty >= 80,
   },
   {
     id: 'influencer_rich',
@@ -171,18 +163,18 @@ export const achievements: Achievement[] = [
   {
     id: 'speed_run',
     title: '速通大师',
-    description: '在第5天前就触发结局',
+    description: '在第3天前就触发结局',
     emoji: '⚡',
     rarity: 'legendary',
-    check: ({ day }) => day <= 5,
+    check: ({ day }) => day <= 3,
   },
   {
     id: 'zero_risk',
     title: '无懈可击',
-    description: '第15天时风险仍为0',
+    description: '第10天时风险仍为0',
     emoji: '🧊',
     rarity: 'legendary',
-    check: ({ stats, day }) => day >= 15 && stats.prRisk === 0,
+    check: ({ stats, day }) => day >= 10 && stats.prRisk === 0,
   },
 ];
 

@@ -39,7 +39,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '"纯属造谣，已委托律师"',
         outcome: {
           narration: '律师函发出去了，但大V不仅没删帖，还追加了一条"我有证据"。事情越闹越大，"欲盖弥彰"四个字满屏都是。',
-          statChanges: { prRisk: 8, fanLoyalty: -3 },
+          statChanges: { prRisk: 5, fanLoyalty: -3 },
           followUpEventId: 'chain_tax_2_deny',
           unlockTag: 'tax_denied',
         },
@@ -50,7 +50,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '等风头过去',
         outcome: {
           narration: '你选择沉默，但沉默在这种时候就等于默认。"不敢回应就是心虚"的论调铺天盖地。品牌方已经在考虑暂停合作了。',
-          statChanges: { prRisk: 6, commercialValue: -5 },
+          statChanges: { prRisk: 4, commercialValue: -3 },
         },
       },
     ],
@@ -72,7 +72,7 @@ export const chainEvents: GameEvent[] = [
         requireMinMoney: 50000,
         outcome: {
           narration: '补缴完毕，诚恳道歉。"虽然有问题但态度端正"上了热搜，路人觉得你很体面。税务局也发了公告确认已结清。危机完美化解！',
-          statChanges: { prRisk: -8, fanLoyalty: 5, money: -50000 },
+          statChanges: { prRisk: -5, fanLoyalty: 3, money: -50000 },
           followUpEventId: 'chain_tax_3_clear',
           unlockTag: 'tax_resolved_well',
         },
@@ -83,7 +83,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '"是财务公司的失误，不是我们的问题"',
         outcome: {
           narration: '你把锅甩给了财务公司，但网友不买账："请的财务公司你不管？推卸责任也是一种态度。" 舆论继续发酵中。',
-          statChanges: { prRisk: 6, fanLoyalty: -5 },
+          statChanges: { prRisk: 4, fanLoyalty: -3 },
           followUpEventId: 'chain_tax_3_penalty',
           unlockTag: 'tax_argued',
         },
@@ -107,7 +107,7 @@ export const chainEvents: GameEvent[] = [
         requireMinMoney: 80000,
         outcome: {
           narration: '迟到的道歉虽然不够体面，但至少止血了。"先否认再道歉"成了经典案例，品牌方还是解约了两个。代价惨痛的教训。',
-          statChanges: { prRisk: -3, commercialValue: -8, fanLoyalty: -5, money: -80000 },
+          statChanges: { prRisk: -3, commercialValue: -5, fanLoyalty: -3, money: -80000 },
           unlockTag: 'tax_late_apology',
         },
       },
@@ -141,7 +141,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '捐款 + 税务普法宣传',
         outcome: {
           narration: '你的艺人参与了税务普法公益活动，"用亲身经历教育大家"的人设立住了。各大品牌的合作邀约纷至沓来，税务风波反而成了加分项！',
-          statChanges: { commercialValue: 8, fanLoyalty: 5, prRisk: -5, money: -20000 },
+          statChanges: { commercialValue: 5, fanLoyalty: 3, prRisk: -3, money: -20000 },
         },
       },
       {
@@ -173,7 +173,7 @@ export const chainEvents: GameEvent[] = [
         requireMinMoney: 60000,
         outcome: {
           narration: '罚款交了，声明发了，但这个污点短期内洗不掉。好在你态度诚恳，几个核心粉丝站了出来：" 人非圣贤。"慢慢来吧。',
-          statChanges: { prRisk: -3, commercialValue: -5, money: -60000 },
+          statChanges: { prRisk: -3, commercialValue: -3, money: -60000 },
         },
       },
       {
@@ -182,7 +182,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '暂停所有商务，专心作品',
         outcome: {
           narration: '你宣布暂停一切商业活动，专心打磨作品。粉丝含泪支持，路人也觉得这份决心值得尊重。"卧薪尝胆"的剧本，走起。',
-          statChanges: { commercialValue: -8, fanLoyalty: 8, prRisk: -6, money: -30000 },
+          statChanges: { commercialValue: -5, fanLoyalty: 5, prRisk: -4, money: -30000 },
         },
       },
     ],
@@ -210,7 +210,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '"对，我恋爱了，很幸福"',
         outcome: {
           narration: '艺人甜蜜官宣，微博直接瘫了。"终于不用帮你们藏了"成了热评第一。CP粉狂喜，唯粉心碎，品牌方紧急开会评估影响...',
-          statChanges: { prRisk: -5, fanLoyalty: -7, commercialValue: -3 },
+          statChanges: { prRisk: -3, fanLoyalty: -4, commercialValue: -3 },
           followUpEventId: 'chain_romance_2_public',
           unlockTag: 'romance_official',
         },
@@ -221,7 +221,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '联系狗仔删图 + 控评',
         outcome: {
           narration: '你花了一番功夫把火压下去了，但图已经存了无数份。"互联网是有记忆的"——这句话你今天深刻体会到了。暗地里恋情继续，但随时可能再爆。',
-          statChanges: { prRisk: 5, money: -30000 },
+          statChanges: { prRisk: 3, money: -30000 },
           followUpEventId: 'chain_romance_2_secret',
           unlockTag: 'romance_hidden',
         },
@@ -236,7 +236,7 @@ export const chainEvents: GameEvent[] = [
           twist: {
             chance: 0.25,
             narration: '分手的消息不知道怎么被对方朋友圈传出来了，"为了事业抛弃爱情"的话题引发热议。部分路人开始同情对方，觉得你的艺人太现实了。',
-            statChanges: { prRisk: 6, fanLoyalty: -4 },
+            statChanges: { prRisk: 4, fanLoyalty: -4 },
           },
         },
       },
@@ -258,7 +258,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '和恋人一起拍广告',
         outcome: {
           narration: '情侣广告拍得甜到齁，全网都在嗑真糖！商业价值虽然转型了但没降。"这就是爱情该有的样子"成了爆款文案。',
-          statChanges: { commercialValue: 5, fanLoyalty: 3, money: 60000 },
+          statChanges: { commercialValue: 3, fanLoyalty: 3, money: 60000 },
           followUpEventId: 'chain_romance_3_blessing',
           unlockTag: 'romance_couple_brand',
         },
@@ -292,7 +292,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '道歉 + 公开',
         outcome: {
           narration: '"上次撒谎了对不起"——这个道歉声明写得诚恳但尴尬。粉丝最恨的就是被骗。脱粉的比直接官宣多了三倍，但好歹不用再藏了。',
-          statChanges: { fanLoyalty: -9, prRisk: 3, commercialValue: -5 },
+          statChanges: { fanLoyalty: -5, prRisk: 3, commercialValue: -3 },
           followUpEventId: 'chain_romance_3_breakup',
           unlockTag: 'romance_forced_reveal',
         },
@@ -303,11 +303,11 @@ export const chainEvents: GameEvent[] = [
         subtext: '"是P图！假的！"',
         outcome: {
           narration: '你选择死不承认。但这次连粉丝都不信了——"经纪人你当我们傻吗？"超话里满是失望。恋人那边的朋友也开始爆料，四面楚歌。',
-          statChanges: { prRisk: 9, fanLoyalty: -8, commercialValue: -3 },
+          statChanges: { prRisk: 5, fanLoyalty: -5, commercialValue: -3 },
           twist: {
             chance: 0.4,
             narration: '恋人本人发微博了："我不想再做见不得光的人。"直接放出聊天记录。全网哗然，"渣经纪人"的词条冲上热搜第一。',
-            statChanges: { prRisk: 8, fanLoyalty: -6 },
+            statChanges: { prRisk: 5, fanLoyalty: -4 },
           },
         },
       },
@@ -329,7 +329,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '爱情事业双丰收！',
         outcome: {
           narration: '珠宝、婚纱、度假...品牌方排着队来谈情侣代言。你的艺人成了"国民恋人"代言专业户，粉丝也从心疼变成了真心祝福。HE达成！',
-          statChanges: { commercialValue: 7, fanLoyalty: 5, money: 80000, prRisk: -3 },
+          statChanges: { commercialValue: 4, fanLoyalty: 3, money: 80000, prRisk: -3 },
         },
       },
       {
@@ -338,7 +338,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '别过度消费爱情',
         outcome: {
           narration: '你控制了恋情的曝光节奏，既保持了话题度又没有让人审美疲劳。"会营业但不油腻"的评价，正是你想要的效果。',
-          statChanges: { commercialValue: 3, fanLoyalty: 3, prRisk: -5 },
+          statChanges: { commercialValue: 3, fanLoyalty: 3, prRisk: -3 },
         },
       },
     ],
@@ -360,7 +360,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '"感谢这段感情"',
         outcome: {
           narration: '体面的分手声明发出后，粉丝们居然松了一口气。"单身了又可以磕别的CP了！"你的艺人重新变成了"全民老公/老婆"，商业价值回来了。',
-          statChanges: { fanLoyalty: 5, commercialValue: 5, prRisk: -3 },
+          statChanges: { fanLoyalty: 3, commercialValue: 3, prRisk: -3 },
         },
       },
       {
@@ -395,13 +395,13 @@ export const chainEvents: GameEvent[] = [
         subtext: '高风险高回报',
         outcome: {
           narration: '你的艺人上了节目，表现得又真实又可爱。尤其是那段被吓到飙方言的片段，已经被做成表情包疯传了！弹幕都在刷"哈哈哈哈太真实了"。',
-          statChanges: { fanLoyalty: 5, commercialValue: 3, prRisk: 2 },
+          statChanges: { fanLoyalty: 3, commercialValue: 3, prRisk: 2 },
           followUpEventId: 'chain_variety_2_viral',
           unlockTag: 'variety_appeared',
           twist: {
             chance: 0.2,
             narration: '节目里有个环节翻车了——你的艺人说错了一个常识性问题，"文化水平堪忧"的词条上了热搜。虽然后来澄清是剪辑效果，但已经传开了。',
-            statChanges: { prRisk: 7, fanLoyalty: -3 },
+            statChanges: { prRisk: 4, fanLoyalty: -3 },
           },
         },
       },
@@ -441,11 +441,11 @@ export const chainEvents: GameEvent[] = [
         subtext: '多上几档节目巩固综艺咖人设',
         outcome: {
           narration: '你一口气接了三档综艺，艺人彻底打上了"综艺感超强"的标签。各大节目的邀约排到了下个季度，综艺通告费也翻了倍！',
-          statChanges: { commercialValue: 7, money: 80000, fanLoyalty: 3 },
+          statChanges: { commercialValue: 4, money: 80000, fanLoyalty: 3 },
           twist: {
             chance: 0.25,
             narration: '上太多综艺了！粉丝开始抱怨："能不能好好拍戏/唱歌？天天上综艺是要转型搞笑艺人吗？"专业口碑有所下滑。',
-            statChanges: { fanLoyalty: -5, commercialValue: -3 },
+            statChanges: { fanLoyalty: -3, commercialValue: -3 },
           },
         },
       },
@@ -455,7 +455,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '出联名周边 + 授权表情包',
         outcome: {
           narration: '你迅速注册了表情包IP，联名周边上线三分钟售罄。"原来表情包也能变现"成了行业案例。你的艺人笑着数钱，这波属于是躺赢了。',
-          statChanges: { money: 100000, commercialValue: 5, fanLoyalty: 5 },
+          statChanges: { money: 100000, commercialValue: 3, fanLoyalty: 3 },
         },
       },
       {
@@ -464,7 +464,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '让热度慢慢沉淀',
         outcome: {
           narration: '你没有急于变现，反而让艺人发了条自嘲微博。这种"不把自己当回事"的态度反而让路人更喜欢了。格局，打开了。',
-          statChanges: { fanLoyalty: 6, prRisk: -3, commercialValue: 3 },
+          statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
         },
       },
     ],
@@ -491,7 +491,7 @@ export const chainEvents: GameEvent[] = [
         requireMinMoney: 300000,
         outcome: {
           narration: '签约仪式办得很风光，你的艺人笑容满面地举着奶茶合影。品牌方在三个月内开了50家店，看起来形势一片大好。你心里美滋滋的...',
-          statChanges: { commercialValue: 5, money: -300000 },
+          statChanges: { commercialValue: 3, money: -300000 },
           followUpEventId: 'chain_invest_2_bad',
           unlockTag: 'invested_big',
         },
@@ -535,7 +535,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '发声明 + 退股 + 道歉',
         outcome: {
           narration: '你以最快速度发了声明退出投资。但"割韭菜跑得倒快"的讽刺声不断。退股的钱品牌方说"正在走流程"——你觉得大概率打水漂了。',
-          statChanges: { prRisk: 5, commercialValue: -5, fanLoyalty: -3 },
+          statChanges: { prRisk: 3, commercialValue: -3, fanLoyalty: -3 },
           followUpEventId: 'chain_invest_3_aftermath',
           unlockTag: 'invest_cut_loss',
         },
@@ -580,7 +580,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '专注本职工作',
         outcome: {
           narration: '"不投了不投了"成了你的口头禅。品牌方们反而放心了——至少不会再有投资暴雷的风险。通告费虽然赚得慢，但胜在稳定。',
-          statChanges: { commercialValue: 3, prRisk: -5, fanLoyalty: 2 },
+          statChanges: { commercialValue: 3, prRisk: -3, fanLoyalty: 2 },
         },
       },
       {
@@ -616,7 +616,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '亲自参与设计，深度合作',
         outcome: {
           narration: '你的艺人花了两周时间和设计团队碰撞灵感。从纹样到配色都有参与，"认真到让设计师都惊讶"的幕后花絮被品牌方发了出来，好评如潮。',
-          statChanges: { commercialValue: 5, fanLoyalty: 3, money: -20000 },
+          statChanges: { commercialValue: 3, fanLoyalty: 3, money: -20000 },
           followUpEventId: 'chain_collab_2_success',
           unlockTag: 'collab_full_commit',
         },
@@ -659,7 +659,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '成为品牌全球大使',
         outcome: {
           narration: '品牌方主动提出了三年全球大使合约，年薪七位数。签约仪式在巴黎举行，你的艺人站在埃菲尔铁塔前的大幅广告下，这一刻，值了。',
-          statChanges: { commercialValue: 9, money: 150000, fanLoyalty: 5, prRisk: -3 },
+          statChanges: { commercialValue: 5, money: 150000, fanLoyalty: 3, prRisk: -3 },
         },
       },
       {
@@ -668,7 +668,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '这次的成功不能被稀释',
         outcome: {
           narration: '你没有急于签长约，反而让品牌方来"追"你。这种"不是所有钱都赚"的态度传开后，更多顶级品牌向你抛来了橄榄枝。饥饿营销，格局！',
-          statChanges: { commercialValue: 6, fanLoyalty: 3, money: 60000 },
+          statChanges: { commercialValue: 4, fanLoyalty: 3, money: 60000 },
         },
       },
     ],
@@ -689,7 +689,7 @@ export const chainEvents: GameEvent[] = [
         subtext: '承认参与度不够',
         outcome: {
           narration: '你发了声明承认参与度不足并退出合作。"至少敢承认"的评价让你止了血，但这个"联名翻车"的标签短期内是撕不掉了。下次记住：要么不做，要么做好。',
-          statChanges: { prRisk: 3, commercialValue: -5, fanLoyalty: -2 },
+          statChanges: { prRisk: 3, commercialValue: -3, fanLoyalty: -2 },
         },
       },
       {
@@ -698,11 +698,11 @@ export const chainEvents: GameEvent[] = [
         subtext: '"设计方案不是我们定的"',
         outcome: {
           narration: '你把责任推给了品牌方的设计团队。虽然说的是事实，但"合作就是双方的事"的逻辑让甩锅显得很没担当。品牌方也发声了："合作过程中对方全程缺席。" 你被打了个措手不及。',
-          statChanges: { prRisk: 7, commercialValue: -7, fanLoyalty: -4 },
+          statChanges: { prRisk: 4, commercialValue: -4, fanLoyalty: -4 },
           twist: {
             chance: 0.3,
             narration: '品牌方的公关总监在社交媒体上放出了你们的沟通记录，证明你方确实只给了一天时间。"实锤了"——你的艺人成了甩锅典型案例。',
-            statChanges: { prRisk: 5, commercialValue: -3 },
+            statChanges: { prRisk: 3, commercialValue: -3 },
           },
         },
       },

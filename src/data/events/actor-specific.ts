@@ -18,7 +18,7 @@ export const actorSpecificEvents: GameEvent[] = [
         subtext: '发文表示会继续精进',
         outcome: {
           narration: '郝美丽发了一段很真诚的文字："演技是一辈子的修行，感谢批评的声音。"科班出身的态度征服了大部分人。',
-          statChanges: { fanLoyalty: 6, prRisk: -3, commercialValue: 3 },
+          statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
         },
       },
       {
@@ -27,7 +27,7 @@ export const actorSpecificEvents: GameEvent[] = [
         subtext: '让大家看看真正的表演功底',
         outcome: {
           narration: '团队放出了她在片场反复揣摩角色的长视频。一条哭戏NG了十遍、每遍都不同的片段直接封神，"被批油腻的女演员到底有多努力"刷屏了。',
-          statChanges: { fanLoyalty: 5, commercialValue: 6, prRisk: -5 },
+          statChanges: { fanLoyalty: 3, commercialValue: 4, prRisk: -3 },
         },
       },
       {
@@ -58,11 +58,11 @@ export const actorSpecificEvents: GameEvent[] = [
         requireMinMoney: 110000,
         outcome: {
           narration: '你们投入大量资源做了国际宣传。电影节评委对这部片赞不绝口，郝美丽的名字出现在了国际媒体上。',
-          statChanges: { money: -110000, commercialValue: 9, fanLoyalty: 6, prRisk: -3 },
+          statChanges: { money: -110000, commercialValue: 5, fanLoyalty: 4, prRisk: -3 },
           twist: {
             chance: 0.3,
             narration: '她拿奖了！颁奖礼上的获奖感言视频在国内播放量破亿，"郝美丽为国争光"登顶热搜。整个娱乐圈都在为她鼓掌。',
-            statChanges: { commercialValue: 9, fanLoyalty: 9, money: 140000 },
+            statChanges: { commercialValue: 5, fanLoyalty: 5, money: 140000 },
           },
         },
       },
@@ -72,7 +72,7 @@ export const actorSpecificEvents: GameEvent[] = [
         subtext: '去走走红毯就好',
         outcome: {
           narration: '没有大规模宣传，但郝美丽在红毯上的气场还是引起了国际媒体的注意。几家外国杂志找来约了拍摄。',
-          statChanges: { commercialValue: 5, fanLoyalty: 3 },
+          statChanges: { commercialValue: 3, fanLoyalty: 3 },
         },
       },
     ],
@@ -93,7 +93,7 @@ export const actorSpecificEvents: GameEvent[] = [
         subtext: '一起发微博互相认可',
         outcome: {
           narration: '导演先发了微博："艺术上的争论是好事，郝美丽是我见过最认真的演员。"郝美丽转发："谢谢导演包容。"两人互动被赞"神仙组合"。',
-          statChanges: { fanLoyalty: 5, commercialValue: 6, prRisk: -3 },
+          statChanges: { fanLoyalty: 3, commercialValue: 4, prRisk: -3 },
         },
       },
       {
@@ -102,7 +102,7 @@ export const actorSpecificEvents: GameEvent[] = [
         subtext: '"好演员就该对角色负责"',
         outcome: {
           narration: '郝美丽没有道歉，反而详细解释了她对角色的理解。一部分影评人力挺她，说"这才是真正的创作者"。但导演那边不太高兴。',
-          statChanges: { fanLoyalty: 7, commercialValue: -3, prRisk: 5 },
+          statChanges: { fanLoyalty: 4, commercialValue: -3, prRisk: 3 },
         },
       },
     ],
@@ -122,7 +122,7 @@ export const actorSpecificEvents: GameEvent[] = [
         subtext: '拍摄生活化物料',
         outcome: {
           narration: '团队精心拍了一组"郝美丽的周末"系列。虽然不是她的风格，但互动数据确实涨了，品牌方满意了。',
-          statChanges: { commercialValue: 5, fanLoyalty: -3 },
+          statChanges: { commercialValue: 3, fanLoyalty: -3 },
         },
       },
       {

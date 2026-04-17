@@ -18,7 +18,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '发声明要求后援会公开账目',
         outcome: {
           narration: '工作室发声明要求后援会48小时内公开所有账目，并宣布以后禁止以艺人名义集资。粉丝说"哥哥终于管了"，路人觉得这才是负责任的偶像。',
-          statChanges: { fanLoyalty: 6, prRisk: -3, commercialValue: 3 },
+          statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
         },
       },
       {
@@ -27,7 +27,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '"后援会行为与艺人无关"',
         outcome: {
           narration: '声明一出，粉丝心寒了。"出事了就撇清，享受的时候怎么不说无关？"脱粉潮开始了。',
-          statChanges: { fanLoyalty: -9, prRisk: 3 },
+          statChanges: { fanLoyalty: -5, prRisk: 3 },
         },
       },
       {
@@ -37,7 +37,7 @@ export const idolSpecificEvents: GameEvent[] = [
         requireMinMoney: 56000,
         outcome: {
           narration: '你让艺人私下补上了后援会的亏空。消息传出去后，"教科书级别的偶像"成了新标签。品牌方对这种负责任的态度印象深刻。',
-          statChanges: { money: -56000, fanLoyalty: 12, prRisk: -5, commercialValue: 5 },
+          statChanges: { money: -56000, fanLoyalty: 7, prRisk: -3, commercialValue: 3 },
         },
       },
     ],
@@ -58,7 +58,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '公开鼓励后辈',
         outcome: {
           narration: '"每个时代都有属于它的偶像，希望你也能走得更远。"这段回应被赞"格局打开"，路人好感飙升。后辈反而显得小家子气了。',
-          statChanges: { fanLoyalty: 5, commercialValue: 6, prRisk: -3 },
+          statChanges: { fanLoyalty: 3, commercialValue: 4, prRisk: -3 },
         },
       },
       {
@@ -76,7 +76,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '化敌为友',
         outcome: {
           narration: '你主动联系对方经纪人，安排了一次综艺同台。节目上两人互相调侃的化学反应炸了，"世纪大和解"上了热搜。两边粉丝都说"磕到了"。',
-          statChanges: { fanLoyalty: 7, commercialValue: 5, prRisk: -5 },
+          statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: -3 },
         },
       },
     ],
@@ -97,7 +97,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '"给朋友过生日而已"',
         outcome: {
           narration: '"给大学同学庆生"的解释有一半人信了。但"凌晨三点的夜店生日会"这个说法确实有点勉强...评论区充满了质疑。',
-          statChanges: { prRisk: 6, fanLoyalty: -5 },
+          statChanges: { prRisk: 4, fanLoyalty: -3 },
         },
       },
       {
@@ -106,7 +106,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '"我也有自己的生活"',
         outcome: {
           narration: '甄帅发了一条微博："工作之余也需要放松，谢谢大家关心。"路人觉得正常，但核心粉丝接受不了"偶像去夜店"的事实。',
-          statChanges: { prRisk: 3, fanLoyalty: -7, commercialValue: 3 },
+          statChanges: { prRisk: 3, fanLoyalty: -4, commercialValue: 3 },
           conditionalOutcomes: [
             {
               condition: { minFanLoyalty: 70 },
@@ -134,7 +134,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '接受恋爱禁令条款',
         outcome: {
           narration: '合同签了，代言费到手。但你知道这等于在甄帅脖子上套了一个随时会收紧的绳圈——万一恋情曝光，违约金是代言费的三倍。',
-          statChanges: { money: 180000, commercialValue: 6, prRisk: 3 },
+          statChanges: { money: 180000, commercialValue: 4, prRisk: 3 },
         },
       },
       {
@@ -143,7 +143,7 @@ export const idolSpecificEvents: GameEvent[] = [
         subtext: '争取合理条款',
         outcome: {
           narration: '品牌方坚持不让步，谈判陷入僵局。最终你拿到了一个折中方案：代言费降20%但没有恋爱禁令。也算不亏。',
-          statChanges: { money: 130000, commercialValue: 5 },
+          statChanges: { money: 130000, commercialValue: 3 },
         },
       },
     ],

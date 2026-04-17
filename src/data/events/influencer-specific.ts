@@ -18,7 +18,7 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '晒出商业数据和作品',
         outcome: {
           narration: '你整理了冷冰凝的品牌合作列表、带货数据和短片作品。"网红怎么了？数据不会说谎"的回应让不少人改观。',
-          statChanges: { commercialValue: 5, fanLoyalty: 3, prRisk: -3 },
+          statChanges: { commercialValue: 3, fanLoyalty: 3, prRisk: -3 },
         },
       },
       {
@@ -27,7 +27,7 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '"对对对我就是网红"',
         outcome: {
           narration: '冷冰凝发了一条视频：穿着睡衣吃泡面，配文"网红的真实生活"。播放量破亿，连那位老牌演员的粉丝都笑了。这波操作格局太大了。',
-          statChanges: { fanLoyalty: 9, commercialValue: 3, prRisk: -5 },
+          statChanges: { fanLoyalty: 5, commercialValue: 3, prRisk: -3 },
         },
       },
       {
@@ -36,7 +36,7 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '"票房不如我带货，凭什么瞧不起？"',
         outcome: {
           narration: '火药味十足的回应引爆了舆论。年轻粉丝觉得"太飒了"，但传统娱乐圈的大门可能就此关上了。',
-          statChanges: { fanLoyalty: 5, commercialValue: -5, prRisk: 7 },
+          statChanges: { fanLoyalty: 3, commercialValue: -3, prRisk: 4 },
         },
       },
     ],
@@ -57,11 +57,11 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '立刻道歉+下架产品',
         outcome: {
           narration: '冷冰凝当场道歉并宣布全额退款。虽然损失了一笔钱，但"网红带货的良心标杆"成了新标签。品牌方吓坏了，赔了一大笔。',
-          statChanges: { money: -40000, fanLoyalty: 7, prRisk: -3, commercialValue: 3 },
+          statChanges: { money: -40000, fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
           twist: {
             chance: 0.3,
             narration: '过敏的观众后来发微博说："小鱼姐第一时间处理，还私下联系我赔偿了医药费。以后只在她的直播间买东西。"这条微博被转发了50万次。',
-            statChanges: { fanLoyalty: 6, commercialValue: 5 },
+            statChanges: { fanLoyalty: 4, commercialValue: 3 },
           },
         },
       },
@@ -71,7 +71,7 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '"是他们的产品有问题"',
         outcome: {
           narration: '你让冷冰凝把责任推给了品牌方。品牌方一怒之下放出了你们签合同时根本没看质检报告的证据。"翻车还甩锅"成了热搜。',
-          statChanges: { prRisk: 11, fanLoyalty: -6, commercialValue: -5 },
+          statChanges: { prRisk: 7, fanLoyalty: -4, commercialValue: -3 },
         },
       },
     ],
@@ -92,7 +92,7 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '发长文讲述转型心路',
         outcome: {
           narration: '冷冰凝写了一篇两千字的长文，讲述了从最开始拍视频到现在的心路历程。"谁不是从不完美开始的"引发了大量共鸣。路人好感反而上升了。',
-          statChanges: { fanLoyalty: 6, prRisk: -3, commercialValue: 3 },
+          statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
         },
       },
       {
@@ -101,7 +101,7 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '"视频是AI生成的"',
         outcome: {
           narration: '这个时代谁信AI生成的说法啊...原始平台的数据被扒出来了，实锤就是本人。说谎比视频本身更让人反感。',
-          statChanges: { prRisk: 12, fanLoyalty: -7 },
+          statChanges: { prRisk: 7, fanLoyalty: -4 },
         },
       },
       {
@@ -130,7 +130,7 @@ export const influencerSpecificEvents: GameEvent[] = [
         subtext: '用幽默化解',
         outcome: {
           narration: '"是啊，不过直播间的观众可比这多多了呢。"全场笑翻，连调侃她的人都竖了大拇指。"综艺感炸裂"上了当晚热搜。',
-          statChanges: { fanLoyalty: 7, commercialValue: 6, prRisk: -3 },
+          statChanges: { fanLoyalty: 4, commercialValue: 4, prRisk: -3 },
         },
       },
       {
