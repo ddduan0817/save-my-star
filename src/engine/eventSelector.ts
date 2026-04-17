@@ -12,6 +12,7 @@ import { influencerSpecificEvents } from '@/data/events/influencer-specific';
 import { lateGameEvents } from '@/data/events/late-game';
 import { milestoneEvents } from '@/data/events/milestone';
 import { chainEvents } from '@/data/events/chains';
+import { chainsExtendedEvents } from '@/data/events/chains-extended';
 import { artistTroubleEvents } from '@/data/events/artist-trouble';
 
 const allEvents: GameEvent[] = [
@@ -27,6 +28,7 @@ const allEvents: GameEvent[] = [
   ...lateGameEvents,
   ...milestoneEvents,
   ...chainEvents,
+  ...chainsExtendedEvents,
   ...artistTroubleEvents,
 ];
 

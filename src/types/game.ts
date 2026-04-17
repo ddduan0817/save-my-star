@@ -235,3 +235,14 @@ export interface WeiboPostRecord {
   day: number;
   wasBackfire: boolean;
 }
+
+// ===== Story Chain Tracker =====
+export interface StoryChainDefinition {
+  id: string;
+  title: string;
+  emoji: string;
+  description: string;
+  totalSteps: number;
+  eventIds: string[];     // 该链所有可能的事件 ID
+  triggerEventId: string; // 触发链的第一个事件 ID
+}

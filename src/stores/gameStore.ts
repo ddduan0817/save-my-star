@@ -61,7 +61,7 @@ interface GameStore {
   lastOutcomeNarration: string;
   lastStatChanges: StatChange | null;
   pendingTwist: { narration: string; statChanges: StatChange; unlockTag?: string } | null;
-  pendingFollowUpEventId: string | null;
+  pendingFollowUpEventIds: string[];
 
   // Game history
   decisionHistory: DecisionRecord[];
@@ -164,15 +164,17 @@ function generateEventsForDay(
   eventUsageMap: Record<string, number>,
   activeTags: string[],
   artistId?: ArtistArchetype,
-  pendingFollowUpEventId?: string | null,
+  pendingFollowUpEventIds?: string[],
 ): { events: GameEvent[]; newUsageMap: Record<string, number> } {
   let { events } = startNewDay(day, stats, eventUsageMap, activeTags, artistId);
 
-  // Inject follow-up events (event chains)
-  if (pendingFollowUpEventId) {
-    const followUpEvent = findEventById(pendingFollowUpEventId);
-    if (followUpEvent) {
-      events = [followUpEvent, ...events];
+  // Inject follow-up events (event chains — supports multiple simultaneous chains)
+  if (pendingFollowUpEventIds && pendingFollowUpEventIds.length > 0) {
+    for (const id of pendingFollowUpEventIds) {
+      const followUpEvent = findEventById(id);
+      if (followUpEvent) {
+        events = [followUpEvent, ...events];
+      }
     }
   }
 
@@ -202,7 +204,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   lastOutcomeNarration: '',
   lastStatChanges: null,
   pendingTwist: null,
-  pendingFollowUpEventId: null,
+  pendingFollowUpEventIds: [],
   decisionHistory: [],
   activeTags: [],
   eventUsageMap: {},
@@ -256,7 +258,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastOutcomeNarration: '',
       lastStatChanges: null,
       pendingTwist: null,
-      pendingFollowUpEventId: null,
+      pendingFollowUpEventIds: [],
       decisionHistory: [],
       activeTags,
       eventUsageMap: newUsageMap,
@@ -363,7 +365,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastOutcomeNarration: result.narration,
       lastStatChanges: result.statChanges,
       pendingTwist: result.twist ?? null,
-      pendingFollowUpEventId: result.followUpEventId ?? null,
+      pendingFollowUpEventIds: result.followUpEventId
+        ? [...get().pendingFollowUpEventIds, result.followUpEventId]
+        : get().pendingFollowUpEventIds,
       gamePhase: 'showing_outcome',
       activeTags: newTags,
       decisionHistory: [...get().decisionHistory, record],
@@ -422,7 +426,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   endDay: () => {
     const {
       messages, currentDay, stats, activeTags, peakRisk, artist,
-      eventUsageMap, pendingFollowUpEventId, decisionHistory,
+      eventUsageMap, pendingFollowUpEventIds, decisionHistory,
       artistSchedule, companyUpgrades,
     } = get();
 
@@ -471,7 +475,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 5. Generate new events for next day
     const { events, newUsageMap } = generateEventsForDay(
-      nextDay, newStats, eventUsageMap, activeTags, artist?.id, pendingFollowUpEventId
+      nextDay, newStats, eventUsageMap, activeTags, artist?.id, pendingFollowUpEventIds
     );
 
     const newMessages = createMessages(events, nextDay);
@@ -493,7 +497,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       activeTab: 'messages',
       gamePhase: 'playing',
       eventUsageMap: newUsageMap,
-      pendingFollowUpEventId: null,
+      pendingFollowUpEventIds: [],
       peakRisk: newPeakRisk,
       lastOutcomeNarration: '',
       lastStatChanges: null,
@@ -604,7 +608,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastOutcomeNarration: '',
       lastStatChanges: null,
       pendingTwist: null,
-      pendingFollowUpEventId: null,
+      pendingFollowUpEventIds: [],
       decisionHistory: [],
       activeTags: [],
       eventUsageMap: {},

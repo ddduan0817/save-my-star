@@ -1,0 +1,865 @@
+import type { GameEvent } from '@/types/game';
+
+// ===== Chain 1: 综艺真人秀 =====
+
+const chainRealityEvents: GameEvent[] = [
+  {
+    id: 'chain_reality_1',
+    category: 'business',
+    severity: 'medium',
+    title: '王牌综艺发来邀请',
+    description: '某卫视收视冠军综艺邀请你的艺人参加录制，这可是千载难逢的曝光机会。',
+    emoji: '🎪',
+    minDay: 5,
+    choices: [
+      {
+        id: 'reality_regular',
+        text: '以常驻嘉宾身份加入',
+        subtext: '稳妥但曝光有限',
+        emoji: '😊',
+        outcome: {
+          narration: '顺利签约成为常驻嘉宾，节目组表示非常期待合作。接下来就看节目表现了。',
+          statChanges: { commercialValue: 2, fanLoyalty: 1 },
+          followUpEventId: 'chain_reality_2_regular',
+          unlockTag: 'reality_joined',
+        },
+      },
+      {
+        id: 'reality_captain',
+        text: '争取队长位置',
+        subtext: '高曝光但压力大',
+        emoji: '👑',
+        outcome: {
+          narration: '经过一番谈判，成功拿下队长位置！但节目组暗示——队长要对收视率负责。',
+          statChanges: { commercialValue: 3, prRisk: 2 },
+          followUpEventId: 'chain_reality_2_captain',
+          unlockTag: 'reality_captain',
+        },
+      },
+      {
+        id: 'reality_decline',
+        text: '婉拒邀请',
+        subtext: '专注其他工作',
+        emoji: '✋',
+        outcome: {
+          narration: '婉拒了综艺邀请。节目组有些遗憾，但表示以后有机会再合作。',
+          statChanges: { commercialValue: -1 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_reality_2_regular',
+    category: 'pr',
+    severity: 'medium',
+    title: '综艺录制：组队环节',
+    description: '节目进入组队环节，选择队友将影响后续走向。',
+    emoji: '🤝',
+    requiredTags: ['reality_joined'],
+    choices: [
+      {
+        id: 'reality_popular_ally',
+        text: '和人气选手组队',
+        subtext: '蹭到热度但容易被比下去',
+        emoji: '⭐',
+        outcome: {
+          narration: '和人气选手组队后，虽然镜头少了一些，但整体热度蹭到不少。两人的互动片段被剪进了预告。',
+          statChanges: { fanLoyalty: 2, commercialValue: 1 },
+          followUpEventId: 'chain_reality_3_finale',
+          unlockTag: 'reality_popular_ally',
+        },
+      },
+      {
+        id: 'reality_underdog_ally',
+        text: '和素人选手组队',
+        subtext: '可能收获意外好评',
+        emoji: '💪',
+        outcome: {
+          narration: '选择了最不被看好的素人搭档。现场一片质疑，但你的艺人反而激发了斗志。',
+          statChanges: { fanLoyalty: 1, prRisk: 1 },
+          followUpEventId: 'chain_reality_3_underdog',
+          unlockTag: 'reality_underdog_ally',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_reality_2_captain',
+    category: 'crisis',
+    severity: 'high',
+    title: '队长的压力：团队落后',
+    description: '作为队长，你的团队在前几期排名垫底，舆论开始质疑你的领导能力。',
+    emoji: '😰',
+    requiredTags: ['reality_captain'],
+    choices: [
+      {
+        id: 'reality_motivate',
+        text: '录制前给队员打气',
+        subtext: '展现领袖魅力',
+        emoji: '🎯',
+        outcome: {
+          narration: '在镜头前真诚地给队员加油打气，这段被剪进了正片。弹幕刷屏"好温暖""真正的队长"。',
+          statChanges: { fanLoyalty: 4, commercialValue: 1 },
+          followUpEventId: 'chain_reality_3_finale',
+          unlockTag: 'reality_leader',
+        },
+      },
+      {
+        id: 'reality_blame',
+        text: '指出队员的问题',
+        subtext: '可能被解读为甩锅',
+        emoji: '😤',
+        outcome: {
+          narration: '直言不讳地指出了队员的不足。虽然说的有道理，但剪辑后看起来像在甩锅……',
+          statChanges: { prRisk: 3, fanLoyalty: -2 },
+          followUpEventId: 'chain_reality_3_controversy',
+          unlockTag: 'reality_blamed',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_reality_3_finale',
+    category: 'business',
+    severity: 'high',
+    title: '综艺决赛夜',
+    description: '总决赛之夜，最后的舞台，全网直播。',
+    emoji: '🏆',
+    requiredTags: ['reality_joined'],
+    choices: [
+      {
+        id: 'reality_all_in',
+        text: '放手一搏，全力表演',
+        subtext: '高风险高回报',
+        emoji: '🔥',
+        outcome: {
+          narration: '全力以赴的表演引爆全场！直播间弹幕爆炸，"太绝了""封神""YYDS"。节目收视率创新高！',
+          statChanges: { commercialValue: 6, fanLoyalty: 5, money: 100000 },
+          unlockTag: 'reality_won',
+        },
+      },
+      {
+        id: 'reality_safe',
+        text: '稳健发挥，不出错',
+        subtext: '安全但不出彩',
+        emoji: '🛡️',
+        outcome: {
+          narration: '发挥稳定，虽然没有惊艳全场，但也没出任何差错。一个体面的收尾。',
+          statChanges: { commercialValue: 3, fanLoyalty: 2, money: 50000 },
+          unlockTag: 'reality_finished',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_reality_3_underdog',
+    category: 'pr',
+    severity: 'medium',
+    title: '逆袭之路引发热议',
+    description: '你的艺人和素人搭档的逆袭故事在网上疯传，"不被看好却最打动人"。',
+    emoji: '🌟',
+    requiredTags: ['reality_underdog_ally'],
+    choices: [
+      {
+        id: 'reality_underdog_humble',
+        text: '感谢搭档，功劳归对方',
+        subtext: '人品加分',
+        emoji: '🤗',
+        outcome: {
+          narration: '"把掌声给我的搭档"——这句话被截图疯传。路人好感度暴涨，"太真诚了""这才是偶像该有的样子"。',
+          statChanges: { fanLoyalty: 8, prRisk: -5 },
+          unlockTag: 'reality_underdog_won',
+        },
+      },
+      {
+        id: 'reality_underdog_celebrate',
+        text: '尽情庆祝，享受胜利',
+        subtext: '开心就好',
+        emoji: '🎉',
+        outcome: {
+          narration: '庆祝的画面很开心，观众也跟着笑了。虽然没有那么催泪，但大家都记住了这个笑容。',
+          statChanges: { fanLoyalty: 5, commercialValue: 2 },
+          unlockTag: 'reality_underdog_won',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_reality_3_controversy',
+    category: 'crisis',
+    severity: 'high',
+    title: '综艺剪辑争议',
+    description: '节目组的剪辑让你的艺人看起来"甩锅队友"，#XX综艺剪辑争议# 上了热搜。',
+    emoji: '✂️',
+    requiredTags: ['reality_blamed'],
+    choices: [
+      {
+        id: 'reality_call_out_edit',
+        text: '公开指出剪辑不公',
+        subtext: '冒险但可能赢得同情',
+        emoji: '📢',
+        outcome: {
+          narration: '公开发文指出剪辑不公正。一部分人支持"敢说真话"，但节目组发声明暗怼"不专业"。争议进一步扩大。',
+          statChanges: { prRisk: 3, fanLoyalty: 3, commercialValue: -2 },
+          unlockTag: 'reality_controversy_end',
+        },
+      },
+      {
+        id: 'reality_accept_edit',
+        text: '大度回应，不计较',
+        subtext: '委屈但安全',
+        emoji: '😌',
+        outcome: {
+          narration: '"节目组很辛苦，不怪他们。"这个回应让很多路人路转粉——"格局大""不是一般艺人"。',
+          statChanges: { fanLoyalty: 4, prRisk: -2, commercialValue: 1 },
+          unlockTag: 'reality_controversy_end',
+        },
+      },
+    ],
+  },
+];
+
+// ===== Chain 2: 粉丝危机 =====
+
+const chainFanCrisisEvents: GameEvent[] = [
+  {
+    id: 'chain_fancrisis_1',
+    category: 'crisis',
+    severity: 'high',
+    title: '粉丝站站长曝光行程',
+    description: '最大粉丝站的站长在社交媒体公开了你的艺人私人行程和航班信息，引发大量私生粉前往蹲守。',
+    emoji: '📍',
+    minDay: 5,
+    statConditions: { minFanLoyalty: 40 },
+    choices: [
+      {
+        id: 'fancrisis_condemn',
+        text: '公开谴责私生行为',
+        subtext: '划清界限',
+        emoji: '🚫',
+        outcome: {
+          narration: '发布声明严厉谴责私生行为，呼吁理性追星。大部分粉丝支持，但少数激进粉丝不满。',
+          statChanges: { fanLoyalty: -2, prRisk: -1 },
+          followUpEventId: 'chain_fancrisis_2_boundary',
+          unlockTag: 'fan_boundary_stance',
+        },
+      },
+      {
+        id: 'fancrisis_ignore',
+        text: '不公开回应',
+        subtext: '避免激化矛盾',
+        emoji: '🙈',
+        outcome: {
+          narration: '选择沉默，但私生粉变本加厉。甚至有人蹲到了家门口，保安报告情况越来越失控。',
+          statChanges: { prRisk: 3 },
+          followUpEventId: 'chain_fancrisis_2_escalate',
+          unlockTag: 'fan_ignored',
+        },
+      },
+      {
+        id: 'fancrisis_thank',
+        text: '感谢"热情粉丝"',
+        subtext: '讨好粉丝但可能纵容',
+        emoji: '💖',
+        outcome: {
+          narration: '"谢谢大家的热情~"这条微博发出后，被解读为"鼓励私生"。理性粉丝直接炸了。',
+          statChanges: { prRisk: 5, fanLoyalty: -3 },
+          followUpEventId: 'chain_fancrisis_2_backfire',
+          unlockTag: 'fan_thanked_stalkers',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_fancrisis_2_boundary',
+    category: 'drama',
+    severity: 'high',
+    title: '粉圈分裂：理智粉 vs 私生粉',
+    description: '你的声明引发粉圈大战。理智粉支持你，但私生粉阵营也很强大。',
+    emoji: '⚔️',
+    requiredTags: ['fan_boundary_stance'],
+    choices: [
+      {
+        id: 'fancrisis_ban_stalkers',
+        text: '联合理智粉，封禁私生账号',
+        subtext: '果断切割',
+        emoji: '🛡️',
+        outcome: {
+          narration: '工作室配合理智粉丝，对私生账号进行举报封禁。虽然失去了一些极端粉丝，但粉丝生态明显好转。',
+          statChanges: { fanLoyalty: 3, prRisk: -4 },
+          followUpEventId: 'chain_fancrisis_3_resolution',
+          unlockTag: 'fan_boundary_set',
+        },
+      },
+      {
+        id: 'fancrisis_both_sides',
+        text: '两边都安抚',
+        subtext: '谁也不得罪',
+        emoji: '🤷',
+        outcome: {
+          narration: '试图两边都安抚的做法被双方都批评——"骑墙""没有原则"。事情变得更混乱了。',
+          statChanges: { fanLoyalty: -2, prRisk: 3 },
+          followUpEventId: 'chain_fancrisis_3_mess',
+          unlockTag: 'fan_both_sides',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_fancrisis_2_escalate',
+    category: 'crisis',
+    severity: 'critical',
+    title: '私生粉堵到家门口',
+    description: '情况升级了！有私生粉蹲到了艺人公寓楼下，甚至试图闯入大堂。安全已经受到威胁。',
+    emoji: '🚨',
+    requiredTags: ['fan_ignored'],
+    choices: [
+      {
+        id: 'fancrisis_call_police',
+        text: '报警处理',
+        subtext: '最安全的做法',
+        emoji: '🚔',
+        outcome: {
+          narration: '报警后警方迅速到场，将私生粉驱离。此事被媒体报道，引发社会对追星乱象的讨论。',
+          statChanges: { prRisk: -2, fanLoyalty: -1, money: -10000 },
+          followUpEventId: 'chain_fancrisis_3_resolution',
+          unlockTag: 'fan_police_called',
+        },
+      },
+      {
+        id: 'fancrisis_move',
+        text: '悄悄搬家',
+        subtext: '花钱解决但治标不治本',
+        emoji: '🏠',
+        outcome: {
+          narration: '紧急搬家，总算暂时安全了。但搬家费用不菲，而且谁知道新地址能保密多久？',
+          statChanges: { money: -80000, prRisk: 1 },
+          followUpEventId: 'chain_fancrisis_3_mess',
+          unlockTag: 'fan_moved',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_fancrisis_2_backfire',
+    category: 'crisis',
+    severity: 'high',
+    title: '感谢私生被全网批评',
+    description: '"你的感谢就是在纵容私生！"——话题 #抵制纵容私生# 上了热搜。',
+    emoji: '💥',
+    requiredTags: ['fan_thanked_stalkers'],
+    choices: [
+      {
+        id: 'fancrisis_apologize',
+        text: '道歉并改正立场',
+        subtext: '亡羊补牢',
+        emoji: '🙏',
+        outcome: {
+          narration: '紧急发布道歉声明，承认之前的回应不当。大部分人选择了原谅——"知错能改，善莫大焉"。',
+          statChanges: { prRisk: -2, fanLoyalty: 1 },
+          followUpEventId: 'chain_fancrisis_3_resolution',
+          unlockTag: 'fan_apologized',
+        },
+      },
+      {
+        id: 'fancrisis_stubborn',
+        text: '坚持自己没错',
+        subtext: '硬扛到底',
+        emoji: '😤',
+        outcome: {
+          narration: '"我感谢粉丝有什么错？"——这个回应让事情彻底失控了。粉丝大面积脱粉，路人好感归零。',
+          statChanges: { prRisk: 6, fanLoyalty: -5 },
+          followUpEventId: 'chain_fancrisis_3_mess',
+          unlockTag: 'fan_stubborn',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_fancrisis_3_resolution',
+    category: 'pr',
+    severity: 'medium',
+    title: '粉丝生态重建',
+    description: '经过这次风波，粉丝群体经历了一次大洗牌。留下来的都是理性粉。',
+    emoji: '🌱',
+    requiredTags: ['fan_boundary_stance'],
+    excludeTags: ['fan_stubborn', 'fan_both_sides'],
+    choices: [
+      {
+        id: 'fancrisis_fan_meeting',
+        text: '办一场线上粉丝见面会',
+        subtext: '重建信任',
+        emoji: '💫',
+        outcome: {
+          narration: '线上见面会气氛温馨，粉丝们感动落泪。"经历过风雨，感情更深了。"粉丝生态进入了健康的新阶段。',
+          statChanges: { fanLoyalty: 5, prRisk: -3 },
+          unlockTag: 'fan_crisis_resolved',
+        },
+      },
+      {
+        id: 'fancrisis_quiet',
+        text: '低调处理，让事情自然平息',
+        emoji: '🍃',
+        outcome: {
+          narration: '没有大张旗鼓，一切慢慢回归正常。虽然少了一些仪式感，但安全、稳当。',
+          statChanges: { fanLoyalty: 2, prRisk: -2 },
+          unlockTag: 'fan_crisis_resolved',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_fancrisis_3_mess',
+    category: 'crisis',
+    severity: 'critical',
+    title: '粉圈大战全面爆发',
+    description: '各派粉丝在超话、微博、豆瓣全面开战。路人看热闹，黑粉趁机搅浑水。',
+    emoji: '🔥',
+    choices: [
+      {
+        id: 'fancrisis_distance',
+        text: '暂停一切社交媒体活动',
+        subtext: '等风头过去',
+        emoji: '🔇',
+        outcome: {
+          narration: '关闭评论，暂停更新。虽然热度降了，但至少没有继续恶化。三天后，大家开始转移注意力了。',
+          statChanges: { prRisk: 2, fanLoyalty: -4, commercialValue: -2 },
+          unlockTag: 'fan_crisis_mess',
+        },
+      },
+      {
+        id: 'fancrisis_address',
+        text: '发长文正面回应一切',
+        subtext: '坦诚面对',
+        emoji: '📝',
+        outcome: {
+          narration: '一篇2000字的长文坦诚面对所有问题。虽然没有完全平息争议，但赢得了一些尊重。',
+          statChanges: { prRisk: -1, fanLoyalty: -2 },
+          unlockTag: 'fan_crisis_mess',
+        },
+      },
+    ],
+  },
+];
+
+// ===== Chain 3: 商业帝国 =====
+
+const chainEmpireEvents: GameEvent[] = [
+  {
+    id: 'chain_empire_1',
+    category: 'business',
+    severity: 'high',
+    title: '自创品牌的机会',
+    description: '有投资方找上门，提议和你的艺人联名创建自有品牌。初始投入不小，但回报可能巨大。',
+    emoji: '🏢',
+    minDay: 10,
+    statConditions: { minMoney: 200000, minCommercial: 50 },
+    choices: [
+      {
+        id: 'empire_fashion',
+        text: '做时尚潮牌',
+        subtext: '投入15万，潜力大',
+        emoji: '👗',
+        requireMinMoney: 150000,
+        outcome: {
+          narration: '和设计师团队碰头，品牌定位为高端时尚。设计方向还需要进一步确定……',
+          statChanges: { money: -150000, commercialValue: 2 },
+          followUpEventId: 'chain_empire_2_fashion',
+          unlockTag: 'empire_fashion',
+        },
+      },
+      {
+        id: 'empire_food',
+        text: '做餐饮品牌',
+        subtext: '投入10万，更接地气',
+        emoji: '🍜',
+        requireMinMoney: 100000,
+        outcome: {
+          narration: '和餐饮团队开始策划，品牌定位大众消费。产品研发阶段启动了……',
+          statChanges: { money: -100000, fanLoyalty: 1 },
+          followUpEventId: 'chain_empire_2_food',
+          unlockTag: 'empire_food',
+        },
+      },
+      {
+        id: 'empire_pass',
+        text: '太冒险了，不做',
+        emoji: '✋',
+        outcome: {
+          narration: '拒绝了投资方的提议。安全第一，但错过了一个可能改变局面的机会。',
+          statChanges: {},
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_empire_2_fashion',
+    category: 'business',
+    severity: 'medium',
+    title: '品牌设计阶段：时尚方向',
+    description: '设计团队拿出了两个方向的样品，需要决定品牌定位。',
+    emoji: '✨',
+    requiredTags: ['empire_fashion'],
+    choices: [
+      {
+        id: 'empire_luxury',
+        text: '走高端奢华路线',
+        subtext: '定价高，目标小众',
+        emoji: '💎',
+        outcome: {
+          narration: '决定走奢华路线。虽然目标客群小，但品牌调性立住了。时尚博主们已经开始关注。',
+          statChanges: { commercialValue: 3, money: -50000 },
+          followUpEventId: 'chain_empire_3_launch',
+          unlockTag: 'empire_luxury',
+        },
+      },
+      {
+        id: 'empire_affordable',
+        text: '走亲民潮流路线',
+        subtext: '定价亲民，受众广',
+        emoji: '🛍️',
+        outcome: {
+          narration: '走亲民路线！粉丝群直接炸了——"终于买得起了""已经准备好钱包"。预售链接还没放出就有人催了。',
+          statChanges: { fanLoyalty: 3, money: -30000 },
+          followUpEventId: 'chain_empire_3_launch',
+          unlockTag: 'empire_affordable',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_empire_2_food',
+    category: 'business',
+    severity: 'medium',
+    title: '产品研发阶段：餐饮方向',
+    description: '研发团队准备了两个产品方向，需要拍板。',
+    emoji: '🧪',
+    requiredTags: ['empire_food'],
+    choices: [
+      {
+        id: 'empire_health',
+        text: '主打健康轻食',
+        subtext: '迎合健康趋势',
+        emoji: '🥗',
+        outcome: {
+          narration: '健康轻食的定位非常契合当下趋势。"明星都在吃"本身就是最好的广告。',
+          statChanges: { commercialValue: 2, prRisk: -2 },
+          followUpEventId: 'chain_empire_3_launch',
+          unlockTag: 'empire_health',
+        },
+      },
+      {
+        id: 'empire_trendy',
+        text: '做网红奶茶',
+        subtext: '爆款潜力大但竞争激烈',
+        emoji: '🧋',
+        outcome: {
+          narration: '网红奶茶赛道太卷了！但团队有信心——"有你家艺人的名字就够了。"预计首月流水就能回本。',
+          statChanges: { money: 20000 },
+          followUpEventId: 'chain_empire_3_launch',
+          unlockTag: 'empire_trendy',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_empire_3_launch',
+    category: 'business',
+    severity: 'high',
+    title: '品牌发布日',
+    description: '品牌正式发布！全网关注，成败在此一举。',
+    emoji: '🚀',
+    choices: [
+      {
+        id: 'empire_big_launch',
+        text: '砸钱办盛大发布会',
+        subtext: '高投入高曝光',
+        emoji: '🎆',
+        requireMinMoney: 80000,
+        outcome: {
+          narration: '发布会场面宏大，各路明星捧场，媒体争相报道。品牌一炮而红！首日销售额远超预期。',
+          statChanges: { commercialValue: 5, money: 150000, fanLoyalty: 2 },
+          unlockTag: 'empire_launched',
+          conditionalOutcomes: [
+            {
+              condition: { minPrRisk: 50 },
+              narration: '发布会上一切顺利，但有记者提问关于争议的事……虽然巧妙回避了，品牌还是蒙上了一层阴影。',
+              statChanges: { commercialValue: 2, money: 80000, prRisk: 2 },
+              unlockTag: 'empire_launched',
+            },
+          ],
+        },
+      },
+      {
+        id: 'empire_quiet_launch',
+        text: '线上低调发售',
+        subtext: '省钱但曝光有限',
+        emoji: '📱',
+        outcome: {
+          narration: '线上悄悄开售，粉丝群自发传播。虽然没有大场面，但口碑意外地好。"品质说话，不需要花哨"。',
+          statChanges: { commercialValue: 2, money: 60000, fanLoyalty: 3 },
+          unlockTag: 'empire_launched',
+        },
+      },
+    ],
+  },
+];
+
+// ===== Chain 4: 黑料危机 =====
+
+const chainScandalEvents: GameEvent[] = [
+  {
+    id: 'chain_scandal_1',
+    category: 'crisis',
+    severity: 'high',
+    title: '匿名爆料帖出现',
+    description: '某论坛出现匿名帖，声称握有你的艺人"惊天黑料"，配了模糊的截图。帖子正在迅速传播。',
+    emoji: '🕵️',
+    minDay: 8,
+    statConditions: { minPrRisk: 30 },
+    choices: [
+      {
+        id: 'scandal_investigate',
+        text: '花钱找人调查来源',
+        subtext: '查出真相',
+        emoji: '🔍',
+        requireMinMoney: 50000,
+        outcome: {
+          narration: '花了一笔钱请专业团队追踪IP。很快有了线索——发帖人疑似是前助理。',
+          statChanges: { money: -50000, prRisk: 2 },
+          followUpEventId: 'chain_scandal_2_investigate',
+          unlockTag: 'scandal_investigating',
+        },
+      },
+      {
+        id: 'scandal_confess',
+        text: '先发制人，主动坦白',
+        subtext: '以退为进',
+        emoji: '🤚',
+        outcome: {
+          narration: '在爆料扩散前主动发长文承认了一些事情。舆论反应两极——有人说"真诚"，有人说"果然有料"。',
+          statChanges: { prRisk: 3, fanLoyalty: 2 },
+          followUpEventId: 'chain_scandal_2_confess',
+          unlockTag: 'scandal_confessing',
+        },
+      },
+      {
+        id: 'scandal_legal',
+        text: '发律师函',
+        subtext: '法律手段应对',
+        emoji: '⚖️',
+        outcome: {
+          narration: '律师函一出，爆料帖暂时被删了。但"发律师函 = 心虚"的论调也出来了……',
+          statChanges: { money: -30000, prRisk: 1 },
+          followUpEventId: 'chain_scandal_2_legal',
+          unlockTag: 'scandal_legal_action',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_scandal_2_investigate',
+    category: 'drama',
+    severity: 'high',
+    title: '查到了：是前助理',
+    description: '调查结果出来了——发帖人是三个月前被辞退的前助理。手里确实有一些尴尬的聊天记录。',
+    emoji: '🎭',
+    requiredTags: ['scandal_investigating'],
+    choices: [
+      {
+        id: 'scandal_expose_source',
+        text: '公开揭露发帖人身份',
+        subtext: '激进反击',
+        emoji: '💣',
+        outcome: {
+          narration: '公开揭露前助理的身份和动机。舆论大反转——"原来是被开除心怀不满""职场报复"。但也有人质疑"为什么要开除她？"',
+          statChanges: { prRisk: -4, fanLoyalty: 2, commercialValue: 1 },
+          followUpEventId: 'chain_scandal_3_expose',
+          unlockTag: 'scandal_exposed_source',
+        },
+      },
+      {
+        id: 'scandal_settle_private',
+        text: '私下和解',
+        subtext: '花钱消灾',
+        emoji: '🤫',
+        outcome: {
+          narration: '通过中间人联系前助理，支付了一笔和解金。对方同意删帖并签署保密协议。',
+          statChanges: { money: -80000, prRisk: -3 },
+          followUpEventId: 'chain_scandal_3_settle',
+          unlockTag: 'scandal_settled',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_scandal_2_confess',
+    category: 'pr',
+    severity: 'high',
+    title: '主动坦白后的舆论走向',
+    description: '坦白的长文发出后24小时，舆论逐渐分化。需要决定下一步行动。',
+    emoji: '📊',
+    requiredTags: ['scandal_confessing'],
+    choices: [
+      {
+        id: 'scandal_full_truth',
+        text: '继续深度坦白，全部说清',
+        subtext: '彻底坦诚',
+        emoji: '💯',
+        outcome: {
+          narration: '又发了一篇更详细的文章，把来龙去脉讲得清清楚楚。大部分人被打动了——"至少是个真诚的人"。',
+          statChanges: { prRisk: -6, fanLoyalty: 4 },
+          followUpEventId: 'chain_scandal_3_redemption',
+          unlockTag: 'scandal_full_truth',
+        },
+      },
+      {
+        id: 'scandal_half_truth',
+        text: '到此为止，不再多说',
+        subtext: '见好就收',
+        emoji: '🤐',
+        outcome: {
+          narration: '选择不再深入解释。支持者觉得"已经够了"，但质疑者认为"还有隐瞒"。舆论悬而未决。',
+          statChanges: { prRisk: -1 },
+          unlockTag: 'scandal_half_truth',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_scandal_2_legal',
+    category: 'crisis',
+    severity: 'high',
+    title: '律师函的后续',
+    description: '律师函发出后，对方不仅没退缩，反而放出了更多"证据"。事情闹大了。',
+    emoji: '⚡',
+    requiredTags: ['scandal_legal_action'],
+    choices: [
+      {
+        id: 'scandal_sue',
+        text: '正式起诉',
+        subtext: '走法律程序',
+        emoji: '🏛️',
+        outcome: {
+          narration: '正式提起诉讼。漫长的法律程序开始了，但至少表明了立场——"我们不怕查"。',
+          statChanges: { money: -60000, prRisk: -2 },
+          followUpEventId: 'chain_scandal_3_court',
+          unlockTag: 'scandal_suing',
+        },
+      },
+      {
+        id: 'scandal_mediate',
+        text: '通过中间人调解',
+        subtext: '私下解决',
+        emoji: '🤝',
+        outcome: {
+          narration: '请了娱乐圈的前辈出面调解。双方各退一步，事态逐渐平息。',
+          statChanges: { money: -40000, prRisk: -3 },
+          followUpEventId: 'chain_scandal_3_settle',
+          unlockTag: 'scandal_mediated',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_scandal_3_expose',
+    category: 'pr',
+    severity: 'medium',
+    title: '爆料反转：公众同情',
+    description: '前助理的身份被公开后，舆论大反转。但还有最后一个收尾要做。',
+    emoji: '🔄',
+    requiredTags: ['scandal_exposed_source'],
+    choices: [
+      {
+        id: 'scandal_forgive',
+        text: '表示不追究，展现大度',
+        emoji: '🕊️',
+        outcome: {
+          narration: '"大家都不容易，不追究了。"——这个表态直接上了热搜。路人好感拉满，"格局！"。',
+          statChanges: { fanLoyalty: 5, prRisk: -5, commercialValue: 2 },
+          unlockTag: 'scandal_resolved',
+        },
+      },
+      {
+        id: 'scandal_pursue',
+        text: '追究到底',
+        subtext: '杀鸡儆猴',
+        emoji: '⚔️',
+        outcome: {
+          narration: '决定追究法律责任。虽然维护了权益，但也有人觉得"太狠了""赢了官司输了人品"。',
+          statChanges: { prRisk: -2, fanLoyalty: 1, money: -20000 },
+          unlockTag: 'scandal_resolved',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_scandal_3_settle',
+    category: 'pr',
+    severity: 'low',
+    title: '风波平息',
+    description: '经过一系列操作，黑料风波终于平息了。虽然花了不少钱，但总算安全着陆。',
+    emoji: '🏖️',
+    choices: [
+      {
+        id: 'scandal_move_on',
+        text: '翻篇，重新出发',
+        emoji: '🚀',
+        outcome: {
+          narration: '风波过后，一切回归正轨。虽然钱包瘦了不少，但至少名声保住了。是时候往前看了。',
+          statChanges: { prRisk: -2, fanLoyalty: 1 },
+          unlockTag: 'scandal_resolved',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_scandal_3_redemption',
+    category: 'pr',
+    severity: 'medium',
+    title: '坦诚赢得尊重',
+    description: '完全坦诚的态度赢得了公众的尊重。"虽然不完美，但至少真诚。"',
+    emoji: '🌟',
+    requiredTags: ['scandal_full_truth'],
+    choices: [
+      {
+        id: 'scandal_new_start',
+        text: '用作品证明自己',
+        emoji: '🎯',
+        outcome: {
+          narration: '坦诚之后，反而收获了一波"真实人设"的好评。品牌方也觉得这种人设更有辨识度。',
+          statChanges: { fanLoyalty: 5, commercialValue: 3, prRisk: -8 },
+          unlockTag: 'scandal_redeemed',
+        },
+      },
+    ],
+  },
+  {
+    id: 'chain_scandal_3_court',
+    category: 'business',
+    severity: 'medium',
+    title: '法庭上的胜利',
+    description: '经过数周的审理，法院判决对方造谣诽谤，你方胜诉。',
+    emoji: '🏛️',
+    requiredTags: ['scandal_suing'],
+    choices: [
+      {
+        id: 'scandal_court_victory',
+        text: '发声明宣布胜诉',
+        emoji: '🏆',
+        outcome: {
+          narration: '"正义也许会迟到，但不会缺席。"胜诉声明获得大量转发。名声和信誉都得到了恢复。',
+          statChanges: { prRisk: -6, commercialValue: 3, money: 30000, fanLoyalty: 2 },
+          unlockTag: 'scandal_resolved',
+        },
+      },
+    ],
+  },
+];
+
+export const chainsExtendedEvents: GameEvent[] = [
+  ...chainRealityEvents,
+  ...chainFanCrisisEvents,
+  ...chainEmpireEvents,
+  ...chainScandalEvents,
+];

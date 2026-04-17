@@ -5,6 +5,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { scheduleActivities } from '@/data/schedules';
 import { sfxClick } from '@/lib/sounds';
+import StoryTracker from '@/components/game/StoryTracker';
 
 const moodEmojis = [
   { min: 0, emoji: '😰', label: '焦虑' },
@@ -175,6 +176,9 @@ export default function ArtistTab() {
           </div>
         </motion.div>
       )}
+
+      {/* Story Chain Tracker */}
+      <StoryTracker />
     </div>
   );
 }
