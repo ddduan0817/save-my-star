@@ -43,12 +43,21 @@ export default function MessageRow({ message, index, onOpen }: MessageRowProps) 
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <span className={cn(
             "text-sm font-semibold truncate",
             isResolved ? "text-gray-400" : "text-gray-800",
           )}>
             {event.title}
+          </span>
+          <span className={cn(
+            "shrink-0 text-[10px] font-medium px-1.5 py-0.5 rounded",
+            event.category === 'crisis' ? "text-red-400 bg-red-50"
+              : event.category === 'business' ? "text-amber-500 bg-amber-50"
+              : event.category === 'breaking' ? "text-orange-500 bg-orange-50"
+              : "text-gray-400 bg-gray-50"
+          )}>
+            {CATEGORY_LABEL[event.category]}
           </span>
           {isUrgent && !isResolved && (
             <span className="shrink-0 text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded">
@@ -56,18 +65,12 @@ export default function MessageRow({ message, index, onOpen }: MessageRowProps) 
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5 mt-0.5">
-          <span className={cn(
-            "text-[10px] font-medium",
-            event.category === 'crisis' ? "text-red-400"
-              : event.category === 'business' ? "text-amber-500"
-              : "text-gray-400"
-          )}>
-            {CATEGORY_LABEL[event.category]}
-          </span>
-          <span className="text-gray-200">·</span>
-          <span className="text-[10px] text-gray-400 truncate">{event.description}</span>
-        </div>
+        <p className={cn(
+          "text-[11px] mt-0.5 truncate",
+          isResolved ? "text-gray-300" : "text-gray-400",
+        )}>
+          {event.description}
+        </p>
       </div>
 
       {/* Status */}

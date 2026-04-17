@@ -117,7 +117,10 @@ export default function MeTab() {
                   {comment.content}
                 </p>
               </div>
-              <span className="text-[10px] text-gray-300 shrink-0 tabular-nums">{comment.likes}</span>
+              <div className="flex items-center gap-0.5 shrink-0">
+                <span className="text-[10px] text-gray-300">♥</span>
+                <span className="text-[10px] text-gray-300 tabular-nums">{comment.likes}</span>
+              </div>
             </div>
           ))}
         </div>

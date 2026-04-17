@@ -346,17 +346,46 @@ const avatarEmojis = [
   '🐳', '🦢', '🍀', '🌺', '🎪', '🧊', '🍊', '🐾', '💎', '🌟',
 ];
 
-const nicknames = [
-  '追星少女', '吃瓜群众', '路人甲', '快乐小粉丝', '理智追星人',
-  '不明真相围观', '娱乐博主', '黑粉滚粗', '清醒追星', '今天脱粉了吗',
-  '哈哈哈哈哈', '理性讨论', '退出饭圈', '盲目支持', '又来吃瓜',
-  '微博冲浪选手', '十级冲浪', '瓜田守望者',
-  '佛系追星', '暴躁老粉', '考古达人', '超话管理', '数据女工',
-  '只看作品', '不追星的朋友', '今天又崩溃了', '追到地老天荒',
-  '打投前线', '氪金粉', '白嫖党', '理性路人', '贵圈真乱',
-  '娱乐圈老司机', '刚下飞机', '蹲一个瓜', '不关注但总能看到',
-  '今天也要加油鸭', '冷静分析', '吃完这个瓜我就走',
+// 通用昵称（路人 / 吃瓜群众）
+const genericNicknames = [
+  '吃瓜群众', '路人甲', '不明真相围观', '娱乐博主', '理性讨论',
+  '微博冲浪选手', '十级冲浪', '瓜田守望者', '贵圈真乱',
+  '娱乐圈老司机', '刚下飞机', '蹲一个瓜', '冷静分析',
+  '吃完这个瓜我就走', '不关注但总能看到', '理性路人',
+  '今日份娱乐', '某不愿透露姓名的网友', '前排吃瓜',
 ];
+
+// 艺人专属粉丝昵称（会替换 {name}）
+const artistNicknames: Record<ArtistArchetype, string[]> = {
+  idol: [
+    '帅帅的小太阳', '{name}老婆', '甄帅全球后援会',
+    '帅帅今天营业了吗', 'C位永远是帅帅', '甄爱帅帅',
+    '{name}超话管理', '帅帅数据组', '为帅帅打投第365天',
+    '帅帅的氪金粉', '追帅帅追到地老天荒', '帅帅冲鸭',
+    '{name}反黑站', '帅帅的小棉袄', '只看帅帅舞台',
+  ],
+  actor: [
+    '丽姐演技粉', '{name}影迷会', '郝美丽作品站',
+    '丽姐拿影后我请客', '美丽姐姐加油', '{name}全球粉丝团',
+    '等丽姐新剧等到秃头', '丽姐的老粉', '只为演技追{name}',
+    '郝美丽路人粉', '{name}颜值担当', '看丽姐哭戏我先哭了',
+    '丽姐选剧本我放心', '追丽姐第三年', '美丽永远美丽',
+  ],
+  singer: [
+    '八哥的音乐粉', '{name}全球歌迷会', '高八度live永远的神',
+    '八哥新歌循环中', '为八哥高音尖叫', '{name}演唱会蹲票中',
+    '高八度超话管理', '八哥的死忠粉', '听{name}的歌长大的',
+    '{name}音乐站', '八哥唱功天花板', '等八哥巡演等到退休',
+    '高八度反黑组', '八哥我可以', '只听{name}的歌',
+  ],
+  influencer: [
+    '冰冰的小粉丝', '{name}日常搬运', '冷冰凝种草笔记',
+    '冰冰推荐我闭眼入', '冰冰直播间蹲守', '{name}粉丝后援团',
+    '冰冰的铁粉', '跟着冰冰买买买', '{name}探店合集',
+    '冰冰太真实了', '冷冰凝颜值粉', '看冰冰日常好治愈',
+    '冰冰加油站', '{name}的路人粉', '冰冰段子手',
+  ],
+};
 
 export function generateFanComments(stats: GameStats, artist: Artist): FanComment[] {
   const comments: FanComment[] = [];
@@ -411,10 +440,16 @@ export function generateFanComments(stats: GameStats, artist: Artist): FanCommen
     const count = counts[sentiment];
     const selected = pickRandom(pools[sentiment], count);
     for (const content of selected) {
+      // 粉丝/脱粉用艺人相关昵称，路人/黑粉用通用昵称
+      const isFanNick = sentiment === 'supportive' || sentiment === 'angry';
+      const nickPool = isFanNick ? artistNicknames[artist.id] : genericNicknames;
+      const rawNick = nickPool[Math.floor(Math.random() * nickPool.length)];
+      const nickname = rawNick.replace('{name}', artist.name);
+
       comments.push({
         id: `comment-${comments.length}-${Math.random().toString(36).slice(2, 6)}`,
         avatar: avatarEmojis[Math.floor(Math.random() * avatarEmojis.length)],
-        nickname: nicknames[Math.floor(Math.random() * nicknames.length)],
+        nickname,
         content,
         likes: Math.floor(Math.random() * 5000),
         sentiment,
