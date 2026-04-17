@@ -106,7 +106,13 @@ export default function MeTab() {
         <div className="max-h-64 overflow-y-auto">
           {fanComments.map((comment) => (
             <div key={comment.id} className="flex items-start gap-2.5 px-4 py-2.5 border-b border-gray-50 last:border-0">
-              <span className="text-lg shrink-0 mt-0.5">{comment.avatar}</span>
+              <span className="shrink-0 mt-0.5">
+                <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
+                  <circle cx="20" cy="20" r="20" fill={comment.avatar} />
+                  <circle cx="20" cy="16" r="7" fill="white" />
+                  <path d="M8 38C8 30.27 13.37 24 20 24C26.63 24 32 30.27 32 38H8Z" fill="white" />
+                </svg>
+              </span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] font-medium text-gray-500">{comment.nickname}</span>

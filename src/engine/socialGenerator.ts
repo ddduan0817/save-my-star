@@ -344,10 +344,16 @@ const artistComments: Record<ArtistArchetype, { supportive: string[]; angry: str
   },
 };
 
-const avatarEmojis = [
-  '🐱', '🐶', '🐰', '🦊', '🐼', '🐨', '🦄', '🌸', '⭐', '🌙',
-  '🍑', '🎀', '💫', '🌻', '🍒', '🧸', '🎭', '🌈', '🍄', '🦋',
-  '🐳', '🦢', '🍀', '🌺', '🎪', '🧊', '🍊', '🐾', '💎', '🌟',
+const avatarColors = [
+  '#FB923C', '#F97316', '#EA580C', '#FDBA74', '#FED7AA',
+  '#F59E0B', '#FBBF24', '#D97706', '#FDE68A',
+  '#EF4444', '#F87171', '#FCA5A5',
+  '#EC4899', '#F472B6', '#FBCFE8',
+  '#A78BFA', '#8B5CF6', '#C4B5FD',
+  '#60A5FA', '#3B82F6', '#93C5FD',
+  '#34D399', '#10B981', '#6EE7B7',
+  '#F472B6', '#E879F9', '#C084FC',
+  '#FB7185', '#FDA4AF', '#FECDD3',
 ];
 
 // 通用昵称（路人 / 吃瓜群众）
@@ -452,7 +458,7 @@ export function generateFanComments(stats: GameStats, artist: Artist): FanCommen
 
       comments.push({
         id: `comment-${comments.length}-${Math.random().toString(36).slice(2, 6)}`,
-        avatar: avatarEmojis[Math.floor(Math.random() * avatarEmojis.length)],
+        avatar: avatarColors[Math.floor(Math.random() * avatarColors.length)],
         nickname,
         content,
         likes: Math.floor(Math.random() * 5000),
