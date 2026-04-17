@@ -1,0 +1,135 @@
+import type { GameEvent, GameStats, EventCategory } from '@/types/game';
+import { GAME_CONFIG } from '@/data/constants';
+import { crisisEvents } from '@/data/events/crisis';
+import { businessEvents } from '@/data/events/business';
+import { prEvents } from '@/data/events/pr';
+import { dramaEvents } from '@/data/events/drama';
+import { randomEvents } from '@/data/events/random';
+
+const allEvents: GameEvent[] = [
+  ...crisisEvents,
+  ...businessEvents,
+  ...prEvents,
+  ...dramaEvents,
+  ...randomEvents,
+];
+
+function getCategoryWeight(category: EventCategory, stats: GameStats, day: number): number {
+  let weight = 1.0;
+
+  if (category === 'crisis') {
+    if (stats.prRisk > 60) weight *= GAME_CONFIG.CRISIS_WEIGHT_HIGH_RISK;
+    // More crises in late game
+    if (day > GAME_CONFIG.LATE_GAME[0]) weight *= 1.5;
+  }
+
+  if (category === 'business') {
+    if (stats.money < 100000) weight *= GAME_CONFIG.BUSINESS_WEIGHT_LOW_MONEY;
+  }
+
+  if (category === 'pr') {
+    if (stats.fanLoyalty < 40) weight *= GAME_CONFIG.PR_WEIGHT_LOW_LOYALTY;
+  }
+
+  if (category === 'drama') {
+    if (day > GAME_CONFIG.MID_GAME[0]) weight *= 1.5;
+  }
+
+  return weight;
+}
+
+function getSeverityAllowed(day: number): string[] {
+  if (day <= GAME_CONFIG.EARLY_GAME[1]) return ['low', 'medium'];
+  if (day <= GAME_CONFIG.MID_GAME[1]) return ['low', 'medium', 'high'];
+  return ['low', 'medium', 'high', 'critical'];
+}
+
+function isEventEligible(
+  event: GameEvent,
+  day: number,
+  stats: GameStats,
+  usedEventIds: string[],
+  activeTags: string[]
+): boolean {
+  if (usedEventIds.includes(event.id)) return false;
+  if (event.minDay && day < event.minDay) return false;
+  if (event.maxDay && day > event.maxDay) return false;
+
+  const allowedSeverities = getSeverityAllowed(day);
+  if (!allowedSeverities.includes(event.severity)) return false;
+
+  if (event.requiredTags) {
+    if (!event.requiredTags.every(tag => activeTags.includes(tag))) return false;
+  }
+  if (event.excludeTags) {
+    if (event.excludeTags.some(tag => activeTags.includes(tag))) return false;
+  }
+
+  if (event.statConditions) {
+    const c = event.statConditions;
+    if (c.minCommercial && stats.commercialValue < c.minCommercial) return false;
+    if (c.maxCommercial && stats.commercialValue > c.maxCommercial) return false;
+    if (c.minFanLoyalty && stats.fanLoyalty < c.minFanLoyalty) return false;
+    if (c.minPrRisk && stats.prRisk < c.minPrRisk) return false;
+    if (c.maxPrRisk && stats.prRisk > c.maxPrRisk) return false;
+  }
+
+  return true;
+}
+
+export function selectEventsForDay(
+  day: number,
+  stats: GameStats,
+  usedEventIds: string[],
+  activeTags: string[]
+): GameEvent[] {
+  const eligible = allEvents.filter(e =>
+    isEventEligible(e, day, stats, usedEventIds, activeTags)
+  );
+
+  if (eligible.length === 0) return [];
+
+  // Determine how many events this day
+  const rand = Math.random();
+  let eventCount: number;
+  if (day <= GAME_CONFIG.EARLY_GAME[1]) {
+    eventCount = 1;
+  } else if (rand < 0.3) {
+    eventCount = 1;
+  } else if (rand < 0.8) {
+    eventCount = 2;
+  } else {
+    eventCount = 3;
+  }
+  eventCount = Math.min(eventCount, eligible.length);
+
+  // Weight events by category
+  const weighted = eligible.map(event => ({
+    event,
+    weight: getCategoryWeight(event.category, stats, day),
+  }));
+
+  const selected: GameEvent[] = [];
+  const usedCategories = new Set<string>();
+
+  for (let i = 0; i < eventCount; i++) {
+    const available = weighted.filter(
+      w => !selected.includes(w.event) && !usedCategories.has(w.event.category)
+    );
+    if (available.length === 0) break;
+
+    const totalWeight = available.reduce((sum, w) => sum + w.weight, 0);
+    let r = Math.random() * totalWeight;
+
+    for (const w of available) {
+      r -= w.weight;
+      if (r <= 0) {
+        selected.push(w.event);
+        usedCategories.add(w.event.category);
+        break;
+      }
+    }
+  }
+
+  return selected;
+}
