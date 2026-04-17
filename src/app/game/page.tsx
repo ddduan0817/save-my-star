@@ -59,7 +59,7 @@ export default function GamePage() {
         onDismiss={dismissAchievement}
       />
 
-      <AnimatePresence mode="wait">
+      <AnimatePresence mode="popLayout">
         {gamePhase === 'day_transition' && (
           <DayHeader
             key={`day-${currentDay}`}

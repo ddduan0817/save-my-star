@@ -46,10 +46,10 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ type: 'spring', stiffness: 180, damping: 22 }}
+      exit={{ opacity: 0, scale: 0.97 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
       className={cn(
         "mx-4 rounded-3xl overflow-hidden",
         isTwist

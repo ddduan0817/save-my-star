@@ -38,10 +38,10 @@ export default function EventCard({ event }: EventCardProps) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, ...(isBreaking ? { scale: 0.95 } : {}) }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ type: 'spring', stiffness: 180, damping: 22 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.97 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
       className={cn(
         "mx-4 rounded-3xl overflow-hidden",
         isBreaking && "ring-2 ring-orange-300/70 shadow-lg shadow-orange-100/60",
@@ -114,9 +114,9 @@ export default function EventCard({ event }: EventCardProps) {
             return (
               <motion.button
                 key={choice.id}
-                initial={{ opacity: 0, x: -15 }}
+                initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + i * 0.1, type: 'spring', stiffness: 200, damping: 20 }}
+                transition={{ delay: 0.15 + i * 0.06, duration: 0.2, ease: 'easeOut' }}
                 whileHover={available ? { scale: 1.015, y: -1 } : undefined}
                 whileTap={available ? { scale: 0.975 } : undefined}
                 onClick={() => {

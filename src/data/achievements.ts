@@ -176,6 +176,125 @@ export const achievements: Achievement[] = [
     rarity: 'legendary',
     check: ({ stats, day }) => day >= 10 && stats.prRisk === 0,
   },
+
+  // ===== 奇葩/搞笑成就 =====
+  {
+    id: 'poverty_line',
+    title: '吃土经纪人',
+    description: '资金降到 -10万 以下，你比艺人还惨',
+    emoji: '🪦',
+    rarity: 'rare',
+    check: ({ stats }) => stats.money <= -100000,
+  },
+  {
+    id: 'drama_magnet',
+    title: '热搜体质',
+    description: '单局触发过8个以上事件',
+    emoji: '🧲',
+    rarity: 'common',
+    check: ({ decisionHistory }) => decisionHistory.length >= 8,
+  },
+  {
+    id: 'mood_swing',
+    title: '精分经纪人',
+    description: '连续两个选择一个加忠诚一个减忠诚',
+    emoji: '🎭',
+    rarity: 'common',
+    check: ({ decisionHistory }) => {
+      if (decisionHistory.length < 2) return false;
+      const last2 = decisionHistory.slice(-2);
+      const a = last2[0].statChanges.fanLoyalty ?? 0;
+      const b = last2[1].statChanges.fanLoyalty ?? 0;
+      return (a > 0 && b < 0) || (a < 0 && b > 0);
+    },
+  },
+  {
+    id: 'money_printer',
+    title: '印钞机',
+    description: '单局累计赚超过 ¥50万',
+    emoji: '🖨️',
+    rarity: 'rare',
+    check: ({ decisionHistory }) => {
+      const totalEarned = decisionHistory.reduce((sum, d) => {
+        const m = d.statChanges.money ?? 0;
+        return m > 0 ? sum + m : sum;
+      }, 0);
+      return totalEarned >= 500000;
+    },
+  },
+  {
+    id: 'risk_junkie',
+    title: '危险就是我的春药',
+    description: '风险超过90还在继续玩',
+    emoji: '☠️',
+    rarity: 'rare',
+    check: ({ stats }) => stats.prRisk >= 90,
+  },
+  {
+    id: 'flat_liner',
+    title: '咸鱼经纪人',
+    description: '商业、粉丝、风险全部在30-50之间，毫无波澜',
+    emoji: '🐟',
+    rarity: 'rare',
+    check: ({ stats }) =>
+      stats.commercialValue >= 30 && stats.commercialValue <= 50 &&
+      stats.fanLoyalty >= 30 && stats.fanLoyalty <= 50 &&
+      stats.prRisk >= 30 && stats.prRisk <= 50,
+  },
+  {
+    id: 'fan_zero',
+    title: '孤家寡人',
+    description: '粉丝忠诚度降到0',
+    emoji: '🦗',
+    rarity: 'common',
+    check: ({ stats }) => stats.fanLoyalty <= 0,
+  },
+  {
+    id: 'phoenix',
+    title: '涅槃重生',
+    description: '粉丝忠诚曾低于10后又回到70以上',
+    emoji: '🔥',
+    rarity: 'legendary',
+    check: ({ stats, decisionHistory }) => {
+      const wasLow = decisionHistory.some(d => {
+        const fl = d.statChanges.fanLoyalty ?? 0;
+        return fl < -5; // 曾经大幅掉粉
+      });
+      return wasLow && stats.fanLoyalty >= 70;
+    },
+  },
+  {
+    id: 'pacifist',
+    title: '和平主义者',
+    description: '前5个选择全部没有增加风险',
+    emoji: '🕊️',
+    rarity: 'rare',
+    check: ({ decisionHistory }) => {
+      if (decisionHistory.length < 5) return false;
+      const first5 = decisionHistory.slice(0, 5);
+      return first5.every(d => (d.statChanges.prRisk ?? 0) <= 0);
+    },
+  },
+  {
+    id: 'chaos_agent',
+    title: '混沌经纪人',
+    description: '前5个选择每个都增加了风险',
+    emoji: '🌀',
+    rarity: 'legendary',
+    check: ({ decisionHistory }) => {
+      if (decisionHistory.length < 5) return false;
+      const first5 = decisionHistory.slice(0, 5);
+      return first5.every(d => (d.statChanges.prRisk ?? 0) > 0);
+    },
+  },
+  {
+    id: 'survivor_no_money',
+    title: '穷但活着',
+    description: '资金为负数还撑到了第15天',
+    emoji: '💀',
+    rarity: 'rare',
+    check: ({ stats, day }) => day >= 15 && stats.money < 0,
+  },
 ];
 
 // localStorage 存储
