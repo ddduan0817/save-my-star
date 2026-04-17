@@ -17,6 +17,12 @@ import { applyDailyPassiveEffects, applyStatChanges } from '@/engine/outcomeCalc
 import { loadUnlockedEndings, saveUnlockedEnding } from '@/lib/storage';
 import { breakingEvents } from '@/data/events/breaking';
 import { findEventById } from '@/engine/eventSelector';
+import {
+  checkAchievements,
+  loadUnlockedAchievements,
+  saveArtistUsed,
+  type Achievement,
+} from '@/data/achievements';
 
 interface GameStore {
   gamePhase: GamePhase;
@@ -35,18 +41,43 @@ interface GameStore {
   ending: Ending | null;
   peakRisk: number;
   unlockedEndings: EndingId[];
+  // 成就系统
+  pendingAchievement: Achievement | null;
+  unlockedAchievements: string[];
 
   startGame: (artistId: ArtistArchetype) => void;
   advanceDay: () => void;
   selectChoice: (choice: EventChoice) => void;
   dismissOutcome: () => void;
   dismissTwist: () => void;
+  dismissAchievement: () => void;
   resetGame: () => void;
   loadCollection: () => void;
 }
 
 // 突发事件触发概率 (每天 25%)
 const BREAKING_CHANCE = 0.25;
+
+// 成就检查 helper
+function runAchievementCheck(get: () => GameStore, set: (partial: Partial<GameStore>) => void) {
+  const { stats, currentDay, artist, activeTags, decisionHistory, peakRisk } = get();
+  if (!artist) return;
+  const newAchs = checkAchievements({
+    stats,
+    day: currentDay,
+    artistId: artist.id,
+    activeTags,
+    decisionHistory,
+    peakRisk,
+  });
+  if (newAchs.length > 0) {
+    // 显示第一个新解锁的成就（后续的等下次触发时显示）
+    set({
+      pendingAchievement: newAchs[0],
+      unlockedAchievements: loadUnlockedAchievements(),
+    });
+  }
+}
 
 function maybeInjectBreaking(
   events: GameEvent[],
@@ -86,9 +117,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
   ending: null,
   peakRisk: 0,
   unlockedEndings: [],
+  pendingAchievement: null,
+  unlockedAchievements: [],
 
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
+    saveArtistUsed(artistId);
     set({
       gamePhase: 'day_transition',
       currentDay: 1,
@@ -199,6 +233,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       decisionHistory: [...get().decisionHistory, record],
       peakRisk: newPeakRisk,
     });
+
+    // 选择完成后检查成就
+    runAchievementCheck(get, set);
   },
 
   dismissOutcome: () => {
@@ -297,10 +334,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
       eventUsageMap: {},
       ending: null,
       peakRisk: 0,
+      pendingAchievement: null,
     });
   },
 
+  dismissAchievement: () => {
+    set({ pendingAchievement: null });
+  },
+
   loadCollection: () => {
-    set({ unlockedEndings: loadUnlockedEndings() });
+    set({
+      unlockedEndings: loadUnlockedEndings(),
+      unlockedAchievements: loadUnlockedAchievements(),
+    });
   },
 }));

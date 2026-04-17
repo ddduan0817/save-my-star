@@ -1,11 +1,13 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import type { GameEvent, EventChoice } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useGameStore } from '@/stores/gameStore';
 import { CATEGORY_LABEL } from '@/data/constants';
 import { formatMoney } from '@/lib/utils';
+import { sfxSelect, sfxCrisisAlert, sfxBreaking } from '@/lib/sounds';
 
 interface EventCardProps {
   event: GameEvent;
@@ -27,6 +29,12 @@ export default function EventCard({ event }: EventCardProps) {
   };
 
   const showUrgentBanner = isCrisis || isBreaking;
+
+  // 事件出现时播放音效
+  useEffect(() => {
+    if (isBreaking) sfxBreaking();
+    else if (isCrisis) sfxCrisisAlert();
+  }, [event.id, isBreaking, isCrisis]);
 
   return (
     <motion.div
@@ -111,7 +119,11 @@ export default function EventCard({ event }: EventCardProps) {
                 transition={{ delay: 0.3 + i * 0.1, type: 'spring', stiffness: 200, damping: 20 }}
                 whileHover={available ? { scale: 1.015, y: -1 } : undefined}
                 whileTap={available ? { scale: 0.975 } : undefined}
-                onClick={() => available && selectChoice(choice)}
+                onClick={() => {
+                  if (!available) return;
+                  sfxSelect();
+                  selectChoice(choice);
+                }}
                 disabled={!available}
                 className={cn(
                   "w-full text-left p-4 rounded-2xl border transition-all duration-300",

@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
+import { sfxDisaster } from '@/lib/sounds';
 
 const statConfig = [
   { key: 'commercialValue' as const, label: '商业', barClass: 'stat-bar-amber', trackColor: 'bg-amber-100/60', max: 100 },
@@ -14,9 +16,21 @@ export default function StatsBar() {
   const stats = useGameStore(s => s.stats);
   const currentDay = useGameStore(s => s.currentDay);
   const lastStatChanges = useGameStore(s => s.lastStatChanges);
+  const barRef = useRef<HTMLDivElement>(null);
+  const prevRiskRef = useRef(stats.prRisk);
+
+  // 风险突破80时震屏
+  useEffect(() => {
+    if (stats.prRisk >= 80 && prevRiskRef.current < 80) {
+      sfxDisaster();
+      barRef.current?.classList.add('animate-shake');
+      setTimeout(() => barRef.current?.classList.remove('animate-shake'), 500);
+    }
+    prevRiskRef.current = stats.prRisk;
+  }, [stats.prRisk]);
 
   return (
-    <div className="sticky top-0 z-50 glass-card border-b border-gray-100/60 px-4 py-3 shadow-sm">
+    <div ref={barRef} className="sticky top-0 z-50 glass-card border-b border-gray-100/60 px-4 py-3 shadow-sm">
       <div className="flex items-center justify-between mb-3">
         <span className="text-xs font-bold text-gray-400 bg-gradient-to-r from-gray-100 to-gray-50 px-3 py-1 rounded-full shadow-sm shadow-gray-100/50">
           Day {currentDay}

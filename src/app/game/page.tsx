@@ -8,6 +8,8 @@ import StatsBar from '@/components/game/StatsBar';
 import DayHeader from '@/components/game/DayHeader';
 import EventCard from '@/components/game/EventCard';
 import EventOutcome from '@/components/game/EventOutcome';
+import AchievementToast from '@/components/game/AchievementToast';
+import { sfxAchievement } from '@/lib/sounds';
 
 export default function GamePage() {
   const router = useRouter();
@@ -17,6 +19,8 @@ export default function GamePage() {
   const currentEventIndex = useGameStore(s => s.currentEventIndex);
   const ending = useGameStore(s => s.ending);
   const advanceDay = useGameStore(s => s.advanceDay);
+  const pendingAchievement = useGameStore(s => s.pendingAchievement);
+  const dismissAchievement = useGameStore(s => s.dismissAchievement);
 
   // Redirect if no game started
   useEffect(() => {
@@ -32,6 +36,15 @@ export default function GamePage() {
     }
   }, [gamePhase, ending, router]);
 
+  // 成就解锁音效 + 自动消失
+  useEffect(() => {
+    if (pendingAchievement) {
+      sfxAchievement();
+      const timer = setTimeout(dismissAchievement, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [pendingAchievement, dismissAchievement]);
+
   if (gamePhase === 'not_started') return null;
 
   const currentEvent = currentEvents[currentEventIndex];
@@ -39,6 +52,12 @@ export default function GamePage() {
   return (
     <div className="min-h-screen flex flex-col pb-8">
       <StatsBar />
+
+      {/* 成就通知 */}
+      <AchievementToast
+        achievement={pendingAchievement}
+        onDismiss={dismissAchievement}
+      />
 
       <AnimatePresence mode="wait">
         {gamePhase === 'day_transition' && (
@@ -58,7 +77,7 @@ export default function GamePage() {
                   <div
                     key={i}
                     className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                      i === currentEventIndex ? 'bg-white' : i < currentEventIndex ? 'bg-white/30' : 'bg-white/10'
+                      i === currentEventIndex ? 'bg-gray-400' : i < currentEventIndex ? 'bg-gray-300' : 'bg-gray-200'
                     }`}
                   />
                 ))}

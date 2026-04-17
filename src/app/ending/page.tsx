@@ -1,11 +1,12 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { toPng } from 'html-to-image';
+import { sfxEnding, sfxDisaster, sfxClick } from '@/lib/sounds';
 
 export default function EndingPage() {
   const router = useRouter();
@@ -16,11 +17,19 @@ export default function EndingPage() {
   const decisionHistory = useGameStore(s => s.decisionHistory);
   const resetGame = useGameStore(s => s.resetGame);
   const shareRef = useRef<HTMLDivElement>(null);
+  const [showContent, setShowContent] = useState(false);
 
   useEffect(() => {
     if (!ending) {
       router.replace('/');
+      return;
     }
+    // 全屏揭晓动画后再显示内容
+    const isBadEnding = ending.id === 'cancelled' || ending.id === 'fallen' || ending.id === 'scandal_king';
+    if (isBadEnding) sfxDisaster();
+    else sfxEnding();
+    const timer = setTimeout(() => setShowContent(true), 1800);
+    return () => clearTimeout(timer);
   }, [ending, router]);
 
   if (!ending || !artist) return null;
@@ -59,9 +68,70 @@ export default function EndingPage() {
     legendary: 'text-amber-600 bg-amber-50 ring-1 ring-amber-200/50',
   };
 
+  const isBadEnding = ending.id === 'cancelled' || ending.id === 'fallen' || ending.id === 'scandal_king';
+
   return (
-    <div className="min-h-screen px-4 py-8">
+    <div className="min-h-screen px-4 py-8 relative">
+      {/* 全屏揭晓动画 */}
+      <AnimatePresence>
+        {!showContent && (
+          <motion.div
+            className="fixed inset-0 z-[60] flex flex-col items-center justify-center"
+            style={{ background: isBadEnding ? '#1a1a2e' : '#faf8f5' }}
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            {/* 背景光效 */}
+            <motion.div
+              className={cn(
+                "absolute w-80 h-80 rounded-full blur-3xl",
+                isBadEnding ? "bg-red-900/30" : "bg-amber-200/40"
+              )}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1.5, opacity: 1 }}
+              transition={{ duration: 1.2, ease: 'easeOut' }}
+            />
+            <motion.div
+              className="text-6xl relative z-10"
+              initial={{ scale: 0, rotate: -30 }}
+              animate={{ scale: [0, 1.3, 1], rotate: [30, -10, 0] }}
+              transition={{ duration: 0.8, delay: 0.3, ease: 'easeOut' }}
+            >
+              {ending.emoji}
+            </motion.div>
+            <motion.div
+              className={cn(
+                "text-2xl font-black mt-4 relative z-10",
+                isBadEnding ? "text-red-400" : "text-gray-800"
+              )}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8 }}
+            >
+              {ending.title}
+            </motion.div>
+            <motion.div
+              className={cn(
+                "text-sm mt-2 relative z-10",
+                isBadEnding ? "text-red-300/70" : "text-gray-400"
+              )}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1.1 }}
+            >
+              {ending.subtitle}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* Share card */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={showContent ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ type: 'spring', stiffness: 150, damping: 20 }}
+      >
       <div ref={shareRef} className="rounded-3xl overflow-hidden shadow-xl shadow-gray-200/50 ring-1 ring-gray-200/40">
         {/* Header gradient */}
         <div className={cn("bg-gradient-to-br p-6 text-center relative overflow-hidden", ending.color)}>
@@ -168,16 +238,22 @@ export default function EndingPage() {
           </div>
         </div>
       </div>
+      </motion.div>
 
       {/* Action buttons */}
-      <div className="mt-6 space-y-3">
+      <motion.div
+        className="mt-6 space-y-3"
+        initial={{ opacity: 0 }}
+        animate={showContent ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ delay: 0.3 }}
+      >
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, type: 'spring', stiffness: 200, damping: 20 }}
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.97 }}
-          onClick={handleShare}
+          onClick={() => { sfxClick(); handleShare(); }}
           className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 text-white font-bold text-sm transition-all duration-300 shadow-lg shadow-orange-200/40 hover:shadow-xl hover:shadow-orange-200/60"
         >
           保存分享卡
@@ -189,7 +265,7 @@ export default function EndingPage() {
           transition={{ delay: 0.9, type: 'spring', stiffness: 200, damping: 20 }}
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.97 }}
-          onClick={handlePlayAgain}
+          onClick={() => { sfxClick(); handlePlayAgain(); }}
           className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-sm font-semibold text-gray-600 transition-all duration-300 shadow-sm"
         >
           再来一局
@@ -206,7 +282,7 @@ export default function EndingPage() {
         >
           查看结局图鉴
         </motion.button>
-      </div>
+      </motion.div>
     </div>
   );
 }

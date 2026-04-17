@@ -1,6 +1,8 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { sfxDayTransition, sfxClick } from '@/lib/sounds';
 
 interface DayHeaderProps {
   day: number;
@@ -8,6 +10,9 @@ interface DayHeaderProps {
 }
 
 export default function DayHeader({ day, onComplete }: DayHeaderProps) {
+  useEffect(() => {
+    sfxDayTransition();
+  }, [day]);
   return (
     <motion.div
       className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#faf8f5]"
@@ -60,7 +65,7 @@ export default function DayHeader({ day, onComplete }: DayHeaderProps) {
         transition={{ delay: 1, type: 'spring', stiffness: 200, damping: 20 }}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-        onClick={onComplete}
+        onClick={() => { sfxClick(); onComplete(); }}
         className="mt-12 text-sm text-gray-300 hover:text-gray-600 transition-colors duration-300 font-medium relative z-10 px-6 py-2 rounded-full hover:bg-gray-100/50"
       >
         <motion.span

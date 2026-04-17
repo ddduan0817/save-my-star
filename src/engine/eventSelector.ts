@@ -11,6 +11,7 @@ import { singerSpecificEvents } from '@/data/events/singer-specific';
 import { influencerSpecificEvents } from '@/data/events/influencer-specific';
 import { lateGameEvents } from '@/data/events/late-game';
 import { milestoneEvents } from '@/data/events/milestone';
+import { chainEvents } from '@/data/events/chains';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -24,6 +25,7 @@ const allEvents: GameEvent[] = [
   ...influencerSpecificEvents,
   ...lateGameEvents,
   ...milestoneEvents,
+  ...chainEvents,
 ];
 
 const EVENT_COOLDOWN = 8; // 事件使用后需间隔8天才能再次出现

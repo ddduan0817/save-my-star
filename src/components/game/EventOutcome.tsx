@@ -1,8 +1,10 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
+import { sfxPositive, sfxNegative, sfxTwist, sfxClick } from '@/lib/sounds';
 
 interface EventOutcomeProps {
   isTwist?: boolean;
@@ -26,6 +28,21 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
 
   const handleDismiss = isTwist ? dismissTwist : dismissOutcome;
   const hasTwistPending = !isTwist && !!pendingTwist;
+
+  // 结果出现时播放音效
+  useEffect(() => {
+    if (isTwist) {
+      sfxTwist();
+      return;
+    }
+    // 判断总体结果是正面还是负面
+    if (statChanges) {
+      const net = (statChanges.commercialValue ?? 0) + (statChanges.fanLoyalty ?? 0)
+        - (statChanges.prRisk ?? 0) + ((statChanges.money ?? 0) > 0 ? 1 : (statChanges.money ?? 0) < 0 ? -1 : 0);
+      if (net >= 0) sfxPositive();
+      else sfxNegative();
+    }
+  }, [narration, isTwist, statChanges]);
 
   return (
     <motion.div
@@ -117,7 +134,7 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
           transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.97 }}
-          onClick={handleDismiss}
+          onClick={() => { sfxClick(); handleDismiss(); }}
           className={cn(
             "w-full mt-5 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300",
             hasTwistPending
