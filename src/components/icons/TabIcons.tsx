@@ -115,7 +115,7 @@ export function IconWorkspace({ active, size = 26, ...props }: TabIconProps) {
 /**
  * 我的 Tab — 居中头像 + 小皇冠，active 时橙色渐变
  */
-export function IconMe({ active, size = 26, ...props }: TabIconProps) {
+export function IconMe({ active, size = 30, ...props }: TabIconProps) {
   const id = 'ic-me';
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>

@@ -59,13 +59,13 @@ function AvatarIdol(props: AvatarProps) {
   return <MaleAvatar color1="#FDBA74" color2="#EA580C" {...props} />;
 }
 function AvatarActor(props: AvatarProps) {
-  return <FemaleAvatar color1="#C4B5FD" color2="#7C3AED" {...props} />;
+  return <FemaleAvatar color1="#FDBA74" color2="#EA580C" {...props} />;
 }
 function AvatarSinger(props: AvatarProps) {
-  return <MaleAvatar color1="#93C5FD" color2="#2563EB" {...props} />;
+  return <MaleAvatar color1="#FDBA74" color2="#EA580C" {...props} />;
 }
 function AvatarInfluencer(props: AvatarProps) {
-  return <FemaleAvatar color1="#FDA4AF" color2="#E11D48" {...props} />;
+  return <FemaleAvatar color1="#FDBA74" color2="#EA580C" {...props} />;
 }
 
 export const artistAvatarMap: Record<ArtistArchetype, (props: AvatarProps) => React.JSX.Element> = {
