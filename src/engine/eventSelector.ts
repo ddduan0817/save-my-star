@@ -109,6 +109,9 @@ function isEventEligible(
   return true;
 }
 
+// 里程碑事件ID集合，满足条件时强制注入
+const milestoneIds = new Set(milestoneEvents.map(e => e.id));
+
 export function selectEventsForDay(
   day: number,
   stats: GameStats,
@@ -122,7 +125,11 @@ export function selectEventsForDay(
 
   if (eligible.length === 0) return [];
 
-  // Determine how many events this day
+  // 里程碑事件强制注入（满足条件就触发，不和普通事件竞争）
+  const triggeredMilestones = eligible.filter(e => milestoneIds.has(e.id));
+  const normalEligible = eligible.filter(e => !milestoneIds.has(e.id));
+
+  // Determine how many normal events this day
   const rand = Math.random();
   let eventCount: number;
   if (day <= GAME_CONFIG.EARLY_GAME[1]) {
@@ -134,10 +141,12 @@ export function selectEventsForDay(
   } else {
     eventCount = 3;
   }
-  eventCount = Math.min(eventCount, eligible.length);
+  // 里程碑事件占位后，剩余名额给普通事件
+  const milestoneCount = Math.min(triggeredMilestones.length, 1); // 每天最多1个里程碑
+  const normalCount = Math.min(Math.max(eventCount - milestoneCount, 1), normalEligible.length);
 
   // Prefer unused events, then oldest used events
-  const weighted = eligible.map(event => {
+  const weighted = normalEligible.map(event => {
     const baseWeight = getCategoryWeight(event.category, stats, day);
     const lastUsed = eventUsageMap[event.id];
     // Never-used events get 2x weight; older usage = higher weight
@@ -148,7 +157,15 @@ export function selectEventsForDay(
   const selected: GameEvent[] = [];
   const usedCategories = new Set<string>();
 
-  for (let i = 0; i < eventCount; i++) {
+  // 先放入里程碑事件
+  if (milestoneCount > 0 && triggeredMilestones.length > 0) {
+    const ms = triggeredMilestones[Math.floor(Math.random() * triggeredMilestones.length)];
+    selected.push(ms);
+    usedCategories.add(ms.category);
+  }
+
+  // 再抽选普通事件
+  for (let i = 0; i < normalCount; i++) {
     const available = weighted.filter(
       w => !selected.includes(w.event) && !usedCategories.has(w.event.category)
     );
