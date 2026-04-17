@@ -3,8 +3,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
-import { achievements, loadUnlockedAchievements } from '@/data/achievements';
-import { useMemo } from 'react';
 import WeiboCompose from '@/components/game/WeiboCompose';
 
 // 经纪人等级定义（按优先级从高到低排列）
@@ -75,11 +73,6 @@ export default function MeTab() {
   const artist = useGameStore(s => s.artist);
 
   const manager = getManagerInfo(currentDay, stats, stats.money);
-
-  const unlockedIds = useMemo(() => {
-    if (typeof window === 'undefined') return new Set<string>();
-    return new Set(loadUnlockedAchievements());
-  }, []);
 
   return (
     <div className="flex-1 px-4 py-4 space-y-4 pb-24">
@@ -179,7 +172,7 @@ export default function MeTab() {
                 <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
                   <circle cx="20" cy="20" r="20" fill={comment.avatar} />
                   <circle cx="20" cy="16" r="7" fill="white" />
-                  <path d="M8 38C8 30.27 13.37 24 20 24C26.63 24 32 30.27 32 38H8Z" fill="white" />
+                  <path d="M6 44C6 30.27 13.37 24 20 24C26.63 24 34 30.27 34 44H6Z" fill="white" />
                 </svg>
               </span>
               <div className="flex-1 min-w-0">
@@ -202,35 +195,6 @@ export default function MeTab() {
               </div>
             </div>
           ))}
-        </div>
-      </motion.div>
-
-      {/* Achievements */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
-      >
-        <div className="text-xs font-medium text-gray-400 tracking-wider mb-3">成就柜</div>
-        <div className="flex flex-wrap gap-2">
-          {achievements.map(ach => {
-            const unlocked = unlockedIds.has(ach.id);
-            return (
-              <div
-                key={ach.id}
-                title={unlocked ? `${ach.title}: ${ach.description}` : '???'}
-                className={cn(
-                  "w-9 h-9 rounded-xl flex items-center justify-center text-lg transition-all",
-                  unlocked
-                    ? "bg-gradient-to-br from-amber-50 to-orange-50 shadow-sm ring-1 ring-amber-200/40"
-                    : "bg-gray-100 opacity-30 grayscale",
-                )}
-              >
-                {unlocked ? ach.emoji : '?'}
-              </div>
-            );
-          })}
         </div>
       </motion.div>
     </div>

@@ -77,8 +77,8 @@ export default function ArtistTab() {
               <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{artist.title}</span>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
-              <span className="text-sm">{mood.emoji}</span>
-              <span className="text-xs text-gray-400">{mood.label}</span>
+              <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">心情</span>
+              <span className="text-xs font-medium text-gray-500">{mood.label}</span>
             </div>
           </div>
           <div className="text-right">
