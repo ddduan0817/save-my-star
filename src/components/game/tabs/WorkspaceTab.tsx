@@ -1,6 +1,7 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { companyUpgradesData } from '@/data/upgrades';
@@ -14,6 +15,7 @@ const FAME_LABELS: Record<string, { text: string; color: string }> = {
 };
 
 export default function WorkspaceTab() {
+  const [rivalExpanded, setRivalExpanded] = useState(false);
   const stats = useGameStore(s => s.stats);
   const companyUpgrades = useGameStore(s => s.companyUpgrades);
   const purchaseUpgrade = useGameStore(s => s.purchaseUpgrade);
@@ -79,9 +81,18 @@ export default function WorkspaceTab() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.07 }}
-          className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
+          className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm cursor-pointer"
+          onClick={() => { sfxClick(); setRivalExpanded(!rivalExpanded); }}
         >
-          <div className="text-xs font-medium text-gray-400 tracking-wider mb-3">对手情报</div>
+          <div className="flex items-center justify-between mb-3">
+            <div className="text-xs font-medium text-gray-400 tracking-wider">对手情报</div>
+            <motion.span
+              className="text-[10px] text-gray-300"
+              animate={{ rotate: rivalExpanded ? 180 : 0 }}
+            >
+              ▼
+            </motion.span>
+          </div>
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center text-2xl">
               {rival.avatar}
@@ -89,6 +100,7 @@ export default function WorkspaceTab() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
                 <span className="text-sm font-bold text-gray-800">{rival.name}</span>
+                <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">{rival.title}</span>
                 <span className={cn("text-[10px] font-semibold", FAME_LABELS[rival.fameLevel]?.color)}>
                   {FAME_LABELS[rival.fameLevel]?.text}
                 </span>
@@ -111,6 +123,48 @@ export default function WorkspaceTab() {
               </div>
             </div>
           </div>
+
+          {/* Expanded detail */}
+          <AnimatePresence>
+            {rivalExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.2 }}
+                className="overflow-hidden"
+              >
+                {/* Backstory */}
+                <div className="mt-3 pt-3 border-t border-gray-50">
+                  <div className="text-[10px] text-gray-500 leading-relaxed">{rival.backstory}</div>
+                </div>
+
+                {/* Rival stats */}
+                <div className="mt-3 space-y-1.5">
+                  {[
+                    { label: '商业价值', value: rival.stats.commercialValue, color: 'bg-amber-400', track: 'bg-amber-100' },
+                    { label: '粉丝忠诚', value: rival.stats.fanLoyalty, color: 'bg-pink-400', track: 'bg-pink-100' },
+                    { label: '舆论风险', value: rival.stats.prRisk, color: 'bg-red-400', track: 'bg-red-100' },
+                    { label: '外貌颜值', value: rival.stats.appearance, color: 'bg-purple-400', track: 'bg-purple-100' },
+                  ].map(bar => (
+                    <div key={bar.label} className="flex items-center gap-2">
+                      <span className="text-[10px] text-gray-400 w-10 shrink-0">{bar.label}</span>
+                      <div className={cn("flex-1 h-1.5 rounded-full overflow-hidden", bar.track)}>
+                        <motion.div
+                          className={cn("h-full rounded-full", bar.color)}
+                          initial={false}
+                          animate={{ width: `${bar.value}%` }}
+                          transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-gray-400 w-5 text-right tabular-nums">{bar.value}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Recent rival actions */}
           {rival.actionsLog.length > 0 && (
             <div className="mt-3 pt-3 border-t border-gray-50 space-y-1.5">

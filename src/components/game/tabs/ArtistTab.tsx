@@ -55,7 +55,7 @@ export default function ArtistTab() {
     { label: '商业价值', value: stats.commercialValue, color: 'bg-amber-400', track: 'bg-amber-100' },
     { label: '粉丝忠诚', value: stats.fanLoyalty, color: 'bg-pink-400', track: 'bg-pink-100' },
     { label: '舆论风险', value: stats.prRisk, color: 'bg-red-400', track: 'bg-red-100' },
-    { label: '颜值', value: cosmeticState.appearance, color: 'bg-purple-400', track: 'bg-purple-100' },
+    { label: '外貌颜值', value: cosmeticState.appearance, color: 'bg-purple-400', track: 'bg-purple-100' },
   ];
 
   return (

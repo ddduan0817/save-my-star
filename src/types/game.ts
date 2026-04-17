@@ -255,8 +255,16 @@ export interface RivalState {
   artistId: ArtistArchetype;
   name: string;
   avatar: string;
+  title: string;
+  backstory: string;
   fameLevel: RivalFameLevel;
   aggression: number; // 0-100
+  stats: {
+    commercialValue: number;
+    fanLoyalty: number;
+    prRisk: number;
+    appearance: number;
+  };
   actionsLog: RivalActionRecord[];
 }
 

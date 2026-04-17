@@ -8,7 +8,7 @@ import type {
   WeiboTrend,
   StatChange,
 } from '@/types/game';
-import { artists } from '@/data/artists';
+import { getRivalForArtist } from '@/data/rivals';
 import { rivalActions } from '@/data/rivalActions';
 
 const FAME_ORDER: RivalFameLevel[] = ['low', 'medium', 'high', 'top'];
@@ -21,18 +21,20 @@ function numToFame(n: number): RivalFameLevel {
 }
 
 /**
- * 开局初始化对手：从未选的3个艺人中随机选一个
+ * 开局初始化对手：根据玩家选择的艺人匹配同赛道NPC对家
  */
 export function initializeRival(chosenArtistId: ArtistArchetype): RivalState {
-  const candidates = artists.filter(a => a.id !== chosenArtistId);
-  const rival = candidates[Math.floor(Math.random() * candidates.length)];
+  const def = getRivalForArtist(chosenArtistId);
 
   return {
-    artistId: rival.id,
-    name: rival.name,
-    avatar: rival.avatar,
-    fameLevel: 'medium',
-    aggression: 40 + Math.floor(Math.random() * 20),
+    artistId: def.forArtist,
+    name: def.name,
+    avatar: def.avatar,
+    title: def.title,
+    backstory: def.backstory,
+    fameLevel: def.initialFameLevel,
+    aggression: def.initialAggression + Math.floor(Math.random() * 10 - 5),
+    stats: { ...def.stats },
     actionsLog: [],
   };
 }
