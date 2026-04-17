@@ -121,7 +121,7 @@ export function resolveRivalAction(
   if (action.type === 'self_destruct') newAggression = Math.max(0, newAggression - 5);
 
   // 3. 构建 narration
-  const narration = `${rival.avatar} ${rival.name}的经纪人动态：${action.description}`;
+  const narration = action.description;
 
   // 4. 构建热搜条目
   let trend: WeiboTrend | null = null;

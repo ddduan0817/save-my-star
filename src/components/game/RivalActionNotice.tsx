@@ -28,7 +28,7 @@ export default function RivalActionNotice() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -60 }}
           transition={{ type: 'spring', stiffness: 200, damping: 24 }}
-          className="fixed top-12 left-1/2 -translate-x-1/2 z-50 w-[90vw] max-w-sm"
+          className="fixed top-12 inset-x-0 mx-auto z-50 w-[90%] max-w-sm"
         >
           <button
             onClick={dismissRivalAction}
@@ -36,8 +36,8 @@ export default function RivalActionNotice() {
           >
             <div className="flex items-center gap-2 mb-1">
               <span className="text-lg">{rival.avatar}</span>
-              <span className="text-xs font-bold text-gray-700">对手动态</span>
-              <span className="ml-auto text-[10px] text-gray-400">点击关闭</span>
+              <span className="text-xs font-bold text-gray-700">{rival.name}的经纪人动态</span>
+              <span className="ml-auto text-[10px] text-gray-400 shrink-0">点击关闭</span>
             </div>
             <div className="text-sm text-gray-600 leading-relaxed">
               {rivalActionNarration}
