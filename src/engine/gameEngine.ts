@@ -20,11 +20,10 @@ export interface ChoiceResult {
 export function startNewDay(
   day: number,
   stats: GameStats,
-  usedEventIds: string[],
+  eventUsageMap: Record<string, number>,
   activeTags: string[]
 ): DayResult {
-  // Apply daily passive effects
-  const events = selectEventsForDay(day, stats, usedEventIds, activeTags);
+  const events = selectEventsForDay(day, stats, eventUsageMap, activeTags);
   return { events };
 }
 

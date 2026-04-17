@@ -203,4 +203,75 @@ export const prEvents: GameEvent[] = [
       },
     ],
   },
+  {
+    id: 'pr_weibo_night',
+    category: 'pr',
+    severity: 'medium',
+    title: '微博之夜座位安排',
+    description: '一年一度的微博之夜，座位安排就是地位的体现。你的艺人被安排在第三排，而几个"不如他/她"的后辈竟然坐在前面。粉丝已经在编"内涵长文"了。',
+    emoji: '💺',
+    minDay: 10,
+    choices: [
+      {
+        id: 'negotiate_seat',
+        text: '和主办方交涉',
+        subtext: '据理力争好位置',
+        emoji: '📞',
+        outcome: {
+          narration: '主办方给调到了第二排。粉丝们欢天喜地，但被挤走的那位的团队开始记恨你了。',
+          statChanges: { fanLoyalty: 8, prRisk: 5 },
+        },
+      },
+      {
+        id: 'dont_care_seat',
+        text: '无所谓',
+        subtext: '位置不代表一切',
+        emoji: '😌',
+        outcome: {
+          narration: '艺人坐在第三排全程笑得最开心，和周围的人热聊。反而成了当晚最出圈的互动时刻。',
+          statChanges: { fanLoyalty: 3, commercialValue: 5, prRisk: -3 },
+        },
+      },
+      {
+        id: 'skip_event',
+        text: '直接不去',
+        subtext: '用"档期冲突"推掉',
+        emoji: '✋',
+        outcome: {
+          narration: '缺席微博之夜的消息传出，"XX是不是被封杀了"的猜测满天飞。虽然不是真的，但造成了一些不必要的恐慌。',
+          statChanges: { prRisk: 10, fanLoyalty: -5 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'pr_social_media_style',
+    category: 'pr',
+    severity: 'low',
+    title: '社交媒体人设讨论',
+    description: '团队在讨论你艺人的社交媒体策略。目前发的都是精修大片，但最近"接地气"的明星更受欢迎。要不要改变风格？',
+    emoji: '📱',
+    choices: [
+      {
+        id: 'go_casual',
+        text: '转型接地气',
+        subtext: '发日常、发素颜、发碎碎念',
+        emoji: '🤳',
+        outcome: {
+          narration: '第一条接地气的微博——一张没化妆在家吃泡面的照片——居然成了近期互动最高的一条。"原来你也吃泡面啊"成了出圈热评。',
+          statChanges: { fanLoyalty: 10, commercialValue: 3 },
+        },
+      },
+      {
+        id: 'keep_glamour',
+        text: '保持高冷精修',
+        subtext: '维持现有调性',
+        emoji: '✨',
+        outcome: {
+          narration: '精修路线继续维持，品牌方倒是很满意。但粉丝们开始吐槽"像个没有感情的营业机器"。',
+          statChanges: { commercialValue: 5, fanLoyalty: -5 },
+        },
+      },
+    ],
+  },
 ];

@@ -27,7 +27,7 @@ interface GameStore {
   lastStatChanges: { commercialValue?: number; fanLoyalty?: number; prRisk?: number; money?: number } | null;
   decisionHistory: DecisionRecord[];
   activeTags: string[];
-  usedEventIds: string[];
+  eventUsageMap: Record<string, number>; // eventId -> last used day
   ending: Ending | null;
   peakRisk: number;
   unlockedEndings: EndingId[];
@@ -52,7 +52,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   lastStatChanges: null,
   decisionHistory: [],
   activeTags: [],
-  usedEventIds: [],
+  eventUsageMap: {},
   ending: null,
   peakRisk: 0,
   unlockedEndings: [],
@@ -70,22 +70,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastStatChanges: null,
       decisionHistory: [],
       activeTags: [],
-      usedEventIds: [],
+      eventUsageMap: {},
       ending: null,
       peakRisk: artist.initialStats.prRisk,
     });
   },
 
   advanceDay: () => {
-    const { currentDay, stats, usedEventIds, activeTags, artist } = get();
+    const { currentDay, stats, eventUsageMap, activeTags } = get();
 
     // Apply daily passive effects
     const newStats = currentDay > 1 ? applyDailyPassiveEffects(stats) : stats;
 
-    const { events } = startNewDay(currentDay, newStats, usedEventIds, activeTags);
+    const { events } = startNewDay(currentDay, newStats, eventUsageMap, activeTags);
 
     if (events.length === 0) {
-      // If no events available, just advance the day
       const dayEndEnding = checkDayEnd(currentDay, newStats, activeTags, get().peakRisk);
       if (dayEndEnding) {
         const unlocked = saveUnlockedEnding(dayEndEnding.id);
@@ -105,12 +104,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
 
+    // Record usage with current day
+    const newUsageMap = { ...eventUsageMap };
+    for (const e of events) {
+      newUsageMap[e.id] = currentDay;
+    }
+
     set({
       currentEvents: events,
       currentEventIndex: 0,
       stats: newStats,
       gamePhase: 'playing',
-      usedEventIds: [...usedEventIds, ...events.map(e => e.id)],
+      eventUsageMap: newUsageMap,
     });
   },
 
@@ -164,7 +169,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
   dismissOutcome: () => {
     const { currentEvents, currentEventIndex, currentDay, stats, activeTags, peakRisk } = get();
 
-    // Check if there are more events today
     if (currentEventIndex < currentEvents.length - 1) {
       set({
         currentEventIndex: currentEventIndex + 1,
@@ -175,7 +179,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
 
-    // Day is over, check for day-end ending
     const dayEndEnding = checkDayEnd(currentDay, stats, activeTags, peakRisk);
     if (dayEndEnding) {
       const unlocked = saveUnlockedEnding(dayEndEnding.id);
@@ -187,7 +190,6 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
 
-    // Move to next day
     set({
       currentDay: currentDay + 1,
       gamePhase: 'day_transition',
@@ -208,7 +210,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastStatChanges: null,
       decisionHistory: [],
       activeTags: [],
-      usedEventIds: [],
+      eventUsageMap: {},
       ending: null,
       peakRisk: 0,
     });

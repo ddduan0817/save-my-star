@@ -249,4 +249,76 @@ export const crisisEvents: GameEvent[] = [
       },
     ],
   },
+  {
+    id: 'crisis_drunk_video',
+    category: 'crisis',
+    severity: 'high',
+    title: '醉酒视频流出！',
+    description: '不知道谁拍的，你的艺人在私人聚会上喝多了的视频流出来了。视频里说了一些不太得体的话，还模仿了几个同行，虽然很搞笑但...这要是被当事人看到就不好了。',
+    emoji: '🍺',
+    minDay: 10,
+    choices: [
+      {
+        id: 'humor_drunk',
+        text: '自嘲化解',
+        subtext: '"喝多了说的话不算数嘛"',
+        emoji: '😅',
+        outcome: {
+          narration: '艺人发了条自嘲微博，配了个喝水的照片："从今天起只喝白开水。"网友觉得真实又可爱，风评反而变好了。',
+          statChanges: { fanLoyalty: 5, prRisk: 5 },
+        },
+      },
+      {
+        id: 'deny_drunk',
+        text: '声称视频被恶意剪辑',
+        subtext: '否认真实性',
+        emoji: '✂️',
+        outcome: {
+          narration: '原视频的完整版被放了出来...更尴尬了。"越描越黑"成了热搜联想词。',
+          statChanges: { prRisk: 18, fanLoyalty: -8 },
+        },
+      },
+      {
+        id: 'apologize_drunk',
+        text: '向被模仿的同行道歉',
+        subtext: '主动联系对方化解',
+        emoji: '🤝',
+        outcome: {
+          narration: '被模仿的同行大度回复"模仿得还挺像"，两人互动上了热搜正面位。危机变成了营销。',
+          statChanges: { prRisk: -3, commercialValue: 5, fanLoyalty: 3 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'crisis_sasaeng',
+    category: 'crisis',
+    severity: 'medium',
+    title: '私生饭闯入住所！',
+    description: '一个疯狂粉丝想方设法闯入了你艺人的公寓楼层，虽然被保安拦住了，但你的艺人被吓得不轻。更糟的是，这件事如果处理不好会被扣上"不爱粉丝"的帽子。',
+    emoji: '😱',
+    minDay: 8,
+    choices: [
+      {
+        id: 'report_police',
+        text: '报警处理',
+        subtext: '走法律途径',
+        emoji: '🚔',
+        outcome: {
+          narration: '报警后艺人发了长文呼吁理性追星。大部分粉丝支持，但私生饭的朋友们开始在网上造谣"XX耍大牌报警抓粉丝"。',
+          statChanges: { prRisk: 8, fanLoyalty: -3, money: -10000 },
+        },
+      },
+      {
+        id: 'gentle_reject',
+        text: '温柔劝退',
+        subtext: '私下沟通，不闹大',
+        emoji: '💬',
+        outcome: {
+          narration: '你安排助理私下和对方谈了谈，对方流着泪说"我只是太喜欢了"。事情暂时平息了，但你知道这不是最后一次。',
+          statChanges: { fanLoyalty: 3, prRisk: 3 },
+        },
+      },
+    ],
+  },
 ];

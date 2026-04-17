@@ -14,12 +14,13 @@ const allEvents: GameEvent[] = [
   ...randomEvents,
 ];
 
+const EVENT_COOLDOWN = 8; // 事件使用后需间隔8天才能再次出现
+
 function getCategoryWeight(category: EventCategory, stats: GameStats, day: number): number {
   let weight = 1.0;
 
   if (category === 'crisis') {
     if (stats.prRisk > 60) weight *= GAME_CONFIG.CRISIS_WEIGHT_HIGH_RISK;
-    // More crises in late game
     if (day > GAME_CONFIG.LATE_GAME[0]) weight *= 1.5;
   }
 
@@ -48,10 +49,13 @@ function isEventEligible(
   event: GameEvent,
   day: number,
   stats: GameStats,
-  usedEventIds: string[],
+  eventUsageMap: Record<string, number>, // eventId -> last used day
   activeTags: string[]
 ): boolean {
-  if (usedEventIds.includes(event.id)) return false;
+  // Cooldown check: skip if used too recently
+  const lastUsedDay = eventUsageMap[event.id];
+  if (lastUsedDay !== undefined && (day - lastUsedDay) < EVENT_COOLDOWN) return false;
+
   if (event.minDay && day < event.minDay) return false;
   if (event.maxDay && day > event.maxDay) return false;
 
@@ -80,11 +84,11 @@ function isEventEligible(
 export function selectEventsForDay(
   day: number,
   stats: GameStats,
-  usedEventIds: string[],
+  eventUsageMap: Record<string, number>,
   activeTags: string[]
 ): GameEvent[] {
   const eligible = allEvents.filter(e =>
-    isEventEligible(e, day, stats, usedEventIds, activeTags)
+    isEventEligible(e, day, stats, eventUsageMap, activeTags)
   );
 
   if (eligible.length === 0) return [];
@@ -103,11 +107,14 @@ export function selectEventsForDay(
   }
   eventCount = Math.min(eventCount, eligible.length);
 
-  // Weight events by category
-  const weighted = eligible.map(event => ({
-    event,
-    weight: getCategoryWeight(event.category, stats, day),
-  }));
+  // Prefer unused events, then oldest used events
+  const weighted = eligible.map(event => {
+    const baseWeight = getCategoryWeight(event.category, stats, day);
+    const lastUsed = eventUsageMap[event.id];
+    // Never-used events get 2x weight; older usage = higher weight
+    const freshnessBonus = lastUsed === undefined ? 2.0 : 1.0 + (day - lastUsed - EVENT_COOLDOWN) * 0.1;
+    return { event, weight: baseWeight * Math.max(freshnessBonus, 0.5) };
+  });
 
   const selected: GameEvent[] = [];
   const usedCategories = new Set<string>();

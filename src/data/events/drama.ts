@@ -206,4 +206,76 @@ export const dramaEvents: GameEvent[] = [
       },
     ],
   },
+  {
+    id: 'drama_trainee_scandal',
+    category: 'drama',
+    severity: 'medium',
+    title: '前练习生爆料内幕',
+    description: '一个曾经和你艺人一起练习的淘汰选手在社交媒体上爆料："那个人当年根本不努力，全靠公司砸资源。"帖子正在发酵...',
+    emoji: '🗣️',
+    minDay: 8,
+    choices: [
+      {
+        id: 'show_evidence',
+        text: '放出练习视频',
+        subtext: '用事实打脸',
+        emoji: '📹',
+        outcome: {
+          narration: '团队翻出了当年的练习室视频——凌晨三点还在练舞。"努力的人不需要解释"刷屏了，爆料人被反噬。',
+          statChanges: { fanLoyalty: 12, prRisk: -5, commercialValue: 5 },
+        },
+      },
+      {
+        id: 'ignore_trainee',
+        text: '不搭理',
+        subtext: '让子弹飞一会',
+        emoji: '🤷',
+        outcome: {
+          narration: '帖子热度持续了两天就自然消退了。毕竟网友的记忆只有三秒，新的瓜更香。',
+          statChanges: { prRisk: 5 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'drama_dating_rumor_costar',
+    category: 'drama',
+    severity: 'high',
+    title: '和搭档暧昧上热搜',
+    description: '你的艺人和新剧的搭档最近互动频繁，粉丝开始磕CP。但今天两人被拍到深夜同回酒店，虽然可能只是剧组聚餐后一起回去，但标题已经写好了："实锤！"',
+    emoji: '💑',
+    minDay: 12,
+    choices: [
+      {
+        id: 'use_cp_heat',
+        text: '借势炒CP',
+        subtext: '反正对新剧有利',
+        emoji: '🔥',
+        outcome: {
+          narration: 'CP热搜带飞了新剧预告的播放量。唯粉在哭，CP粉在笑，但数据是真的好看。',
+          statChanges: { commercialValue: 10, fanLoyalty: -10, prRisk: 5 },
+        },
+      },
+      {
+        id: 'professional_boundary',
+        text: '专业声明',
+        subtext: '"只是工作关系"',
+        emoji: '📋',
+        outcome: {
+          narration: '声明中规中矩，但搭档的经纪团队没有同步发声明，显得你在"单方面否认"。气氛更暧昧了。',
+          statChanges: { prRisk: 8, fanLoyalty: -3 },
+        },
+      },
+      {
+        id: 'humor_deflect',
+        text: '玩梗带过',
+        subtext: '发搞笑合照化解',
+        emoji: '🤣',
+        outcome: {
+          narration: '两人合发了一张恶搞表情包，配文"我们真的只是同事啦"。CP粉和唯粉竟然都笑了，这波操作满分。',
+          statChanges: { fanLoyalty: 5, prRisk: -3, commercialValue: 5 },
+        },
+      },
+    ],
+  },
 ];

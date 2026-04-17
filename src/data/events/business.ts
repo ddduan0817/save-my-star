@@ -206,4 +206,65 @@ export const businessEvents: GameEvent[] = [
       },
     ],
   },
+  {
+    id: 'biz_overseas',
+    category: 'business',
+    severity: 'medium',
+    title: '海外市场递来橄榄枝',
+    description: '一家韩国娱乐公司想和你的艺人合作推出海外专辑，这意味着有机会打入国际市场。但国内的行程可能要让步。',
+    emoji: '🌏',
+    minDay: 12,
+    choices: [
+      {
+        id: 'accept_overseas',
+        text: '进军海外',
+        subtext: '签约合作',
+        emoji: '✈️',
+        outcome: {
+          narration: '海外专辑反响不错，在东南亚和日韩圈了一波粉。国内粉丝觉得"我家偶像走向世界了"，很自豪。',
+          statChanges: { commercialValue: 12, fanLoyalty: 5, money: 100000 },
+        },
+      },
+      {
+        id: 'focus_domestic',
+        text: '深耕国内',
+        subtext: '国内市场还没吃透',
+        emoji: '🏠',
+        outcome: {
+          narration: '专注国内的决定让你有更多精力经营粉丝。虽然错过了海外机会，但根基更扎实了。',
+          statChanges: { fanLoyalty: 8 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'biz_game_endorsement',
+    category: 'business',
+    severity: 'low',
+    title: '大厂手游代言邀约',
+    description: '某头部游戏公司想请你的艺人代言新手游，代言费给得很大方。但游戏圈粉丝一向挑剔，代言翻车的案例也不少。',
+    emoji: '🎮',
+    choices: [
+      {
+        id: 'accept_game',
+        text: '接代言',
+        subtext: '拿钱！',
+        emoji: '💰',
+        outcome: {
+          narration: '代言广告拍得不错，游戏玩家虽然吐槽"又是流量明星"，但下载量确实涨了。品牌方很满意，追加了合作。',
+          statChanges: { money: 180000, commercialValue: 5, prRisk: 3 },
+        },
+      },
+      {
+        id: 'play_game',
+        text: '先试玩再决定',
+        subtext: '如果游戏不好就不接',
+        emoji: '🕹️',
+        outcome: {
+          narration: '艺人真的试玩了一周，还在直播间打了几把。游戏圈粉丝震惊："这人是真的在玩啊！"口碑爆了。',
+          statChanges: { money: 150000, commercialValue: 10, fanLoyalty: 8 },
+        },
+      },
+    ],
+  },
 ];
