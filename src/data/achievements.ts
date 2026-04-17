@@ -225,7 +225,7 @@ export const achievements: Achievement[] = [
   },
   {
     id: 'risk_junkie',
-    title: '危险就是我的春药',
+    title: '刀尖上跳舞',
     description: '风险超过90还在继续玩',
     emoji: '☠️',
     rarity: 'rare',
