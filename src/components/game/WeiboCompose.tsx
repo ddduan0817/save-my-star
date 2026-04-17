@@ -6,6 +6,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { cn, formatMoney } from '@/lib/utils';
 import { sfxClick, sfxPositive, sfxNegative } from '@/lib/sounds';
+import { IconWeiboCompose } from '@/components/icons';
 
 export default function WeiboCompose() {
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +72,7 @@ export default function WeiboCompose() {
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-lg">{dailyPostUsed ? '✅' : '✏️'}</span>
+            <span className="text-lg">{dailyPostUsed ? '✅' : <IconWeiboCompose size={22} />}</span>
             <span className={cn(
               "text-xs font-medium",
               dailyPostUsed ? "text-gray-400" : "text-blue-600"

@@ -9,6 +9,7 @@ import StoryTracker from '@/components/game/StoryTracker';
 import { getAppearanceTier } from '@/engine/cosmeticEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import type { CosmeticCategory } from '@/types/game';
+import { scheduleIconMap, cosmeticIconMap, artistAvatarMap } from '@/components/icons';
 
 const moodEmojis = [
   { min: 0, emoji: '😰', label: '焦虑' },
@@ -67,8 +68,8 @@ export default function ArtistTab() {
         className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
       >
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center text-3xl shadow-sm">
-            {artist.avatar}
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center overflow-hidden shadow-sm">
+            {(() => { const Avatar = artistAvatarMap[artist.id]; return Avatar ? <Avatar size={56} /> : artist.avatar; })()}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -135,7 +136,7 @@ export default function ArtistTab() {
 
         {isScheduleBusy ? (
           <div className="flex items-center gap-3 p-3 bg-orange-50/60 rounded-xl ring-1 ring-orange-100/60">
-            <span className="text-2xl">{artistSchedule.activity.emoji}</span>
+            {(() => { const Icon = scheduleIconMap[artistSchedule.activity.id]; return Icon ? <Icon size={28} /> : <span className="text-2xl">{artistSchedule.activity.emoji}</span>; })()}
             <div className="flex-1">
               <div className="text-sm font-semibold text-gray-800">{artistSchedule.activity.name}</div>
               <div className="text-[10px] text-orange-500 mt-0.5">
@@ -187,7 +188,7 @@ export default function ArtistTab() {
                   className="text-left p-3 rounded-xl border border-gray-100/60 hover:border-orange-200/60 hover:bg-orange-50/30 transition-all"
                 >
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-lg">{activity.emoji}</span>
+                    {(() => { const Icon = scheduleIconMap[activity.id]; return Icon ? <Icon size={22} /> : <span className="text-lg">{activity.emoji}</span>; })()}
                     <span className="text-xs font-semibold text-gray-700">{activity.name}</span>
                   </div>
                   <div className="text-[10px] text-gray-400">{activity.durationDays}天 · {changes.join(' ')}</div>
@@ -250,7 +251,7 @@ export default function ArtistTab() {
                         )}
                       >
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="text-lg">{proc.emoji}</span>
+                          {(() => { const Icon = cosmeticIconMap[proc.id]; return Icon ? <Icon size={22} /> : <span className="text-lg">{proc.emoji}</span>; })()}
                           <span className="text-xs font-semibold text-gray-700 flex-1">{proc.name}</span>
                           <span className={cn(
                             "text-[10px] font-bold",

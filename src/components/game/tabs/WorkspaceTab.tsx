@@ -6,6 +6,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { companyUpgradesData } from '@/data/upgrades';
 import { sfxClick, sfxMoney } from '@/lib/sounds';
+import { upgradeIconMap } from '@/components/icons';
 
 const FAME_LABELS: Record<string, { text: string; color: string }> = {
   low: { text: '低迷', color: 'text-gray-400' },
@@ -211,8 +212,8 @@ export default function WorkspaceTab() {
                 )}
               >
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center text-lg shrink-0">
-                    {upgrade.emoji}
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center shrink-0">
+                    {(() => { const Icon = upgradeIconMap[upgrade.id]; return Icon ? <Icon size={24} /> : upgrade.emoji; })()}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
