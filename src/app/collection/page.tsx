@@ -21,10 +21,10 @@ export default function CollectionPage() {
     rare: '稀有',
     legendary: '传说',
   };
-  const rarityColor = {
-    common: 'border-[#8888aa]/20',
-    rare: 'border-purple-500/30',
-    legendary: 'border-amber-500/30',
+  const rarityBorder = {
+    common: 'ring-gray-200',
+    rare: 'ring-purple-300',
+    legendary: 'ring-amber-300',
   };
 
   return (
@@ -34,14 +34,14 @@ export default function CollectionPage() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-6"
       >
-        <h1 className="text-xl font-bold mb-1">📚 结局图鉴</h1>
-        <p className="text-xs text-[#8888aa]">
+        <h1 className="text-xl font-bold mb-1 text-gray-800">结局图鉴</h1>
+        <p className="text-xs text-gray-500">
           已解锁 {unlockedEndings.length}/{endings.length} 个结局
         </p>
         {/* Progress bar */}
-        <div className="w-48 h-1.5 bg-white/10 rounded-full mx-auto mt-3 overflow-hidden">
+        <div className="w-48 h-1.5 bg-gray-100 rounded-full mx-auto mt-3 overflow-hidden">
           <motion.div
-            className="h-full bg-amber-500 rounded-full"
+            className="h-full bg-orange-400 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${(unlockedEndings.length / endings.length) * 100}%` }}
             transition={{ delay: 0.3, duration: 0.5 }}
@@ -59,34 +59,36 @@ export default function CollectionPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
               className={cn(
-                "rounded-xl border p-4 text-center",
-                unlocked ? rarityColor[ending.rarity] : "border-white/5",
-                unlocked ? "bg-[#141420]" : "bg-[#141420]/50"
+                "rounded-xl ring-1 p-4 text-center shadow-sm",
+                unlocked ? rarityBorder[ending.rarity] : "ring-gray-100",
+                unlocked ? "bg-white" : "bg-gray-50"
               )}
             >
               <div className={cn("text-3xl mb-2", !unlocked && "blur-sm opacity-30")}>
-                {unlocked ? ending.emoji : '❓'}
+                {unlocked ? ending.emoji : '?'}
               </div>
               <div className={cn(
                 "text-sm font-bold mb-0.5",
-                !unlocked && "text-[#8888aa]/50"
+                unlocked ? "text-gray-800" : "text-gray-300"
               )}>
                 {unlocked ? ending.title : '???'}
               </div>
-              <div className="text-[10px] text-[#8888aa]">
+              <div className="text-[10px]">
                 {unlocked ? (
                   <span className={cn(
-                    ending.rarity === 'legendary' && 'text-amber-400',
-                    ending.rarity === 'rare' && 'text-purple-400',
+                    "font-medium",
+                    ending.rarity === 'legendary' && 'text-amber-600',
+                    ending.rarity === 'rare' && 'text-purple-600',
+                    ending.rarity === 'common' && 'text-gray-500',
                   )}>
                     {rarityLabel[ending.rarity]}
                   </span>
                 ) : (
-                  '未解锁'
+                  <span className="text-gray-400">未解锁</span>
                 )}
               </div>
               {unlocked && (
-                <p className="text-[10px] text-[#8888aa]/70 mt-2 line-clamp-2">
+                <p className="text-[10px] text-gray-400 mt-2 line-clamp-2">
                   {ending.subtitle}
                 </p>
               )}
@@ -100,9 +102,9 @@ export default function CollectionPage() {
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
         onClick={() => router.push('/')}
-        className="w-full mt-6 py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm font-medium transition-colors active:scale-[0.98]"
+        className="w-full mt-6 py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700 transition-colors active:scale-[0.98]"
       >
-        🎭 回到首页
+        回到首页
       </motion.button>
     </div>
   );

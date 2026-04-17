@@ -13,7 +13,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'deny',
         text: '坚决否认',
         subtext: '声明只是普通朋友',
-        emoji: '🙅',
         outcome: {
           narration: '工作室紧急发声明否认恋情。但网友扒出更多细节，"此地无银三百两"的评论占满了评论区。',
           statChanges: { prRisk: 15, fanLoyalty: -5 },
@@ -29,7 +28,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'admit',
         text: '大方官宣',
         subtext: '直接公开恋情',
-        emoji: '💕',
         outcome: {
           narration: '艺人亲自发微博："是的，我恋爱了，谢谢大家关心。"一部分粉丝送祝福，但脱粉的也不少。不过路人好感度倒是上来了。',
           statChanges: { prRisk: -5, fanLoyalty: -15, commercialValue: -10 },
@@ -54,7 +52,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'suppress',
         text: '花钱压热搜',
         subtext: '联系平台撤热搜 (-8万)',
-        emoji: '💰',
         requireMinMoney: 80000,
         outcome: {
           narration: '热搜被撤了，但"404"反而引发了更大的好奇心。大家都在问：到底是谁这么有能量？',
@@ -65,7 +62,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'misdirect',
         text: '转移注意力',
         subtext: '放出新歌/新戏的物料',
-        emoji: '🎵',
         outcome: {
           narration: '紧急发布了新歌MV预告，粉丝们的注意力被成功转移了一部分。但八卦博主可不会这么轻易放过...',
           statChanges: { prRisk: 8, commercialValue: 5 },
@@ -86,7 +82,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'sincere_apology',
         text: '诚恳道歉',
         subtext: '承认过去不成熟',
-        emoji: '🙏',
         outcome: {
           narration: '艺人手写了一封道歉信，承认年少无知。大部分路人接受了，但"道歉有用要警察干嘛"的声音也不小。',
           statChanges: { prRisk: 10, fanLoyalty: -5, commercialValue: -10 },
@@ -103,7 +98,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'claim_hacked',
         text: '声称被盗号',
         subtext: '说不是本人发的',
-        emoji: '🤖',
         outcome: {
           narration: '"盗号"的说法没人信，反而被群嘲"娱乐圈盗号宇宙"。事情进一步发酵，你现在是互联网笑话了。',
           statChanges: { prRisk: 25, fanLoyalty: -10 },
@@ -113,7 +107,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'stay_silent',
         text: '沉默以对',
         subtext: '冷处理，等热度过去',
-        emoji: '🤐',
         outcome: {
           narration: '沉默被解读为"心虚"。但好消息是，三天后新的瓜出来了，注意力转移了。坏消息是，这颗雷还埋着。',
           statChanges: { prRisk: 15 },
@@ -135,7 +128,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'admit_tech',
         text: '承认技术问题',
         subtext: '解释是音响故障导致的',
-        emoji: '🔧',
         outcome: {
           narration: '发了一条长微博解释当天音响出了问题，并宣布免费重办一场。大部分粉丝买账了，但"花钱买假唱"的梗已经传开了。',
           statChanges: { prRisk: 10, money: -100000, fanLoyalty: 5 },
@@ -145,7 +137,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'sue',
         text: '法律手段',
         subtext: '发律师函警告造谣者',
-        emoji: '⚖️',
         outcome: {
           narration: '律师函一发，网友更来劲了："怎么，被说中了急了？"舆论进一步发酵。',
           statChanges: { prRisk: 20, money: -50000 },
@@ -155,7 +146,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'live_proof',
         text: '直播飙高音',
         subtext: '开直播唱一段证明实力',
-        emoji: '🎶',
         outcome: {
           narration: '艺人开了一场直播清唱，高音稳得一批。"打脸来得太快"刷屏弹幕，风评逆转！',
           statChanges: { prRisk: -10, fanLoyalty: 10, commercialValue: 5 },
@@ -181,7 +171,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'cooperate',
         text: '主动配合调查',
         subtext: '自查补缴 (-20万)',
-        emoji: '✅',
         outcome: {
           narration: '主动找税务部门自查补缴，态度诚恳。虽然花了大钱，但这件事被控制住了。官媒评价"知错能改"。',
           statChanges: { money: -200000, prRisk: 5, commercialValue: -5 },
@@ -191,7 +180,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'lawyer',
         text: '请顶级律师',
         subtext: '法律团队全面介入 (-10万)',
-        emoji: '👔',
         outcome: {
           narration: '律师团队介入后发现确实有问题，但及时补救了。不过"请得起顶级律师说明赚得够多"的讨论又起来了。',
           statChanges: { money: -100000, prRisk: 10 },
@@ -201,7 +189,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'deny_tax',
         text: '否认一切',
         subtext: '声明从未逃税',
-        emoji: '❌',
         outcome: {
           narration: '否认之后，举报人放出了更多证据。这下连官媒都点名了。你正在走一条非常危险的路。',
           statChanges: { prRisk: 30, commercialValue: -15 },
@@ -226,7 +213,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'condemn',
         text: '公开谴责暴力',
         subtext: '呼吁理性追星',
-        emoji: '🕊️',
         outcome: {
           narration: '艺人发长文谴责暴力行为，呼吁大家理性追星。官媒点赞，路人好感上升，但一部分激进粉丝觉得"偶像不向着我们"。',
           statChanges: { prRisk: -5, fanLoyalty: -8, commercialValue: 5 },
@@ -243,7 +229,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'blame_other',
         text: '暗示是对方先动手',
         subtext: '让粉丝觉得被支持',
-        emoji: '😤',
         outcome: {
           narration: '粉丝们觉得被偶像撑腰了，战斗力更强了。但对方粉丝和路人都在骂你拉偏架。',
           statChanges: { prRisk: 15, fanLoyalty: 10 },
@@ -253,7 +238,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'ignore_fight',
         text: '装作没看到',
         subtext: '冷处理',
-        emoji: '🙈',
         outcome: {
           narration: '沉默被解读为默许。官媒批评"艺人有责任引导粉丝"，热度持续了三天才消退。',
           statChanges: { prRisk: 10 },
@@ -273,7 +257,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'apologize_smoke',
         text: '道歉并承诺戒烟',
         subtext: '维护偶像人设',
-        emoji: '🙏',
         outcome: {
           narration: '道歉声明获得大部分粉丝谅解。但"承诺戒烟"这件事，以后万一又被拍到可就不好交代了...',
           statChanges: { prRisk: 5, fanLoyalty: -3 },
@@ -284,7 +267,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'personal_choice',
         text: '"个人生活不需要交代"',
         subtext: '强硬回应',
-        emoji: '😎',
         outcome: {
           narration: '路人觉得说得对，粉丝觉得不够在乎他们的感受。一场"偶像到底该不该有私生活"的大讨论开始了。',
           statChanges: { prRisk: 8, fanLoyalty: -10, commercialValue: 3 },
@@ -305,7 +287,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'humor_drunk',
         text: '自嘲化解',
         subtext: '"喝多了说的话不算数嘛"',
-        emoji: '😅',
         outcome: {
           narration: '艺人发了条自嘲微博，配了个喝水的照片："从今天起只喝白开水。"网友觉得真实又可爱，风评反而变好了。',
           statChanges: { fanLoyalty: 5, prRisk: 5 },
@@ -315,7 +296,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'deny_drunk',
         text: '声称视频被恶意剪辑',
         subtext: '否认真实性',
-        emoji: '✂️',
         outcome: {
           narration: '原视频的完整版被放了出来...更尴尬了。"越描越黑"成了热搜联想词。',
           statChanges: { prRisk: 18, fanLoyalty: -8 },
@@ -325,7 +305,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'apologize_drunk',
         text: '向被模仿的同行道歉',
         subtext: '主动联系对方化解',
-        emoji: '🤝',
         outcome: {
           narration: '被模仿的同行大度回复"模仿得还挺像"，两人互动上了热搜正面位。危机变成了营销。',
           statChanges: { prRisk: -3, commercialValue: 5, fanLoyalty: 3 },
@@ -346,7 +325,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'report_police',
         text: '报警处理',
         subtext: '走法律途径',
-        emoji: '🚔',
         outcome: {
           narration: '报警后艺人发了长文呼吁理性追星。大部分粉丝支持，但私生饭的朋友们开始在网上造谣"XX耍大牌报警抓粉丝"。',
           statChanges: { prRisk: 8, fanLoyalty: -3, money: -10000 },
@@ -356,7 +334,6 @@ export const crisisEvents: GameEvent[] = [
         id: 'gentle_reject',
         text: '温柔劝退',
         subtext: '私下沟通，不闹大',
-        emoji: '💬',
         outcome: {
           narration: '你安排助理私下和对方谈了谈，对方流着泪说"我只是太喜欢了"。事情暂时平息了，但你知道这不是最后一次。',
           statChanges: { fanLoyalty: 3, prRisk: 3 },

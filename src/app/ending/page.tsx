@@ -32,7 +32,7 @@ export default function EndingPage() {
     try {
       const dataUrl = await toPng(shareRef.current, {
         pixelRatio: 2,
-        backgroundColor: '#0a0a0f',
+        backgroundColor: '#faf8f5',
       });
       const link = document.createElement('a');
       link.download = `经纪人模拟器-${ending.title}.png`;
@@ -54,15 +54,15 @@ export default function EndingPage() {
     legendary: '传说',
   };
   const rarityColor = {
-    common: 'text-[#8888aa] border-[#8888aa]/30',
-    rare: 'text-purple-400 border-purple-400/30',
-    legendary: 'text-amber-400 border-amber-400/30',
+    common: 'text-gray-500 bg-gray-100',
+    rare: 'text-purple-600 bg-purple-50',
+    legendary: 'text-amber-600 bg-amber-50',
   };
 
   return (
     <div className="min-h-screen px-4 py-8">
-      {/* Share card (rendered but also used for screenshot) */}
-      <div ref={shareRef} className="rounded-2xl overflow-hidden border border-white/10">
+      {/* Share card */}
+      <div ref={shareRef} className="rounded-2xl overflow-hidden shadow-md ring-1 ring-gray-200">
         {/* Header gradient */}
         <div className={cn("bg-gradient-to-br p-6 text-center", ending.color)}>
           <motion.div
@@ -94,7 +94,7 @@ export default function EndingPage() {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
             className={cn(
-              "inline-block text-xs px-2 py-0.5 rounded-full border mt-2",
+              "inline-block text-xs px-2.5 py-0.5 rounded-full font-semibold mt-2",
               rarityColor[ending.rarity]
             )}
           >
@@ -103,30 +103,30 @@ export default function EndingPage() {
         </div>
 
         {/* Content */}
-        <div className="bg-[#141420] p-5">
+        <div className="bg-white p-5">
           {/* Artist info */}
           <div className="flex items-center gap-2 mb-4">
             <span className="text-xl">{artist.avatar}</span>
-            <span className="text-sm font-medium">{artist.name}</span>
-            <span className="text-xs text-[#8888aa]">· {artist.title}</span>
-            <span className="text-xs text-[#8888aa] ml-auto">坚持了 {currentDay} 天</span>
+            <span className="text-sm font-semibold text-gray-800">{artist.name}</span>
+            <span className="text-xs text-gray-500">· {artist.title}</span>
+            <span className="text-xs text-gray-400 ml-auto">坚持了 {currentDay} 天</span>
           </div>
 
           {/* Story */}
-          <p className="text-sm text-[#ccccdd] leading-relaxed mb-4">
+          <p className="text-sm text-gray-600 leading-relaxed mb-4">
             {ending.description}
           </p>
 
           {/* Final stats */}
           <div className="grid grid-cols-4 gap-3 mb-4">
             {[
-              { label: '商业价值', value: stats.commercialValue, color: 'text-amber-400' },
-              { label: '粉丝忠诚', value: stats.fanLoyalty, color: 'text-pink-400' },
-              { label: '舆论风险', value: stats.prRisk, color: 'text-red-400' },
-              { label: '资金', value: null, money: stats.money, color: stats.money >= 0 ? 'text-green-400' : 'text-red-400' },
+              { label: '商业价值', value: stats.commercialValue, color: 'text-amber-600' },
+              { label: '粉丝忠诚', value: stats.fanLoyalty, color: 'text-pink-500' },
+              { label: '舆论风险', value: stats.prRisk, color: 'text-red-500' },
+              { label: '资金', value: null, money: stats.money, color: stats.money >= 0 ? 'text-green-600' : 'text-red-500' },
             ].map(stat => (
               <div key={stat.label} className="text-center">
-                <div className="text-[10px] text-[#8888aa] mb-1">{stat.label}</div>
+                <div className="text-[10px] text-gray-400 mb-1">{stat.label}</div>
                 <div className={cn("text-lg font-bold", stat.color)}>
                   {stat.value !== null ? stat.value : `¥${formatMoney(stat.money!)}`}
                 </div>
@@ -136,13 +136,13 @@ export default function EndingPage() {
 
           {/* Key decisions */}
           {keyDecisions.length > 0 && (
-            <div className="border-t border-white/5 pt-3">
-              <div className="text-[10px] text-[#8888aa] mb-2 tracking-wider">关键决策回顾</div>
+            <div className="border-t border-gray-100 pt-3">
+              <div className="text-[10px] text-gray-400 mb-2 tracking-wider font-medium">关键决策回顾</div>
               <div className="space-y-1.5">
                 {keyDecisions.map((d, i) => (
                   <div key={i} className="flex items-start gap-2 text-xs">
-                    <span className="text-[#8888aa] shrink-0">Day {d.day}</span>
-                    <span className="text-white/60 truncate">{d.eventTitle} → {d.choiceText}</span>
+                    <span className="text-gray-400 shrink-0">Day {d.day}</span>
+                    <span className="text-gray-600 truncate">{d.eventTitle} → {d.choiceText}</span>
                   </div>
                 ))}
               </div>
@@ -150,8 +150,8 @@ export default function EndingPage() {
           )}
 
           {/* Branding */}
-          <div className="text-center text-[10px] text-[#8888aa]/50 mt-4 pt-3 border-t border-white/5">
-            🎭 经纪人模拟器：塌房危机
+          <div className="text-center text-[10px] text-gray-300 mt-4 pt-3 border-t border-gray-100">
+            经纪人模拟器：塌房危机
           </div>
         </div>
       </div>
@@ -163,9 +163,9 @@ export default function EndingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
           onClick={handleShare}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-sm active:scale-[0.98] transition-transform"
+          className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 text-white font-bold text-sm active:scale-[0.98] transition-transform shadow-sm"
         >
-          📸 保存分享卡
+          保存分享卡
         </motion.button>
 
         <motion.button
@@ -173,9 +173,9 @@ export default function EndingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.9 }}
           onClick={handlePlayAgain}
-          className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-sm font-medium transition-colors active:scale-[0.98]"
+          className="w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700 transition-colors active:scale-[0.98]"
         >
-          🔄 再来一局
+          再来一局
         </motion.button>
 
         <motion.button
@@ -183,9 +183,9 @@ export default function EndingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.0 }}
           onClick={() => router.push('/collection')}
-          className="w-full py-3 rounded-xl border border-white/10 text-sm text-[#8888aa] hover:text-white transition-colors active:scale-[0.98]"
+          className="w-full py-3 rounded-xl ring-1 ring-gray-200 text-sm text-gray-500 hover:text-gray-700 transition-colors active:scale-[0.98]"
         >
-          📚 查看结局图鉴
+          查看结局图鉴
         </motion.button>
       </div>
     </div>

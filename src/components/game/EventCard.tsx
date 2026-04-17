@@ -35,11 +35,11 @@ export default function EventCard({ event }: EventCardProps) {
       exit={{ opacity: 0, y: -20 }}
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       className={cn(
-        "mx-4 rounded-2xl border overflow-hidden",
-        isBreaking && "border-orange-500/40 ring-1 ring-orange-500/20 shadow-lg shadow-orange-500/10",
-        !isBreaking && isCrisis && "border-red-500/30 animate-pulse-red",
-        !isBreaking && isBusiness && "border-amber-500/30 animate-shimmer-gold",
-        !isBreaking && !isCrisis && !isBusiness && "border-white/10"
+        "mx-4 rounded-2xl overflow-hidden shadow-sm",
+        isBreaking && "ring-2 ring-orange-300 shadow-md shadow-orange-100",
+        !isBreaking && isCrisis && "ring-1 ring-red-200 animate-pulse-red",
+        !isBreaking && isBusiness && "ring-1 ring-amber-200 animate-shimmer-gold",
+        !isBreaking && !isCrisis && !isBusiness && "ring-1 ring-gray-200"
       )}
     >
       {/* Breaking event banner */}
@@ -48,13 +48,13 @@ export default function EventCard({ event }: EventCardProps) {
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
           transition={{ delay: 0.1, duration: 0.3, ease: 'easeOut' }}
-          className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-600 text-white text-xs font-bold px-4 py-2 tracking-widest flex items-center gap-2"
+          className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-4 py-2 tracking-widest flex items-center gap-2"
         >
           <motion.span
             animate={{ opacity: [1, 0.3, 1] }}
             transition={{ repeat: Infinity, duration: 0.8 }}
           >
-            🔴
+            ●
           </motion.span>
           BREAKING · 突发快讯
         </motion.div>
@@ -66,35 +66,35 @@ export default function EventCard({ event }: EventCardProps) {
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
           transition={{ delay: 0.2, duration: 0.4 }}
-          className="bg-red-600 text-white text-xs font-bold px-4 py-1.5 tracking-widest"
+          className="bg-red-500 text-white text-xs font-bold px-4 py-1.5 tracking-widest"
         >
-          🚨 BREAKING · {CATEGORY_LABEL[event.category]}
+          BREAKING · {CATEGORY_LABEL[event.category]}
         </motion.div>
       )}
 
       {/* Normal category badge */}
       {!showUrgentBanner && (
         <div className={cn(
-          "text-xs font-medium px-4 py-1.5 tracking-wider",
-          isBusiness ? "bg-amber-500/10 text-amber-400" : "bg-white/5 text-[#8888aa]"
+          "text-xs font-medium px-4 py-2 tracking-wider",
+          isBusiness ? "bg-amber-50 text-amber-600" : "bg-gray-50 text-gray-500"
         )}>
-          {event.emoji} {CATEGORY_LABEL[event.category]}
+          {CATEGORY_LABEL[event.category]}
         </div>
       )}
 
       {/* Event content */}
       <div className={cn(
         "p-4",
-        isBreaking ? "bg-[#1a1410]" : "bg-[#141420]"
+        isBreaking ? "bg-orange-50" : "bg-white"
       )}>
         <h2 className={cn(
           "text-lg font-bold mb-3",
-          isBreaking && "text-orange-300",
-          !isBreaking && isCrisis && "text-red-400 animate-shake"
+          isBreaking && "text-orange-700",
+          !isBreaking && isCrisis && "text-red-600 animate-shake"
         )}>
-          {event.emoji} {event.title}
+          {event.title}
         </h2>
-        <p className="text-sm text-[#ccccdd] leading-relaxed mb-5">
+        <p className="text-sm text-gray-600 leading-relaxed mb-5">
           {event.description}
         </p>
 
@@ -111,23 +111,22 @@ export default function EventCard({ event }: EventCardProps) {
                 onClick={() => available && selectChoice(choice)}
                 disabled={!available}
                 className={cn(
-                  "w-full text-left p-3 rounded-xl border transition-all",
+                  "w-full text-left p-3.5 rounded-xl border transition-all",
                   available
                     ? isBreaking
-                      ? "border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/30 active:scale-[0.98]"
-                      : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 active:scale-[0.98]"
-                    : "border-white/5 bg-white/[0.02] opacity-40 cursor-not-allowed"
+                      ? "border-orange-200 bg-orange-50/50 hover:bg-orange-100 hover:border-orange-300 active:scale-[0.98]"
+                      : "border-gray-200 bg-gray-50/50 hover:bg-gray-100 hover:border-gray-300 active:scale-[0.98]"
+                    : "border-gray-100 bg-gray-50/30 opacity-40 cursor-not-allowed"
                 )}
               >
                 <div className="flex items-start gap-2">
-                  {choice.emoji && <span className="text-base mt-0.5">{choice.emoji}</span>}
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-medium text-white">{choice.text}</div>
+                    <div className="text-sm font-semibold text-gray-800">{choice.text}</div>
                     {choice.subtext && (
-                      <div className="text-xs text-[#8888aa] mt-0.5">{choice.subtext}</div>
+                      <div className="text-xs text-gray-500 mt-0.5">{choice.subtext}</div>
                     )}
                     {!available && choice.requireMinMoney && (
-                      <div className="text-xs text-red-400 mt-0.5">
+                      <div className="text-xs text-red-500 mt-0.5">
                         需要 ¥{formatMoney(choice.requireMinMoney)}（当前不足）
                       </div>
                     )}

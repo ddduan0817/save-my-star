@@ -24,19 +24,11 @@ export default function HomePage() {
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-          className="text-5xl mb-3"
-        >
-          🎭
-        </motion.div>
-        <h1 className="text-2xl font-black tracking-tight mb-1">
+        <h1 className="text-2xl font-black tracking-tight mb-1 text-gray-800">
           经纪人模拟器
         </h1>
-        <div className="text-red-400 text-sm font-bold mb-3">塌房危机</div>
-        <p className="text-xs text-[#8888aa] leading-relaxed max-w-xs mx-auto">
+        <div className="text-red-500 text-sm font-bold mb-3">塌房危机</div>
+        <p className="text-xs text-gray-500 leading-relaxed max-w-xs mx-auto">
           你是一名娱乐经纪人。你的艺人每天都在塌房的边缘疯狂试探。
           <br />
           你能撑过30天吗？
@@ -48,7 +40,7 @@ export default function HomePage() {
         initial={{ scaleX: 0 }}
         animate={{ scaleX: 1 }}
         transition={{ delay: 0.3 }}
-        className="w-24 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent mx-auto mb-6"
+        className="w-24 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mb-6"
       />
 
       {/* Artist selection */}
@@ -58,7 +50,7 @@ export default function HomePage() {
         transition={{ delay: 0.2 }}
         className="mb-4"
       >
-        <div className="text-xs text-[#8888aa] text-center mb-4 tracking-wider">
+        <div className="text-xs text-gray-500 text-center mb-4 tracking-wider font-medium">
           选择你要带的艺人
         </div>
         <ArtistSelector artists={artists} onSelect={handleSelect} />
@@ -73,9 +65,9 @@ export default function HomePage() {
       >
         <button
           onClick={() => router.push('/collection')}
-          className="text-xs text-[#8888aa] hover:text-white transition-colors"
+          className="text-xs text-gray-400 hover:text-gray-700 transition-colors font-medium"
         >
-          📚 查看结局图鉴
+          查看结局图鉴
         </button>
       </motion.div>
     </div>

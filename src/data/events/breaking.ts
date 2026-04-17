@@ -6,7 +6,7 @@ export const breakingEvents: GameEvent[] = [
     id: 'breaking_live_accident',
     category: 'breaking',
     severity: 'high',
-    title: '⚡ 直播事故！正在直播中！',
+    title: '直播事故！正在直播中！',
     description: '你的艺人正在直播，突然说错了话——把还没官宣的新代言品牌名字说了出来！品牌方正在疯狂打电话过来，直播间弹幕已经截图了，你有30秒做决定！',
     emoji: '🔴',
     isBreaking: true,
@@ -15,7 +15,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'cut_stream',
         text: '立刻断直播',
         subtext: '假装网络故障',
-        emoji: '📡',
         outcome: {
           narration: '"网络好像出了点问题——"画面突然黑了。粉丝们一脸懵，但截图已经传出去了。',
           statChanges: { prRisk: 8, money: -30000 },
@@ -30,7 +29,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'play_dumb',
         text: '装傻糊弄过去',
         subtext: '"啊我说什么了？"',
-        emoji: '🤪',
         outcome: {
           narration: '"哈？我刚说啥了？大家听错了吧～"虽然很假，但直播间的节奏被带过去了。',
           statChanges: { prRisk: 5 },
@@ -52,7 +50,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'own_it',
         text: '大方承认',
         subtext: '"嘻嘻剧透了"',
-        emoji: '😝',
         outcome: {
           narration: '"好吧被你们发现了～过两天就官宣了啦～"品牌方一开始很生气，但直播间的兴奋反应让他们看到了热度的价值。',
           statChanges: { commercialValue: 5, prRisk: 3 },
@@ -71,7 +68,7 @@ export const breakingEvents: GameEvent[] = [
     id: 'breaking_trending_negative',
     category: 'breaking',
     severity: 'critical',
-    title: '⚡ 紧急！你被挂上热搜第一了',
+    title: '紧急！你被挂上热搜第一了',
     description: '一个匿名大V发了一条微博："某顶流背后的真面目"，配了几张模糊的聊天截图。虽然没有指名道姓，但所有的线索都指向你的艺人。10分钟内阅读量已经破亿。',
     emoji: '🔴',
     isBreaking: true,
@@ -81,7 +78,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'immediate_response',
         text: '第一时间回应',
         subtext: '抢在发酵前声明',
-        emoji: '⚡',
         outcome: {
           narration: '30分钟内发出了律师声明，否认一切指控并保留追究法律责任的权利。速度之快让网友印象深刻。',
           statChanges: { prRisk: 10, money: -50000 },
@@ -108,7 +104,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'wait_and_see',
         text: '先观察',
         subtext: '看看对方还有没有后手',
-        emoji: '👀',
         outcome: {
           narration: '你选择按兵不动，但沉默被解读为心虚。一小时后，第二波"证据"放出来了...',
           statChanges: { prRisk: 15 },
@@ -123,7 +118,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'counter_attack',
         text: '反击！扒对方',
         subtext: '调查大V背景，反将一军',
-        emoji: '🗡️',
         outcome: {
           narration: '你的团队连夜调查，发现大V和竞争对手有利益关系。反击的微博配上证据链，阅读量瞬间超过了对方。',
           statChanges: { prRisk: 5, commercialValue: 5 },
@@ -142,7 +136,7 @@ export const breakingEvents: GameEvent[] = [
     id: 'breaking_viral_moment',
     category: 'breaking',
     severity: 'low',
-    title: '⚡ 刚刚！你的艺人上了热搜！',
+    title: '刚刚！你的艺人上了热搜！',
     description: '你的艺人在机场被拍到帮一个迷路的小朋友找妈妈，全程温柔耐心。视频在20分钟内播放量破千万，评论区全是"嫁给我"和"好温柔啊啊啊"。',
     emoji: '💫',
     isBreaking: true,
@@ -151,7 +145,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'stay_humble',
         text: '低调处理',
         subtext: '不回应，保持自然',
-        emoji: '☺️',
         outcome: {
           narration: '什么都不做反而是最好的操作。视频靠自来水传播了一整天，"好人设是装不出来的"成了全网共识。',
           statChanges: { fanLoyalty: 15, commercialValue: 8, prRisk: -8 },
@@ -161,7 +154,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'thank_publicly',
         text: '发微博感谢关注',
         subtext: '顺势表达态度',
-        emoji: '🙏',
         outcome: {
           narration: '一条简单的"举手之劳，希望小朋友以后不会再迷路啦"获得百万转发。',
           statChanges: { fanLoyalty: 12, commercialValue: 5, prRisk: -5 },
@@ -178,7 +170,7 @@ export const breakingEvents: GameEvent[] = [
     id: 'breaking_competitor_fall',
     category: 'breaking',
     severity: 'medium',
-    title: '⚡ 竞争对手突然塌房！',
+    title: '竞争对手突然塌房！',
     description: '你最大的竞争对手刚刚被爆出重大丑闻，全网震动。品牌方们正在紧急寻找替代人选——这是千载难逢的机会，但吃"人血馒头"的风险也不小。',
     emoji: '📰',
     isBreaking: true,
@@ -188,7 +180,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'seize_opportunity',
         text: '抢夺资源',
         subtext: '主动联系品牌方',
-        emoji: '🏃',
         outcome: {
           narration: '你第一时间联系了对方的三个代言品牌，成功拿下其中两个。效率惊人，钱包也鼓了。',
           statChanges: { money: 200000, commercialValue: 12 },
@@ -215,7 +206,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'show_sympathy',
         text: '表示同情',
         subtext: '发声支持对手',
-        emoji: '🤝',
         outcome: {
           narration: '"希望真相能早日水落石出，也请大家给当事人一些空间。"这条微博让你的艺人收获了巨大的路人好感。',
           statChanges: { fanLoyalty: 10, commercialValue: 5, prRisk: -5 },
@@ -225,7 +215,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'stay_out',
         text: '完全不表态',
         subtext: '事不关己',
-        emoji: '🤐',
         outcome: {
           narration: '你选择置身事外。几天后，风波平息了。你没吃到红利，但也没沾上麻烦。',
           statChanges: {},
@@ -237,7 +226,7 @@ export const breakingEvents: GameEvent[] = [
     id: 'breaking_fan_donation',
     category: 'breaking',
     severity: 'low',
-    title: '⚡ 粉丝以你的名义捐了100万！',
+    title: '粉丝以你的名义捐了100万！',
     description: '你的粉丝后援会以艺人名义向某灾区捐了100万善款，消息上了新闻联播！虽然是好事，但这个操作事先没有和你沟通过...',
     emoji: '💰',
     isBreaking: true,
@@ -247,7 +236,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'match_donation',
         text: '艺人再捐100万',
         subtext: '配捐表诚意 (-100万)',
-        emoji: '❤️',
         requireMinMoney: 100000,
         outcome: {
           narration: '艺人宣布个人再捐100万，"偶像和粉丝双向奔赴"的故事感动了全网。官媒点名表扬。',
@@ -258,7 +246,6 @@ export const breakingEvents: GameEvent[] = [
         id: 'thank_fans_donation',
         text: '感谢粉丝善举',
         subtext: '发文称赞粉丝',
-        emoji: '🙏',
         outcome: {
           narration: '艺人发微博感谢粉丝的善举，但有人质疑"100万都让粉丝出，自己一分没捐？"',
           statChanges: { fanLoyalty: 5, prRisk: 8 },
