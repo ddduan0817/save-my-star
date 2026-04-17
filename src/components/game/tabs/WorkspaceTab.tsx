@@ -6,10 +6,18 @@ import { cn, formatMoney } from '@/lib/utils';
 import { companyUpgradesData } from '@/data/upgrades';
 import { sfxClick, sfxMoney } from '@/lib/sounds';
 
+const FAME_LABELS: Record<string, { text: string; color: string }> = {
+  low: { text: '低迷', color: 'text-gray-400' },
+  medium: { text: '中等', color: 'text-amber-500' },
+  high: { text: '当红', color: 'text-orange-500' },
+  top: { text: '顶流', color: 'text-red-500' },
+};
+
 export default function WorkspaceTab() {
   const stats = useGameStore(s => s.stats);
   const companyUpgrades = useGameStore(s => s.companyUpgrades);
   const purchaseUpgrade = useGameStore(s => s.purchaseUpgrade);
+  const rival = useGameStore(s => s.rival);
 
   // Active buffs
   const activeBuffs: string[] = [];
@@ -60,6 +68,64 @@ export default function WorkspaceTab() {
               </span>
             ))}
           </div>
+        </motion.div>
+      )}
+
+      {/* Rival Intel */}
+      {rival && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.07 }}
+          className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
+        >
+          <div className="text-xs font-medium text-gray-400 tracking-wider mb-3">对手情报</div>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center text-2xl">
+              {rival.avatar}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-gray-800">{rival.name}</span>
+                <span className={cn("text-[10px] font-semibold", FAME_LABELS[rival.fameLevel]?.color)}>
+                  {FAME_LABELS[rival.fameLevel]?.text}
+                </span>
+              </div>
+              {/* Aggression bar */}
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-[10px] text-gray-400 w-8 shrink-0">攻击性</span>
+                <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                  <motion.div
+                    className={cn(
+                      "h-full rounded-full",
+                      rival.aggression > 70 ? "bg-red-400" : rival.aggression > 40 ? "bg-amber-400" : "bg-green-400"
+                    )}
+                    initial={false}
+                    animate={{ width: `${rival.aggression}%` }}
+                    transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+                  />
+                </div>
+                <span className="text-[10px] text-gray-400 w-5 text-right tabular-nums">{rival.aggression}</span>
+              </div>
+            </div>
+          </div>
+          {/* Recent rival actions */}
+          {rival.actionsLog.length > 0 && (
+            <div className="mt-3 pt-3 border-t border-gray-50 space-y-1.5">
+              {rival.actionsLog.slice(-3).reverse().map((log, i) => (
+                <div key={i} className="flex items-center gap-2 text-[10px] text-gray-400">
+                  <span className="text-gray-300">Day {log.day}</span>
+                  <span className={cn(
+                    "flex-1 truncate",
+                    log.affectedYou ? "text-red-400" : "text-gray-400"
+                  )}>
+                    {log.title}
+                    {log.affectedYou && ' ⚡'}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </motion.div>
       )}
 

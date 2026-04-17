@@ -246,3 +246,39 @@ export interface StoryChainDefinition {
   eventIds: string[];     // 该链所有可能的事件 ID
   triggerEventId: string; // 触发链的第一个事件 ID
 }
+
+// ===== Rival Manager System =====
+export type RivalFameLevel = 'low' | 'medium' | 'high' | 'top';
+
+export interface RivalState {
+  artistId: ArtistArchetype;
+  name: string;
+  avatar: string;
+  fameLevel: RivalFameLevel;
+  aggression: number; // 0-100
+  actionsLog: RivalActionRecord[];
+}
+
+export interface RivalActionRecord {
+  day: number;
+  actionId: string;
+  title: string;
+  affectedYou: boolean;
+}
+
+export type RivalActionType = 'attack' | 'neutral' | 'cooperation' | 'self_destruct';
+
+export interface RivalAction {
+  id: string;
+  title: string;
+  emoji: string;
+  description: string;
+  type: RivalActionType;
+  playerEffects?: StatChange;
+  rivalFameChange: number; // -1, 0, +1
+  minFameLevel?: RivalFameLevel;
+  minDay?: number;
+  minAggression?: number;
+  generatesTrend: boolean;
+  trendTitle?: string; // {rivalName} / {playerName} 占位
+}

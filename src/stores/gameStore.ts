@@ -18,6 +18,7 @@ import type {
   WeiboTrend,
   FanComment,
   WeiboPostRecord,
+  RivalState,
 } from '@/types/game';
 import { artists } from '@/data/artists';
 import { startNewDay, resolveChoice, checkDayEnd } from '@/engine/gameEngine';
@@ -27,10 +28,12 @@ import { breakingEvents } from '@/data/events/breaking';
 import { findEventById } from '@/engine/eventSelector';
 import { createMessages } from '@/engine/messageFactory';
 import { scheduleActivities } from '@/data/schedules';
+import { GAME_CONFIG } from '@/data/constants';
 import { companyUpgradesData } from '@/data/upgrades';
 import { generateWeiboTrends, generateFanComments } from '@/engine/socialGenerator';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { resolveWeiboPost } from '@/engine/weiboPostEngine';
+import { initializeRival, selectRivalAction, resolveRivalAction } from '@/engine/rivalEngine';
 import { applyStatChanges as applyStatChangesEngine } from '@/engine/outcomeCalculator';
 import {
   checkAchievements,
@@ -95,6 +98,11 @@ interface GameStore {
   lastPostStatChanges: StatChange | null;
   showPostResult: boolean;
 
+  // Rival manager system
+  rival: RivalState | null;
+  rivalActionNarration: string;
+  showRivalAction: boolean;
+
   // Actions
   startGame: (artistId: ArtistArchetype) => void;
   setActiveTab: (tab: TabId) => void;
@@ -108,6 +116,7 @@ interface GameStore {
   purchaseUpgrade: (upgradeId: UpgradeId) => void;
   postWeibo: (templateId: string) => void;
   dismissPostResult: () => void;
+  dismissRivalAction: () => void;
   dismissAchievement: () => void;
   dismissDayBanner: () => void;
   resetGame: () => void;
@@ -228,6 +237,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   lastPostStatChanges: null,
   showPostResult: false,
 
+  rival: null,
+  rivalActionNarration: '',
+  showRivalAction: false,
+
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
@@ -244,6 +257,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const messages = createMessages(events, day);
     const trends = generateWeiboTrends(stats, artist, [], activeTags);
     const comments = generateFanComments(stats, artist);
+    const rival = initializeRival(artistId);
 
     set({
       gamePhase: 'playing',
@@ -274,6 +288,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastPostNarration: '',
       lastPostStatChanges: null,
       showPostResult: false,
+      rival,
+      rivalActionNarration: '',
+      showRivalAction: false,
     });
   },
 
@@ -427,12 +444,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const {
       messages, currentDay, stats, activeTags, peakRisk, artist,
       eventUsageMap, pendingFollowUpEventIds, decisionHistory,
-      artistSchedule, companyUpgrades,
+      artistSchedule, companyUpgrades, rival,
     } = get();
 
-    // Block if urgent messages unresolved
+    // Block if urgent messages unresolved (except on final day — force ending)
     const hasUnresolvedUrgent = messages.some(m => m.isUrgent && m.status !== 'resolved');
-    if (hasUnresolvedUrgent) return false;
+    if (hasUnresolvedUrgent && currentDay < GAME_CONFIG.MAX_DAYS) return false;
 
     let newStats = { ...stats };
 
@@ -453,6 +470,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 2. Apply daily passive effects (with upgrade bonuses)
     newStats = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team);
+
+    // 2.5 Rival daily action
+    let newRival = rival;
+    let rivalNarration = '';
+    let rivalTrend: import('@/types/game').WeiboTrend | null = null;
+    if (rival && artist) {
+      const rivalAction = selectRivalAction(rival, currentDay, newStats);
+      if (rivalAction) {
+        const result = resolveRivalAction(rivalAction, rival, artist, currentDay);
+        if (result.playerStatChanges) {
+          newStats = applyStatChangesEngine(newStats, result.playerStatChanges, artist.id);
+        }
+        newRival = result.newRivalState;
+        rivalNarration = result.narration;
+        rivalTrend = result.trend;
+      }
+    }
 
     // 3. Check for endings
     const newPeakRisk = Math.max(peakRisk, newStats.prRisk);
@@ -486,8 +520,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       .slice(0, MAX_CARRYOVER_MESSAGES);
 
     // 6. Regenerate social feed
-    const trends = generateWeiboTrends(newStats, artist!, decisionHistory, activeTags);
+    let trends = generateWeiboTrends(newStats, artist!, decisionHistory, activeTags);
     const comments = generateFanComments(newStats, artist!);
+
+    // Inject rival trend if any
+    if (rivalTrend) {
+      trends = [{ ...rivalTrend, rank: 1 }, ...trends.map(t => ({ ...t, rank: t.rank + 1 }))];
+    }
 
     set({
       currentDay: nextDay,
@@ -507,6 +546,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showDayBanner: true,
       dailyPostUsed: false,
       showPostResult: false,
+      rival: newRival,
+      rivalActionNarration: rivalNarration,
+      showRivalAction: !!rivalNarration,
     });
 
     return true;
@@ -625,7 +667,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastPostNarration: '',
       lastPostStatChanges: null,
       showPostResult: false,
+      rival: null,
+      rivalActionNarration: '',
+      showRivalAction: false,
     });
+  },
+
+  dismissRivalAction: () => {
+    set({ showRivalAction: false });
   },
 
   dismissAchievement: () => {
