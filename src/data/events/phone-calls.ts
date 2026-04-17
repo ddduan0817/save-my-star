@@ -190,11 +190,11 @@ export const phoneCallEvents: GameEvent[] = [
     emoji: '📣',
     isPhoneCall: true,
     phoneCallMeta: {
-      callerName: '粉丝会会长',
+      callerName: '粉丝后援会',
       callerAvatar: '📣',
-      ringDescription: '粉丝会会长来电',
+      ringDescription: '粉丝后援会来电',
       hangUpOutcome: {
-        narration: '你没接粉丝会的电话。会长很失望，两派矛盾进一步升级，最终后援会分裂成两个互相攻击的小团体。',
+        narration: '你没接粉丝后援会的电话。会长很失望，两派矛盾进一步升级，最终后援会分裂成两个互相攻击的小团体。',
         statChanges: { fanLoyalty: -10, prRisk: 5 },
       },
     },

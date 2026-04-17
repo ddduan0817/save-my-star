@@ -124,11 +124,8 @@ export default function PhoneCallOverlay() {
                 onClick={handleHangUp}
                 className="w-16 h-16 rounded-full bg-red-500 flex items-center justify-center shadow-lg shadow-red-500/30"
               >
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M3.51 8.93C5.4 4.82 8.44 3 12 3c3.56 0 6.6 1.82 8.49 5.93.36.78.36 1.67 0 2.45-.5 1.08-1.23 2.01-2.1 2.73a1.5 1.5 0 01-1.94.05l-1.7-1.36a1.5 1.5 0 01-.55-1.15V9.4a6.12 6.12 0 00-4.4 0v2.25c0 .44-.2.86-.55 1.15l-1.7 1.36a1.5 1.5 0 01-1.94-.05 8.85 8.85 0 01-2.1-2.73 2.13 2.13 0 010-2.45z"
-                    fill="white"
-                  />
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+                  <path d="M3.68 16.07l3.92-3.11a1 1 0 011.28.08l1.94 1.93a13 13 0 004.6-4.6L13.5 8.43a1 1 0 01-.08-1.28l3.11-3.92A1 1 0 0117.82 3C20.13 4.41 21.5 6.73 21.5 9.5 21.5 15.85 15.85 21.5 9.5 21.5c-2.77 0-5.09-1.37-6.5-3.68a1 1 0 01.68-1.75z" transform="rotate(135 12 12)" />
                 </svg>
               </motion.button>
               <span className="text-red-400 text-xs">挂断</span>
@@ -144,11 +141,8 @@ export default function PhoneCallOverlay() {
                 animate={{ scale: [1, 1.08, 1] }}
                 transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
               >
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 1 0 01.87-.27c.95.17 1.94.27 2.95.27a1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.01.1 2 .27 2.95a1 1 0 01-.27.87l-2.2 2.2z"
-                    fill="white"
-                  />
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="white">
+                  <path d="M3.68 16.07l3.92-3.11a1 1 0 011.28.08l1.94 1.93a13 13 0 004.6-4.6L13.5 8.43a1 1 0 01-.08-1.28l3.11-3.92A1 1 0 0117.82 3C20.13 4.41 21.5 6.73 21.5 9.5 21.5 15.85 15.85 21.5 9.5 21.5c-2.77 0-5.09-1.37-6.5-3.68a1 1 0 01.68-1.75z" />
                 </svg>
               </motion.button>
               <span className="text-green-400 text-xs">接听</span>
