@@ -110,6 +110,14 @@ export interface GameEvent {
   forArtist?: ArtistArchetype | ArtistArchetype[];
   // 后续事件ID（事件链）
   followUpEventId?: string;
+  // 紧急来电事件：以全屏来电界面弹出
+  isPhoneCall?: boolean;
+  phoneCallMeta?: {
+    callerName: string;          // 来电者名称
+    callerAvatar: string;        // 来电者头像 emoji
+    ringDescription: string;     // 来电提示文字
+    hangUpOutcome: EventOutcome; // 挂断后果
+  };
 }
 
 // ===== Endings =====

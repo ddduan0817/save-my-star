@@ -9,6 +9,7 @@ import EndDayButton from '@/components/game/EndDayButton';
 import AchievementToast from '@/components/game/AchievementToast';
 import RivalActionNotice from '@/components/game/RivalActionNotice';
 import CosmeticResultModal from '@/components/game/CosmeticResultModal';
+import PhoneCallOverlay from '@/components/game/PhoneCallOverlay';
 import MessagesTab from '@/components/game/tabs/MessagesTab';
 import ArtistTab from '@/components/game/tabs/ArtistTab';
 import WorkspaceTab from '@/components/game/tabs/WorkspaceTab';
@@ -63,6 +64,9 @@ export default function GamePage() {
 
       {/* Cosmetic result modal */}
       <CosmeticResultModal />
+
+      {/* Phone call overlay */}
+      <PhoneCallOverlay />
 
       {/* Tab content */}
       {activeTab === 'messages' && <MessagesTab />}

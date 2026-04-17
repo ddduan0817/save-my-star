@@ -185,3 +185,26 @@ export function sfxDisaster() {
   playNoise(0.3, 0.06);
   vibrate([50, 30, 80, 30, 120]);
 }
+
+/** 来电铃声 - 模拟手机铃声（重复两组上升音阶） */
+export function sfxPhoneRing() {
+  // 第一组铃声
+  playTone(880, 0.15, 'sine', 0.12);
+  playTone(1100, 0.15, 'sine', 0.12, 0.15);
+  playTone(880, 0.15, 'sine', 0.12, 0.35);
+  playTone(1100, 0.15, 'sine', 0.12, 0.50);
+  // 间隔后第二组
+  playTone(880, 0.15, 'sine', 0.10, 0.80);
+  playTone(1100, 0.15, 'sine', 0.10, 0.95);
+  playTone(880, 0.15, 'sine', 0.10, 1.15);
+  playTone(1100, 0.15, 'sine', 0.10, 1.30);
+  vibrate([100, 80, 100, 80, 100, 80, 100, 80, 200]);
+}
+
+/** 挂断电话 - 短促下降音 */
+export function sfxPhoneHangUp() {
+  playTone(600, 0.1, 'sine', 0.1);
+  playTone(400, 0.15, 'sine', 0.08, 0.08);
+  playTone(250, 0.2, 'triangle', 0.06, 0.18);
+  vibrate(30);
+}

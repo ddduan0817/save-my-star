@@ -113,6 +113,10 @@ interface GameStore {
   lastCosmeticStatChanges: StatChange | null;
   showCosmeticResult: boolean;
 
+  // Phone call system
+  pendingPhoneCall: GameEvent | null;
+  showPhoneCall: boolean;
+
   // Actions
   startGame: (artistId: ArtistArchetype) => void;
   setActiveTab: (tab: TabId) => void;
@@ -129,6 +133,8 @@ interface GameStore {
   dismissRivalAction: () => void;
   performProcedure: (procedureId: CosmeticProcedureId) => void;
   dismissCosmeticResult: () => void;
+  answerPhoneCall: () => void;
+  hangUpPhoneCall: () => void;
   dismissAchievement: () => void;
   dismissDayBanner: () => void;
   resetGame: () => void;
@@ -265,6 +271,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
   lastCosmeticStatChanges: null,
   showCosmeticResult: false,
 
+  pendingPhoneCall: null,
+  showPhoneCall: false,
+
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
@@ -326,6 +335,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastCosmeticNarration: '',
       lastCosmeticStatChanges: null,
       showCosmeticResult: false,
+      pendingPhoneCall: null,
+      showPhoneCall: false,
     });
   },
 
@@ -562,6 +573,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const newMessages = createMessages(events, nextDay);
 
+    // Separate phone call events (max 1 per day, from day 3+)
+    let phoneCall: GameEvent | null = null;
+    let filteredMessages = newMessages;
+    if (nextDay >= 3) {
+      const phoneCallMsg = newMessages.find(m => m.event.isPhoneCall);
+      if (phoneCallMsg) {
+        phoneCall = phoneCallMsg.event;
+        filteredMessages = newMessages.filter(m => m.id !== phoneCallMsg.id);
+      }
+    }
+
     // Carry over unresolved non-urgent messages (max 2)
     const carryOver = messages
       .filter(m => m.status !== 'resolved' && !m.isUrgent)
@@ -579,7 +601,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({
       currentDay: nextDay,
       stats: newStats,
-      messages: [...carryOver, ...newMessages],
+      messages: [...carryOver, ...filteredMessages],
       activeMessageId: null,
       activeTab: 'messages',
       gamePhase: 'playing',
@@ -591,7 +613,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       artistSchedule: newSchedule,
       weiboTrends: trends,
       fanComments: comments,
-      showDayBanner: true,
+      showDayBanner: !phoneCall, // don't show day banner if phone call is pending (will show after call ends)
       dailyPostUsed: false,
       showPostResult: false,
       rival: newRival,
@@ -599,6 +621,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showRivalAction: !!rivalNarration,
       cosmeticState: newCosmeticState,
       activeTags: newActiveTags,
+      pendingPhoneCall: phoneCall,
+      showPhoneCall: !!phoneCall,
     });
 
     return true;
@@ -738,6 +762,59 @@ export const useGameStore = create<GameStore>((set, get) => ({
     set({ showCosmeticResult: false });
   },
 
+  answerPhoneCall: () => {
+    const { pendingPhoneCall, messages, currentDay } = get();
+    if (!pendingPhoneCall) return;
+
+    // Inject the phone call event as a message and auto-open it
+    const msg = createMessages([pendingPhoneCall], currentDay)[0];
+    const updatedMessages = [{ ...msg, status: 'read' as const }, ...messages];
+
+    set({
+      showPhoneCall: false,
+      pendingPhoneCall: null,
+      messages: updatedMessages,
+      activeMessageId: msg.id,
+      gamePhase: 'processing_message',
+      currentEvents: [pendingPhoneCall],
+      currentEventIndex: 0,
+      showDayBanner: true,
+    });
+  },
+
+  hangUpPhoneCall: () => {
+    const { pendingPhoneCall, stats, artist, activeTags, peakRisk, currentDay, decisionHistory } = get();
+    if (!pendingPhoneCall?.phoneCallMeta) return;
+
+    const hangUpOutcome = pendingPhoneCall.phoneCallMeta.hangUpOutcome;
+    const newStats = applyStatChanges(stats, hangUpOutcome.statChanges, artist?.id);
+    const newTags = hangUpOutcome.unlockTag ? [...activeTags, hangUpOutcome.unlockTag] : [...activeTags];
+
+    const record: DecisionRecord = {
+      day: currentDay,
+      eventId: pendingPhoneCall.id,
+      eventTitle: pendingPhoneCall.title,
+      choiceId: 'hang_up',
+      choiceText: '挂断电话',
+      statChanges: hangUpOutcome.statChanges,
+    };
+
+    set({
+      showPhoneCall: false,
+      pendingPhoneCall: null,
+      stats: newStats,
+      activeTags: newTags,
+      lastOutcomeNarration: hangUpOutcome.narration,
+      lastStatChanges: hangUpOutcome.statChanges,
+      gamePhase: 'showing_outcome',
+      decisionHistory: [...decisionHistory, record],
+      peakRisk: Math.max(peakRisk, newStats.prRisk),
+      showDayBanner: true,
+    });
+
+    runAchievementCheck(get, set);
+  },
+
   dismissDayBanner: () => {
     set({ showDayBanner: false });
   },
@@ -786,6 +863,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastCosmeticNarration: '',
       lastCosmeticStatChanges: null,
       showCosmeticResult: false,
+      pendingPhoneCall: null,
+      showPhoneCall: false,
     });
   },
 

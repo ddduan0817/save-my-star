@@ -67,7 +67,7 @@ export default function WeiboCompose() {
           "w-full rounded-2xl px-4 py-3 text-left ring-1 transition-all duration-200",
           dailyPostUsed
             ? "bg-gray-50 ring-gray-100/60 opacity-60"
-            : "bg-gradient-to-r from-blue-50 to-sky-50 ring-blue-200/40 shadow-sm hover:shadow-md"
+            : "bg-white ring-gray-200/50 shadow-sm hover:shadow-md hover:ring-orange-200/50"
         )}
       >
         <div className="flex items-center justify-between">
@@ -75,13 +75,13 @@ export default function WeiboCompose() {
             <span className="text-lg">{dailyPostUsed ? '✅' : <IconWeiboCompose size={22} />}</span>
             <span className={cn(
               "text-xs font-medium",
-              dailyPostUsed ? "text-gray-400" : "text-blue-600"
+              dailyPostUsed ? "text-gray-400" : "text-gray-700"
             )}>
               {dailyPostUsed ? '今日已发微博' : '替艺人发微博'}
             </span>
           </div>
           {!dailyPostUsed && (
-            <span className="text-[10px] text-blue-400">每日1次 ›</span>
+            <span className="text-[10px] text-gray-400">每日1次 ›</span>
           )}
         </div>
       </motion.button>
