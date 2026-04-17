@@ -7,7 +7,6 @@ import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { toPng } from 'html-to-image';
 import { sfxEnding, sfxDisaster, sfxClick } from '@/lib/sounds';
-import { artistAvatarMap } from '@/components/icons';
 
 export default function EndingPage() {
   const router = useRouter();
@@ -178,7 +177,7 @@ export default function EndingPage() {
         <div className="bg-white p-5">
           {/* Artist info */}
           <div className="flex items-center gap-2.5 mb-4">
-            {(() => { const Avatar = artist ? artistAvatarMap[artist.id] : null; return Avatar ? <Avatar size={24} /> : <span className="text-xl">{artist?.avatar}</span>; })()}
+            <span className="text-xl">{artist?.avatar}</span>
             <span className="text-sm font-semibold text-gray-800">{artist.name}</span>
             <span className="text-xs text-gray-400">· {artist.title}</span>
             <span className="text-[10px] text-gray-300 ml-auto bg-gray-50 px-2 py-0.5 rounded-full">坚持了 {currentDay} 天</span>

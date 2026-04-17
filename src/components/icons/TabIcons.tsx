@@ -113,34 +113,34 @@ export function IconWorkspace({ active, size = 26, ...props }: TabIconProps) {
 }
 
 /**
- * 我的 Tab — 居中头像 + 小皇冠，active 时橙色渐变
+ * 我的 Tab — 勋章/奖牌，active 时橙色渐变
  */
-export function IconMe({ active, size = 30, ...props }: TabIconProps) {
+export function IconMe({ active, size = 26, ...props }: TabIconProps) {
   const id = 'ic-me';
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <defs>
-        <linearGradient id={`${id}-g`} x1="8" y1="6" x2="40" y2="46" gradientUnits="userSpaceOnUse">
+        <linearGradient id={`${id}-g`} x1="8" y1="4" x2="40" y2="44" gradientUnits="userSpaceOnUse">
           <stop stopColor={active ? '#FB923C' : '#B0B0B0'} />
           <stop offset="1" stopColor={active ? '#EA580C' : '#9CA3AF'} />
         </linearGradient>
-        <linearGradient id={`${id}-crown`} x1="16" y1="4" x2="32" y2="14" gradientUnits="userSpaceOnUse">
+        <linearGradient id={`${id}-ribbon`} x1="12" y1="4" x2="36" y2="20" gradientUnits="userSpaceOnUse">
           <stop stopColor={active ? '#FDE68A' : '#D1D5DB'} />
           <stop offset="1" stopColor={active ? '#F59E0B' : '#9CA3AF'} />
         </linearGradient>
       </defs>
-      {/* 小皇冠 */}
+      {/* 绶带 */}
+      <path d="M14 4H22L18 22H10L14 4Z" fill={`url(#${id}-ribbon)`} />
+      <path d="M34 4H26L30 22H38L34 4Z" fill={`url(#${id}-ribbon)`} />
+      {/* 勋章圆 */}
+      <circle cx="24" cy="30" r="14" fill={`url(#${id}-g)`} />
+      {/* 内圈 */}
+      <circle cx="24" cy="30" r="9" fill="none" stroke="white" strokeWidth="1.5" strokeOpacity="0.3" />
+      {/* 星星 */}
       <path
-        d="M18 10L21 4L24 9L27 4L30 10H18Z"
-        fill={`url(#${id}-crown)`}
-      />
-      <rect x="18" y="8.5" width="12" height="2" rx="1" fill={`url(#${id}-crown)`} />
-      {/* 头 */}
-      <circle cx="24" cy="25" r="9" fill={`url(#${id}-g)`} />
-      {/* 身体 */}
-      <path
-        d="M8 48C8 40.27 14.27 34 22 34H26C33.73 34 40 40.27 40 48H8Z"
-        fill={`url(#${id}-g)`}
+        d="M24 22L26.2 27.5L32 28.2L27.8 32L28.9 38L24 35.2L19.1 38L20.2 32L16 28.2L21.8 27.5L24 22Z"
+        fill="white"
+        fillOpacity="0.5"
       />
     </svg>
   );

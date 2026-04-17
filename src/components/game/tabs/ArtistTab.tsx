@@ -9,7 +9,7 @@ import StoryTracker from '@/components/game/StoryTracker';
 import { getAppearanceTier } from '@/engine/cosmeticEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import type { CosmeticCategory } from '@/types/game';
-import { scheduleIconMap, cosmeticIconMap, artistAvatarMap } from '@/components/icons';
+import { scheduleIconMap, cosmeticIconMap } from '@/components/icons';
 
 const moodEmojis = [
   { min: 0, emoji: '😰', label: '焦虑' },
@@ -68,8 +68,8 @@ export default function ArtistTab() {
         className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
       >
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center overflow-hidden shadow-sm">
-            {(() => { const Avatar = artistAvatarMap[artist.id]; return Avatar ? <Avatar size={56} /> : artist.avatar; })()}
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center text-3xl overflow-hidden shadow-sm">
+            {artist.avatar}
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
