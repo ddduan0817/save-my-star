@@ -131,15 +131,15 @@ export function IconMe({ active, size = 30, ...props }: TabIconProps) {
       </defs>
       {/* 小皇冠 */}
       <path
-        d="M17 14L20 8L24 12L28 8L31 14H17Z"
+        d="M18 10L21 4L24 9L27 4L30 10H18Z"
         fill={`url(#${id}-crown)`}
       />
-      <rect x="17" y="12.5" width="14" height="2" rx="1" fill={`url(#${id}-crown)`} />
+      <rect x="18" y="8.5" width="12" height="2" rx="1" fill={`url(#${id}-crown)`} />
       {/* 头 */}
-      <circle cx="24" cy="24" r="9" fill={`url(#${id}-g)`} />
+      <circle cx="24" cy="25" r="9" fill={`url(#${id}-g)`} />
       {/* 身体 */}
       <path
-        d="M8 46C8 38.27 14.27 32 22 32H26C33.73 32 40 38.27 40 46H8Z"
+        d="M8 48C8 40.27 14.27 34 22 34H26C33.73 34 40 40.27 40 48H8Z"
         fill={`url(#${id}-g)`}
       />
     </svg>
