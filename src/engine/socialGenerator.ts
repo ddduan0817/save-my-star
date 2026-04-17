@@ -233,7 +233,11 @@ export function generateWeiboTrends(
     });
   }
 
-  // Re-rank
+  // 按热度数值降序排列，然后重新编号
+  trends.sort((a, b) => {
+    const parseHeat = (h: string) => parseFloat(h.replace('万', ''));
+    return parseHeat(b.heat) - parseHeat(a.heat);
+  });
   return trends.map((t, i) => ({ ...t, rank: i + 1 }));
 }
 

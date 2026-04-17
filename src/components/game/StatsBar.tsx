@@ -36,7 +36,6 @@ export default function StatsBar() {
           Day {currentDay}
         </span>
         <div className="flex items-center gap-1.5 relative">
-          <span className="text-[10px] text-gray-400 mr-0.5">💰</span>
           <span className={cn(
             "text-sm font-bold tabular-nums",
             stats.money < 0 ? "text-red-500" : "text-amber-600"

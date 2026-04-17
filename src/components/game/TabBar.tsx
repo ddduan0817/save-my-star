@@ -4,13 +4,21 @@ import { useGameStore } from '@/stores/gameStore';
 import type { TabId } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { sfxClick } from '@/lib/sounds';
+import { IconMessages, IconArtist, IconWorkspace, IconMe } from '@/components/icons/TabIcons';
 
-const tabs: { id: TabId; emoji: string; label: string }[] = [
-  { id: 'messages', emoji: '💬', label: '消息' },
-  { id: 'artist', emoji: '👤', label: '艺人' },
-  { id: 'workspace', emoji: '📋', label: '工作台' },
-  { id: 'me', emoji: '👔', label: '我的' },
+const tabs: { id: TabId; label: string }[] = [
+  { id: 'messages', label: '消息' },
+  { id: 'artist', label: '艺人' },
+  { id: 'workspace', label: '工作台' },
+  { id: 'me', label: '我的' },
 ];
+
+const iconMap: Record<TabId, typeof IconMessages> = {
+  messages: IconMessages,
+  artist: IconArtist,
+  workspace: IconWorkspace,
+  me: IconMe,
+};
 
 export default function TabBar() {
   const activeTab = useGameStore(s => s.activeTab);
@@ -27,6 +35,7 @@ export default function TabBar() {
         <div className="flex">
           {tabs.map(tab => {
             const isActive = activeTab === tab.id;
+            const Icon = iconMap[tab.id];
             return (
               <button
                 key={tab.id}
@@ -42,8 +51,8 @@ export default function TabBar() {
                   isLocked && !isActive && "opacity-40",
                 )}
               >
-                <span className="text-lg relative">
-                  {tab.emoji}
+                <span className="relative">
+                  <Icon active={isActive} size={26} />
                   {tab.id === 'messages' && unreadCount > 0 && (
                     <span className="absolute -top-1 -right-2 min-w-[16px] h-4 flex items-center justify-center bg-red-500 text-white text-[10px] font-bold rounded-full px-1">
                       {unreadCount}
