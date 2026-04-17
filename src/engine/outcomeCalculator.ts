@@ -17,21 +17,13 @@ export function applyStatChanges(
   // Artist-specific modifiers
   if (artistId === 'idol') {
     // Fan events amplified both ways
-    if (fl !== 0) {
-      const amplified = Math.round(fl * 1.5);
-      fanLoyalty = clampStat(fanLoyalty + amplified);
-    } else {
-      fanLoyalty = clampStat(fanLoyalty + fl);
-    }
+    fanLoyalty = clampStat(fanLoyalty + (fl !== 0 ? Math.round(fl * 1.5) : 0));
     if (pr > 0) pr = Math.round(pr * 1.5);
+    commercialValue = clampStat(commercialValue + cv);
   } else if (artistId === 'actor') {
     // Risk increase halved, commercial gain halved
     if (pr > 0) pr = Math.round(pr * 0.5);
-    if (cv > 0) {
-      commercialValue = clampStat(commercialValue + Math.round(cv * 0.5));
-    } else {
-      commercialValue = clampStat(commercialValue + cv);
-    }
+    commercialValue = clampStat(commercialValue + (cv > 0 ? Math.round(cv * 0.5) : cv));
     fanLoyalty = clampStat(fanLoyalty + fl);
   } else if (artistId === 'influencer') {
     // Money gains +50%
@@ -39,16 +31,9 @@ export function applyStatChanges(
     fanLoyalty = clampStat(fanLoyalty + fl);
     commercialValue = clampStat(commercialValue + cv);
   } else {
+    // Singer / default
     fanLoyalty = clampStat(fanLoyalty + fl);
     commercialValue = clampStat(commercialValue + cv);
-  }
-
-  // Apply remaining changes if not already applied by artist modifiers
-  if (artistId !== 'actor') {
-    commercialValue = clampStat(commercialValue + cv);
-  }
-  if (artistId !== 'idol') {
-    fanLoyalty = clampStat(fanLoyalty + fl);
   }
 
   prRisk = clampStat(prRisk + pr);

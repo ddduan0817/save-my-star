@@ -16,6 +16,7 @@ import { startNewDay, resolveChoice, checkDayEnd } from '@/engine/gameEngine';
 import { applyDailyPassiveEffects, applyStatChanges } from '@/engine/outcomeCalculator';
 import { loadUnlockedEndings, saveUnlockedEnding } from '@/lib/storage';
 import { breakingEvents } from '@/data/events/breaking';
+import { findEventById } from '@/engine/eventSelector';
 
 interface GameStore {
   gamePhase: GamePhase;
@@ -27,6 +28,7 @@ interface GameStore {
   lastOutcomeNarration: string;
   lastStatChanges: StatChange | null;
   pendingTwist: { narration: string; statChanges: StatChange; unlockTag?: string } | null;
+  pendingFollowUpEventId: string | null;
   decisionHistory: DecisionRecord[];
   activeTags: string[];
   eventUsageMap: Record<string, number>;
@@ -77,6 +79,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   lastOutcomeNarration: '',
   lastStatChanges: null,
   pendingTwist: null,
+  pendingFollowUpEventId: null,
   decisionHistory: [],
   activeTags: [],
   eventUsageMap: {},
@@ -105,11 +108,19 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   advanceDay: () => {
-    const { currentDay, stats, eventUsageMap, activeTags } = get();
+    const { currentDay, stats, eventUsageMap, activeTags, artist, pendingFollowUpEventId } = get();
 
     const newStats = currentDay > 1 ? applyDailyPassiveEffects(stats) : stats;
 
-    let { events } = startNewDay(currentDay, newStats, eventUsageMap, activeTags);
+    let { events } = startNewDay(currentDay, newStats, eventUsageMap, activeTags, artist?.id);
+
+    // 注入后续事件（事件链）
+    if (pendingFollowUpEventId) {
+      const followUpEvent = findEventById(pendingFollowUpEventId);
+      if (followUpEvent) {
+        events = [followUpEvent, ...events];
+      }
+    }
 
     // 可能注入突发事件
     events = maybeInjectBreaking(events, currentDay, eventUsageMap);
@@ -136,6 +147,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       stats: newStats,
       gamePhase: 'playing',
       eventUsageMap: newUsageMap,
+      pendingFollowUpEventId: null,
     });
   },
 
@@ -181,6 +193,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastOutcomeNarration: result.narration,
       lastStatChanges: result.statChanges,
       pendingTwist: result.twist ?? null,
+      pendingFollowUpEventId: result.followUpEventId ?? null,
       gamePhase: 'showing_outcome',
       activeTags: newTags,
       decisionHistory: [...get().decisionHistory, record],
@@ -278,6 +291,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastOutcomeNarration: '',
       lastStatChanges: null,
       pendingTwist: null,
+      pendingFollowUpEventId: null,
       decisionHistory: [],
       activeTags: [],
       eventUsageMap: {},

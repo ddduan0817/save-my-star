@@ -3,10 +3,11 @@ import type { Artist } from '@/types/game';
 export const artists: Artist[] = [
   {
     id: 'idol',
-    name: '林星辰',
+    name: '甄帅',
     title: '流量偶像',
     description: '选秀出道，颜值即正义，粉丝基数庞大但极度敏感',
     avatar: '🌟',
+    gender: 'male',
     initialStats: {
       commercialValue: 60,
       fanLoyalty: 75,
@@ -14,14 +15,15 @@ export const artists: Artist[] = [
       money: 200000,
     },
     specialTrait: '万人迷体质：粉丝事件收益×1.5，但塌房代价也×1.5',
-    backstory: '选秀节目C位出道，凭借一张天选之脸迅速走红。粉丝们为他疯狂打榜，但也意味着任何风吹草动都会被放大一百倍。作为经纪人，你需要在流量和风险之间找到平衡。',
+    backstory: '选秀节目C位出道，全网投票第一名。名字就是"真帅"的谐音，粉丝叫他"帅帅"，黑粉叫他"真帅？假帅吧"。流量越大风越大，你能让他在顶流位置上坐稳吗？',
   },
   {
     id: 'actor',
-    name: '陈墨白',
+    name: '郝美丽',
     title: '实力派演员',
     description: '科班出身，演技在线，路人缘好但商业号召力一般',
     avatar: '🎬',
+    gender: 'female',
     initialStats: {
       commercialValue: 50,
       fanLoyalty: 50,
@@ -29,14 +31,15 @@ export const artists: Artist[] = [
       money: 150000,
     },
     specialTrait: '路人缘好：舆论风险增长减半，但商业收益也减半',
-    backstory: '北电毕业，靠一部文艺片在圈内崭露头角。观众认可他的演技，但品牌方总觉得他"不够有话题"。你的任务是让实力被更多人看到，同时保住他"零绯闻"的金字招牌。',
+    backstory: '中戏科班出身，凭一部文艺片拿下金鸡新人奖。名字谐音"好美丽"，粉丝叫她"丽姐"，但她最烦别人只关注她的脸。品牌方觉得她不够有话题，你能帮她破圈吗？',
   },
   {
     id: 'singer',
-    name: '许安歌',
+    name: '高八度',
     title: '唱跳歌手',
     description: '音乐才华横溢，舞台表现力强，作品说话',
     avatar: '🎤',
+    gender: 'male',
     initialStats: {
       commercialValue: 70,
       fanLoyalty: 55,
@@ -44,14 +47,15 @@ export const artists: Artist[] = [
       money: 180000,
     },
     specialTrait: '作品说话：可以抵挡一次致命危机（舆论风险不会直接触发封杀）',
-    backstory: '从地下音乐人一路唱到万人体育场，每首歌都是自己写的。品牌方爱他的调性，但他骨子里是个"不想营业"的艺术家。你需要在商业化和艺术追求之间走钢丝。',
+    backstory: '从livehouse唱到万人体育场，艺名就叫"高八度"，因为出道曲的高音直接把观众唱懵了。粉丝叫他"八哥"，他觉得自己是艺术家不是偶像。你需要在商业化和他的倔脾气之间走钢丝。',
   },
   {
     id: 'influencer',
-    name: '赵小鱼',
+    name: '冷冰凝',
     title: '网红转型',
     description: '从短视频起家，会搞钱但根基不稳，时刻面临"不够格"的质疑',
     avatar: '📱',
+    gender: 'female',
     initialStats: {
       commercialValue: 40,
       fanLoyalty: 35,
@@ -59,6 +63,6 @@ export const artists: Artist[] = [
       money: 350000,
     },
     specialTrait: '会搞钱：所有资金收益+50%，但起步舆论风险更高',
-    backstory: '抖音千万粉丝，靠一条爆款视频出圈。现在想转型做"正经艺人"，但传统娱乐圈对她充满偏见。钱是不缺的，缺的是认可。你能帮她杀出一条血路吗？',
+    backstory: '抖音两千万粉丝，靠一条"在出租屋哭着吃泡面"的视频爆火出圈。起这个名字是因为"冷冰凝听着就很有气场"。粉丝叫她"冰冰"，黑粉叫她"冷笑话"。钱不是问题，问题是没人看得起她。',
   },
 ];

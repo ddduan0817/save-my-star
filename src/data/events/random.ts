@@ -15,7 +15,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '自己也用这个表情包',
         outcome: {
           narration: '艺人亲自转发了最火的表情包，配文"你们够了哈哈哈"。这条微博转发破百万，"本人下场玩梗第一人"成了新标签。',
-          statChanges: { fanLoyalty: 10, commercialValue: 5, prRisk: -3 },
+          statChanges: { fanLoyalty: 6, commercialValue: 3, prRisk: -3 },
         },
       },
       {
@@ -24,7 +24,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '发声明维护肖像权',
         outcome: {
           narration: '律师函一发，网友们更起劲了——"表情包都要管，太把自己当回事了吧。"适得其反了属于是。',
-          statChanges: { prRisk: 8, fanLoyalty: -5 },
+          statChanges: { prRisk: 5, fanLoyalty: -3 },
         },
       },
       {
@@ -33,11 +33,11 @@ export const randomEvents: GameEvent[] = [
         subtext: '和平台合作官方表情包',
         outcome: {
           narration: '和微信合作出了官方付费表情包，销量出奇地好！粉丝觉得偶像太会了，路人觉得这个人很有趣。',
-          statChanges: { money: 60000, fanLoyalty: 5, commercialValue: 8 },
+          statChanges: { money: 40000, fanLoyalty: 3, commercialValue: 5 },
           twist: {
             chance: 0.3,
             narration: '表情包销量冲到全平台第一！微信主动续约并追加了一套动态表情的合作。又一笔意外收入！',
-            statChanges: { money: 80000, commercialValue: 5 },
+            statChanges: { money: 60000, commercialValue: 3 },
           },
         },
       },
@@ -57,7 +57,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '让视频自然传播',
         outcome: {
           narration: '没有任何炒作，视频靠自来水传播到了千万级播放。"这就是为什么喜欢他/她"成了热评第一。自然的才是最有力的。',
-          statChanges: { fanLoyalty: 12, prRisk: -8, commercialValue: 5 },
+          statChanges: { fanLoyalty: 7, prRisk: -5, commercialValue: 3 },
         },
       },
       {
@@ -66,7 +66,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '安排媒体跟进报道',
         outcome: {
           narration: '媒体跟进报道了，但有人扒出旁边有工作人员在拍——"所以这是安排好的？"质疑声开始出来了。',
-          statChanges: { commercialValue: 5, prRisk: 8 },
+          statChanges: { commercialValue: 3, prRisk: 5 },
         },
       },
     ],
@@ -85,7 +85,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '安排替身车引开狗仔 (-2万)',
         outcome: {
           narration: '替身车成功引开了狗仔。不过这种操作不能天天用，下次得想个更好的办法。',
-          statChanges: { money: -20000, prRisk: -3 },
+          statChanges: { money: -14000, prRisk: -3 },
         },
       },
       {
@@ -94,7 +94,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '派保安去交涉',
         outcome: {
           narration: '保安和狗仔发生了口角，被对方偷偷录了下来。"XX团队嚣张保安推搡记者"的标题已经在路上了。',
-          statChanges: { prRisk: 12 },
+          statChanges: { prRisk: 7 },
         },
       },
       {
@@ -103,7 +103,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '主动给一张买菜照',
         outcome: {
           narration: '你安排艺人穿着朴素去超市买菜，让狗仔拍了个够。"XX接地气买菜"的热搜虽然无聊，但至少挤走了他们准备曝的料。',
-          statChanges: { prRisk: -5, fanLoyalty: 3 },
+          statChanges: { prRisk: -3, fanLoyalty: 3 },
         },
       },
     ],
@@ -122,12 +122,12 @@ export const randomEvents: GameEvent[] = [
         subtext: '蹭一波热度',
         outcome: {
           narration: '两人合拍了一条"当我遇见另一个我"的短视频，笑到岔气。视频播放量破亿，两人都涨了一大波粉。',
-          statChanges: { fanLoyalty: 8, commercialValue: 10, prRisk: -3 },
+          statChanges: { fanLoyalty: 5, commercialValue: 6, prRisk: -3 },
           conditionalOutcomes: [
             {
               condition: { minCommercialValue: 60 },
               narration: '合拍视频爆了！不仅播放破亿，品牌方看到传播力后追加了一个"双胞胎"概念的广告创意。这波操作直接转化成了商业合作。',
-              statChanges: { fanLoyalty: 10, commercialValue: 15, money: 80000, prRisk: -5 },
+              statChanges: { fanLoyalty: 6, commercialValue: 9, money: 60000, prRisk: -3 },
             },
           ],
         },
@@ -157,11 +157,11 @@ export const randomEvents: GameEvent[] = [
         subtext: '给粉丝最大的认可',
         outcome: {
           narration: '艺人亲自转发并写了一段长评论感谢这位粉丝。"双向奔赴"的故事感动了全网，连路人都开始追这部纪录片了。',
-          statChanges: { fanLoyalty: 15, commercialValue: 5 },
+          statChanges: { fanLoyalty: 9, commercialValue: 3 },
           twist: {
             chance: 0.25,
             narration: '纪录片被一家视频平台看中，买下了独家版权并邀请原作者制作官方纪录片系列！粉丝成了签约导演，这个故事本身又上了一轮热搜。',
-            statChanges: { fanLoyalty: 8, commercialValue: 8, money: 30000 },
+            statChanges: { fanLoyalty: 5, commercialValue: 5, money: 20000 },
           },
         },
       },
@@ -171,7 +171,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '涉及未授权素材',
         outcome: {
           narration: '版权投诉导致视频下架，粉丝心寒了。"用爱发电换来一纸投诉"成了出圈的伤心梗。大量粉丝脱粉。',
-          statChanges: { fanLoyalty: -20, prRisk: 10 },
+          statChanges: { fanLoyalty: -12, prRisk: 6 },
         },
       },
       {
@@ -180,7 +180,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '把人才收编',
         outcome: {
           narration: '粉丝激动到哭！加入团队后制作的第一条官方视频质量炸裂。"别人家的运营"成了同行羡慕的模板。',
-          statChanges: { fanLoyalty: 12, commercialValue: 8, money: -10000 },
+          statChanges: { fanLoyalty: 7, commercialValue: 5, money: -10000 },
         },
       },
     ],
@@ -199,7 +199,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '自己出一版更搞笑的',
         outcome: {
           narration: '官方出了一版"AI艺人的一天"系列视频，从买菜到送外卖全套，笑翻全网。科技博主都来分析了。',
-          statChanges: { fanLoyalty: 8, commercialValue: 10, prRisk: -3 },
+          statChanges: { fanLoyalty: 5, commercialValue: 6, prRisk: -3 },
         },
       },
       {
@@ -208,7 +208,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '发律师函',
         outcome: {
           narration: '律师函发了，但AI换脸的法律边界还很模糊。最后不了了之，白花了律师费。',
-          statChanges: { money: -30000, prRisk: 3 },
+          statChanges: { money: -20000, prRisk: 3 },
         },
       },
     ],
@@ -227,7 +227,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '用独特的方式完成挑战',
         outcome: {
           narration: '你的艺人用了一个超有创意的方式完成了挑战，视频在全平台霸榜。"这才是公益正确打开方式"成了热评。',
-          statChanges: { fanLoyalty: 10, commercialValue: 8, prRisk: -5 },
+          statChanges: { fanLoyalty: 6, commercialValue: 5, prRisk: -3 },
         },
       },
       {
@@ -255,7 +255,7 @@ export const randomEvents: GameEvent[] = [
         subtext: '和猫主人合作',
         outcome: {
           narration: '艺人抱着"本喵"的合照冲上热搜第一。"人不如猫"的自嘲让全网路转粉。这只猫也成了艺人官方编外成员。',
-          statChanges: { fanLoyalty: 12, commercialValue: 5, prRisk: -5 },
+          statChanges: { fanLoyalty: 7, commercialValue: 3, prRisk: -3 },
         },
       },
       {

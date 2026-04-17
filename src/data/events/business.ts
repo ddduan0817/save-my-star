@@ -16,11 +16,11 @@ export const businessEvents: GameEvent[] = [
         subtext: '按品牌方报价签约',
         outcome: {
           narration: '成功签下顶奢代言！品牌方很满意，时尚圈的大门正式打开。粉丝们也与有荣焉——"我家哥哥/姐姐也太厉害了吧！"',
-          statChanges: { commercialValue: 15, money: 200000, fanLoyalty: 5 },
+          statChanges: { commercialValue: 9, money: 140000, fanLoyalty: 3 },
           twist: {
             chance: 0.2,
             narration: '品牌方对首批广告大片的效果非常满意！紧急追加了全球代言合约，代言费翻倍。这下是真的起飞了！',
-            statChanges: { commercialValue: 10, money: 200000 },
+            statChanges: { commercialValue: 6, money: 140000 },
           },
         },
       },
@@ -30,7 +30,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '要求更高代言费',
         outcome: {
           narration: '你狮子大开口，品牌方犹豫了一下...最终还是答应了！毕竟你的艺人确实值这个价。但对方心里多少有点不爽。',
-          statChanges: { commercialValue: 10, money: 350000 },
+          statChanges: { commercialValue: 6, money: 250000 },
         },
       },
       {
@@ -39,7 +39,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '"不符合我们的调性"',
         outcome: {
           narration: '拒绝顶奢代言的消息传出去，业内人都惊了。但也有人说"有格局"。粉丝觉得偶像很有原则。',
-          statChanges: { fanLoyalty: 10, commercialValue: -5 },
+          statChanges: { fanLoyalty: 6, commercialValue: -3 },
         },
       },
     ],
@@ -58,12 +58,12 @@ export const businessEvents: GameEvent[] = [
         subtext: '增加曝光和国民度',
         outcome: {
           narration: '综艺效果拉满！你的艺人意外展现了搞笑天赋，"人间清醒"的梗在社交媒体上疯传。路人粉暴涨！',
-          statChanges: { fanLoyalty: 12, commercialValue: 8, money: 80000 },
+          statChanges: { fanLoyalty: 7, commercialValue: 5, money: 60000 },
           conditionalOutcomes: [
             {
               condition: { minPrRisk: 50 },
               narration: '综艺录制现场，你的艺人状态不太好，几次接梗都没接住。网友说"综艺感为零"，加上最近的争议，弹幕全是嘲讽。',
-              statChanges: { fanLoyalty: -5, commercialValue: -3, money: 80000, prRisk: 5 },
+              statChanges: { fanLoyalty: -3, commercialValue: -2, money: 60000, prRisk: 3 },
             },
           ],
         },
@@ -74,7 +74,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '必须最高排位',
         outcome: {
           narration: '节目组答应了，但其他嘉宾的粉丝不乐意了。录制现场气氛微妙，剪辑出来效果一般。',
-          statChanges: { money: 120000, fanLoyalty: -5, prRisk: 5 },
+          statChanges: { money: 80000, fanLoyalty: -3, prRisk: 3 },
         },
       },
       {
@@ -83,7 +83,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '保持神秘感',
         outcome: {
           narration: '拒绝了国综邀请。有人说"端什么架子"，但核心粉丝觉得偶像很专注本职工作。',
-          statChanges: { fanLoyalty: 3, commercialValue: -3 },
+          statChanges: { fanLoyalty: 3, commercialValue: -2 },
         },
       },
     ],
@@ -103,7 +103,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '先进组学习',
         outcome: {
           narration: '虽然是配角，但大导演调教下的演技进步明显。杀青后，导演在采访中夸了你的艺人"是块料"。',
-          statChanges: { commercialValue: 10, fanLoyalty: 5, money: 50000 },
+          statChanges: { commercialValue: 6, fanLoyalty: 3, money: 40000 },
           unlockTag: 'transform',
         },
       },
@@ -113,7 +113,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '不是主角不去',
         outcome: {
           narration: '导演摇了摇头："演技还不够。"你失去了这次机会。粉丝不知道内情，但业内人都在说"不知天高地厚"。',
-          statChanges: { commercialValue: -5 },
+          statChanges: { commercialValue: -3 },
         },
       },
       {
@@ -122,7 +122,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '打包合作',
         outcome: {
           narration: '一石二鸟的方案！配角演得不错，主题曲还上了音乐榜热搜。这波操作被业内人称为"教科书级别的资源利用"。',
-          statChanges: { commercialValue: 12, fanLoyalty: 8, money: 80000 },
+          statChanges: { commercialValue: 7, fanLoyalty: 5, money: 60000 },
           unlockTag: 'transform',
         },
       },
@@ -142,11 +142,11 @@ export const businessEvents: GameEvent[] = [
         subtext: '拿高额坑位费',
         outcome: {
           narration: '直播间人气爆棚，但弹幕里"偶像怎么卖货了"的吐槽不少。不过看看到账的金额...真香。',
-          statChanges: { money: 150000, commercialValue: -5, fanLoyalty: -3 },
+          statChanges: { money: 110000, commercialValue: -3, fanLoyalty: -3 },
           twist: {
             chance: 0.3,
             narration: '直播卖出去的产品出质量问题了！买家集体在你艺人微博下面维权。"恰烂钱"的标签贴上来了。',
-            statChanges: { prRisk: 15, fanLoyalty: -8, money: -50000 },
+            statChanges: { prRisk: 9, fanLoyalty: -5, money: -40000 },
           },
         },
       },
@@ -156,7 +156,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '只带和人设匹配的品牌',
         outcome: {
           narration: '只选了高端护肤和数码产品，直播效果好，口碑也维持住了。品牌方追加了合作。',
-          statChanges: { money: 100000, commercialValue: 3 },
+          statChanges: { money: 70000, commercialValue: 3 },
         },
       },
       {
@@ -165,7 +165,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '"我们不带货"',
         outcome: {
           narration: '核心粉丝觉得偶像有调性，但钱就这么飞了。经纪人的工资是你自己发的啊喂。',
-          statChanges: { fanLoyalty: 5, commercialValue: 3 },
+          statChanges: { fanLoyalty: 3, commercialValue: 3 },
         },
       },
     ],
@@ -185,7 +185,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '匹配对方开价 (-10万)',
         outcome: {
           narration: '你咬牙加薪，艺人留下了。但你知道，这种事发生过一次就会发生第二次。而且你的钱包在哭泣。',
-          statChanges: { money: -100000, fanLoyalty: 5 },
+          statChanges: { money: -70000, fanLoyalty: 3 },
         },
       },
       {
@@ -194,7 +194,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '尊重选择',
         outcome: {
           narration: '你大度放手，艺人反而犹豫了——"你不挽留我吗？"最终他/她被你的坦诚打动，决定留下。信任度反而上来了。',
-          statChanges: { fanLoyalty: 15, commercialValue: 5 },
+          statChanges: { fanLoyalty: 9, commercialValue: 3 },
         },
       },
       {
@@ -203,7 +203,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '用未来的蓝图打动TA',
         outcome: {
           narration: '你做了一份PPT，详细规划了未来三年的发展路径。艺人看完眼睛亮了，不仅留下来了，还主动发微博说"感谢最好的经纪人"。',
-          statChanges: { fanLoyalty: 10, commercialValue: 8 },
+          statChanges: { fanLoyalty: 6, commercialValue: 5 },
         },
       },
     ],
@@ -223,7 +223,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '签约合作',
         outcome: {
           narration: '海外专辑反响不错，在东南亚和日韩圈了一波粉。国内粉丝觉得"我家偶像走向世界了"，很自豪。',
-          statChanges: { commercialValue: 12, fanLoyalty: 5, money: 100000 },
+          statChanges: { commercialValue: 7, fanLoyalty: 3, money: 70000 },
         },
       },
       {
@@ -232,7 +232,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '国内市场还没吃透',
         outcome: {
           narration: '专注国内的决定让你有更多精力经营粉丝。虽然错过了海外机会，但根基更扎实了。',
-          statChanges: { fanLoyalty: 8 },
+          statChanges: { fanLoyalty: 5 },
         },
       },
     ],
@@ -251,7 +251,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '拿钱！',
         outcome: {
           narration: '代言广告拍得不错，游戏玩家虽然吐槽"又是流量明星"，但下载量确实涨了。品牌方很满意，追加了合作。',
-          statChanges: { money: 180000, commercialValue: 5, prRisk: 3 },
+          statChanges: { money: 130000, commercialValue: 3, prRisk: 3 },
         },
       },
       {
@@ -260,7 +260,7 @@ export const businessEvents: GameEvent[] = [
         subtext: '如果游戏不好就不接',
         outcome: {
           narration: '艺人真的试玩了一周，还在直播间打了几把。游戏圈粉丝震惊："这人是真的在玩啊！"口碑爆了。',
-          statChanges: { money: 150000, commercialValue: 10, fanLoyalty: 8 },
+          statChanges: { money: 110000, commercialValue: 6, fanLoyalty: 5 },
         },
       },
     ],

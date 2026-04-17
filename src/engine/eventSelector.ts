@@ -1,10 +1,16 @@
-import type { GameEvent, GameStats, EventCategory } from '@/types/game';
+import type { GameEvent, GameStats, EventCategory, ArtistArchetype } from '@/types/game';
 import { GAME_CONFIG } from '@/data/constants';
 import { crisisEvents } from '@/data/events/crisis';
 import { businessEvents } from '@/data/events/business';
 import { prEvents } from '@/data/events/pr';
 import { dramaEvents } from '@/data/events/drama';
 import { randomEvents } from '@/data/events/random';
+import { idolSpecificEvents } from '@/data/events/idol-specific';
+import { actorSpecificEvents } from '@/data/events/actor-specific';
+import { singerSpecificEvents } from '@/data/events/singer-specific';
+import { influencerSpecificEvents } from '@/data/events/influencer-specific';
+import { lateGameEvents } from '@/data/events/late-game';
+import { milestoneEvents } from '@/data/events/milestone';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -12,9 +18,20 @@ const allEvents: GameEvent[] = [
   ...prEvents,
   ...dramaEvents,
   ...randomEvents,
+  ...idolSpecificEvents,
+  ...actorSpecificEvents,
+  ...singerSpecificEvents,
+  ...influencerSpecificEvents,
+  ...lateGameEvents,
+  ...milestoneEvents,
 ];
 
 const EVENT_COOLDOWN = 8; // 事件使用后需间隔8天才能再次出现
+
+// 查找事件（用于事件链 followUpEventId）
+export function findEventById(id: string): GameEvent | undefined {
+  return allEvents.find(e => e.id === id);
+}
 
 function getCategoryWeight(category: EventCategory, stats: GameStats, day: number): number {
   let weight = 1.0;
@@ -50,8 +67,16 @@ function isEventEligible(
   day: number,
   stats: GameStats,
   eventUsageMap: Record<string, number>, // eventId -> last used day
-  activeTags: string[]
+  activeTags: string[],
+  artistId?: ArtistArchetype
 ): boolean {
+  // Artist-specific event filter
+  if (event.forArtist) {
+    if (!artistId) return false;
+    const allowed = Array.isArray(event.forArtist) ? event.forArtist : [event.forArtist];
+    if (!allowed.includes(artistId)) return false;
+  }
+
   // Cooldown check: skip if used too recently
   const lastUsedDay = eventUsageMap[event.id];
   if (lastUsedDay !== undefined && (day - lastUsedDay) < EVENT_COOLDOWN) return false;
@@ -71,11 +96,14 @@ function isEventEligible(
 
   if (event.statConditions) {
     const c = event.statConditions;
-    if (c.minCommercial && stats.commercialValue < c.minCommercial) return false;
-    if (c.maxCommercial && stats.commercialValue > c.maxCommercial) return false;
-    if (c.minFanLoyalty && stats.fanLoyalty < c.minFanLoyalty) return false;
-    if (c.minPrRisk && stats.prRisk < c.minPrRisk) return false;
-    if (c.maxPrRisk && stats.prRisk > c.maxPrRisk) return false;
+    if (c.minCommercial !== undefined && stats.commercialValue < c.minCommercial) return false;
+    if (c.maxCommercial !== undefined && stats.commercialValue > c.maxCommercial) return false;
+    if (c.minFanLoyalty !== undefined && stats.fanLoyalty < c.minFanLoyalty) return false;
+    if (c.maxFanLoyalty !== undefined && stats.fanLoyalty > c.maxFanLoyalty) return false;
+    if (c.minPrRisk !== undefined && stats.prRisk < c.minPrRisk) return false;
+    if (c.maxPrRisk !== undefined && stats.prRisk > c.maxPrRisk) return false;
+    if (c.minMoney !== undefined && stats.money < c.minMoney) return false;
+    if (c.maxMoney !== undefined && stats.money > c.maxMoney) return false;
   }
 
   return true;
@@ -85,10 +113,11 @@ export function selectEventsForDay(
   day: number,
   stats: GameStats,
   eventUsageMap: Record<string, number>,
-  activeTags: string[]
+  activeTags: string[],
+  artistId?: ArtistArchetype
 ): GameEvent[] {
   const eligible = allEvents.filter(e =>
-    isEventEligible(e, day, stats, eventUsageMap, activeTags)
+    isEventEligible(e, day, stats, eventUsageMap, activeTags, artistId)
   );
 
   if (eligible.length === 0) return [];

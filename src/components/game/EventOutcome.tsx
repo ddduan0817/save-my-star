@@ -32,11 +32,12 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
       initial={{ opacity: 0, y: 30 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
+      transition={{ type: 'spring', stiffness: 180, damping: 22 }}
       className={cn(
-        "mx-4 rounded-2xl overflow-hidden shadow-sm",
+        "mx-4 rounded-3xl overflow-hidden",
         isTwist
-          ? "ring-2 ring-orange-300 bg-orange-50"
-          : "ring-1 ring-gray-200 bg-white"
+          ? "ring-2 ring-orange-300/70 bg-gradient-to-b from-orange-50 to-white shadow-lg shadow-orange-100/40"
+          : "ring-1 ring-gray-200/60 bg-white shadow-lg shadow-gray-100/40"
       )}
     >
       {/* Twist banner */}
@@ -45,16 +46,16 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
           transition={{ duration: 0.4, ease: 'easeOut' }}
-          className="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-4 py-2 tracking-widest"
+          className="bg-gradient-to-r from-orange-500 via-red-500 to-orange-500 text-white text-xs font-bold px-4 py-2 tracking-widest"
         >
-          反转！剧情突变
+          ⚡ 反转！剧情突变
         </motion.div>
       )}
 
       <div className="p-5">
         <div className={cn(
           "text-xs font-medium mb-3 tracking-wider",
-          isTwist ? "text-orange-600" : "text-gray-400"
+          isTwist ? "text-orange-500" : "text-gray-300"
         )}>
           {isTwist ? '但是——' : '事件结果'}
         </div>
@@ -64,22 +65,27 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3 }}
+            transition={{ delay: 0.3, type: 'spring', stiffness: 200, damping: 20 }}
           >
-            <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line font-medium">
+            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-line font-medium">
               {narration}
             </p>
           </motion.div>
         ) : (
-          <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-line">
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.15 }}
+            className="text-sm text-gray-500 leading-relaxed whitespace-pre-line"
+          >
             {narration}
-          </p>
+          </motion.p>
         )}
 
         {/* Stat changes */}
         {changes.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {changes.map(([key, value]) => {
+            {changes.map(([key, value], i) => {
               const v = value as number;
               const isRisk = key === 'prRisk';
               const isPositive = isRisk ? v < 0 : v > 0;
@@ -88,12 +94,14 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
               return (
                 <motion.div
                   key={key}
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: i * 0.08, type: 'spring', stiffness: 350, damping: 22 }}
                   className={cn(
-                    "px-3 py-1.5 rounded-lg text-xs font-semibold",
-                    isPositive ? "bg-green-50 text-green-600 ring-1 ring-green-200" : "bg-red-50 text-red-500 ring-1 ring-red-200"
+                    "px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm",
+                    isPositive
+                      ? "bg-gradient-to-r from-green-50 to-emerald-50 text-green-600 ring-1 ring-green-200/60"
+                      : "bg-gradient-to-r from-red-50 to-orange-50 text-red-500 ring-1 ring-red-200/60"
                   )}
                 >
                   {statLabels[key]} {v > 0 ? '+' : ''}{displayValue}
@@ -104,15 +112,17 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
         )}
 
         <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.5 }}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handleDismiss}
           className={cn(
-            "w-full mt-5 py-3 rounded-xl text-sm font-semibold transition-all active:scale-[0.98]",
+            "w-full mt-5 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-300",
             hasTwistPending
-              ? "bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-sm"
-              : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+              ? "bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 text-white shadow-md shadow-orange-200/40 hover:shadow-lg hover:shadow-orange-200/60"
+              : "bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-gray-600 shadow-sm shadow-gray-100/40"
           )}
         >
           {hasTwistPending ? '但是……' : '继续'}

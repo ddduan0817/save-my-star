@@ -55,29 +55,30 @@ export default function EndingPage() {
   };
   const rarityColor = {
     common: 'text-gray-500 bg-gray-100',
-    rare: 'text-purple-600 bg-purple-50',
-    legendary: 'text-amber-600 bg-amber-50',
+    rare: 'text-purple-600 bg-purple-50 ring-1 ring-purple-200/50',
+    legendary: 'text-amber-600 bg-amber-50 ring-1 ring-amber-200/50',
   };
 
   return (
     <div className="min-h-screen px-4 py-8">
       {/* Share card */}
-      <div ref={shareRef} className="rounded-2xl overflow-hidden shadow-md ring-1 ring-gray-200">
+      <div ref={shareRef} className="rounded-3xl overflow-hidden shadow-xl shadow-gray-200/50 ring-1 ring-gray-200/40">
         {/* Header gradient */}
-        <div className={cn("bg-gradient-to-br p-6 text-center", ending.color)}>
+        <div className={cn("bg-gradient-to-br p-6 text-center relative overflow-hidden", ending.color)}>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent" />
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-            className="text-5xl mb-2"
+            initial={{ scale: 0, rotate: -20 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 180, damping: 14 }}
+            className="text-5xl mb-2 relative z-10"
           >
             {ending.emoji}
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-2xl font-black text-white mb-1"
+            transition={{ delay: 0.3, type: 'spring', stiffness: 200, damping: 20 }}
+            className="text-2xl font-black text-white mb-1 relative z-10"
           >
             {ending.title}
           </motion.h1>
@@ -85,16 +86,16 @@ export default function EndingPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.5 }}
-            className="text-sm text-white/80"
+            className="text-sm text-white/80 relative z-10"
           >
             {ending.subtitle}
           </motion.p>
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.6, type: 'spring' }}
             className={cn(
-              "inline-block text-xs px-2.5 py-0.5 rounded-full font-semibold mt-2",
+              "inline-block text-xs px-3 py-1 rounded-full font-semibold mt-2.5 relative z-10",
               rarityColor[ending.rarity]
             )}
           >
@@ -105,15 +106,15 @@ export default function EndingPage() {
         {/* Content */}
         <div className="bg-white p-5">
           {/* Artist info */}
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex items-center gap-2.5 mb-4">
             <span className="text-xl">{artist.avatar}</span>
             <span className="text-sm font-semibold text-gray-800">{artist.name}</span>
-            <span className="text-xs text-gray-500">· {artist.title}</span>
-            <span className="text-xs text-gray-400 ml-auto">坚持了 {currentDay} 天</span>
+            <span className="text-xs text-gray-400">· {artist.title}</span>
+            <span className="text-[10px] text-gray-300 ml-auto bg-gray-50 px-2 py-0.5 rounded-full">坚持了 {currentDay} 天</span>
           </div>
 
           {/* Story */}
-          <p className="text-sm text-gray-600 leading-relaxed mb-4">
+          <p className="text-sm text-gray-500 leading-relaxed mb-4">
             {ending.description}
           </p>
 
@@ -124,33 +125,45 @@ export default function EndingPage() {
               { label: '粉丝忠诚', value: stats.fanLoyalty, color: 'text-pink-500' },
               { label: '舆论风险', value: stats.prRisk, color: 'text-red-500' },
               { label: '资金', value: null, money: stats.money, color: stats.money >= 0 ? 'text-green-600' : 'text-red-500' },
-            ].map(stat => (
-              <div key={stat.label} className="text-center">
-                <div className="text-[10px] text-gray-400 mb-1">{stat.label}</div>
+            ].map((stat, i) => (
+              <motion.div
+                key={stat.label}
+                className="text-center"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.7 + i * 0.08 }}
+              >
+                <div className="text-[10px] text-gray-300 mb-1">{stat.label}</div>
                 <div className={cn("text-lg font-bold", stat.color)}>
                   {stat.value !== null ? stat.value : `¥${formatMoney(stat.money!)}`}
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 
           {/* Key decisions */}
           {keyDecisions.length > 0 && (
-            <div className="border-t border-gray-100 pt-3">
-              <div className="text-[10px] text-gray-400 mb-2 tracking-wider font-medium">关键决策回顾</div>
-              <div className="space-y-1.5">
+            <div className="border-t border-gray-100/60 pt-3">
+              <div className="text-[10px] text-gray-300 mb-2 tracking-wider font-medium">关键决策回顾</div>
+              <div className="space-y-2">
                 {keyDecisions.map((d, i) => (
-                  <div key={i} className="flex items-start gap-2 text-xs">
-                    <span className="text-gray-400 shrink-0">Day {d.day}</span>
-                    <span className="text-gray-600 truncate">{d.eventTitle} → {d.choiceText}</span>
-                  </div>
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1 + i * 0.06 }}
+                    className="flex items-start gap-2 text-xs"
+                  >
+                    <span className="text-gray-300 shrink-0 bg-gray-50 px-1.5 py-0.5 rounded-md text-[10px]">Day {d.day}</span>
+                    <span className="text-gray-500 truncate">{d.eventTitle} → {d.choiceText}</span>
+                  </motion.div>
                 ))}
               </div>
             </div>
           )}
 
           {/* Branding */}
-          <div className="text-center text-[10px] text-gray-300 mt-4 pt-3 border-t border-gray-100">
+          <div className="text-center text-[10px] text-gray-200 mt-4 pt-3 border-t border-gray-100/40">
             经纪人模拟器：塌房危机
           </div>
         </div>
@@ -161,9 +174,11 @@ export default function EndingPage() {
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+          transition={{ delay: 0.8, type: 'spring', stiffness: 200, damping: 20 }}
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handleShare}
-          className="w-full py-3 rounded-xl bg-gradient-to-r from-orange-400 to-red-400 text-white font-bold text-sm active:scale-[0.98] transition-transform shadow-sm"
+          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 text-white font-bold text-sm transition-all duration-300 shadow-lg shadow-orange-200/40 hover:shadow-xl hover:shadow-orange-200/60"
         >
           保存分享卡
         </motion.button>
@@ -171,9 +186,11 @@ export default function EndingPage() {
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9 }}
+          transition={{ delay: 0.9, type: 'spring', stiffness: 200, damping: 20 }}
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.97 }}
           onClick={handlePlayAgain}
-          className="w-full py-3 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-semibold text-gray-700 transition-colors active:scale-[0.98]"
+          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-sm font-semibold text-gray-600 transition-all duration-300 shadow-sm"
         >
           再来一局
         </motion.button>
@@ -181,9 +198,11 @@ export default function EndingPage() {
         <motion.button
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0 }}
+          transition={{ delay: 1.0, type: 'spring', stiffness: 200, damping: 20 }}
+          whileHover={{ scale: 1.02, y: -1 }}
+          whileTap={{ scale: 0.97 }}
           onClick={() => router.push('/collection')}
-          className="w-full py-3 rounded-xl ring-1 ring-gray-200 text-sm text-gray-500 hover:text-gray-700 transition-colors active:scale-[0.98]"
+          className="w-full py-3.5 rounded-2xl ring-1 ring-gray-200/50 text-sm text-gray-400 hover:text-gray-600 hover:ring-gray-300/60 transition-all duration-300"
         >
           查看结局图鉴
         </motion.button>

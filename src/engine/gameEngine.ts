@@ -1,4 +1,4 @@
-import type { GameStats, GameEvent, EventChoice, StatChange, Ending, ConditionalOutcome, Twist } from '@/types/game';
+import type { GameStats, GameEvent, EventChoice, StatChange, Ending, ConditionalOutcome, Twist, ArtistArchetype } from '@/types/game';
 import { GAME_CONFIG } from '@/data/constants';
 import { applyStatChanges } from './outcomeCalculator';
 import { selectEventsForDay } from './eventSelector';
@@ -15,6 +15,7 @@ export interface ChoiceResult {
   specialEffect?: string;
   unlockTag?: string;
   ending?: Ending | null;
+  followUpEventId?: string;
   // 反转信息
   twist?: {
     narration: string;
@@ -55,9 +56,10 @@ export function startNewDay(
   day: number,
   stats: GameStats,
   eventUsageMap: Record<string, number>,
-  activeTags: string[]
+  activeTags: string[],
+  artistId?: ArtistArchetype
 ): DayResult {
-  const events = selectEventsForDay(day, stats, eventUsageMap, activeTags);
+  const events = selectEventsForDay(day, stats, eventUsageMap, activeTags, artistId);
   return { events };
 }
 
@@ -122,6 +124,7 @@ export function resolveChoice(
     specialEffect: choice.outcome.specialEffect,
     unlockTag,
     ending: immediateEnding,
+    followUpEventId: choice.outcome.followUpEventId,
     twist: twistResult,
   };
 }

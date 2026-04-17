@@ -15,6 +15,7 @@ export interface Artist {
   title: string;
   description: string;
   avatar: string;
+  gender: 'male' | 'female';
   initialStats: GameStats;
   specialTrait: string;
   backstory: string;
@@ -94,13 +95,20 @@ export interface GameEvent {
     minCommercial?: number;
     maxCommercial?: number;
     minFanLoyalty?: number;
+    maxFanLoyalty?: number;
     maxPrRisk?: number;
     minPrRisk?: number;
+    minMoney?: number;
+    maxMoney?: number;
   };
   // 突发事件标记：会用不同的UI表现
   isBreaking?: boolean;
   // 限时选择（秒），0=不限时
   timeLimit?: number;
+  // 艺人专属事件
+  forArtist?: ArtistArchetype | ArtistArchetype[];
+  // 后续事件ID（事件链）
+  followUpEventId?: string;
 }
 
 // ===== Endings =====
