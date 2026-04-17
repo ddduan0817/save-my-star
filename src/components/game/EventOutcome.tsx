@@ -142,7 +142,7 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
               : "bg-gradient-to-r from-gray-100 to-gray-50 hover:from-gray-200 hover:to-gray-100 text-gray-600 shadow-sm shadow-gray-100/40"
           )}
         >
-          {hasTwistPending ? '但是……' : '继续'}
+          {hasTwistPending ? '但是……' : '返回消息'}
         </motion.button>
       </div>
     </motion.div>

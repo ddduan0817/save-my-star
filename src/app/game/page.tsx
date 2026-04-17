@@ -2,23 +2,22 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { AnimatePresence } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import StatsBar from '@/components/game/StatsBar';
-import DayHeader from '@/components/game/DayHeader';
-import EventCard from '@/components/game/EventCard';
-import EventOutcome from '@/components/game/EventOutcome';
+import TabBar from '@/components/game/TabBar';
+import EndDayButton from '@/components/game/EndDayButton';
 import AchievementToast from '@/components/game/AchievementToast';
+import MessagesTab from '@/components/game/tabs/MessagesTab';
+import ArtistTab from '@/components/game/tabs/ArtistTab';
+import WorkspaceTab from '@/components/game/tabs/WorkspaceTab';
+import MeTab from '@/components/game/tabs/MeTab';
 import { sfxAchievement } from '@/lib/sounds';
 
 export default function GamePage() {
   const router = useRouter();
   const gamePhase = useGameStore(s => s.gamePhase);
-  const currentDay = useGameStore(s => s.currentDay);
-  const currentEvents = useGameStore(s => s.currentEvents);
-  const currentEventIndex = useGameStore(s => s.currentEventIndex);
   const ending = useGameStore(s => s.ending);
-  const advanceDay = useGameStore(s => s.advanceDay);
+  const activeTab = useGameStore(s => s.activeTab);
   const pendingAchievement = useGameStore(s => s.pendingAchievement);
   const dismissAchievement = useGameStore(s => s.dismissAchievement);
 
@@ -36,7 +35,7 @@ export default function GamePage() {
     }
   }, [gamePhase, ending, router]);
 
-  // 成就解锁音效 + 自动消失
+  // Achievement sound + auto dismiss
   useEffect(() => {
     if (pendingAchievement) {
       sfxAchievement();
@@ -47,57 +46,27 @@ export default function GamePage() {
 
   if (gamePhase === 'not_started') return null;
 
-  const currentEvent = currentEvents[currentEventIndex];
-
   return (
-    <div className="min-h-screen flex flex-col pb-8">
+    <div className="min-h-screen flex flex-col pb-[56px]">
       <StatsBar />
 
-      {/* 成就通知 */}
+      {/* Achievement toast */}
       <AchievementToast
         achievement={pendingAchievement}
         onDismiss={dismissAchievement}
       />
 
-      <AnimatePresence mode="popLayout">
-        {gamePhase === 'day_transition' && (
-          <DayHeader
-            key={`day-${currentDay}`}
-            day={currentDay}
-            onComplete={advanceDay}
-          />
-        )}
+      {/* Tab content */}
+      {activeTab === 'messages' && <MessagesTab />}
+      {activeTab === 'artist' && <ArtistTab />}
+      {activeTab === 'workspace' && <WorkspaceTab />}
+      {activeTab === 'me' && <MeTab />}
 
-        {gamePhase === 'playing' && currentEvent && (
-          <div key={`event-${currentEvent.id}`} className="flex-1 flex flex-col justify-center py-6">
-            <EventCard event={currentEvent} />
-            {currentEvents.length > 1 && (
-              <div className="flex justify-center gap-1.5 mt-4">
-                {currentEvents.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-1.5 h-1.5 rounded-full transition-colors ${
-                      i === currentEventIndex ? 'bg-gray-400' : i < currentEventIndex ? 'bg-gray-300' : 'bg-gray-200'
-                    }`}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+      {/* Floating end day button */}
+      <EndDayButton />
 
-        {gamePhase === 'showing_outcome' && (
-          <div key="outcome" className="flex-1 flex flex-col justify-center py-6">
-            <EventOutcome />
-          </div>
-        )}
-
-        {gamePhase === 'showing_twist' && (
-          <div key="twist" className="flex-1 flex flex-col justify-center py-6">
-            <EventOutcome isTwist />
-          </div>
-        )}
-      </AnimatePresence>
+      {/* Bottom tab bar */}
+      <TabBar />
     </div>
   );
 }

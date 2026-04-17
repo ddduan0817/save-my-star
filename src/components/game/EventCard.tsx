@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 import { useGameStore } from '@/stores/gameStore';
 import { CATEGORY_LABEL } from '@/data/constants';
 import { formatMoney } from '@/lib/utils';
-import { sfxSelect, sfxCrisisAlert, sfxBreaking } from '@/lib/sounds';
+import { sfxSelect, sfxCrisisAlert, sfxBreaking, sfxClick } from '@/lib/sounds';
 
 interface EventCardProps {
   event: GameEvent;
@@ -15,11 +15,18 @@ interface EventCardProps {
 
 export default function EventCard({ event }: EventCardProps) {
   const selectChoice = useGameStore(s => s.selectChoice);
+  const closeMessage = useGameStore(s => s.closeMessage);
   const stats = useGameStore(s => s.stats);
+  const activeMessageId = useGameStore(s => s.activeMessageId);
+  const messages = useGameStore(s => s.messages);
 
   const isCrisis = event.category === 'crisis';
   const isBusiness = event.category === 'business';
   const isBreaking = !!event.isBreaking;
+
+  // Check if current message is urgent (can't go back)
+  const currentMsg = messages.find(m => m.id === activeMessageId);
+  const canGoBack = currentMsg ? !currentMsg.isUrgent : false;
 
   const isChoiceAvailable = (choice: EventChoice) => {
     if (choice.requireMinMoney && stats.money < choice.requireMinMoney) return false;
@@ -95,6 +102,15 @@ export default function EventCard({ event }: EventCardProps) {
         "p-5",
         isBreaking ? "bg-gradient-to-b from-orange-50 to-white" : "bg-white"
       )}>
+        {/* Back button for non-urgent messages */}
+        {canGoBack && (
+          <button
+            onClick={() => { sfxClick(); closeMessage(); }}
+            className="text-xs text-gray-400 hover:text-gray-600 mb-3 flex items-center gap-1 transition-colors"
+          >
+            <span>‹</span> 返回消息列表
+          </button>
+        )}
         <h2 className={cn(
           "text-lg font-bold mb-3",
           isBreaking && "text-orange-700",

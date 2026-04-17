@@ -146,4 +146,66 @@ export interface DecisionRecord {
   statChanges: StatChange;
 }
 
-export type GamePhase = 'not_started' | 'playing' | 'showing_outcome' | 'showing_twist' | 'day_transition' | 'ended';
+export type GamePhase = 'not_started' | 'playing' | 'processing_message' | 'showing_outcome' | 'showing_twist' | 'ended';
+
+// ===== Tab System =====
+export type TabId = 'messages' | 'artist' | 'workspace' | 'me';
+
+// ===== Message System =====
+export type MessageStatus = 'unread' | 'read' | 'resolved';
+
+export interface GameMessage {
+  id: string;
+  event: GameEvent;
+  status: MessageStatus;
+  isUrgent: boolean;
+  dayReceived: number;
+}
+
+// ===== Schedule System =====
+export type ScheduleActivityId = 'filming' | 'variety' | 'endorsement' | 'rest' | 'training';
+
+export interface ScheduleActivity {
+  id: ScheduleActivityId;
+  name: string;
+  emoji: string;
+  description: string;
+  durationDays: number;
+  statChanges: StatChange;
+}
+
+export interface ActiveSchedule {
+  activity: ScheduleActivity;
+  startedDay: number;
+  remainingDays: number;
+}
+
+// ===== Company Upgrades =====
+export type UpgradeId = 'pr_team' | 'data_analysis' | 'network' | 'legal';
+
+export interface CompanyUpgrade {
+  id: UpgradeId;
+  name: string;
+  emoji: string;
+  maxLevel: number;
+  costs: number[];
+  descriptions: string[];
+}
+
+// ===== Social Feed =====
+export interface WeiboTrend {
+  rank: number;
+  title: string;
+  heat: string;
+  isHot: boolean;
+  sentiment: 'positive' | 'negative' | 'neutral';
+}
+
+export interface FanComment {
+  id: string;
+  avatar: string;
+  nickname: string;
+  content: string;
+  likes: number;
+  sentiment: 'supportive' | 'angry' | 'hate' | 'neutral';
+}

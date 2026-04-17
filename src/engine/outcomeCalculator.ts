@@ -61,11 +61,11 @@ export function applyStatChanges(
   return { commercialValue, fanLoyalty, prRisk, money };
 }
 
-export function applyDailyPassiveEffects(stats: GameStats): GameStats {
+export function applyDailyPassiveEffects(stats: GameStats, prTeamLevel: number = 0): GameStats {
   let { commercialValue, fanLoyalty, prRisk, money } = stats;
 
-  // Natural risk decay
-  prRisk = clampStat(prRisk + GAME_CONFIG.DAILY_RISK_DECAY);
+  // Natural risk decay (+ PR team upgrade bonus)
+  prRisk = clampStat(prRisk + GAME_CONFIG.DAILY_RISK_DECAY - prTeamLevel);
 
   // High risk drains commercial value
   if (prRisk > GAME_CONFIG.HIGH_RISK_THRESHOLD) {

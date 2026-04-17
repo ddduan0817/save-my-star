@@ -10,6 +10,13 @@ import type {
   Ending,
   EndingId,
   StatChange,
+  TabId,
+  GameMessage,
+  ActiveSchedule,
+  ScheduleActivityId,
+  UpgradeId,
+  WeiboTrend,
+  FanComment,
 } from '@/types/game';
 import { artists } from '@/data/artists';
 import { startNewDay, resolveChoice, checkDayEnd } from '@/engine/gameEngine';
@@ -17,6 +24,10 @@ import { applyDailyPassiveEffects, applyStatChanges } from '@/engine/outcomeCalc
 import { loadUnlockedEndings, saveUnlockedEnding } from '@/lib/storage';
 import { breakingEvents } from '@/data/events/breaking';
 import { findEventById } from '@/engine/eventSelector';
+import { createMessages } from '@/engine/messageFactory';
+import { scheduleActivities } from '@/data/schedules';
+import { companyUpgradesData } from '@/data/upgrades';
+import { generateWeiboTrends, generateFanComments } from '@/engine/socialGenerator';
 import {
   checkAchievements,
   loadUnlockedAchievements,
@@ -25,38 +36,74 @@ import {
 } from '@/data/achievements';
 
 interface GameStore {
+  // Core state
   gamePhase: GamePhase;
   currentDay: number;
   artist: Artist | null;
   stats: GameStats;
+
+  // Tab system
+  activeTab: TabId;
+
+  // Message system (replaces old currentEvents)
+  messages: GameMessage[];
+  activeMessageId: string | null;
+
+  // Legacy compat: current event being processed
   currentEvents: GameEvent[];
   currentEventIndex: number;
+
+  // Outcome display
   lastOutcomeNarration: string;
   lastStatChanges: StatChange | null;
   pendingTwist: { narration: string; statChanges: StatChange; unlockTag?: string } | null;
   pendingFollowUpEventId: string | null;
+
+  // Game history
   decisionHistory: DecisionRecord[];
   activeTags: string[];
   eventUsageMap: Record<string, number>;
   ending: Ending | null;
   peakRisk: number;
+
+  // Collection
   unlockedEndings: EndingId[];
-  // 成就系统
   pendingAchievement: Achievement | null;
   unlockedAchievements: string[];
 
+  // Schedule system
+  artistSchedule: ActiveSchedule | null;
+
+  // Company upgrades
+  companyUpgrades: Record<UpgradeId, number>;
+
+  // Social feed
+  weiboTrends: WeiboTrend[];
+  fanComments: FanComment[];
+
+  // Day transition banner
+  showDayBanner: boolean;
+
+  // Actions
   startGame: (artistId: ArtistArchetype) => void;
-  advanceDay: () => void;
+  setActiveTab: (tab: TabId) => void;
+  openMessage: (messageId: string) => void;
+  closeMessage: () => void;
   selectChoice: (choice: EventChoice) => void;
   dismissOutcome: () => void;
   dismissTwist: () => void;
+  endDay: () => boolean; // returns false if blocked by urgent messages
+  setArtistSchedule: (activityId: ScheduleActivityId) => void;
+  purchaseUpgrade: (upgradeId: UpgradeId) => void;
   dismissAchievement: () => void;
+  dismissDayBanner: () => void;
   resetGame: () => void;
   loadCollection: () => void;
 }
 
 // 突发事件触发概率 (每天 25%)
 const BREAKING_CHANCE = 0.25;
+const MAX_CARRYOVER_MESSAGES = 2;
 
 // 成就检查 helper
 function runAchievementCheck(get: () => GameStore, set: (partial: Partial<GameStore>) => void) {
@@ -71,7 +118,6 @@ function runAchievementCheck(get: () => GameStore, set: (partial: Partial<GameSt
     peakRisk,
   });
   if (newAchs.length > 0) {
-    // 显示第一个新解锁的成就（后续的等下次触发时显示）
     set({
       pendingAchievement: newAchs[0],
       unlockedAchievements: loadUnlockedAchievements(),
@@ -88,7 +134,7 @@ function maybeInjectBreaking(
 
   const available = breakingEvents.filter(e => {
     const lastUsed = eventUsageMap[e.id];
-    if (lastUsed !== undefined) return false; // 单局内不重复
+    if (lastUsed !== undefined) return false;
     if (e.minDay && day < e.minDay) return false;
     return true;
   });
@@ -96,8 +142,36 @@ function maybeInjectBreaking(
   if (available.length === 0) return events;
 
   const breaking = available[Math.floor(Math.random() * available.length)];
-  // 突发事件插到最前面
   return [breaking, ...events];
+}
+
+function generateEventsForDay(
+  day: number,
+  stats: GameStats,
+  eventUsageMap: Record<string, number>,
+  activeTags: string[],
+  artistId?: ArtistArchetype,
+  pendingFollowUpEventId?: string | null,
+): { events: GameEvent[]; newUsageMap: Record<string, number> } {
+  let { events } = startNewDay(day, stats, eventUsageMap, activeTags, artistId);
+
+  // Inject follow-up events (event chains)
+  if (pendingFollowUpEventId) {
+    const followUpEvent = findEventById(pendingFollowUpEventId);
+    if (followUpEvent) {
+      events = [followUpEvent, ...events];
+    }
+  }
+
+  // Maybe inject breaking event
+  events = maybeInjectBreaking(events, day, eventUsageMap);
+
+  const newUsageMap = { ...eventUsageMap };
+  for (const e of events) {
+    newUsageMap[e.id] = day;
+  }
+
+  return { events, newUsageMap };
 }
 
 export const useGameStore = create<GameStore>((set, get) => ({
@@ -105,6 +179,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
   currentDay: 0,
   artist: null,
   stats: { commercialValue: 0, fanLoyalty: 0, prRisk: 0, money: 0 },
+
+  activeTab: 'messages',
+  messages: [],
+  activeMessageId: null,
+
   currentEvents: [],
   currentEventIndex: 0,
   lastOutcomeNarration: '',
@@ -120,73 +199,100 @@ export const useGameStore = create<GameStore>((set, get) => ({
   pendingAchievement: null,
   unlockedAchievements: [],
 
+  artistSchedule: null,
+  companyUpgrades: { pr_team: 0, data_analysis: 0, network: 0, legal: 0 },
+
+  weiboTrends: [],
+  fanComments: [],
+
+  showDayBanner: false,
+
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
+
+    const day = 1;
+    const stats = { ...artist.initialStats };
+    const eventUsageMap: Record<string, number> = {};
+    const activeTags: string[] = [];
+
+    const { events, newUsageMap } = generateEventsForDay(
+      day, stats, eventUsageMap, activeTags, artistId
+    );
+
+    const messages = createMessages(events, day);
+    const trends = generateWeiboTrends(stats, artist, [], activeTags);
+    const comments = generateFanComments(stats, artist);
+
     set({
-      gamePhase: 'day_transition',
-      currentDay: 1,
+      gamePhase: 'playing',
+      currentDay: day,
       artist,
-      stats: { ...artist.initialStats },
+      stats,
+      activeTab: 'messages',
+      messages,
+      activeMessageId: null,
       currentEvents: [],
       currentEventIndex: 0,
       lastOutcomeNarration: '',
       lastStatChanges: null,
       pendingTwist: null,
+      pendingFollowUpEventId: null,
       decisionHistory: [],
-      activeTags: [],
-      eventUsageMap: {},
+      activeTags,
+      eventUsageMap: newUsageMap,
       ending: null,
       peakRisk: artist.initialStats.prRisk,
+      artistSchedule: null,
+      companyUpgrades: { pr_team: 0, data_analysis: 0, network: 0, legal: 0 },
+      weiboTrends: trends,
+      fanComments: comments,
+      showDayBanner: true,
     });
   },
 
-  advanceDay: () => {
-    const { currentDay, stats, eventUsageMap, activeTags, artist, pendingFollowUpEventId } = get();
+  setActiveTab: (tab: TabId) => {
+    const { gamePhase } = get();
+    // Don't allow tab switching while processing a message/outcome
+    if (gamePhase === 'processing_message' || gamePhase === 'showing_outcome' || gamePhase === 'showing_twist') return;
+    set({ activeTab: tab });
+  },
 
-    const newStats = currentDay > 1 ? applyDailyPassiveEffects(stats) : stats;
+  openMessage: (messageId: string) => {
+    const { messages } = get();
+    const msg = messages.find(m => m.id === messageId);
+    if (!msg || msg.status === 'resolved') return;
 
-    let { events } = startNewDay(currentDay, newStats, eventUsageMap, activeTags, artist?.id);
-
-    // 注入后续事件（事件链）
-    if (pendingFollowUpEventId) {
-      const followUpEvent = findEventById(pendingFollowUpEventId);
-      if (followUpEvent) {
-        events = [followUpEvent, ...events];
-      }
-    }
-
-    // 可能注入突发事件
-    events = maybeInjectBreaking(events, currentDay, eventUsageMap);
-
-    if (events.length === 0) {
-      const dayEndEnding = checkDayEnd(currentDay, newStats, activeTags, get().peakRisk);
-      if (dayEndEnding) {
-        const unlocked = saveUnlockedEnding(dayEndEnding.id);
-        set({ ending: dayEndEnding, gamePhase: 'ended', stats: newStats, unlockedEndings: unlocked });
-        return;
-      }
-      set({ currentDay: currentDay + 1, stats: newStats, gamePhase: 'day_transition' });
-      return;
-    }
-
-    const newUsageMap = { ...eventUsageMap };
-    for (const e of events) {
-      newUsageMap[e.id] = currentDay;
-    }
+    // Mark as read
+    const updatedMessages = messages.map(m =>
+      m.id === messageId ? { ...m, status: 'read' as const } : m
+    );
 
     set({
-      currentEvents: events,
+      activeMessageId: messageId,
+      messages: updatedMessages,
+      gamePhase: 'processing_message',
+      currentEvents: [msg.event],
       currentEventIndex: 0,
-      stats: newStats,
+    });
+  },
+
+  closeMessage: () => {
+    // Only allow closing non-urgent messages
+    const { messages, activeMessageId } = get();
+    const msg = messages.find(m => m.id === activeMessageId);
+    if (msg?.isUrgent && msg.status !== 'resolved') return;
+
+    set({
+      activeMessageId: null,
       gamePhase: 'playing',
-      eventUsageMap: newUsageMap,
-      pendingFollowUpEventId: null,
+      currentEvents: [],
+      currentEventIndex: 0,
     });
   },
 
   selectChoice: (choice: EventChoice) => {
-    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk } = get();
+    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId } = get();
     const event = currentEvents[currentEventIndex];
 
     const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk);
@@ -205,6 +311,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const newPeakRisk = Math.max(peakRisk, result.newStats.prRisk);
 
+    // Mark message as resolved
+    const updatedMessages = messages.map(m =>
+      m.id === activeMessageId ? { ...m, status: 'resolved' as const } : m
+    );
+
     if (result.ending) {
       const unlocked = saveUnlockedEnding(result.ending.id);
       set({
@@ -218,6 +329,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         decisionHistory: [...get().decisionHistory, record],
         peakRisk: newPeakRisk,
         unlockedEndings: unlocked,
+        messages: updatedMessages,
       });
       return;
     }
@@ -232,16 +344,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
       activeTags: newTags,
       decisionHistory: [...get().decisionHistory, record],
       peakRisk: newPeakRisk,
+      messages: updatedMessages,
     });
 
-    // 选择完成后检查成就
     runAchievementCheck(get, set);
   },
 
   dismissOutcome: () => {
     const { pendingTwist } = get();
 
-    // 如果有反转待触发，进入反转阶段
+    // If twist pending, transition to twist phase
     if (pendingTwist) {
       const { stats, artist, activeTags } = get();
       const twistStats = applyStatChanges(stats, pendingTwist.statChanges, artist?.id);
@@ -260,61 +372,150 @@ export const useGameStore = create<GameStore>((set, get) => ({
       return;
     }
 
-    // 正常流转
-    const { currentEvents, currentEventIndex, currentDay, stats, activeTags, peakRisk } = get();
-
-    if (currentEventIndex < currentEvents.length - 1) {
-      set({
-        currentEventIndex: currentEventIndex + 1,
-        gamePhase: 'playing',
-        lastOutcomeNarration: '',
-        lastStatChanges: null,
-      });
-      return;
-    }
-
-    const dayEndEnding = checkDayEnd(currentDay, stats, activeTags, peakRisk);
-    if (dayEndEnding) {
-      const unlocked = saveUnlockedEnding(dayEndEnding.id);
-      set({ ending: dayEndEnding, gamePhase: 'ended', unlockedEndings: unlocked });
-      return;
-    }
-
+    // Return to message list
     set({
-      currentDay: currentDay + 1,
-      gamePhase: 'day_transition',
+      activeMessageId: null,
+      gamePhase: 'playing',
       lastOutcomeNarration: '',
       lastStatChanges: null,
+      currentEvents: [],
+      currentEventIndex: 0,
     });
   },
 
-  // 反转阶段结束后继续正常流转
   dismissTwist: () => {
-    const { currentEvents, currentEventIndex, currentDay, stats, activeTags, peakRisk } = get();
-
-    if (currentEventIndex < currentEvents.length - 1) {
-      set({
-        currentEventIndex: currentEventIndex + 1,
-        gamePhase: 'playing',
-        lastOutcomeNarration: '',
-        lastStatChanges: null,
-      });
-      return;
-    }
-
-    const dayEndEnding = checkDayEnd(currentDay, stats, activeTags, peakRisk);
-    if (dayEndEnding) {
-      const unlocked = saveUnlockedEnding(dayEndEnding.id);
-      set({ ending: dayEndEnding, gamePhase: 'ended', unlockedEndings: unlocked });
-      return;
-    }
-
+    // Return to message list after twist
     set({
-      currentDay: currentDay + 1,
-      gamePhase: 'day_transition',
+      activeMessageId: null,
+      gamePhase: 'playing',
       lastOutcomeNarration: '',
       lastStatChanges: null,
+      currentEvents: [],
+      currentEventIndex: 0,
     });
+  },
+
+  endDay: () => {
+    const {
+      messages, currentDay, stats, activeTags, peakRisk, artist,
+      eventUsageMap, pendingFollowUpEventId, decisionHistory,
+      artistSchedule, companyUpgrades,
+    } = get();
+
+    // Block if urgent messages unresolved
+    const hasUnresolvedUrgent = messages.some(m => m.isUrgent && m.status !== 'resolved');
+    if (hasUnresolvedUrgent) return false;
+
+    let newStats = { ...stats };
+
+    // 1. Resolve artist schedule
+    let newSchedule = artistSchedule;
+    if (artistSchedule) {
+      if (artistSchedule.remainingDays <= 1) {
+        // Schedule completes
+        newStats = applyStatChanges(newStats, artistSchedule.activity.statChanges, artist?.id);
+        newSchedule = null;
+      } else {
+        newSchedule = {
+          ...artistSchedule,
+          remainingDays: artistSchedule.remainingDays - 1,
+        };
+      }
+    }
+
+    // 2. Apply daily passive effects (with upgrade bonuses)
+    newStats = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team);
+
+    // 3. Check for endings
+    const newPeakRisk = Math.max(peakRisk, newStats.prRisk);
+    const dayEndEnding = checkDayEnd(currentDay, newStats, activeTags, newPeakRisk);
+    if (dayEndEnding) {
+      const unlocked = saveUnlockedEnding(dayEndEnding.id);
+      set({
+        ending: dayEndEnding,
+        gamePhase: 'ended',
+        stats: newStats,
+        unlockedEndings: unlocked,
+        peakRisk: newPeakRisk,
+        artistSchedule: newSchedule,
+      });
+      return true;
+    }
+
+    // 4. Advance day
+    const nextDay = currentDay + 1;
+
+    // 5. Generate new events for next day
+    const { events, newUsageMap } = generateEventsForDay(
+      nextDay, newStats, eventUsageMap, activeTags, artist?.id, pendingFollowUpEventId
+    );
+
+    const newMessages = createMessages(events, nextDay);
+
+    // Carry over unresolved non-urgent messages (max 2)
+    const carryOver = messages
+      .filter(m => m.status !== 'resolved' && !m.isUrgent)
+      .slice(0, MAX_CARRYOVER_MESSAGES);
+
+    // 6. Regenerate social feed
+    const trends = generateWeiboTrends(newStats, artist!, decisionHistory, activeTags);
+    const comments = generateFanComments(newStats, artist!);
+
+    set({
+      currentDay: nextDay,
+      stats: newStats,
+      messages: [...carryOver, ...newMessages],
+      activeMessageId: null,
+      activeTab: 'messages',
+      gamePhase: 'playing',
+      eventUsageMap: newUsageMap,
+      pendingFollowUpEventId: null,
+      peakRisk: newPeakRisk,
+      lastOutcomeNarration: '',
+      lastStatChanges: null,
+      artistSchedule: newSchedule,
+      weiboTrends: trends,
+      fanComments: comments,
+      showDayBanner: true,
+    });
+
+    return true;
+  },
+
+  setArtistSchedule: (activityId: ScheduleActivityId) => {
+    const { artistSchedule, currentDay } = get();
+    // Can't change schedule while one is in progress
+    if (artistSchedule && artistSchedule.remainingDays > 0) return;
+
+    const activity = scheduleActivities.find(a => a.id === activityId);
+    if (!activity) return;
+
+    set({
+      artistSchedule: {
+        activity,
+        startedDay: currentDay,
+        remainingDays: activity.durationDays,
+      },
+    });
+  },
+
+  purchaseUpgrade: (upgradeId: UpgradeId) => {
+    const { stats, companyUpgrades } = get();
+    const currentLevel = companyUpgrades[upgradeId] ?? 0;
+    const upgradeData = companyUpgradesData.find(u => u.id === upgradeId);
+    if (!upgradeData || currentLevel >= upgradeData.maxLevel) return;
+
+    const cost = upgradeData.costs[currentLevel];
+    if (stats.money < cost) return;
+
+    set({
+      stats: { ...stats, money: stats.money - cost },
+      companyUpgrades: { ...companyUpgrades, [upgradeId]: currentLevel + 1 },
+    });
+  },
+
+  dismissDayBanner: () => {
+    set({ showDayBanner: false });
   },
 
   resetGame: () => {
@@ -323,6 +524,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       currentDay: 0,
       artist: null,
       stats: { commercialValue: 0, fanLoyalty: 0, prRisk: 0, money: 0 },
+      activeTab: 'messages',
+      messages: [],
+      activeMessageId: null,
       currentEvents: [],
       currentEventIndex: 0,
       lastOutcomeNarration: '',
@@ -335,6 +539,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       ending: null,
       peakRisk: 0,
       pendingAchievement: null,
+      artistSchedule: null,
+      companyUpgrades: { pr_team: 0, data_analysis: 0, network: 0, legal: 0 },
+      weiboTrends: [],
+      fanComments: [],
+      showDayBanner: false,
     });
   },
 
