@@ -21,7 +21,7 @@ export interface Artist {
 }
 
 // ===== Events =====
-export type EventCategory = 'crisis' | 'business' | 'pr' | 'drama' | 'random';
+export type EventCategory = 'crisis' | 'business' | 'pr' | 'drama' | 'random' | 'breaking';
 export type EventSeverity = 'low' | 'medium' | 'high' | 'critical';
 
 export interface StatChange {
@@ -31,12 +31,40 @@ export interface StatChange {
   money?: number;
 }
 
+// 根据当前数值走不同剧情分支
+export interface ConditionalOutcome {
+  condition: {
+    minFanLoyalty?: number;
+    maxFanLoyalty?: number;
+    minPrRisk?: number;
+    maxPrRisk?: number;
+    minCommercialValue?: number;
+    maxCommercialValue?: number;
+    minMoney?: number;
+  };
+  narration: string;
+  statChanges: StatChange;
+  unlockTag?: string;
+}
+
+// "但是！"反转
+export interface Twist {
+  chance: number; // 0-1 触发概率
+  narration: string;
+  statChanges: StatChange;
+  unlockTag?: string;
+}
+
 export interface EventOutcome {
   narration: string;
   statChanges: StatChange;
   followUpEventId?: string;
   unlockTag?: string;
   specialEffect?: 'trending' | 'viral' | 'scandal_leak' | 'fan_war';
+  // 动态结局：根据数值走不同分支（优先级高于默认 narration）
+  conditionalOutcomes?: ConditionalOutcome[];
+  // 反转：选完之后有概率触发意外
+  twist?: Twist;
 }
 
 export interface EventChoice {
@@ -69,6 +97,10 @@ export interface GameEvent {
     maxPrRisk?: number;
     minPrRisk?: number;
   };
+  // 突发事件标记：会用不同的UI表现
+  isBreaking?: boolean;
+  // 限时选择（秒），0=不限时
+  timeLimit?: number;
 }
 
 // ===== Endings =====
@@ -106,4 +138,4 @@ export interface DecisionRecord {
   statChanges: StatChange;
 }
 
-export type GamePhase = 'not_started' | 'playing' | 'showing_outcome' | 'day_transition' | 'ended';
+export type GamePhase = 'not_started' | 'playing' | 'showing_outcome' | 'showing_twist' | 'day_transition' | 'ended';

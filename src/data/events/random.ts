@@ -37,6 +37,11 @@ export const randomEvents: GameEvent[] = [
         outcome: {
           narration: '和微信合作出了官方付费表情包，销量出奇地好！粉丝觉得偶像太会了，路人觉得这个人很有趣。',
           statChanges: { money: 60000, fanLoyalty: 5, commercialValue: 8 },
+          twist: {
+            chance: 0.3,
+            narration: '表情包销量冲到全平台第一！微信主动续约并追加了一套动态表情的合作。又一笔意外收入！',
+            statChanges: { money: 80000, commercialValue: 5 },
+          },
         },
       },
     ],
@@ -127,6 +132,13 @@ export const randomEvents: GameEvent[] = [
         outcome: {
           narration: '两人合拍了一条"当我遇见另一个我"的短视频，笑到岔气。视频播放量破亿，两人都涨了一大波粉。',
           statChanges: { fanLoyalty: 8, commercialValue: 10, prRisk: -3 },
+          conditionalOutcomes: [
+            {
+              condition: { minCommercialValue: 60 },
+              narration: '合拍视频爆了！不仅播放破亿，品牌方看到传播力后追加了一个"双胞胎"概念的广告创意。这波操作直接转化成了商业合作。',
+              statChanges: { fanLoyalty: 10, commercialValue: 15, money: 80000, prRisk: -5 },
+            },
+          ],
         },
       },
       {
@@ -157,6 +169,11 @@ export const randomEvents: GameEvent[] = [
         outcome: {
           narration: '艺人亲自转发并写了一段长评论感谢这位粉丝。"双向奔赴"的故事感动了全网，连路人都开始追这部纪录片了。',
           statChanges: { fanLoyalty: 15, commercialValue: 5 },
+          twist: {
+            chance: 0.25,
+            narration: '纪录片被一家视频平台看中，买下了独家版权并邀请原作者制作官方纪录片系列！粉丝成了签约导演，这个故事本身又上了一轮热搜。',
+            statChanges: { fanLoyalty: 8, commercialValue: 8, money: 30000 },
+          },
         },
       },
       {

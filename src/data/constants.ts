@@ -42,6 +42,7 @@ export const CATEGORY_LABEL: Record<string, string> = {
   pr: '公关管理',
   drama: '行业Drama',
   random: '随机事件',
+  breaking: '突发快讯',
 };
 
 export const STAT_LABELS = {

@@ -19,6 +19,11 @@ export const dramaEvents: GameEvent[] = [
           narration: '艺人发了一条意味深长的微博："运气是留给有准备的人的。"粉丝嗨了，对方粉丝也嗨了，一场骂战正式开始。',
           statChanges: { prRisk: 15, fanLoyalty: 8, commercialValue: 3 },
           specialEffect: 'fan_war',
+          twist: {
+            chance: 0.3,
+            narration: '骂战升级了！对方粉丝扒出你艺人以前的黑料反击，两边都在掉路人。综艺节目紧急取消了你们俩的同台邀约。',
+            statChanges: { prRisk: 10, commercialValue: -8 },
+          },
         },
       },
       {
@@ -29,6 +34,13 @@ export const dramaEvents: GameEvent[] = [
         outcome: {
           narration: '"不回应就是最好的回应。"路人纷纷站你这边，"格局大"的评价让你的艺人路人缘又涨了。',
           statChanges: { prRisk: -3, fanLoyalty: 3, commercialValue: 5 },
+          conditionalOutcomes: [
+            {
+              condition: { minCommercialValue: 70 },
+              narration: '你选择高姿态无视。紧接着你的艺人拿下了一个顶级代言，用实力完成了最佳回应。"数据就是最好的反击"成了经典语录。',
+              statChanges: { prRisk: -5, fanLoyalty: 8, commercialValue: 10, money: 80000 },
+            },
+          ],
         },
       },
       {
@@ -120,6 +132,11 @@ export const dramaEvents: GameEvent[] = [
         outcome: {
           narration: '你通过内鬼放出了一条假新闻，结果狗仔信以为真发了出来，被打脸后信誉大损。"这经纪人有点东西"成了圈内评价。',
           statChanges: { prRisk: -10, commercialValue: 5 },
+          twist: {
+            chance: 0.25,
+            narration: '内鬼发现被将计就计后恼羞成怒，把手里存的真料全爆了出来。虽然都不是大事，但一次性曝出十几条也够头疼的。',
+            statChanges: { prRisk: 12 },
+          },
         },
       },
     ],
@@ -141,6 +158,11 @@ export const dramaEvents: GameEvent[] = [
         outcome: {
           narration: '艺人大方转发祝贺，被获奖者在领奖台上公开感谢。"这才是体面"的评价让路人好感飙升。',
           statChanges: { fanLoyalty: 5, commercialValue: 8, prRisk: -5 },
+          twist: {
+            chance: 0.3,
+            narration: '获奖者私下联系你说想一起合作一部电影！这个项目如果成了，商业价值会飙升。意外之喜！',
+            statChanges: { commercialValue: 10, money: 50000 },
+          },
         },
       },
       {
@@ -192,6 +214,11 @@ export const dramaEvents: GameEvent[] = [
         outcome: {
           narration: '你选择了义气，但对方的丑闻越爆越大。现在连你的艺人都被拖下水了——"物以类聚"的评论满天飞。',
           statChanges: { prRisk: 20, fanLoyalty: -5 },
+          twist: {
+            chance: 0.35,
+            narration: '事情反转了！对方被证明是清白的，当初力挺对方的你成了"患难见真情"的典范。全网好感度暴增！',
+            statChanges: { prRisk: -25, fanLoyalty: 15, commercialValue: 10 },
+          },
         },
       },
       {

@@ -27,6 +27,11 @@ export const prEvents: GameEvent[] = [
         outcome: {
           narration: '艺人放飞自我，爆了好几个金句！"今天的发布会太好笑了"刷屏热搜。路人纷纷路转粉，这波赚大了。',
           statChanges: { fanLoyalty: 10, commercialValue: 5, prRisk: 5 },
+          twist: {
+            chance: 0.25,
+            narration: '发布会上的金句被营销号断章取义了！"XX公开嘲讽同行"的标题满天飞，虽然不是原意，但解释的成本太高了。',
+            statChanges: { prRisk: 10, fanLoyalty: -5 },
+          },
         },
       },
       {
@@ -149,6 +154,13 @@ export const prEvents: GameEvent[] = [
         outcome: {
           narration: '"说实话，刚出道的时候确实需要公司支持，但现在的成绩我觉得还是有我自己的努力在的。"这个回答被剪成短视频，好评如潮。',
           statChanges: { fanLoyalty: 10, commercialValue: 5, prRisk: 3 },
+          conditionalOutcomes: [
+            {
+              condition: { minCommercialValue: 60 },
+              narration: '真诚回答+强大的商业数据做后盾，路人直接被圈粉。"这个人说的是实话，数据摆在那"成了最佳防守。好几个品牌方看到采访后主动联系你谈合作。',
+              statChanges: { fanLoyalty: 12, commercialValue: 10, money: 50000 },
+            },
+          ],
         },
       },
       {

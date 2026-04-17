@@ -1,6 +1,6 @@
-import type { GameStats, GameEvent, EventChoice, DecisionRecord, StatChange, Ending } from '@/types/game';
+import type { GameStats, GameEvent, EventChoice, StatChange, Ending, ConditionalOutcome, Twist } from '@/types/game';
 import { GAME_CONFIG } from '@/data/constants';
-import { applyStatChanges, applyDailyPassiveEffects } from './outcomeCalculator';
+import { applyStatChanges } from './outcomeCalculator';
 import { selectEventsForDay } from './eventSelector';
 import { evaluateEnding, checkImmediateEnding } from '@/data/endings';
 
@@ -15,6 +15,40 @@ export interface ChoiceResult {
   specialEffect?: string;
   unlockTag?: string;
   ending?: Ending | null;
+  // 反转信息
+  twist?: {
+    narration: string;
+    statChanges: StatChange;
+    unlockTag?: string;
+  } | null;
+}
+
+// 根据当前数值选择合适的结局分支
+function resolveConditionalOutcome(
+  conditionalOutcomes: ConditionalOutcome[] | undefined,
+  stats: GameStats
+): ConditionalOutcome | null {
+  if (!conditionalOutcomes || conditionalOutcomes.length === 0) return null;
+
+  for (const co of conditionalOutcomes) {
+    const c = co.condition;
+    let match = true;
+    if (c.minFanLoyalty !== undefined && stats.fanLoyalty < c.minFanLoyalty) match = false;
+    if (c.maxFanLoyalty !== undefined && stats.fanLoyalty > c.maxFanLoyalty) match = false;
+    if (c.minPrRisk !== undefined && stats.prRisk < c.minPrRisk) match = false;
+    if (c.maxPrRisk !== undefined && stats.prRisk > c.maxPrRisk) match = false;
+    if (c.minCommercialValue !== undefined && stats.commercialValue < c.minCommercialValue) match = false;
+    if (c.maxCommercialValue !== undefined && stats.commercialValue > c.maxCommercialValue) match = false;
+    if (c.minMoney !== undefined && stats.money < c.minMoney) match = false;
+    if (match) return co;
+  }
+  return null;
+}
+
+// 判断反转是否触发
+function resolveTwist(twist: Twist | undefined): boolean {
+  if (!twist) return false;
+  return Math.random() < twist.chance;
 }
 
 export function startNewDay(
@@ -36,7 +70,18 @@ export function resolveChoice(
   activeTags: string[],
   peakRisk: number
 ): ChoiceResult {
-  const newStats = applyStatChanges(currentStats, choice.outcome.statChanges, artistId);
+  // 1. 检查是否有条件分支匹配
+  const conditionalOutcome = resolveConditionalOutcome(
+    choice.outcome.conditionalOutcomes,
+    currentStats
+  );
+
+  // 使用条件分支或默认结局
+  const narration = conditionalOutcome?.narration ?? choice.outcome.narration;
+  const statChanges = conditionalOutcome?.statChanges ?? choice.outcome.statChanges;
+  const unlockTag = conditionalOutcome?.unlockTag ?? choice.outcome.unlockTag;
+
+  const newStats = applyStatChanges(currentStats, statChanges, artistId);
 
   // Singer special: can survive one critical crisis
   if (artistId === 'singer' && newStats.prRisk >= GAME_CONFIG.CANCELLATION_THRESHOLD) {
@@ -44,28 +89,40 @@ export function resolveChoice(
       newStats.prRisk = 85;
       return {
         newStats,
-        narration: choice.outcome.narration + '\n\n🛡️ 【作品说话】天赋技能发动！凭借过硬的作品口碑，你的艺人扛住了这次致命危机。但这张护身符只能用一次...',
-        statChanges: choice.outcome.statChanges,
+        narration: narration + '\n\n🛡️ 【作品说话】天赋技能发动！凭借过硬的作品口碑，你的艺人扛住了这次致命危机。但这张护身符只能用一次...',
+        statChanges,
         specialEffect: choice.outcome.specialEffect,
         unlockTag: 'used_singer_shield',
+        twist: null,
       };
     }
   }
 
+  // 2. 检查反转是否触发
+  let twistResult = null;
+  if (resolveTwist(choice.outcome.twist)) {
+    twistResult = {
+      narration: choice.outcome.twist!.narration,
+      statChanges: choice.outcome.twist!.statChanges,
+      unlockTag: choice.outcome.twist!.unlockTag,
+    };
+  }
+
   const newPeakRisk = Math.max(peakRisk, newStats.prRisk);
   const tags = [...activeTags];
-  if (choice.outcome.unlockTag) tags.push(choice.outcome.unlockTag);
+  if (unlockTag) tags.push(unlockTag);
 
   // Check for immediate endings
   const immediateEnding = checkImmediateEnding(newStats, newPeakRisk, tags);
 
   return {
     newStats,
-    narration: choice.outcome.narration,
-    statChanges: choice.outcome.statChanges,
+    narration,
+    statChanges,
     specialEffect: choice.outcome.specialEffect,
-    unlockTag: choice.outcome.unlockTag,
+    unlockTag,
     ending: immediateEnding,
+    twist: twistResult,
   };
 }
 

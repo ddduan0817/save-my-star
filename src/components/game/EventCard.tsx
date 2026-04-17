@@ -17,6 +17,7 @@ export default function EventCard({ event }: EventCardProps) {
 
   const isCrisis = event.category === 'crisis';
   const isBusiness = event.category === 'business';
+  const isBreaking = !!event.isBreaking;
 
   const isChoiceAvailable = (choice: EventChoice) => {
     if (choice.requireMinMoney && stats.money < choice.requireMinMoney) return false;
@@ -25,21 +26,42 @@ export default function EventCard({ event }: EventCardProps) {
     return true;
   };
 
+  const showUrgentBanner = isCrisis || isBreaking;
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, y: 30, ...(isBreaking ? { scale: 0.95 } : {}) }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       className={cn(
         "mx-4 rounded-2xl border overflow-hidden",
-        isCrisis && "border-red-500/30 animate-pulse-red",
-        isBusiness && "border-amber-500/30 animate-shimmer-gold",
-        !isCrisis && !isBusiness && "border-white/10"
+        isBreaking && "border-orange-500/40 ring-1 ring-orange-500/20 shadow-lg shadow-orange-500/10",
+        !isBreaking && isCrisis && "border-red-500/30 animate-pulse-red",
+        !isBreaking && isBusiness && "border-amber-500/30 animate-shimmer-gold",
+        !isBreaking && !isCrisis && !isBusiness && "border-white/10"
       )}
     >
-      {/* Breaking banner for crisis */}
-      {isCrisis && (
+      {/* Breaking event banner */}
+      {isBreaking && (
+        <motion.div
+          initial={{ x: '-100%' }}
+          animate={{ x: 0 }}
+          transition={{ delay: 0.1, duration: 0.3, ease: 'easeOut' }}
+          className="bg-gradient-to-r from-orange-600 via-red-600 to-orange-600 text-white text-xs font-bold px-4 py-2 tracking-widest flex items-center gap-2"
+        >
+          <motion.span
+            animate={{ opacity: [1, 0.3, 1] }}
+            transition={{ repeat: Infinity, duration: 0.8 }}
+          >
+            🔴
+          </motion.span>
+          BREAKING · 突发快讯
+        </motion.div>
+      )}
+
+      {/* Crisis banner (non-breaking) */}
+      {!isBreaking && isCrisis && (
         <motion.div
           initial={{ x: '-100%' }}
           animate={{ x: 0 }}
@@ -51,7 +73,7 @@ export default function EventCard({ event }: EventCardProps) {
       )}
 
       {/* Normal category badge */}
-      {!isCrisis && (
+      {!showUrgentBanner && (
         <div className={cn(
           "text-xs font-medium px-4 py-1.5 tracking-wider",
           isBusiness ? "bg-amber-500/10 text-amber-400" : "bg-white/5 text-[#8888aa]"
@@ -61,10 +83,14 @@ export default function EventCard({ event }: EventCardProps) {
       )}
 
       {/* Event content */}
-      <div className="p-4 bg-[#141420]">
+      <div className={cn(
+        "p-4",
+        isBreaking ? "bg-[#1a1410]" : "bg-[#141420]"
+      )}>
         <h2 className={cn(
           "text-lg font-bold mb-3",
-          isCrisis && "text-red-400 animate-shake"
+          isBreaking && "text-orange-300",
+          !isBreaking && isCrisis && "text-red-400 animate-shake"
         )}>
           {event.emoji} {event.title}
         </h2>
@@ -87,7 +113,9 @@ export default function EventCard({ event }: EventCardProps) {
                 className={cn(
                   "w-full text-left p-3 rounded-xl border transition-all",
                   available
-                    ? "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 active:scale-[0.98]"
+                    ? isBreaking
+                      ? "border-orange-500/20 bg-orange-500/5 hover:bg-orange-500/10 hover:border-orange-500/30 active:scale-[0.98]"
+                      : "border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 active:scale-[0.98]"
                     : "border-white/5 bg-white/[0.02] opacity-40 cursor-not-allowed"
                 )}
               >

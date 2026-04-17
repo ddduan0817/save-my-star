@@ -18,6 +18,11 @@ export const crisisEvents: GameEvent[] = [
           narration: '工作室紧急发声明否认恋情。但网友扒出更多细节，"此地无银三百两"的评论占满了评论区。',
           statChanges: { prRisk: 15, fanLoyalty: -5 },
           unlockTag: 'denied_relationship',
+          twist: {
+            chance: 0.35,
+            narration: '更多约会照曝光了！这次是正脸高清图，否认都否认不了了。"打脸来得太快"冲上热搜，品牌方开始考虑解约。',
+            statChanges: { prRisk: 15, commercialValue: -10, fanLoyalty: -10 },
+          },
         },
       },
       {
@@ -29,6 +34,20 @@ export const crisisEvents: GameEvent[] = [
           narration: '艺人亲自发微博："是的，我恋爱了，谢谢大家关心。"一部分粉丝送祝福，但脱粉的也不少。不过路人好感度倒是上来了。',
           statChanges: { prRisk: -5, fanLoyalty: -15, commercialValue: -10 },
           unlockTag: 'public_relationship',
+          conditionalOutcomes: [
+            {
+              condition: { minFanLoyalty: 70 },
+              narration: '艺人官宣恋情。因为粉丝忠诚度极高，脱粉的人意外地少。"我家哥哥/姐姐幸福就好"刷屏了，路人也被这份成熟的粉丝关系感动。',
+              statChanges: { prRisk: -10, fanLoyalty: -5, commercialValue: 3 },
+              unlockTag: 'public_relationship',
+            },
+            {
+              condition: { maxFanLoyalty: 30 },
+              narration: '官宣恋情后，本来就不多的粉丝跑了一大半。"连粉丝都留不住还谈恋爱"的讽刺满天飞。',
+              statChanges: { prRisk: 5, fanLoyalty: -20, commercialValue: -15 },
+              unlockTag: 'public_relationship',
+            },
+          ],
         },
       },
       {
@@ -71,6 +90,13 @@ export const crisisEvents: GameEvent[] = [
         outcome: {
           narration: '艺人手写了一封道歉信，承认年少无知。大部分路人接受了，但"道歉有用要警察干嘛"的声音也不小。',
           statChanges: { prRisk: 10, fanLoyalty: -5, commercialValue: -10 },
+          conditionalOutcomes: [
+            {
+              condition: { maxPrRisk: 20 },
+              narration: '由于之前一直口碑很好，道歉信发出后路人基本都接受了。"谁年轻时没说过蠢话"成了主流声音。危机平稳化解。',
+              statChanges: { prRisk: 5, fanLoyalty: 3 },
+            },
+          ],
         },
       },
       {
@@ -133,6 +159,11 @@ export const crisisEvents: GameEvent[] = [
         outcome: {
           narration: '艺人开了一场直播清唱，高音稳得一批。"打脸来得太快"刷屏弹幕，风评逆转！',
           statChanges: { prRisk: -10, fanLoyalty: 10, commercialValue: 5 },
+          twist: {
+            chance: 0.25,
+            narration: '直播清唱炸了！一个音乐制作人在线下单："就凭这个live水平，我要给TA出专辑！"一份价值百万的音乐合约正在路上。',
+            statChanges: { commercialValue: 10, money: 100000, fanLoyalty: 5 },
+          },
         },
       },
     ],
@@ -174,6 +205,11 @@ export const crisisEvents: GameEvent[] = [
         outcome: {
           narration: '否认之后，举报人放出了更多证据。这下连官媒都点名了。你正在走一条非常危险的路。',
           statChanges: { prRisk: 30, commercialValue: -15 },
+          twist: {
+            chance: 0.4,
+            narration: '税务部门正式介入调查。三个品牌连夜解约，工作全面停摆。这可能是职业生涯最黑暗的时刻。',
+            statChanges: { prRisk: 20, money: -150000, commercialValue: -20 },
+          },
         },
       },
     ],
@@ -194,6 +230,13 @@ export const crisisEvents: GameEvent[] = [
         outcome: {
           narration: '艺人发长文谴责暴力行为，呼吁大家理性追星。官媒点赞，路人好感上升，但一部分激进粉丝觉得"偶像不向着我们"。',
           statChanges: { prRisk: -5, fanLoyalty: -8, commercialValue: 5 },
+          conditionalOutcomes: [
+            {
+              condition: { minFanLoyalty: 80 },
+              narration: '艺人公开谴责暴力。由于粉丝忠诚度极高，连激进粉都说"偶像说的对"。这种正面引导让官媒专门发文表扬，你的艺人成了"饭圈正能量"代表。',
+              statChanges: { prRisk: -15, fanLoyalty: 5, commercialValue: 10 },
+            },
+          ],
         },
       },
       {

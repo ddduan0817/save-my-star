@@ -72,6 +72,12 @@ export default function GamePage() {
             <EventOutcome />
           </div>
         )}
+
+        {gamePhase === 'showing_twist' && (
+          <div key="twist" className="flex-1 flex flex-col justify-center py-6">
+            <EventOutcome isTwist />
+          </div>
+        )}
       </AnimatePresence>
     </div>
   );

@@ -18,6 +18,11 @@ export const businessEvents: GameEvent[] = [
         outcome: {
           narration: '成功签下顶奢代言！品牌方很满意，时尚圈的大门正式打开。粉丝们也与有荣焉——"我家哥哥/姐姐也太厉害了吧！"',
           statChanges: { commercialValue: 15, money: 200000, fanLoyalty: 5 },
+          twist: {
+            chance: 0.2,
+            narration: '品牌方对首批广告大片的效果非常满意！紧急追加了全球代言合约，代言费翻倍。这下是真的起飞了！',
+            statChanges: { commercialValue: 10, money: 200000 },
+          },
         },
       },
       {
@@ -58,6 +63,13 @@ export const businessEvents: GameEvent[] = [
         outcome: {
           narration: '综艺效果拉满！你的艺人意外展现了搞笑天赋，"人间清醒"的梗在社交媒体上疯传。路人粉暴涨！',
           statChanges: { fanLoyalty: 12, commercialValue: 8, money: 80000 },
+          conditionalOutcomes: [
+            {
+              condition: { minPrRisk: 50 },
+              narration: '综艺录制现场，你的艺人状态不太好，几次接梗都没接住。网友说"综艺感为零"，加上最近的争议，弹幕全是嘲讽。',
+              statChanges: { fanLoyalty: -5, commercialValue: -3, money: 80000, prRisk: 5 },
+            },
+          ],
         },
       },
       {
@@ -141,6 +153,11 @@ export const businessEvents: GameEvent[] = [
         outcome: {
           narration: '直播间人气爆棚，但弹幕里"偶像怎么卖货了"的吐槽不少。不过看看到账的金额...真香。',
           statChanges: { money: 150000, commercialValue: -5, fanLoyalty: -3 },
+          twist: {
+            chance: 0.3,
+            narration: '直播卖出去的产品出质量问题了！买家集体在你艺人微博下面维权。"恰烂钱"的标签贴上来了。',
+            statChanges: { prRisk: 15, fanLoyalty: -8, money: -50000 },
+          },
         },
       },
       {
