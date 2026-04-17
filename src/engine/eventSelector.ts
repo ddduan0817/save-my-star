@@ -30,7 +30,7 @@ const allEvents: GameEvent[] = [
   ...artistTroubleEvents,
 ];
 
-const EVENT_COOLDOWN = 8; // 事件使用后需间隔8天才能再次出现
+const EVENT_COOLDOWN = 999; // 单局内事件不重复
 
 // 查找事件（用于事件链 followUpEventId）
 export function findEventById(id: string): GameEvent | undefined {

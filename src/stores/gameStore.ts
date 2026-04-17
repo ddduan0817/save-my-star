@@ -88,7 +88,7 @@ function maybeInjectBreaking(
 
   const available = breakingEvents.filter(e => {
     const lastUsed = eventUsageMap[e.id];
-    if (lastUsed !== undefined && (day - lastUsed) < 10) return false;
+    if (lastUsed !== undefined) return false; // 单局内不重复
     if (e.minDay && day < e.minDay) return false;
     return true;
   });
