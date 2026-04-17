@@ -12,6 +12,7 @@ import { influencerSpecificEvents } from '@/data/events/influencer-specific';
 import { lateGameEvents } from '@/data/events/late-game';
 import { milestoneEvents } from '@/data/events/milestone';
 import { chainEvents } from '@/data/events/chains';
+import { artistTroubleEvents } from '@/data/events/artist-trouble';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -26,6 +27,7 @@ const allEvents: GameEvent[] = [
   ...lateGameEvents,
   ...milestoneEvents,
   ...chainEvents,
+  ...artistTroubleEvents,
 ];
 
 const EVENT_COOLDOWN = 8; // 事件使用后需间隔8天才能再次出现
@@ -113,6 +115,8 @@ function isEventEligible(
 
 // 里程碑事件ID集合，满足条件时强制注入
 const milestoneIds = new Set(milestoneEvents.map(e => e.id));
+// 艺人作妖事件ID集合，每2-3天强制注入一个
+const troubleIds = new Set(artistTroubleEvents.map(e => e.id));
 
 export function selectEventsForDay(
   day: number,
@@ -129,7 +133,11 @@ export function selectEventsForDay(
 
   // 里程碑事件强制注入（满足条件就触发，不和普通事件竞争）
   const triggeredMilestones = eligible.filter(e => milestoneIds.has(e.id));
-  const normalEligible = eligible.filter(e => !milestoneIds.has(e.id));
+  // 艺人作妖事件：每2-3天强制注入一个（从第2天起，偶数天必触发，奇数天50%概率）
+  const troubleEligible = eligible.filter(e => troubleIds.has(e.id));
+  const shouldTriggerTrouble = day >= 2 && troubleEligible.length > 0 &&
+    (day % 2 === 0 || Math.random() < 0.5);
+  const normalEligible = eligible.filter(e => !milestoneIds.has(e.id) && !troubleIds.has(e.id));
 
   // Determine how many normal events this day
   const rand = Math.random();
@@ -145,7 +153,8 @@ export function selectEventsForDay(
   }
   // 里程碑事件占位后，剩余名额给普通事件
   const milestoneCount = Math.min(triggeredMilestones.length, 1); // 每天最多1个里程碑
-  const normalCount = Math.min(Math.max(eventCount - milestoneCount, 1), normalEligible.length);
+  const troubleCount = shouldTriggerTrouble ? 1 : 0; // 艺人作妖事件最多1个
+  const normalCount = Math.min(Math.max(eventCount - milestoneCount - troubleCount, 1), normalEligible.length);
 
   // Prefer unused events, then oldest used events
   const weighted = normalEligible.map(event => {
@@ -164,6 +173,15 @@ export function selectEventsForDay(
     const ms = triggeredMilestones[Math.floor(Math.random() * triggeredMilestones.length)];
     selected.push(ms);
     usedCategories.add(ms.category);
+  }
+
+  // 再放入艺人作妖事件
+  if (troubleCount > 0 && troubleEligible.length > 0) {
+    const availableTrouble = troubleEligible.filter(e => !usedCategories.has(e.category));
+    const pool = availableTrouble.length > 0 ? availableTrouble : troubleEligible;
+    const te = pool[Math.floor(Math.random() * pool.length)];
+    selected.push(te);
+    usedCategories.add(te.category);
   }
 
   // 再抽选普通事件
