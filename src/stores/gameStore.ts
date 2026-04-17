@@ -21,6 +21,7 @@ import type {
   RivalState,
   CosmeticState,
   CosmeticProcedureId,
+  LedgerEntry,
 } from '@/types/game';
 import { artists } from '@/data/artists';
 import { startNewDay, resolveChoice, checkDayEnd } from '@/engine/gameEngine';
@@ -117,6 +118,9 @@ interface GameStore {
   pendingPhoneCall: GameEvent | null;
   showPhoneCall: boolean;
 
+  // Daily ledger (收支明细)
+  dailyLedger: LedgerEntry[];
+
   // Actions
   startGame: (artistId: ArtistArchetype) => void;
   setActiveTab: (tab: TabId) => void;
@@ -144,6 +148,12 @@ interface GameStore {
 // 突发事件触发概率 (每天 25%)
 const BREAKING_CHANCE = 0.25;
 const MAX_CARRYOVER_MESSAGES = 2;
+
+// 收支明细 helper
+function addLedger(get: () => GameStore, set: (partial: Partial<GameStore>) => void, entry: LedgerEntry) {
+  if (entry.amount === 0) return;
+  set({ dailyLedger: [...get().dailyLedger, entry] });
+}
 
 // 成就检查 helper
 function runAchievementCheck(get: () => GameStore, set: (partial: Partial<GameStore>) => void) {
@@ -273,6 +283,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   pendingPhoneCall: null,
   showPhoneCall: false,
+  dailyLedger: [],
 
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
@@ -337,6 +348,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showCosmeticResult: false,
       pendingPhoneCall: null,
       showPhoneCall: false,
+      dailyLedger: [],
     });
   },
 
@@ -421,6 +433,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         unlockedEndings: unlocked,
         messages: updatedMessages,
       });
+      if (result.statChanges.money) {
+        addLedger(get, set, { label: `${event.title} → ${choice.text}`, amount: result.statChanges.money, category: 'event' });
+      }
       return;
     }
 
@@ -438,6 +453,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       peakRisk: newPeakRisk,
       messages: updatedMessages,
     });
+
+    // Ledger: event choice money
+    if (result.statChanges.money) {
+      addLedger(get, set, { label: `${event.title} → ${choice.text}`, amount: result.statChanges.money, category: 'event' });
+    }
 
     runAchievementCheck(get, set);
   },
@@ -461,6 +481,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
         activeTags: newTags,
         peakRisk: Math.max(get().peakRisk, twistStats.prRisk),
       });
+      if (pendingTwist.statChanges.money) {
+        addLedger(get, set, { label: '反转！', amount: pendingTwist.statChanges.money, category: 'event' });
+      }
       return;
     }
 
@@ -502,10 +525,14 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // 1. Resolve artist schedule
     let newSchedule = artistSchedule;
+    let scheduleLedgerEntry: LedgerEntry | null = null;
     if (artistSchedule) {
       if (artistSchedule.remainingDays <= 1) {
         // Schedule completes
         newStats = applyStatChanges(newStats, artistSchedule.activity.statChanges, artist?.id);
+        if (artistSchedule.activity.statChanges.money) {
+          scheduleLedgerEntry = { label: `${artistSchedule.activity.name}完成`, amount: artistSchedule.activity.statChanges.money, category: 'schedule' };
+        }
         newSchedule = null;
       } else {
         newSchedule = {
@@ -532,12 +559,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
     let newRival = rival;
     let rivalNarration = '';
     let rivalTrend: import('@/types/game').WeiboTrend | null = null;
+    let rivalLedgerEntry: LedgerEntry | null = null;
     if (rival && artist) {
       const rivalAction = selectRivalAction(rival, currentDay, newStats);
       if (rivalAction) {
         const result = resolveRivalAction(rivalAction, rival, artist, currentDay);
         if (result.playerStatChanges) {
           newStats = applyStatChangesEngine(newStats, result.playerStatChanges, artist.id);
+          if (result.playerStatChanges.money) {
+            rivalLedgerEntry = { label: `竞争对手：${rivalAction.title}`, amount: result.playerStatChanges.money, category: 'rival' };
+          }
         }
         newRival = result.newRivalState;
         rivalNarration = result.narration;
@@ -623,7 +654,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
       activeTags: newActiveTags,
       pendingPhoneCall: phoneCall,
       showPhoneCall: !!phoneCall,
+      dailyLedger: [], // reset ledger for new day
     });
+
+    // Ledger: daily operating costs
+    addLedger(get, set, { label: '日常运营开支', amount: GAME_CONFIG.DAILY_MONEY_COST, category: 'daily' });
+    // Ledger: fan loyalty bonus
+    if (stats.fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD) {
+      addLedger(get, set, { label: '粉丝周边收入', amount: 3000, category: 'daily' });
+    }
+    // Ledger: schedule completion
+    if (scheduleLedgerEntry) {
+      addLedger(get, set, scheduleLedgerEntry);
+    }
+    // Ledger: rival action
+    if (rivalLedgerEntry) {
+      addLedger(get, set, rivalLedgerEntry);
+    }
 
     return true;
   },
@@ -659,6 +706,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
       stats: { ...stats, money: stats.money - cost },
       companyUpgrades: { ...companyUpgrades, [upgradeId]: currentLevel + 1 },
     });
+
+    addLedger(get, set, { label: `升级：${upgradeData.name} Lv${currentLevel + 1}`, amount: -cost, category: 'upgrade' });
   },
 
   postWeibo: (templateId: string) => {
@@ -699,6 +748,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       activeTags: newTags,
       peakRisk: Math.max(get().peakRisk, newStats.prRisk),
     });
+
+    if (result.statChanges.money) {
+      addLedger(get, set, { label: `发微博：${template.title}`, amount: result.statChanges.money, category: 'weibo' });
+    }
 
     runAchievementCheck(get, set);
   },
@@ -754,6 +807,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showCosmeticResult: true,
       peakRisk: Math.max(get().peakRisk, newStats.prRisk),
     });
+
+    const totalCosmeticCost = procedure.cost + Math.abs(result.statChanges.money ?? 0);
+    addLedger(get, set, { label: `医美：${procedure.name}`, amount: -totalCosmeticCost, category: 'cosmetic' });
 
     runAchievementCheck(get, set);
   },
@@ -812,6 +868,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showDayBanner: true,
     });
 
+    if (hangUpOutcome.statChanges.money) {
+      addLedger(get, set, { label: `挂断来电：${pendingPhoneCall.title}`, amount: hangUpOutcome.statChanges.money, category: 'phone' });
+    }
+
     runAchievementCheck(get, set);
   },
 
@@ -865,6 +925,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showCosmeticResult: false,
       pendingPhoneCall: null,
       showPhoneCall: false,
+      dailyLedger: [],
     });
   },
 

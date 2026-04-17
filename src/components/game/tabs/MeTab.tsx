@@ -71,6 +71,7 @@ export default function MeTab() {
   const weiboTrends = useGameStore(s => s.weiboTrends);
   const fanComments = useGameStore(s => s.fanComments);
   const artist = useGameStore(s => s.artist);
+  const dailyLedger = useGameStore(s => s.dailyLedger);
 
   const manager = getManagerInfo(currentDay, stats, stats.money);
 
@@ -116,6 +117,62 @@ export default function MeTab() {
 
       {/* Weibo Compose */}
       <WeiboCompose />
+
+      {/* Daily Ledger 今日账单 */}
+      {dailyLedger.length > 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="bg-white rounded-2xl overflow-hidden ring-1 ring-gray-100/60 shadow-sm"
+        >
+          <div className="px-4 py-3 border-b border-gray-100/60 flex items-center justify-between">
+            <span className="text-xs font-medium text-gray-400 tracking-wider">今日账单</span>
+            <span className="text-[10px] text-gray-400">
+              第{currentDay}天
+            </span>
+          </div>
+          <div>
+            {dailyLedger.map((entry, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between px-4 py-2 border-b border-gray-50 last:border-0"
+              >
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span className={cn(
+                    "text-[10px] font-medium px-1.5 py-0.5 rounded-full shrink-0",
+                    entry.amount > 0 ? "bg-green-50 text-green-600" : "bg-red-50 text-red-500"
+                  )}>
+                    {entry.amount > 0 ? '收入' : '支出'}
+                  </span>
+                  <span className="text-xs text-gray-600 truncate">{entry.label}</span>
+                </div>
+                <span className={cn(
+                  "text-xs font-medium tabular-nums shrink-0 ml-2",
+                  entry.amount > 0 ? "text-green-600" : "text-red-500"
+                )}>
+                  {entry.amount > 0 ? '+' : ''}{entry.amount.toLocaleString()}
+                </span>
+              </div>
+            ))}
+          </div>
+          {/* Summary row */}
+          <div className="px-4 py-2.5 bg-gray-50/80 flex items-center justify-between">
+            <span className="text-[10px] text-gray-400">今日净收入</span>
+            {(() => {
+              const total = dailyLedger.reduce((sum, e) => sum + e.amount, 0);
+              return (
+                <span className={cn(
+                  "text-xs font-bold tabular-nums",
+                  total > 0 ? "text-green-600" : total < 0 ? "text-red-500" : "text-gray-500"
+                )}>
+                  {total > 0 ? '+' : ''}{total.toLocaleString()}
+                </span>
+              );
+            })()}
+          </div>
+        </motion.div>
+      )}
 
       {/* Weibo Trending */}
       <motion.div

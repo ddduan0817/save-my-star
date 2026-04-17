@@ -341,3 +341,12 @@ export interface CosmeticState {
   stiffFaceDaysRemaining: number;
   recoveryDaysRemaining: number;
 }
+
+// ===== Daily Ledger (收支明细) =====
+export type LedgerCategory = 'event' | 'schedule' | 'cosmetic' | 'upgrade' | 'weibo' | 'daily' | 'rival' | 'phone';
+
+export interface LedgerEntry {
+  label: string;         // e.g. "品牌代言争议 → 诚恳道歉"
+  amount: number;        // positive = income, negative = expense
+  category: LedgerCategory;
+}
