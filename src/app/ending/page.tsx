@@ -63,9 +63,9 @@ export default function EndingPage() {
     legendary: '传说',
   };
   const rarityColor = {
-    common: 'text-gray-500 bg-gray-100',
-    rare: 'text-purple-600 bg-purple-50 ring-1 ring-purple-200/50',
-    legendary: 'text-amber-600 bg-amber-50 ring-1 ring-amber-200/50',
+    common: 'text-white/70 bg-white/15',
+    rare: 'text-purple-200 bg-purple-500/20 ring-1 ring-purple-300/30',
+    legendary: 'text-amber-200 bg-amber-500/20 ring-1 ring-amber-300/30',
   };
 
   const isBadEnding = ending.id === 'cancelled' || ending.id === 'fallen' || ending.id === 'scandal_king';
@@ -114,7 +114,7 @@ export default function EndingPage() {
             <motion.div
               className={cn(
                 "text-sm mt-2 relative z-10",
-                isBadEnding ? "text-red-300/70" : "text-gray-400"
+                isBadEnding ? "text-white/60" : "text-gray-400"
               )}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

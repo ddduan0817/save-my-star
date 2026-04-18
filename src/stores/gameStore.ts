@@ -350,6 +350,9 @@ export const useGameStore = create<GameStore>((set, get) => ({
       showPhoneCall: false,
       dailyLedger: [],
     });
+
+    // Day 1 daily operating cost
+    addLedger(get, set, { label: '日常运营开支', amount: GAME_CONFIG.DAILY_MONEY_COST, category: 'daily' });
   },
 
   setActiveTab: (tab: TabId) => {
