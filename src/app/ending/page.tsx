@@ -77,7 +77,7 @@ export default function EndingPage() {
         {!showContent && (
           <motion.div
             className="fixed inset-0 z-[60] flex flex-col items-center justify-center"
-            style={{ background: isBadEnding ? '#1a1a2e' : '#faf8f5' }}
+            style={{ background: isBadEnding ? '#1a1a2e' : '#f5ebe0' }}
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
