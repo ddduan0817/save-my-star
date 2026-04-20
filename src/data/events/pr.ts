@@ -6,7 +6,7 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'low',
     title: '新专辑发布会',
-    description: '新专辑要开发布会了，媒体们摩拳擦掌准备提问。你得决定让你的艺人用什么策略来应对——安全牌还是搞点事情？',
+    description: '发布会场地的灯光刚调好，你在后台偷看了一眼——前三排坐的全是出了名爱挖坑的记者。提词器上滚动着你改了十七遍的通稿，但你知道，真正的战场是Q&A环节。你的艺人在化妆间里背台词，嘴里念念有词像在念经。',
     emoji: '🎙️',
     choices: [
       {
@@ -14,7 +14,7 @@ export const prEvents: GameEvent[] = [
         text: '念稿子',
         subtext: '安全第一，全程按台本走',
         outcome: {
-          narration: '发布会平稳结束，没出任何差错。但记者们私下吐槽"无聊死了，全是官方话术"。上了一个不温不火的热搜就沉了。',
+          narration: '四十五分钟，零失误。你在后台松了一口气。但散场后你经过记者休息区，听到有人说："又一场念PPT的发布会，稿子都能背了。"当天的通稿发出去，阅读量创了新低。安全的代价是无聊。',
           statChanges: { commercialValue: 3 },
         },
       },
@@ -23,11 +23,11 @@ export const prEvents: GameEvent[] = [
         text: '做自己',
         subtext: '真实互动，展现个性',
         outcome: {
-          narration: '艺人放飞自我，爆了好几个金句！"今天的发布会太好笑了"刷屏热搜。路人纷纷路转粉，这波赚大了。',
+          narration: '你跟艺人说"别管稿子了，想说什么说什么"。结果TA回答第二个问题的时候突然冒了句方言，全场笑喷。接下来四十分钟成了脱口秀现场，"XX发布会名场面"的tag当晚就爆了。你在后台笑得比谁都开心——直到你看到第二天的稿件。',
           statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: 3 },
           twist: {
             chance: 0.25,
-            narration: '发布会上的金句被营销号断章取义了！"XX公开嘲讽同行"的标题满天飞，虽然不是原意，但解释的成本太高了。',
+            narration: '但是！TA那句"这张专辑比上张好多了"被截出来单独发——标题变成了"XX承认上张专辑是烂作？"。你盯着这条热搜看了十秒钟，然后默默把提词器的电源插回了插座。',
             statChanges: { prRisk: 4, fanLoyalty: -3 },
           },
         },
@@ -37,7 +37,7 @@ export const prEvents: GameEvent[] = [
         text: '搞个大新闻',
         subtext: '发布会上宣布重磅消息',
         outcome: {
-          narration: '艺人在发布会上宣布了一个谁都没想到的合作。全场记者都疯了，热搜直接爆了。话题度拉满，但也把同行得罪了不少。',
+          narration: '你让艺人在最后环节"不经意"提了一句："对了，下个月有个特别的合作，今天先不说了。"全场记者的快门声响成一片。三十秒内你收到了十二条媒体私信问"到底是什么合作"。其实你还没谈成呢——但热度先到手了。',
           statChanges: { commercialValue: 4, fanLoyalty: 3, prRisk: 3 },
         },
       },
@@ -48,33 +48,33 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'low',
     title: '公益项目邀请',
-    description: '某知名公益基金会邀请你的艺人担任爱心大使。这是树立正面形象的好机会，但需要投入时间和真金白银。',
+    description: '某知名公益基金会发来邀请函——担任"乡村教育守护人"爱心大使。照片上是几十个孩子在土操场上跑步的画面。你把邀请函递给艺人看，TA盯着照片看了很久。"去。"TA说了一个字。但你在想的是：去几天？带几个人？拍多少素材？这些念头让你觉得自己有点不是人。',
     emoji: '🤲',
     choices: [
       {
         id: 'genuine_charity',
-        text: '真心做公益',
-        subtext: '投入时间和资金 (-5万)',
+        text: '认真做，待够一周',
+        subtext: '投入时间和资金 (-4万)',
         outcome: {
-          narration: '艺人亲自去了山区小学，和孩子们一起上课的照片温暖了全网。"这不是作秀，是真的在做"成了热评第一。',
+          narration: '七天。没有通稿，没有摄影师——你只让助理拿手机随便拍了几张。你的艺人教三年级的孩子唱了一首歌，有个小女孩拉着TA的衣角说"老师你明天还来吗"。这些照片你原本没打算发，但助理偷偷传了一张到粉丝群。那张照片比任何精修大片都火。',
           statChanges: { money: -40000, fanLoyalty: 5, prRisk: -4, commercialValue: 3 },
         },
       },
       {
         id: 'pr_charity_show',
-        text: '做做样子',
-        subtext: '拍几张照就走',
+        text: '去半天拍个素材',
+        subtext: '有图就行',
         outcome: {
-          narration: '照片拍得挺好，但有人扒出艺人全程只待了20分钟。"公益作秀"的质疑声出来了。',
+          narration: '到了、拍了、发了、走了。全程一百二十分钟。照片里艺人笑得标准，孩子们笑得拘谨。有个较真的博主扒了TA的航班记录——"落地到起飞中间只隔了三小时"。"公益打卡"四个字精准到位。',
           statChanges: { prRisk: 3, fanLoyalty: -3 },
         },
       },
       {
         id: 'decline_charity',
         text: '太忙了婉拒',
-        subtext: '这期档满了',
+        subtext: '这期确实排不开',
         outcome: {
-          narration: '拒绝了公益邀请。虽然没人会因此骂你，但一个树立正面形象的机会就这么溜走了。',
+          narration: '你回了封措辞考究的邮件表示遗憾。艺人那边你没提这事。但当你刷到那个基金会最终请了另一个艺人去的新闻时，你关掉了手机。',
           statChanges: {},
         },
       },
@@ -85,25 +85,25 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'low',
     title: '要不要买个热搜？',
-    description: '你的宣传团队提议花钱买一个正面热搜来提升话题度。在这个行业里，这几乎是潜规则了。但万一被发现是买的，可就尴尬了。',
+    description: '宣传总监拿着平板走进来，上面是热搜报价单——这行字小得像怕被人看到。"这个位置四十万，那个位置八十万。效果嘛...你懂的。"你看了看自家艺人上一条微博的转发量——三千。你又看了看报价单。三千。八十万。这笔账怎么算都不对，但在这个行业，有些账本来就不是用来算的。',
     emoji: '🔥',
     choices: [
       {
         id: 'buy_hot',
-        text: '买！',
-        subtext: '花钱上正面热搜 (-8万)',
+        text: '买一个试试',
+        subtext: '花钱上正面热搜 (-5.6万)',
         outcome: {
-          narration: '热搜买到了，#XX全新造型绝了# 成功登上热搜榜。虽然评论区水军味有点重，但至少曝光量上来了。',
+          narration: '#XX全新造型绝了# 在下午两点准时出现在热搜第十六位。你盯着它一点一点往上爬——十四、十一、八。评论区前五十条全是整齐划一的彩虹屁，整齐得像军训方阵。有个路人评论在夹缝中幸存了下来："这控评也太明显了吧。"你假装没看见。',
           statChanges: { money: -56000, commercialValue: 3 },
         },
       },
       {
         id: 'fan_army',
         text: '买热搜+粉丝控评组合拳',
-        subtext: '全方位营销 (-12万)',
+        subtext: '全方位营销 (-8.4万)',
         requireMinMoney: 84000,
         outcome: {
-          narration: '热搜+控评+超话打卡，数据漂亮得像假的（确实有点假）。但品牌方看数据决定合作，所以...值了？',
+          narration: '热搜、控评、超话签到、数据打投——全套流水线启动。数字漂亮得不像话：一小时内#XX造型# tag阅读量破亿。但你打开任意一条评论，像是同一个人用三百个号发的。品牌方的市场总监看了一眼数据说"不错"，然后转头问他的实习生："这个真实互动率多少？"',
           statChanges: { money: -84000, commercialValue: 3, prRisk: 3 },
         },
       },
@@ -112,7 +112,7 @@ export const prEvents: GameEvent[] = [
         text: '不买，靠实力',
         subtext: '自然增长',
         outcome: {
-          narration: '你选择了一条更难但更干净的路。短期内看不到效果，但至少不用担心被扒"数据注水"。',
+          narration: '你合上了平板还给了宣传总监。TA看了你一眼，什么都没说就走了——但你感觉那个眼神在说"你等着瞧"。三个月后你看了看数据：粉丝净增长不多，但每条微博下面的评论都是真人在说真话。这东西值多少钱？你算不出来，但你觉得它值。',
           statChanges: { fanLoyalty: 3 },
         },
       },
@@ -243,7 +243,7 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'low',
     title: '社交媒体人设讨论',
-    description: '团队在讨论你艺人的社交媒体策略。目前发的都是精修大片，但最近"接地气"的明星更受欢迎。要不要改变风格？',
+    description: '团队开了个两小时的会。议题只有一个：为什么你艺人的微博互动量连续三个月下滑。运营小妹拿出了一张对比图——左边是你家精修九宫格，右边是某新晋小花在菜市场啃煎饼果子的随手拍。后者互动量是你的七倍。会议室里很安静。你盯着那张煎饼果子的照片陷入了沉思。',
     emoji: '📱',
     choices: [
       {
@@ -251,7 +251,7 @@ export const prEvents: GameEvent[] = [
         text: '转型接地气',
         subtext: '发日常、发素颜、发碎碎念',
         outcome: {
-          narration: '第一条接地气的微博——一张没化妆在家吃泡面的照片——居然成了近期互动最高的一条。"原来你也吃泡面啊"成了出圈热评。',
+          narration: '第一条接地气的微博是一张窝在沙发上吃泡面的照片，没化妆，头发乱的。你发出去的时候手都在抖。结果——互动量是上条精修图的十二倍。最高赞评论是一位中年大叔写的："看来明星也吃泡面啊，我放心了。"你读了三遍，笑了。',
           statChanges: { fanLoyalty: 4, commercialValue: 3 },
         },
       },
@@ -260,7 +260,7 @@ export const prEvents: GameEvent[] = [
         text: '保持高冷精修',
         subtext: '维持现有调性',
         outcome: {
-          narration: '精修路线继续维持，品牌方倒是很满意。但粉丝们开始吐槽"像个没有感情的营业机器"。',
+          narration: '你拍了拍桌子："我们的定位不一样，不需要去迎合。"运营小妹欲言又止。三个月后的数据会议上，互动量又跌了15%。你打开艺人最新那条精修九宫格——点赞第一名是艺人的妈妈。',
           statChanges: { commercialValue: 3, fanLoyalty: -3 },
         },
       },

@@ -48,7 +48,7 @@ export const randomEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: '暖心一幕被路人拍到了',
-    description: '有路人偷偷拍到你的艺人在便利店帮一位老人搬东西，还聊了好一会儿。视频传上网后，评论区全是"人间清醒""好善良"。',
+    description: '一条九秒的视频在全网疯传：你的艺人在便利店门口，弯腰帮一位颤颤巍巍的老太太把散了一地的橘子捡回袋子里。老太太显然不认识TA，拉着TA的手说了句什么，然后TA笑了。那个笑容没有任何滤镜和角度，但比任何精修大片都好看。视频结尾，TA戴上口罩转身消失在人流里。',
     emoji: '🥺',
     choices: [
       {
@@ -56,16 +56,16 @@ export const randomEvents: GameEvent[] = [
         text: '低调处理',
         subtext: '让视频自然传播',
         outcome: {
-          narration: '没有任何炒作，视频靠自来水传播到了千万级播放。"这就是为什么喜欢他/她"成了热评第一。自然的才是最有力的。',
+          narration: '你做了一件最难的事——什么都不做。没有转发，没有声明，没有"团队知情"。视频靠自来水传到了三千万播放。最打动人的不是捡橘子，而是自始至终没人知道TA就是那个"XX"。热评第一只有四个字："这种人，粉了。"',
           statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
         },
       },
       {
         id: 'amplify',
-        text: '趁机宣传',
-        subtext: '安排媒体跟进报道',
+        text: '安排媒体跟进',
+        subtext: '趁机扩大影响',
         outcome: {
-          narration: '媒体跟进报道了，但有人扒出旁边有工作人员在拍——"所以这是安排好的？"质疑声开始出来了。',
+          narration: '你让三家媒体做了跟进报道，标题都是"XX暖心一幕感动全网"。但有个博主放大了视频的第四秒——角落里站着一个拿手机录像的工作人员。"原来有人跟拍啊""意思是这是安排好的？"质疑声开始冒出来了。你看着那个角落里的人影——那其实是路人，但谁在乎真相呢。',
           statChanges: { commercialValue: 3, prRisk: 3 },
         },
       },
@@ -190,7 +190,7 @@ export const randomEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: 'AI换脸视频传疯了',
-    description: '有人用AI把你艺人的脸换到了各种搞笑视频上，其中一条"你的艺人在菜市场砍价"的视频播放量已经过亿了。',
+    description: '你打开抖音想放松一下，结果第一条推荐就是你的艺人——在菜市场跟大妈砍价，还拍了拍西瓜说"这瓜保熟吗"。你差点信了，直到你看到AI生成的第六根手指。但评论区没人在乎手指——播放量已经过亿了，"XX菜市场砍价"成了本周最火的梗。',
     emoji: '🤖',
     choices: [
       {
@@ -198,7 +198,7 @@ export const randomEvents: GameEvent[] = [
         text: '官方下场玩AI',
         subtext: '自己出一版更搞笑的',
         outcome: {
-          narration: '官方出了一版"AI艺人的一天"系列视频，从买菜到送外卖全套，笑翻全网。科技博主都来分析了。',
+          narration: '你让艺人真的去了趟菜市场，买了个西瓜抱着拍了张照片，配文："这瓜我亲自挑的，保熟。"然后团队出了一套"AI vs 真人"对比图——左边是AI版的六根手指，右边是本人比了个五。科技博主、美食博主、搞笑博主全来蹭热度，你坐在办公室看着数据往上飙，觉得AI这东西也不是完全没好处。',
           statChanges: { fanLoyalty: 3, commercialValue: 4, prRisk: -3 },
         },
       },
@@ -207,7 +207,7 @@ export const randomEvents: GameEvent[] = [
         text: '维权！侵犯肖像权',
         subtext: '发律师函',
         outcome: {
-          narration: '律师函发了，但AI换脸的法律边界还很模糊。最后不了了之，白花了律师费。',
+          narration: '律师函发了，平台删了一批视频。但AI换脸的法律边界模糊得像马赛克——律师打了半个月电话，最后只追回了一个"已处理"的自动回复。钱花了，效果没看到。而且网友们开始用马赛克版本传播了——你压了个寂寞。',
           statChanges: { money: -20000, prRisk: 3 },
         },
       },
@@ -218,7 +218,7 @@ export const randomEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: '公益挑战赛@你了',
-    description: '一个全网公益挑战赛（类似冰桶挑战）在各大明星之间传递，现在轮到你的艺人了。不参加会显得没有社会责任感，参加又怕做得不好被嘲。',
+    description: '一个全网公益挑战赛像击鼓传花一样在明星圈里转了一圈，现在传到你这了。上一个完成挑战的是某老戏骨，拍了条质朴到哭的视频。你的艺人看完后说了句："我也想做，但我怕被骂。"——TA说的是实话，上一个做砸了的明星被骂了整整一周。',
     emoji: '🏃',
     choices: [
       {
@@ -226,7 +226,7 @@ export const randomEvents: GameEvent[] = [
         text: '创意参与',
         subtext: '用独特的方式完成挑战',
         outcome: {
-          narration: '你的艺人用了一个超有创意的方式完成了挑战，视频在全平台霸榜。"这才是公益正确打开方式"成了热评。',
+          narration: '你和创意团队折腾了两天，最后拍了一条三分钟的短片——没有口号没有BGM，只有你的艺人一个人安静地做完了整个挑战。最后一个镜头是TA满头汗看着镜头说："我也不知道拍得好不好，但至少是真的。"这条视频的完播率破了平台纪录。',
           statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: -3 },
         },
       },
@@ -235,7 +235,7 @@ export const randomEvents: GameEvent[] = [
         text: '正常完成',
         subtext: '规规矩矩拍一条',
         outcome: {
-          narration: '视频发了，中规中矩。既没有被夸也没有被骂，就是普通地完成了任务。',
+          narration: '十五分钟拍完，二十分钟剪完，半小时后上线。中规中矩，不惊艳也不出错。热评第一是"完成✓"，第二是"下一位"。你的艺人看了看数据说："...就这？"你说："就这。"然后你们一起沉默了三秒。',
           statChanges: { fanLoyalty: 3, prRisk: -2 },
         },
       },

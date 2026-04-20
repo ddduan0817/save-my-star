@@ -49,7 +49,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'low',
     title: '王牌综艺发来邀请',
-    description: '国民级综艺节目组来了，邀请你的艺人作为常驻嘉宾参加新一季录制。这是提升国民度的绝佳机会，但也意味着曝光量巨大，任何瑕疵都会被放大。',
+    description: '你打开邮箱，差点以为是垃圾邮件——但发件人确实是那个国综的制片主任。"常驻嘉宾，十二期，下个月开录。"你读了两遍确认没有看错。这档综艺上一季的收视率碾压同时段所有节目，但同时也以"素材一条不删"著称。翻车的嘉宾不是一个两个了。',
     emoji: '📺',
     choices: [
       {
@@ -57,12 +57,12 @@ export const businessEvents: GameEvent[] = [
         text: '接！好机会',
         subtext: '增加曝光和国民度',
         outcome: {
-          narration: '综艺效果拉满！你的艺人意外展现了搞笑天赋，"人间清醒"的梗在社交媒体上疯传。路人粉暴涨！',
+          narration: '第一期录制，你在监控室里紧张得来回踱步。但你的艺人上了台就像变了个人——梗接得稳、表情管理到位，有段即兴反应被导演连喊了三遍"好"。播出那天你坐在电视前看弹幕，满屏都是"这人之前怎么没发现这么有意思"。你笑着给艺人发了条消息："你可以啊。"',
           statChanges: { fanLoyalty: 4, commercialValue: 3, money: 60000 },
           conditionalOutcomes: [
             {
               condition: { minPrRisk: 50 },
-              narration: '综艺录制现场，你的艺人状态不太好，几次接梗都没接住。网友说"综艺感为零"，加上最近的争议，弹幕全是嘲讽。',
+              narration: '录制当天你的艺人状态肉眼可见地差——眼神涣散，三次接梗全没接住。导演在对讲机里说了句"换机位别拍TA了"。播出时弹幕一水的"综艺感为零""来混什么呢"。加上最近的争议，路人盘更难了。',
               statChanges: { fanLoyalty: -3, commercialValue: -2, money: 60000, prRisk: 3 },
             },
           ],
@@ -73,7 +73,7 @@ export const businessEvents: GameEvent[] = [
         text: '要求C位出场',
         subtext: '必须最高排位',
         outcome: {
-          narration: '节目组答应了，但其他嘉宾的粉丝不乐意了。录制现场气氛微妙，剪辑出来效果一般。',
+          narration: '你打电话给制片："咱们的排位..."对面笑了一下："都是平等嘉宾。"你坚持要了入场第一位和最多镜头的保证。录制那天，其他嘉宾的表情微妙得像在开追悼会。剪辑出来后你发现——镜头确实多，但全是尬笑的。同行经纪人的群里，你的名字后面多了个外号："C位战神"。',
           statChanges: { money: 80000, fanLoyalty: -3, prRisk: 3 },
         },
       },
@@ -82,7 +82,7 @@ export const businessEvents: GameEvent[] = [
         text: '档期冲突婉拒',
         subtext: '保持神秘感',
         outcome: {
-          narration: '拒绝了国综邀请。有人说"端什么架子"，但核心粉丝觉得偶像很专注本职工作。',
+          narration: '你回了封措辞漂亮的邮件——"遗憾""期待下次"。挂了电话后你坐在椅子上想了五分钟：是不是太保守了？后来你看到节目播出后别的嘉宾大爆，心里酸了一下。但转念想想，至少没给对手送助攻。',
           statChanges: { fanLoyalty: 3, commercialValue: -2 },
         },
       },
@@ -133,7 +133,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'low',
     title: '直播带货邀约',
-    description: '某头部电商平台想和你的艺人合作一场直播带货，坑位费开得很高。但圈内对"偶像直播带货"一直有争议——有人说"掉价"，有人说"真会赚钱"。',
+    description: '某头部电商平台的商务在微信上发了条消息，很简洁：坑位费六位数，佣金另算，档期你定。你截图给艺人看，TA的第一反应是"我又不是卖货的"，第二反应是看到数字后沉默了。你说"在这行，谁还没卖过货呢"。TA又沉默了。',
     emoji: '🛒',
     choices: [
       {
@@ -141,11 +141,11 @@ export const businessEvents: GameEvent[] = [
         text: '接！赚钱要紧',
         subtext: '拿高额坑位费',
         outcome: {
-          narration: '直播间人气爆棚，但弹幕里"偶像怎么卖货了"的吐槽不少。不过看看到账的金额...真香。',
+          narration: '直播间在线人数峰值八十万——其中大概一半是来看热闹的。弹幕里"偶像怎么卖货了"和"买了买了"交替出现。你的艺人一开始还端着，后来越卖越上头，到最后真的在安利一款洗面奶——因为TA自己用了觉得好。这段被截成鬼畜传了一周。钱到账了，你看了看数字，确实很"真香"。',
           statChanges: { money: 110000, commercialValue: -3, fanLoyalty: -3 },
           twist: {
             chance: 0.3,
-            narration: '直播卖出去的产品出质量问题了！买家集体在你艺人微博下面维权。"恰烂钱"的标签贴上来了。',
+            narration: '但是！直播推的一款面膜出了质量问题——有买家过敏了，红肿的照片满天飞。你艺人的微博变成了投诉热线，"恰烂钱"三个字被刻进了评论区的DNA。你退了一部分货款，但名声的损失退不了。',
             statChanges: { prRisk: 5, fanLoyalty: -3, money: -40000 },
           },
         },
@@ -155,7 +155,7 @@ export const businessEvents: GameEvent[] = [
         text: '精选品类再接',
         subtext: '只带和人设匹配的品牌',
         outcome: {
-          narration: '只选了高端护肤和数码产品，直播效果好，口碑也维持住了。品牌方追加了合作。',
+          narration: '你花了三天筛选品牌，最后只留了高端护肤和一款数码新品——都是艺人真的在用的。直播那天TA拿出自己用了半年的旧耳机说"你看磨损了吧，是真的天天用"。这种"真实种草"的画风反而出圈了，品牌方当天就追加了下一季的合作。',
           statChanges: { money: 70000, commercialValue: 3 },
         },
       },
@@ -164,7 +164,7 @@ export const businessEvents: GameEvent[] = [
         text: '坚决不做',
         subtext: '"我们不带货"',
         outcome: {
-          narration: '核心粉丝觉得偶像有调性，但钱就这么飞了。经纪人的工资是你自己发的啊喂。',
+          narration: '你在商务群里回了四个字："暂不考虑。"然后打开工资表算了算这个月的团队开支。数字不太好看。你又打开了那条消息看了一遍坑位费的数字，深呼吸了一口气，把手机扣在桌上。核心粉丝说"偶像有调性"的时候，你微笑着点了点头。笑得有点勉强。',
           statChanges: { fanLoyalty: 3, commercialValue: 3 },
         },
       },
@@ -213,7 +213,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'medium',
     title: '海外市场递来橄榄枝',
-    description: '一家韩国娱乐公司想和你的艺人合作推出海外专辑，这意味着有机会打入国际市场。但国内的行程可能要让步。',
+    description: '一封全英文邮件，你用翻译器看了三遍才看懂——一家韩国娱乐公司想和你的艺人合作推出海外专辑。他们附了一份详细的企划书：日韩巡回、东南亚路演、TikTok全球推广。你翻到最后一页看到了预算和分成比例，嘴角不自觉地上扬了。但你马上冷静下来：国内接下来两个月的行程全要推掉。',
     emoji: '🌏',
     minDay: 12,
     choices: [
@@ -222,7 +222,7 @@ export const businessEvents: GameEvent[] = [
         text: '进军海外',
         subtext: '签约合作',
         outcome: {
-          narration: '海外专辑反响不错，在东南亚和日韩圈了一波粉。国内粉丝觉得"我家偶像走向世界了"，很自豪。',
+          narration: '第一站曼谷。你的艺人在机场出口被一百多个举着灯牌的粉丝包围了——他们不是中国粉丝。TA愣了三秒才反应过来，然后用刚学的泰语说了句"萨瓦迪卡"，全场尖叫。国内粉丝转发了现场视频，配文清一色是"我家偶像全球出道了😭"。你站在旁边，感觉一切都不太真实。',
           statChanges: { commercialValue: 4, fanLoyalty: 3, money: 70000 },
         },
       },
@@ -231,7 +231,7 @@ export const businessEvents: GameEvent[] = [
         text: '深耕国内',
         subtext: '国内市场还没吃透',
         outcome: {
-          narration: '专注国内的决定让你有更多精力经营粉丝。虽然错过了海外机会，但根基更扎实了。',
+          narration: '你回了封委婉的邮件，大意是"时机尚未成熟"。然后你关掉了翻译器，打开了国内下个月的通告排期表。密密麻麻的，但每一条你都认识。海外的世界很大，但眼前的事得先做好。你在心里给自己说了句：不急。',
           statChanges: { fanLoyalty: 3 },
         },
       },
@@ -242,7 +242,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'low',
     title: '大厂手游代言邀约',
-    description: '某头部游戏公司想请你的艺人代言新手游，代言费给得很大方。但游戏圈粉丝一向挑剔，代言翻车的案例也不少。',
+    description: '某头部游戏公司的商务总监约你喝咖啡，桌上摆着一台iPad——上面是他们新手游的Demo。画面确实好看。"我们想让XX做代言人，广告片预算两千万。"你还没说话，他补了一句："但是游戏圈你知道的...玩家很挑。上一个流量代言人被骂到关评论了。"',
     emoji: '🎮',
     choices: [
       {
@@ -250,7 +250,7 @@ export const businessEvents: GameEvent[] = [
         text: '接代言',
         subtext: '拿钱！',
         outcome: {
-          narration: '代言广告拍得不错，游戏玩家虽然吐槽"又是流量明星"，但下载量确实涨了。品牌方很满意，追加了合作。',
+          narration: '广告片拍了三天，特效烧了一千万。成品出来确实帅/美，在B站的播放量破千万——但弹幕里"又是流量""跟游戏有什么关系"的吐槽铺天盖地。不过品牌方看的是下载量：首日新增用户翻了一倍。他们很满意，追加了一个赛季的合作。游戏玩家嘴上说不要，身体很诚实。',
           statChanges: { money: 130000, commercialValue: 3, prRisk: 3 },
         },
       },
@@ -259,7 +259,7 @@ export const businessEvents: GameEvent[] = [
         text: '先试玩再决定',
         subtext: '如果游戏不好就不接',
         outcome: {
-          narration: '艺人真的试玩了一周，还在直播间打了几把。游戏圈粉丝震惊："这人是真的在玩啊！"口碑爆了。',
+          narration: '你让艺人真的玩了一周。TA不仅玩了，还上了瘾——凌晨两点你收到TA的微信："我打到钻石段位了。"你让TA在直播间打了几把排位，操作虽然菜但态度很认真。游戏圈粉丝的画风从"又来一个不玩游戏的"变成了"TA是真菜啊哈哈但是好真实""比我强一点点"。真实比专业更有说服力。',
           statChanges: { money: 110000, commercialValue: 4, fanLoyalty: 3 },
         },
       },

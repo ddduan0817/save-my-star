@@ -16,6 +16,7 @@ import { chainsExtendedEvents } from '@/data/events/chains-extended';
 import { artistTroubleEvents } from '@/data/events/artist-trouble';
 import { cosmeticEvents } from '@/data/events/cosmetic';
 import { phoneCallEvents } from '@/data/events/phone-calls';
+import { absurdEvents } from '@/data/events/absurd';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -34,6 +35,7 @@ const allEvents: GameEvent[] = [
   ...artistTroubleEvents,
   ...cosmeticEvents,
   ...phoneCallEvents,
+  ...absurdEvents,
 ];
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复
