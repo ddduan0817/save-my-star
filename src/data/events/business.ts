@@ -6,7 +6,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'low',
     title: '顶奢品牌邀约！',
-    description: '某国际一线奢侈品牌联系你，想签你的艺人做亚太区品牌大使。这可是顶级商业资源，但谈判需要拿出诚意。',
+    description: '邮件是半夜收到的，发件人后缀是某国际一线奢侈品。你反复读了三遍确认不是钓鱼邮件——"诚邀贵方艺人担任亚太区品牌大使"。你激动得差点截图发朋友圈，但理智告诉你：谈判才刚刚开始。',
     emoji: '💎',
     statConditions: { minCommercial: 50 },
     choices: [
@@ -93,7 +93,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'medium',
     title: '大导演递来橄榄枝',
-    description: '国内一线大导演的新片正在选角，你的艺人被邀请试镜。如果能拿下角色，这将是从偶像到演员的关键一步。',
+    description: '国内票房最高的导演打来电话——不是助理转达，是他亲自打的。"我新片有个角色，写的时候就想到了你家艺人。"你的心跳加速了。这种机会十年一遇，但接下来他说的话让你冷静了："目前只有配角的位置。"',
     emoji: '🎬',
     minDay: 6,
     choices: [
@@ -102,8 +102,8 @@ export const businessEvents: GameEvent[] = [
         text: '接受配角',
         subtext: '先进组学习',
         outcome: {
-          narration: '虽然是配角，但大导演调教下的演技进步明显。杀青后，导演在采访中夸了你的艺人"是块料"。',
-          statChanges: { commercialValue: 4, fanLoyalty: 3, money: 40000 },
+          narration: '进组第一天你的艺人就被骂哭了——导演不留情面。但三个月后杀青时，导演拍了拍TA的肩："下部戏，给你主角。"这句话没有被任何媒体拍到，但你知道这比任何热搜都重要。',
+          statChanges: { commercialValue: 4, fanLoyalty: 2, money: 40000 },
           unlockTag: 'transform',
         },
       },
@@ -112,8 +112,8 @@ export const businessEvents: GameEvent[] = [
         text: '要求演主角',
         subtext: '不是主角不去',
         outcome: {
-          narration: '导演摇了摇头："演技还不够。"你失去了这次机会。粉丝不知道内情，但业内人都在说"不知天高地厚"。',
-          statChanges: { commercialValue: -3 },
+          narration: '导演沉默了三秒："你确定？"然后挂了电话。你听说这个角色后来给了一个科班出身的新人——对方演得真的很好。每次刷到那部电影的预告，你心里都有点不是滋味。',
+          statChanges: { commercialValue: -5, fanLoyalty: -2 },
         },
       },
       {
@@ -121,8 +121,8 @@ export const businessEvents: GameEvent[] = [
         text: '接配角+演唱主题曲',
         subtext: '打包合作',
         outcome: {
-          narration: '一石二鸟的方案！配角演得不错，主题曲还上了音乐榜热搜。这波操作被业内人称为"教科书级别的资源利用"。',
-          statChanges: { commercialValue: 4, fanLoyalty: 3, money: 60000 },
+          narration: '配角演了，主题曲也唱了。电影上映那天，片尾字幕出现你艺人名字的瞬间，粉丝在影院里尖叫了。但导演私下跟圈内人说："这人心太大，什么都想要，下次不一定再用了。"',
+          statChanges: { commercialValue: 3, fanLoyalty: 4, money: 60000, prRisk: 3 },
           unlockTag: 'transform',
         },
       },
@@ -175,7 +175,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'high',
     title: '竞争对手来挖角了！',
-    description: '业内最大的经纪公司私下联系了你的艺人，开出了双倍薪酬的条件，承诺更好的资源。你的艺人态度暧昧，似乎在等你的反应。',
+    description: '业内最大的经纪公司派了个副总来你们公司楼下的咖啡厅"喝杯咖啡"。你的艺人回来后表情微妙："他们开了双倍价。"TA没有直接拒绝。TA看着你，像在等一个让TA留下来的理由。',
     emoji: '🕵️',
     minDay: 10,
     choices: [
@@ -184,7 +184,7 @@ export const businessEvents: GameEvent[] = [
         text: '加薪挽留',
         subtext: '匹配对方开价 (-10万)',
         outcome: {
-          narration: '你咬牙加薪，艺人留下了。但你知道，这种事发生过一次就会发生第二次。而且你的钱包在哭泣。',
+          narration: '你咬牙签了加薪协议。TA笑了："其实我没真想走。但你能为我做到这步，我心里有数。"你也笑了——然后打开银行APP看了眼余额，又不笑了。',
           statChanges: { money: -70000, fanLoyalty: 3 },
         },
       },
@@ -193,7 +193,7 @@ export const businessEvents: GameEvent[] = [
         text: '放人走',
         subtext: '尊重选择',
         outcome: {
-          narration: '你大度放手，艺人反而犹豫了——"你不挽留我吗？"最终他/她被你的坦诚打动，决定留下。信任度反而上来了。',
+          narration: '"想走就走吧，我不拦你。"你说这话的时候语气平静得连自己都意外。TA愣住了，站在门口不动。十秒钟后TA转过身来："你这个人...算了，我不走了。"后来TA在采访里说了一句出圈的话："我的经纪人，是这个行业里最真诚的人。"',
           statChanges: { fanLoyalty: 5, commercialValue: 3 },
         },
       },
