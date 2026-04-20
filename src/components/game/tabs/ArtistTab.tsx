@@ -6,6 +6,7 @@ import { cn, formatMoney } from '@/lib/utils';
 import { scheduleActivities } from '@/data/schedules';
 import { sfxClick } from '@/lib/sounds';
 import StoryTracker from '@/components/game/StoryTracker';
+import WeiboCompose from '@/components/game/WeiboCompose';
 import { getAppearanceTier } from '@/engine/cosmeticEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import type { CosmeticCategory } from '@/types/game';
@@ -124,6 +125,9 @@ export default function ArtistTab() {
           )}
         </div>
       </motion.div>
+
+      {/* Weibo Compose */}
+      <WeiboCompose />
 
       {/* Schedule Section */}
       <motion.div

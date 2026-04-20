@@ -43,7 +43,9 @@ export default function TabBar() {
                   if (isLocked) return;
                   sfxClick();
                   setActiveTab(tab.id);
-                  window.scrollTo(0, 0);
+                  window.scrollTo({ top: 0 });
+                  document.documentElement.scrollTop = 0;
+                  document.body.scrollTop = 0;
                 }}
                 disabled={isLocked}
                 className={cn(

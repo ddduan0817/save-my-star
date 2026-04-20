@@ -63,7 +63,7 @@ export default function EndingPage() {
     legendary: '传说',
   };
   const rarityColor = {
-    common: 'text-white/70 bg-white/15',
+    common: 'text-amber-800/70 bg-amber-800/15',
     rare: 'text-purple-200 bg-purple-500/20 ring-1 ring-purple-300/30',
     legendary: 'text-amber-200 bg-amber-500/20 ring-1 ring-amber-300/30',
   };
@@ -103,7 +103,7 @@ export default function EndingPage() {
             <motion.div
               className={cn(
                 "text-2xl font-black mt-4 relative z-10",
-                isBadEnding ? "text-red-400" : "text-gray-800"
+                isBadEnding ? "text-red-400" : "text-amber-900"
               )}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -114,7 +114,7 @@ export default function EndingPage() {
             <motion.div
               className={cn(
                 "text-sm mt-2 relative z-10",
-                isBadEnding ? "text-white/60" : "text-gray-400"
+                isBadEnding ? "text-white/60" : "text-amber-700/70"
               )}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

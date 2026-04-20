@@ -3,8 +3,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
-import WeiboCompose from '@/components/game/WeiboCompose';
-
 // 经纪人等级定义（按优先级从高到低排列）
 const MANAGER_LEVELS = [
   { lv: 1, title: '实习经纪人', emoji: '📋', minDay: 0, hint: '坚持到第3天晋升' },
@@ -114,9 +112,6 @@ export default function MeTab() {
           {artist?.name}的经纪人 · 第{currentDay}天
         </div>
       </motion.div>
-
-      {/* Weibo Compose */}
-      <WeiboCompose />
 
       {/* Daily Ledger 今日账单 */}
       <motion.div
