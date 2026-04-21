@@ -73,15 +73,15 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 15, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
-          className="relative max-w-sm mx-auto"
+          className="relative mx-4"
         >
-          <div className="bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-2xl rounded-bl-sm px-5 py-4 shadow-sm">
-            <div className="flex items-center gap-2 mb-2">
-              <span className="w-6 h-6 rounded-full bg-red-500/10 flex items-center justify-center text-xs">🔥</span>
-              <span className="text-sm font-semibold text-red-500">紧急消息</span>
-              <span className="text-[11px] text-gray-300 ml-auto">刚刚</span>
+          <div className="bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-2xl rounded-bl-sm px-5 py-5 shadow-sm">
+            <div className="flex items-center gap-2.5 mb-3">
+              <span className="w-7 h-7 rounded-full bg-red-500/10 flex items-center justify-center text-sm">🔥</span>
+              <span className="text-base font-semibold text-red-500">紧急消息</span>
+              <span className="text-xs text-gray-300 ml-auto">刚刚</span>
             </div>
-            <p className="text-sm text-gray-500 leading-relaxed">
+            <p className="text-base text-gray-600 leading-relaxed">
               你的艺人刚刚上了热搜。<br/>
               不是好的那种。<br/>
               <span className="text-gray-400">你能撑过20天吗？</span>
