@@ -65,10 +65,7 @@ export default function ArtistSelector({ artists, onSelect }: ArtistSelectorProp
               theme.ring,
             )}
           >
-            {/* Top color accent bar */}
-            <div className={cn("h-1 w-full bg-gradient-to-r", theme.gradient)} />
-
-            <div className="p-4 pt-3.5">
+            <div className="p-4">
               <div className="flex items-start gap-3.5">
                 {/* Avatar area - bigger, with themed background */}
                 <div className={cn(

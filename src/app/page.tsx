@@ -25,14 +25,8 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
-      {/* Hero Section - Dark dramatic header */}
-      <div className="relative bg-gradient-to-b from-gray-900 via-gray-900 to-[var(--bg-primary)] pt-10 pb-12 px-4">
-        {/* Ambient light effects */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-80 h-40 bg-red-500/10 rounded-full blur-3xl" />
-          <div className="absolute top-10 left-1/4 w-32 h-32 bg-orange-500/8 rounded-full blur-2xl" />
-          <div className="absolute top-5 right-1/4 w-28 h-28 bg-purple-500/8 rounded-full blur-2xl" />
-        </div>
+      {/* Hero Section */}
+      <div className="relative pt-10 pb-12 px-4">
 
         {/* Title */}
         <motion.div
@@ -41,7 +35,7 @@ export default function HomePage() {
           transition={{ type: 'spring', stiffness: 180, damping: 18 }}
           className="relative text-center mb-6"
         >
-          <h1 className="text-4xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400">
+          <h1 className="text-4xl font-black tracking-tight mb-2 text-transparent bg-clip-text bg-gradient-to-b from-gray-800 to-gray-600">
             经纪人模拟器
           </h1>
           <motion.div
@@ -60,13 +54,13 @@ export default function HomePage() {
           transition={{ delay: 0.4 }}
           className="relative mb-6 -mx-4 overflow-hidden"
         >
-          <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-gray-900 to-transparent z-10" />
-          <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-gray-900 to-transparent z-10" />
+          <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-[var(--bg-primary)] to-transparent z-10" />
+          <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[var(--bg-primary)] to-transparent z-10" />
           <div className="flex animate-marquee whitespace-nowrap">
             {[...marqueeItems, ...marqueeItems].map((item, i) => (
               <span
                 key={i}
-                className="inline-flex items-center mx-2 px-3 py-1 rounded-full text-[11px] font-medium bg-white/8 text-gray-400 border border-white/5"
+                className="inline-flex items-center mx-2 px-3 py-1 rounded-full text-[11px] font-medium bg-gray-100 text-gray-400 border border-gray-200/60"
               >
                 {item}
               </span>
@@ -81,20 +75,20 @@ export default function HomePage() {
           transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
           className="relative max-w-xs mx-auto"
         >
-          <div className="bg-white/10 backdrop-blur-sm border border-white/10 rounded-2xl rounded-bl-sm px-4 py-3">
+          <div className="bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-2xl rounded-bl-sm px-4 py-3 shadow-sm">
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center text-[10px]">🔥</span>
-              <span className="text-[11px] font-semibold text-red-400">紧急消息</span>
-              <span className="text-[10px] text-gray-500 ml-auto">刚刚</span>
+              <span className="w-5 h-5 rounded-full bg-red-500/10 flex items-center justify-center text-[10px]">🔥</span>
+              <span className="text-[11px] font-semibold text-red-500">紧急消息</span>
+              <span className="text-[10px] text-gray-300 ml-auto">刚刚</span>
             </div>
-            <p className="text-xs text-gray-300 leading-relaxed">
+            <p className="text-xs text-gray-500 leading-relaxed">
               你的艺人刚刚上了热搜。<br/>
               不是好的那种。<br/>
-              <span className="text-gray-500">你能撑过20天吗？</span>
+              <span className="text-gray-400">你能撑过20天吗？</span>
             </p>
           </div>
           {/* Bubble tail */}
-          <div className="absolute -bottom-1.5 left-3 w-3 h-3 bg-white/10 border-l border-b border-white/10 transform rotate-[-35deg] skew-x-[10deg]" />
+          <div className="absolute -bottom-1.5 left-3 w-3 h-3 bg-white/80 border-l border-b border-gray-200/60 transform rotate-[-35deg] skew-x-[10deg]" />
         </motion.div>
       </div>
 
