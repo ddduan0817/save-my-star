@@ -68,27 +68,34 @@ export default function HomePage() {
           </div>
         </motion.div>
 
-        {/* Message bubble intro */}
+        {/* Notification card intro */}
         <motion.div
-          initial={{ opacity: 0, y: 15, scale: 0.95 }}
+          initial={{ opacity: 0, y: 20, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ delay: 0.5, type: 'spring', stiffness: 200, damping: 20 }}
-          className="relative mx-4"
+          className="mx-4"
         >
-          <div className="bg-white/80 backdrop-blur-sm border border-gray-200/60 rounded-2xl rounded-bl-sm px-5 py-5 shadow-sm">
-            <div className="flex items-center gap-2.5 mb-3">
-              <span className="w-7 h-7 rounded-full bg-red-500/10 flex items-center justify-center text-sm">🔥</span>
-              <span className="text-base font-semibold text-red-500">紧急消息</span>
-              <span className="text-xs text-gray-300 ml-auto">刚刚</span>
+          <div className="bg-white rounded-2xl px-5 py-4 shadow-lg shadow-gray-200/50 ring-1 ring-gray-100">
+            {/* Notification header */}
+            <div className="flex items-center gap-2 mb-2.5">
+              <span className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center text-base shadow-sm">📱</span>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-bold text-gray-800">微博热搜</span>
+                  <span className="text-[11px] text-gray-300">刚刚</span>
+                </div>
+                <span className="text-[11px] text-red-400 font-medium">紧急 · 3条未读</span>
+              </div>
             </div>
-            <p className="text-base text-gray-600 leading-relaxed">
-              你的艺人刚刚上了热搜。<br/>
-              不是好的那种。<br/>
-              <span className="text-gray-400">你能撑过20天吗？</span>
-            </p>
+            {/* Notification body */}
+            <div className="pl-10">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                你的艺人刚刚上了热搜。<br/>
+                不是好的那种。
+              </p>
+              <p className="text-sm text-gray-400 mt-1.5">你能撑过20天吗？</p>
+            </div>
           </div>
-          {/* Bubble tail */}
-          <div className="absolute -bottom-1.5 left-3 w-3 h-3 bg-white/80 border-l border-b border-gray-200/60 transform rotate-[-35deg] skew-x-[10deg]" />
         </motion.div>
       </div>
 
