@@ -43,6 +43,7 @@ export interface ConditionalOutcome {
     minCommercialValue?: number;
     maxCommercialValue?: number;
     minMoney?: number;
+    maxMoney?: number;
   };
   narration: string;
   statChanges: StatChange;

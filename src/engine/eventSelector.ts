@@ -17,6 +17,7 @@ import { artistTroubleEvents } from '@/data/events/artist-trouble';
 import { cosmeticEvents } from '@/data/events/cosmetic';
 import { phoneCallEvents } from '@/data/events/phone-calls';
 import { absurdEvents } from '@/data/events/absurd';
+import { metaEvents } from '@/data/events/meta-events';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -36,6 +37,7 @@ const allEvents: GameEvent[] = [
   ...cosmeticEvents,
   ...phoneCallEvents,
   ...absurdEvents,
+  ...metaEvents,
 ];
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复

@@ -41,6 +41,7 @@ function resolveConditionalOutcome(
     if (c.minCommercialValue !== undefined && stats.commercialValue < c.minCommercialValue) match = false;
     if (c.maxCommercialValue !== undefined && stats.commercialValue > c.maxCommercialValue) match = false;
     if (c.minMoney !== undefined && stats.money < c.minMoney) match = false;
+    if (c.maxMoney !== undefined && stats.money > c.maxMoney) match = false;
     if (match) return co;
   }
   return null;
