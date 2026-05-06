@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import type { Artist } from '@/types/game';
 import { cn, formatMoney } from '@/lib/utils';
+import ArtistAvatarSVG from './ArtistAvatarSVG';
 
 interface ArtistSelectorProps {
   artists: Artist[];
@@ -15,35 +16,30 @@ interface ArtistSelectorProps {
  * sticky-note accent. Designed to read as Xiaohongshu cover, not iOS list.
  */
 const artistThemes: Record<string, {
-  noteBg: string;       // sticky note color
   tagBg: string;        // small chip
   tagText: string;
   ringColor: string;
   tilt: string;         // base tilt class
 }> = {
   idol: {
-    noteBg: 'bg-[#FFE9C7]',
     tagBg: 'bg-[#FFD580]',
     tagText: 'text-[#7A4A00]',
     ringColor: 'ring-[#F5C77E]/60',
     tilt: '-rotate-[1.2deg]',
   },
   actor: {
-    noteBg: 'bg-[#D9EBFF]',
     tagBg: 'bg-[#A9D0FF]',
     tagText: 'text-[#0F3F7A]',
     ringColor: 'ring-[#9CC4F2]/60',
     tilt: 'rotate-[0.8deg]',
   },
   singer: {
-    noteBg: 'bg-[#F4E1FF]',
     tagBg: 'bg-[#D9B6F8]',
     tagText: 'text-[#5D2A85]',
     ringColor: 'ring-[#C9A6E8]/60',
     tilt: '-rotate-[0.6deg]',
   },
   influencer: {
-    noteBg: 'bg-[#FFD9DD]',
     tagBg: 'bg-[#FFA8B2]',
     tagText: 'text-[#8B1F2E]',
     ringColor: 'ring-[#F5969F]/60',
@@ -81,17 +77,16 @@ export default function ArtistSelector({ artists, onSelect }: ArtistSelectorProp
 
             <div className="p-4 pt-5">
               <div className="flex items-start gap-3.5">
-                {/* Sticky-note avatar block */}
+                {/* Sticky-note avatar block — flat sticker SVG */}
                 <div className={cn(
-                  'relative w-16 h-16 rounded-[14px] flex items-center justify-center flex-shrink-0',
+                  'relative w-16 h-16 rounded-[14px] flex items-center justify-center flex-shrink-0 overflow-hidden',
                   'shadow-[2px_2px_0_rgba(0,0,0,0.06)]',
-                  theme.noteBg,
                 )}>
-                  <span className="text-[34px] leading-none">{artist.avatar}</span>
+                  <ArtistAvatarSVG artistId={artist.id} size={64} />
                   {/* small folded-corner accent */}
                   <span
                     aria-hidden
-                    className="absolute bottom-0 right-0 w-3 h-3 bg-white/60"
+                    className="absolute bottom-0 right-0 w-3 h-3 bg-white/60 z-10"
                     style={{ clipPath: 'polygon(100% 0, 100% 100%, 0 100%)' }}
                   />
                 </div>

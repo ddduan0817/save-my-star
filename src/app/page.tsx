@@ -29,24 +29,24 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen paper-bg overflow-hidden relative">
-      {/* Decorative doodle stickers — fixed, very low key */}
+      {/* Decorative doodle stickers — pinned to outer corners, low z-index, semi-transparent */}
       <span
         aria-hidden
-        className="absolute top-24 left-3 text-[26px] animate-doodle pointer-events-none"
+        className="absolute top-3 left-2 text-[22px] text-gray-300/70 animate-doodle pointer-events-none z-0"
         style={{ ['--rot' as string]: '-12deg' }}
       >
         ✦
       </span>
       <span
         aria-hidden
-        className="absolute top-44 right-4 text-[20px] animate-doodle pointer-events-none"
+        className="absolute top-2 right-3 text-[18px] text-gray-300/70 animate-doodle pointer-events-none z-0"
         style={{ ['--rot' as string]: '14deg' }}
       >
         ★
       </span>
       <span
         aria-hidden
-        className="absolute top-[290px] left-5 text-[14px] text-[#ff2e2e] font-bold rotate-[-15deg] pointer-events-none"
+        className="absolute top-[420px] left-2 text-[14px] text-[#ff2e2e]/70 font-bold rotate-[-15deg] pointer-events-none z-0"
       >
         !!!
       </span>
