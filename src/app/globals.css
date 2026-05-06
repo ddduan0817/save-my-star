@@ -7,9 +7,17 @@
   --bg-card: #ffffff;
   --bg-elevated: #f5f2ee;
   --text-primary: #1a1a2e;
-  --text-secondary: #8c8c9e;
+  --text-secondary: #6b6b80;  /* Changed from #8c8c9e for better contrast */
   --accent: #ff6b6b;
   --accent-warm: #ffa07a;
+
+  /* Z-index layers */
+  --z-base: 0;
+  --z-sticky: 40;
+  --z-bar: 50;
+  --z-overlay: 55;
+  --z-modal: 60;
+  --z-toast: 100;
 }
 
 body {
@@ -20,15 +28,27 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 3px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d4d4d8;
+  background: #c4c4cc;
   border-radius: 4px;
 }
 
@@ -152,4 +172,27 @@ body {
   background: linear-gradient(90deg, #f87171, #ef4444);
   background-size: 200% 100%;
   animation: bar-shimmer 3s ease-in-out infinite;
+}
+
+/* Tab content transition */
+.tab-content-enter {
+  animation: tab-fade-in 0.25s ease-out;
+}
+@keyframes tab-fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Safe area for iPhone bottom */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

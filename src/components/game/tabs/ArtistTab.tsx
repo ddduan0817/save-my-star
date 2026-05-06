@@ -7,6 +7,7 @@ import { scheduleActivities } from '@/data/schedules';
 import { sfxClick } from '@/lib/sounds';
 import StoryTracker from '@/components/game/StoryTracker';
 import WeiboCompose from '@/components/game/WeiboCompose';
+import StatsRadar from '@/components/game/StatsRadar';
 import { getAppearanceTier } from '@/engine/cosmeticEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import type { CosmeticCategory } from '@/types/game';
@@ -75,15 +76,15 @@ export default function ArtistTab() {
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <span className="text-lg font-bold text-gray-800">{artist.name}</span>
-              <span className="text-[10px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{artist.title}</span>
+              <span className="text-[11px] text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">{artist.title}</span>
             </div>
             <div className="flex items-center gap-1.5 mt-1">
-              <span className="text-[10px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">心情</span>
+              <span className="text-[11px] font-medium text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">心情</span>
               <span className="text-xs font-medium text-gray-500">{mood.label}</span>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-[10px] text-gray-400">资金</div>
+            <div className="text-[11px] text-gray-400">资金</div>
             <div className={cn("text-sm font-bold", stats.money < 0 ? "text-red-500" : "text-amber-600")}>
               ¥{formatMoney(stats.money)}
             </div>
@@ -94,7 +95,7 @@ export default function ArtistTab() {
         <div className="mt-4 space-y-2.5">
           {statBars.map(bar => (
             <div key={bar.label} className="flex items-center gap-3">
-              <span className="text-[10px] text-gray-400 w-12 shrink-0">{bar.label}</span>
+              <span className="text-[11px] text-gray-400 w-12 shrink-0">{bar.label}</span>
               <div className={cn("flex-1 h-2 rounded-full overflow-hidden", bar.track)}>
                 <motion.div
                   className={cn("h-full rounded-full", bar.color)}
@@ -103,26 +104,45 @@ export default function ArtistTab() {
                   transition={{ type: 'spring', stiffness: 80, damping: 18 }}
                 />
               </div>
-              <span className="text-[11px] font-bold text-gray-600 w-7 text-right tabular-nums">{bar.value}</span>
+              <span className="text-xs font-bold text-gray-600 w-7 text-right tabular-nums">{bar.value}</span>
             </div>
           ))}
         </div>
 
         {/* Appearance tier & cosmetic badges */}
         <div className="mt-3 flex items-center gap-2 flex-wrap">
-          <span className={cn("text-[10px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 ring-1 ring-purple-100/60", appearanceTier.color)}>
+          <span className={cn("text-[11px] font-semibold px-2 py-0.5 rounded-full bg-purple-50 ring-1 ring-purple-100/60", appearanceTier.color)}>
             {appearanceTier.label}
           </span>
           {cosmeticState.stiffFaceActive && (
-            <span className="text-[10px] font-semibold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full ring-1 ring-orange-100/60">
+            <span className="text-[11px] font-semibold text-orange-500 bg-orange-50 px-2 py-0.5 rounded-full ring-1 ring-orange-100/60">
               😶 僵脸中 ({cosmeticState.stiffFaceDaysRemaining}天)
             </span>
           )}
           {isRecovering && (
-            <span className="text-[10px] font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full ring-1 ring-blue-100/60">
+            <span className="text-[11px] font-semibold text-blue-500 bg-blue-50 px-2 py-0.5 rounded-full ring-1 ring-blue-100/60">
               🏥 术后恢复 ({cosmeticState.recoveryDaysRemaining}天)
             </span>
           )}
+        </div>
+      </motion.div>
+
+      {/* Stats Radar Chart */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
+      >
+        <div className="text-xs font-medium text-gray-400 tracking-wider mb-2">能力雷达</div>
+        <div className="flex justify-center">
+          <StatsRadar
+            commercialValue={stats.commercialValue}
+            fanLoyalty={stats.fanLoyalty}
+            prRisk={stats.prRisk}
+            appearance={cosmeticState.appearance}
+            size={200}
+          />
         </div>
       </motion.div>
 
@@ -143,7 +163,7 @@ export default function ArtistTab() {
             {(() => { const Icon = scheduleIconMap[artistSchedule.activity.id]; return Icon ? <Icon size={28} /> : <span className="text-2xl">{artistSchedule.activity.emoji}</span>; })()}
             <div className="flex-1">
               <div className="text-sm font-semibold text-gray-800">{artistSchedule.activity.name}</div>
-              <div className="text-[10px] text-orange-500 mt-0.5">
+              <div className="text-[11px] text-orange-500 mt-0.5">
                 进行中 · 还剩 {artistSchedule.remainingDays} 天
               </div>
             </div>
@@ -156,7 +176,7 @@ export default function ArtistTab() {
             <span className="text-2xl">🏥</span>
             <div className="flex-1">
               <div className="text-sm font-semibold text-gray-800">术后恢复中</div>
-              <div className="text-[10px] text-blue-500 mt-0.5">
+              <div className="text-[11px] text-blue-500 mt-0.5">
                 还剩 {cosmeticState.recoveryDaysRemaining} 天 · 无法安排行程
               </div>
             </div>
@@ -195,7 +215,7 @@ export default function ArtistTab() {
                     {(() => { const Icon = scheduleIconMap[activity.id]; return Icon ? <Icon size={22} /> : <span className="text-lg">{activity.emoji}</span>; })()}
                     <span className="text-xs font-semibold text-gray-700">{activity.name}</span>
                   </div>
-                  <div className="text-[10px] text-gray-400">{activity.durationDays}天 · {changes.join(' ')}</div>
+                  <div className="text-[11px] text-gray-400">{activity.durationDays}天 · {changes.join(' ')}</div>
                 </motion.button>
               );
             })}
@@ -212,13 +232,13 @@ export default function ArtistTab() {
       >
         <div className="flex items-center justify-between mb-3">
           <div className="text-xs font-medium text-gray-400 tracking-wider">医美中心</div>
-          <div className="text-[10px] text-purple-500 bg-purple-50 px-2 py-0.5 rounded-full">
+          <div className="text-[11px] text-purple-500 bg-purple-50 px-2 py-0.5 rounded-full">
             颜值 {cosmeticState.appearance}
           </div>
         </div>
 
         {isRecovering && (
-          <div className="mb-3 p-2.5 bg-blue-50/60 rounded-lg ring-1 ring-blue-100/60 text-[10px] text-blue-500 text-center">
+          <div className="mb-3 p-2.5 bg-blue-50/60 rounded-lg ring-1 ring-blue-100/60 text-[11px] text-blue-500 text-center">
             🏥 术后恢复中，还剩 {cosmeticState.recoveryDaysRemaining} 天
           </div>
         )}
@@ -229,7 +249,7 @@ export default function ArtistTab() {
             const catLabel = CATEGORY_LABELS[cat];
             return (
               <div key={cat}>
-                <div className={cn("text-[10px] font-semibold mb-1.5", catLabel.color)}>
+                <div className={cn("text-[11px] font-semibold mb-1.5", catLabel.color)}>
                   {catLabel.label}项目
                 </div>
                 <div className="grid grid-cols-1 gap-2">
@@ -258,19 +278,19 @@ export default function ArtistTab() {
                           {(() => { const Icon = cosmeticIconMap[proc.id]; return Icon ? <Icon size={22} /> : <span className="text-lg">{proc.emoji}</span>; })()}
                           <span className="text-xs font-semibold text-gray-700 flex-1">{proc.name}</span>
                           <span className={cn(
-                            "text-[10px] font-bold",
+                            "text-[11px] font-bold",
                             canAfford ? "text-purple-500" : "text-gray-400"
                           )}>
                             ¥{formatMoney(proc.cost)}
                           </span>
                         </div>
-                        <div className="text-[10px] text-gray-400 mb-1">{proc.description}</div>
+                        <div className="text-[11px] text-gray-400 mb-1">{proc.description}</div>
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-[10px] text-green-500">颜值+{proc.appearanceGain}</span>
-                          <span className="text-[10px] text-red-400">失败率{Math.round(proc.failChance * 100)}%</span>
-                          <span className="text-[10px] text-orange-400">暴露率{Math.round(proc.discoveryChance * 100)}%</span>
+                          <span className="text-[11px] text-green-500">颜值+{proc.appearanceGain}</span>
+                          <span className="text-[11px] text-red-400">失败率{Math.round(proc.failChance * 100)}%</span>
+                          <span className="text-[11px] text-orange-400">暴露率{Math.round(proc.discoveryChance * 100)}%</span>
                           {proc.recoveryDays > 0 && (
-                            <span className="text-[10px] text-blue-400">恢复{proc.recoveryDays}天</span>
+                            <span className="text-[11px] text-blue-400">恢复{proc.recoveryDays}天</span>
                           )}
                         </div>
                       </motion.button>
@@ -298,7 +318,7 @@ export default function ArtistTab() {
                 <div className="mt-1 w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0" />
                 <div>
                   <div className="text-xs text-gray-600">Day {d.day} · {d.eventTitle}</div>
-                  <div className="text-[10px] text-gray-400 mt-0.5">{d.choiceText}</div>
+                  <div className="text-[11px] text-gray-400 mt-0.5">{d.choiceText}</div>
                 </div>
               </div>
             ))}

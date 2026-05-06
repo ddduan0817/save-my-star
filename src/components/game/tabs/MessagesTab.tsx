@@ -7,7 +7,9 @@ import EventCard from '@/components/game/EventCard';
 import EventOutcome from '@/components/game/EventOutcome';
 import MessageRow from '@/components/game/MessageRow';
 import { sfxDayTransition } from '@/lib/sounds';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+const SWIPE_THRESHOLD_DELETE = 120;
 
 export default function MessagesTab() {
   const {
@@ -30,6 +32,14 @@ export default function MessagesTab() {
     })),
   );
 
+  // Swipe-to-dismiss state (resolved messages only)
+  const [swipedId, setSwipedId] = useState<string | null>(null);
+  const [swipeOffset, setSwipeOffset] = useState(0);
+  const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
+  const touchStartX = useRef(0);
+  const touchCurrentX = useRef(0);
+  const isSwiping = useRef(false);
+
   // Auto-dismiss day banner
   useEffect(() => {
     if (showDayBanner) {
@@ -49,6 +59,48 @@ export default function MessagesTab() {
     if (!a.isUrgent && b.isUrgent) return 1;
     return 0;
   });
+
+  // Filter out locally dismissed resolved messages
+  const visibleMessages = sortedMessages.filter(msg => !dismissedIds.has(msg.id));
+
+  // Touch handlers for swipe-to-dismiss (only attached to resolved rows)
+  const handleTouchStart = useCallback((e: React.TouchEvent, msgId: string) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchCurrentX.current = e.touches[0].clientX;
+    isSwiping.current = true;
+    setSwipedId(msgId);
+    setSwipeOffset(0);
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    if (!isSwiping.current) return;
+    touchCurrentX.current = e.touches[0].clientX;
+    const diff = touchCurrentX.current - touchStartX.current;
+    // Only allow left swipe (negative diff), clamp at 0
+    const clampedDiff = Math.min(0, diff);
+    setSwipeOffset(clampedDiff);
+  }, []);
+
+  const handleTouchEnd = useCallback((msgId: string) => {
+    if (!isSwiping.current) return;
+    isSwiping.current = false;
+
+    if (swipeOffset <= -SWIPE_THRESHOLD_DELETE) {
+      // Swipe exceeded delete threshold - dismiss the message
+      setSwipeOffset(-500); // Animate off-screen
+      setTimeout(() => {
+        setDismissedIds(prev => new Set(prev).add(msgId));
+        setSwipedId(null);
+        setSwipeOffset(0);
+      }, 250);
+    } else {
+      // Snap back
+      setSwipeOffset(0);
+      setTimeout(() => {
+        setSwipedId(null);
+      }, 300);
+    }
+  }, [swipeOffset]);
 
   return (
     <div className="flex-1 flex flex-col">
@@ -102,21 +154,64 @@ export default function MessagesTab() {
             transition={{ duration: 0.15 }}
             className="flex-1"
           >
-            {sortedMessages.length === 0 ? (
+            {visibleMessages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-gray-300">
                 <span className="text-3xl mb-3">📭</span>
                 <span className="text-sm">暂无新消息</span>
               </div>
             ) : (
               <div className="bg-white/60 rounded-2xl mx-3 mt-3 overflow-hidden ring-1 ring-gray-100/60">
-                {sortedMessages.map((msg, i) => (
-                  <MessageRow
-                    key={msg.id}
-                    message={msg}
-                    index={i}
-                    onOpen={openMessage}
-                  />
-                ))}
+                {visibleMessages.map((msg, i) => {
+                  const isResolved = msg.status === 'resolved';
+
+                  if (isResolved) {
+                    return (
+                      <div
+                        key={msg.id}
+                        className="relative overflow-hidden"
+                        onTouchStart={(e) => handleTouchStart(e, msg.id)}
+                        onTouchMove={handleTouchMove}
+                        onTouchEnd={() => handleTouchEnd(msg.id)}
+                      >
+                        {/* Red delete background */}
+                        <div className="absolute inset-y-0 right-0 flex items-center px-4 bg-red-500 rounded-r-xl">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="w-5 h-5 text-white mr-1.5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                          </svg>
+                          <span className="text-white text-sm font-medium">删除</span>
+                        </div>
+                        {/* Message row with swipe offset */}
+                        <motion.div
+                          animate={{ x: swipedId === msg.id ? swipeOffset : 0 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                          className="relative bg-white"
+                        >
+                          <MessageRow
+                            message={msg}
+                            index={i}
+                            onOpen={openMessage}
+                          />
+                        </motion.div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <MessageRow
+                      key={msg.id}
+                      message={msg}
+                      index={i}
+                      onOpen={openMessage}
+                    />
+                  );
+                })}
               </div>
             )}
           </motion.div>

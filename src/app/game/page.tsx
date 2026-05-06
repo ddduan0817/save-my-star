@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/stores/gameStore';
 import StatsBar from '@/components/game/StatsBar';
+import ParticleBackground from '@/components/game/ParticleBackground';
 import TabBar from '@/components/game/TabBar';
 import EndDayButton from '@/components/game/EndDayButton';
 import AchievementToast from '@/components/game/AchievementToast';
@@ -15,6 +17,12 @@ import ArtistTab from '@/components/game/tabs/ArtistTab';
 import WorkspaceTab from '@/components/game/tabs/WorkspaceTab';
 import MeTab from '@/components/game/tabs/MeTab';
 import { sfxAchievement } from '@/lib/sounds';
+
+const tabVariants = {
+  enter: { opacity: 0, y: 12 },
+  center: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -8 },
+};
 
 export default function GamePage() {
   const router = useRouter();
@@ -51,6 +59,7 @@ export default function GamePage() {
 
   return (
     <div className="min-h-screen flex flex-col pb-[56px]">
+      <ParticleBackground />
       <StatsBar />
 
       {/* Achievement toast */}
@@ -69,10 +78,22 @@ export default function GamePage() {
       <PhoneCallOverlay />
 
       {/* Tab content */}
-      {activeTab === 'messages' && <MessagesTab />}
-      {activeTab === 'artist' && <ArtistTab />}
-      {activeTab === 'workspace' && <WorkspaceTab />}
-      {activeTab === 'me' && <MeTab />}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          variants={tabVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          transition={{ duration: 0.2, ease: 'easeInOut' }}
+          className="flex-1 flex flex-col"
+        >
+          {activeTab === 'messages' && <MessagesTab />}
+          {activeTab === 'artist' && <ArtistTab />}
+          {activeTab === 'workspace' && <WorkspaceTab />}
+          {activeTab === 'me' && <MeTab />}
+        </motion.div>
+      </AnimatePresence>
 
       {/* Floating end day button */}
       <EndDayButton />
