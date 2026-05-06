@@ -6,7 +6,7 @@ import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { companyUpgradesData } from '@/data/upgrades';
 import { sfxClick, sfxMoney } from '@/lib/sounds';
-import { upgradeIconMap } from '@/components/icons';
+import { upgradeIconMap, IconOverview, IconFansite, IconInsurance } from '@/components/icons';
 import FansiteManager from '@/components/game/FansiteManager';
 import InsuranceShop from '@/components/game/InsuranceShop';
 import CollapseWarningPanel from '@/components/game/CollapseWarning';
@@ -55,21 +55,21 @@ export default function WorkspaceTab() {
         className="flex gap-2"
       >
         {[
-          { id: 'overview', label: '概览', emoji: '📊' },
-          { id: 'fansites', label: '站姐', emoji: '📸' },
-          { id: 'insurance', label: '保险', emoji: '🛡️' },
+          { id: 'overview', label: '概览', Icon: IconOverview },
+          { id: 'fansites', label: '站姐', Icon: IconFansite },
+          { id: 'insurance', label: '保险', Icon: IconInsurance },
         ].map((tab) => (
           <button
             key={tab.id}
             onClick={() => { sfxClick(); setActiveSection(tab.id as typeof activeSection); }}
             className={cn(
-              "flex-1 flex items-center justify-center gap-1 py-2.5 rounded-xl text-sm font-medium transition-all",
+              "flex-1 flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-medium transition-all",
               activeSection === tab.id
                 ? "bg-gradient-to-r from-orange-400 to-red-400 text-white shadow-sm"
                 : "bg-white text-gray-600 ring-1 ring-gray-200/60"
             )}
           >
-            <span>{tab.emoji}</span>
+            <tab.Icon size={16} />
             <span>{tab.label}</span>
           </button>
         ))}
