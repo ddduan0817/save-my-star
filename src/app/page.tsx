@@ -54,12 +54,12 @@ export default function HomePage() {
         >
           !!!
         </span>
-        {/* Arrow doodle pointing from title toward polaroid */}
+        {/* Arrow doodle — now pointing directly at the central mosaic blob */}
         <span
           aria-hidden
-          className="absolute top-[215px] right-6 text-[18px] text-[#FF2E2E]/80 rotate-[20deg] pointer-events-none z-10 font-black"
+          className="absolute top-[300px] right-[88px] text-[16px] text-[#FF2E2E] rotate-[28deg] pointer-events-none z-20 font-black drop-shadow-[1px_1px_0_rgba(255,255,255,0.9)]"
         >
-          ↘ 看这里
+          ↙ 看这里
         </span>
         {/* Sticky note: "P 过的吧" — anchored to polaroid right side */}
         <motion.span
@@ -136,9 +136,26 @@ export default function HomePage() {
 
           {/* Photo area — gradient placeholder, looks like a redacted paparazzi shot */}
           <div className="relative h-[140px] rounded-sm overflow-hidden bg-gradient-to-br from-[#fff5e8] via-[#ffe4c4] to-[#ffc7b5]">
+            {/* soft silhouette behind the mosaic */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-b from-[#a0764a]/40 to-[#5a3a1f]/30 blur-[6px]" />
+              <div className="w-24 h-24 rounded-full bg-gradient-to-b from-[#a0764a]/40 to-[#5a3a1f]/30 blur-[6px]" />
             </div>
+            {/* actual mosaic patch — pixel grid covering the subject's face/body */}
+            <div
+              aria-hidden
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[88px] h-[88px] rounded-[2px] ring-1 ring-black/20 shadow-[0_2px_6px_rgba(0,0,0,0.18)]"
+              style={{
+                backgroundImage: `
+                  linear-gradient(45deg, #6b4a2a 25%, transparent 25%),
+                  linear-gradient(-45deg, #8b5a3a 25%, transparent 25%),
+                  linear-gradient(45deg, transparent 75%, #4a3a2a 75%),
+                  linear-gradient(-45deg, transparent 75%, #a07a5a 75%)
+                `,
+                backgroundSize: '12px 12px',
+                backgroundPosition: '0 0, 0 6px, 6px -6px, -6px 0',
+                backgroundColor: '#7a5a3a',
+              }}
+            />
             <div
               aria-hidden
               className="absolute inset-0 mix-blend-overlay opacity-40"
