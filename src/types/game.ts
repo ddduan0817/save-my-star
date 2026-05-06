@@ -68,6 +68,15 @@ export interface EventOutcome {
   conditionalOutcomes?: ConditionalOutcome[];
   // 反转：选完之后有概率触发意外
   twist?: Twist;
+  // 心理状态影响（选完之后施加到 ArtistMentalState 上）
+  mentalEffect?: {
+    mood?: number;
+    energy?: number;
+    trust?: number;
+    cooperation?: number;
+    stress?: number;
+    burnout?: number;
+  };
 }
 
 export interface EventChoice {

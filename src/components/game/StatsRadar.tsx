@@ -20,6 +20,10 @@ const AXES = [
 
 const RING_LEVELS = [0.25, 0.5, 0.75, 1.0];
 
+// Horizontal padding inside the viewBox to leave room for 4-character side labels
+const LABEL_PAD_X = 28;
+const LABEL_PAD_Y = 14;
+
 export default function StatsRadar({
   commercialValue,
   fanLoyalty,
@@ -29,7 +33,8 @@ export default function StatsRadar({
 }: StatsRadarProps) {
   const n = AXES.length;
   const center = size / 2;
-  const maxRadius = size / 2 - 28; // leave room for labels
+  // Reserve more room for the 4-character labels at the cardinal axes
+  const maxRadius = size / 2 - 36;
   const angleStep = (2 * Math.PI) / n;
   // Start from the top (-PI/2) and go clockwise
   const startAngle = -Math.PI / 2;
@@ -106,10 +111,11 @@ export default function StatsRadar({
 
   return (
     <svg
-      width={size}
-      height={size}
-      viewBox={`0 0 ${size} ${size}`}
+      width={size + LABEL_PAD_X * 2}
+      height={size + LABEL_PAD_Y * 2}
+      viewBox={`${-LABEL_PAD_X} ${-LABEL_PAD_Y} ${size + LABEL_PAD_X * 2} ${size + LABEL_PAD_Y * 2}`}
       className="block"
+      style={{ overflow: 'visible' }}
     >
       <defs>
         <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">

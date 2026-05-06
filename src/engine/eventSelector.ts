@@ -18,6 +18,7 @@ import { cosmeticEvents } from '@/data/events/cosmetic';
 import { phoneCallEvents } from '@/data/events/phone-calls';
 import { absurdEvents } from '@/data/events/absurd';
 import { metaEvents } from '@/data/events/meta-events';
+import { mentalStateEvents } from '@/data/events/mental-state';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -38,6 +39,7 @@ const allEvents: GameEvent[] = [
   ...phoneCallEvents,
   ...absurdEvents,
   ...metaEvents,
+  ...mentalStateEvents,
 ];
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复
