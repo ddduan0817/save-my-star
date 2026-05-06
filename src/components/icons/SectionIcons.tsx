@@ -42,7 +42,7 @@ export function IconOverview({ size = 18, ...props }: IconProps) {
 }
 
 /**
- * 站姐 — 相机（手绘轮廓 + 镜头 + 快门提示）
+ * 大粉 — 相机（手绘轮廓 + 镜头 + 快门提示）
  */
 export function IconFansite({ size = 18, ...props }: IconProps) {
   return (

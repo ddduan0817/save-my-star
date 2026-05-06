@@ -28,6 +28,7 @@ export default function WorkspaceTab() {
   const cosmeticState = useGameStore(s => s.cosmeticState);
   const fansites = useGameStore(s => s.fansites);
   const interactWithFansite = useGameStore(s => s.interactWithFansite);
+  const artist = useGameStore(s => s.artist);
   const insurancePolicies = useGameStore(s => s.insurancePolicies);
   const purchaseInsurance = useGameStore(s => s.purchaseInsurance);
   const cancelInsurance = useGameStore(s => s.cancelInsurance);
@@ -56,7 +57,7 @@ export default function WorkspaceTab() {
       >
         {[
           { id: 'overview', label: '概览', Icon: IconOverview },
-          { id: 'fansites', label: '站姐', Icon: IconFansite },
+          { id: 'fansites', label: '大粉', Icon: IconFansite },
           { id: 'insurance', label: '保险', Icon: IconInsurance },
         ].map((tab) => (
           <button
@@ -85,11 +86,12 @@ export default function WorkspaceTab() {
             exit={{ opacity: 0, y: -10 }}
           >
             <div className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm">
-              <div className="text-xs font-medium text-gray-400 tracking-wider mb-3">站姐管理</div>
+              <div className="text-xs font-medium text-gray-400 tracking-wider mb-3">大粉管理</div>
               <FansiteManager
                 fansites={fansites}
                 onInteract={interactWithFansite}
                 money={stats.money}
+                artistId={artist?.id}
               />
             </div>
           </motion.div>

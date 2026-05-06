@@ -11,7 +11,7 @@ import {
 export { IconWeiboCompose } from './CosmeticIcons';
 export { IconMessages, IconArtist, IconWorkspace, IconMe } from './TabIcons';
 export { IconOverview, IconFansite, IconInsurance } from './SectionIcons';
-export { fansiteIconMap } from './FansiteIcons';
+export { fansiteIconMap, getFansiteIcon } from './FansiteIcons';
 export { insuranceIconMap } from './InsuranceIcons';
 export { artistAvatarMap } from './ArtistAvatars';
 

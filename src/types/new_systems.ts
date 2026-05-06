@@ -71,14 +71,14 @@ export interface RiskIndicator {
   trend: 'up' | 'down' | 'stable';  // 趋势
 }
 
-// ===== 站姐经济学系统 =====
+// ===== 大粉经济学系统 =====
 
 export type FansiteAttitude = 'devoted' | 'supportive' | 'neutral' | 'dissatisfied' | 'hostile' | 'betrayed';
 export type FansiteResource = 'photos' | 'videos' | 'info' | 'connections' | 'money';
 
 export interface FansiteMaster {
   id: string;
-  name: string;           // 站姐ID/名字
+  name: string;           // 大粉ID/名字
   avatar: string;         // 头像emoji
   followers: number;      // 粉丝数
   attitude: FansiteAttitude;  // 对你的态度

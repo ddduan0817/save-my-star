@@ -66,7 +66,7 @@ import {
   applyMentalEffect,
   applyDailyMentalEffects,
 } from './newSystemsStore';
-import { initialFansites } from '@/data/fansites';
+import { initialFansites, getFansitesForArtist } from '@/data/fansites';
 
 interface GameStore {
   // Core state
@@ -172,7 +172,12 @@ interface GameStore {
   resetGame: () => void;
 
   // ===== 新系统 Actions =====
-  interactWithFansite: (fansiteId: string, interaction: FansiteInteraction) => void;
+  interactWithFansite: (fansiteId: string, interaction: FansiteInteraction) => {
+    narration: string;
+    cost: number;
+    loyaltyDelta: number;
+    attitudeChanged: boolean;
+  };
   purchaseInsurance: (policyId: InsuranceType) => { success: boolean; message: string };
   cancelInsurance: (policyId: InsuranceType) => { refund: number; message: string };
   loadCollection: () => void;
@@ -392,7 +397,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
       // 新系统初始化
       mentalState: initialMentalState,
-      fansites: initialFansites,
+      fansites: getFansitesForArtist(artistId),
       collapseWarning: initialCollapseWarning,
       riskIndicators: initialRiskIndicators,
       insurancePolicies: [],
@@ -1045,12 +1050,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
   interactWithFansite: (fansiteId: string, interaction: FansiteInteraction) => {
     const { fansites, stats, artist } = get();
     const fansite = fansites.find(f => f.id === fansiteId);
-    if (!fansite || !artist) return;
+    if (!fansite || !artist) {
+      return { narration: '', cost: 0, loyaltyDelta: 0, attitudeChanged: false };
+    }
 
     const result = interactWithFansiteImpl(fansites, fansiteId, interaction);
     const moneyChange = -result.cost;
     const statChanges: StatChange = moneyChange ? { money: moneyChange } : {};
     const newStats = moneyChange ? applyStatChanges(stats, statChanges, artist.id) : stats;
+
+    const updated = result.newFansites.find(f => f.id === fansiteId);
+    const loyaltyDelta = (updated?.loyalty ?? fansite.loyalty) - fansite.loyalty;
+    const attitudeChanged = (updated?.attitude ?? fansite.attitude) !== fansite.attitude;
 
     set({
       fansites: result.newFansites,
@@ -1061,11 +1072,18 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     if (moneyChange) {
       addLedger(get, set, {
-        label: `站姐互动：${fansite.name}`,
+        label: `大粉互动：${fansite.name}`,
         amount: moneyChange,
         category: 'event',
       });
     }
+
+    return {
+      narration: result.narration,
+      cost: result.cost,
+      loyaltyDelta,
+      attitudeChanged,
+    };
   },
 
   purchaseInsurance: (policyId: InsuranceType) => {

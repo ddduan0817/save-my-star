@@ -153,7 +153,7 @@ function getRiskTypeName(type: string): string {
   return names[type] || type;
 }
 
-// ===== 站姐互动处理 =====
+// ===== 大粉互动处理 =====
 
 export function interactWithFansite(
   fansites: FansiteMaster[],

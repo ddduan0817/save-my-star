@@ -9,28 +9,28 @@ import type { GameEvent } from '@/types/game';
  */
 
 export const metaEvents: GameEvent[] = [
-  // ===== 事件1：站姐威胁 =====
+  // ===== 事件1：大粉威胁 =====
   // 核心机制：妥协可能养虎为患，强硬可能两败俱伤，玩梗可能神来之笔也可能翻车
   {
     id: 'meta_fansite_blackmail',
     category: 'crisis',
     severity: 'high',
-    title: '站姐手里有黑图',
-    description: '你的大站姐（粉丝头子）私信你："后台独家拍摄权，或者这张素颜崩图——你选。"那张图确实挺崩的，黑眼圈+双下巴+死亡角度。她给了你一晚上考虑。',
+    title: '大粉手里有黑图',
+    description: '你的大大粉（粉丝头子）私信你："后台独家拍摄权，或者这张素颜崩图——你选。"那张图确实挺崩的，黑眼圈+双下巴+死亡角度。她给了你一晚上考虑。',
     emoji: '📸',
     minDay: 6,
     choices: [
       {
         id: 'compromise_fansite',
-        text: '妥协，给站姐 backstage 权限',
+        text: '妥协，给大粉 backstage 权限',
         subtext: '花钱买平安',
         outcome: {
-          narration: '你让步了。站姐拿到了独家图，发了九宫格精修，粉丝狂欢。',
+          narration: '你让步了。大粉拿到了独家图，发了九宫格精修，粉丝狂欢。',
           statChanges: { fanLoyalty: 3, commercialValue: 2, money: -15000 },
           // 随机反转：这次妥协开了坏头
           twist: {
             chance: 0.4,
-            narration: '但是！其他站姐知道了这件事，纷纷私信你"我也要"。你现在有8个站姐在排队威胁你，不给就联合放黑图。养虎为患了属于是。',
+            narration: '但是！其他大粉知道了这件事，纷纷私信你"我也要"。你现在有8个大粉在排队威胁你，不给就联合放黑图。养虎为患了属于是。',
             statChanges: { prRisk: 8, money: -40000 },
             unlockTag: 'fansite_mafia',
           },
@@ -47,19 +47,19 @@ export const metaEvents: GameEvent[] = [
           conditionalOutcomes: [
             {
               condition: { minFanLoyalty: 65 },
-              narration: '站姐真的发了黑图。但你的核心粉丝战斗力惊人，评论区瞬间被"素颜也可爱""拒绝容貌焦虑"刷屏。黑图反而成了虐粉素材，粉丝忠诚度再涨一波。站姐气得删博。',
+              narration: '大粉真的发了黑图。但你的核心粉丝战斗力惊人，评论区瞬间被"素颜也可爱""拒绝容貌焦虑"刷屏。黑图反而成了虐粉素材，粉丝忠诚度再涨一波。大粉气得删博。',
               statChanges: { fanLoyalty: 5, prRisk: -3 },
             },
             {
               condition: { maxFanLoyalty: 35 },
-              narration: '站姐发了黑图。你的粉丝本来就没几个，评论区全是路人的"哈哈哈哈"和"原来长这样"。站姐还补刀："脱粉了，真人和精修差太远。"毁灭性打击。',
+              narration: '大粉发了黑图。你的粉丝本来就没几个，评论区全是路人的"哈哈哈哈"和"原来长这样"。大粉还补刀："脱粉了，真人和精修差太远。"毁灭性打击。',
               statChanges: { fanLoyalty: -8, commercialValue: -5, prRisk: 6 },
             },
           ],
-          // 随机反转：站姐其实是你对家派来的
+          // 随机反转：大粉其实是你对家派来的
           twist: {
             chance: 0.25,
-            narration: '但是！你调查发现这个"站姐"其实是你对家雇的职业黑粉，专门养号等这一天。你反手把证据发给八卦号，舆论瞬间反转。你的艺人成了"被有组织抹黑"的受害者。',
+            narration: '但是！你调查发现这个"大粉"其实是你对家雇的职业黑粉，专门养号等这一天。你反手把证据发给八卦号，舆论瞬间反转。你的艺人成了"被有组织抹黑"的受害者。',
             statChanges: { prRisk: -5, fanLoyalty: 4, commercialValue: 3 },
           },
         },
@@ -89,7 +89,7 @@ export const metaEvents: GameEvent[] = [
           // 随机反转：真的还有更丑的
           twist: {
             chance: 0.2,
-            narration: '但是！站姐被你激怒了，放出了你没想到的存货——艺人刚睡醒的素颜视频，还有打呼的声音。"你以为这就是最丑的？"这波是自爆卡车了。',
+            narration: '但是！大粉被你激怒了，放出了你没想到的存货——艺人刚睡醒的素颜视频，还有打呼的声音。"你以为这就是最丑的？"这波是自爆卡车了。',
             statChanges: { prRisk: 6, fanLoyalty: -3 },
           },
         },
@@ -100,13 +100,13 @@ export const metaEvents: GameEvent[] = [
         subtext: '一次性解决 (-5万)',
         requireMinMoney: 50000,
         outcome: {
-          narration: '你转了5万，站姐删了底片，签了保密协议。',
+          narration: '你转了5万，大粉删了底片，签了保密协议。',
           statChanges: { money: -50000 },
           // 条件分支：取决于资金充裕程度
           conditionalOutcomes: [
             {
               condition: { minMoney: 200000 },
-              narration: '5万对你来说不算什么，买个安心。站姐还变成了你的"御用摄影师"，以后只发精修图。',
+              narration: '5万对你来说不算什么，买个安心。大粉还变成了你的"御用摄影师"，以后只发精修图。',
               statChanges: { fanLoyalty: 2, commercialValue: 2 },
             },
             {
@@ -115,10 +115,10 @@ export const metaEvents: GameEvent[] = [
               statChanges: { commercialValue: -3, money: -50000 },
             },
           ],
-          // 随机反转：站姐留了备份
+          // 随机反转：大粉留了备份
           twist: {
             chance: 0.3,
-            narration: '但是！三个月后，当你以为这事过去了，站姐又来找你要钱——"我忘了云盘里还有备份，这次要10万"。你意识到这是个无底洞。',
+            narration: '但是！三个月后，当你以为这事过去了，大粉又来找你要钱——"我忘了云盘里还有备份，这次要10万"。你意识到这是个无底洞。',
             statChanges: { prRisk: 5 },
             unlockTag: 'fansite_endless_blackmail',
           },
