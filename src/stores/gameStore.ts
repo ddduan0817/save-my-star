@@ -46,6 +46,27 @@ import {
   saveArtistUsed,
   type Achievement,
 } from '@/data/achievements';
+import type {
+  ArtistMentalState,
+  FansiteMaster,
+  InsurancePolicy,
+  CollapseWarning,
+  RiskIndicator,
+  FansiteInteraction,
+  InsuranceType,
+} from '@/types/new_systems';
+import {
+  initialMentalState,
+  initialCollapseWarning,
+  initialRiskIndicators,
+  calculateCollapseWarning,
+  interactWithFansite as interactWithFansiteImpl,
+  purchaseInsurance as purchaseInsuranceImpl,
+  cancelInsurance as cancelInsuranceImpl,
+  applyMentalEffect,
+  applyDailyMentalEffects,
+} from './newSystemsStore';
+import { initialFansites } from '@/data/fansites';
 
 interface GameStore {
   // Core state
@@ -121,6 +142,13 @@ interface GameStore {
   // Daily ledger (收支明细)
   dailyLedger: LedgerEntry[];
 
+  // ===== 新系统状态 =====
+  mentalState: ArtistMentalState;
+  fansites: FansiteMaster[];
+  collapseWarning: CollapseWarning;
+  riskIndicators: RiskIndicator[];
+  insurancePolicies: InsurancePolicy[];
+
   // Actions
   startGame: (artistId: ArtistArchetype) => void;
   setActiveTab: (tab: TabId) => void;
@@ -142,6 +170,11 @@ interface GameStore {
   dismissAchievement: () => void;
   dismissDayBanner: () => void;
   resetGame: () => void;
+
+  // ===== 新系统 Actions =====
+  interactWithFansite: (fansiteId: string, interaction: FansiteInteraction) => void;
+  purchaseInsurance: (policyId: InsuranceType) => { success: boolean; message: string };
+  cancelInsurance: (policyId: InsuranceType) => { refund: number; message: string };
   loadCollection: () => void;
 }
 
@@ -285,6 +318,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
   showPhoneCall: false,
   dailyLedger: [],
 
+  // 新系统初始状态
+  mentalState: initialMentalState,
+  fansites: initialFansites,
+  collapseWarning: initialCollapseWarning,
+  riskIndicators: initialRiskIndicators,
+  insurancePolicies: [],
+
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
@@ -349,6 +389,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       pendingPhoneCall: null,
       showPhoneCall: false,
       dailyLedger: [],
+
+      // 新系统初始化
+      mentalState: initialMentalState,
+      fansites: initialFansites,
+      collapseWarning: initialCollapseWarning,
+      riskIndicators: initialRiskIndicators,
+      insurancePolicies: [],
     });
 
     // Day 1 daily operating cost
@@ -396,7 +443,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   selectChoice: (choice: EventChoice) => {
-    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState } = get();
+    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState, mentalState } = get();
     const event = currentEvents[currentEventIndex];
 
     const appMultiplier = getAppearanceMultiplier(cosmeticState.appearance);
@@ -404,6 +451,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const newTags = [...activeTags];
     if (result.unlockTag) newTags.push(result.unlockTag);
+
+    // 应用心理状态效果
+    const newMentalState = choice.outcome.mentalEffect
+      ? applyMentalEffect(mentalState, choice.outcome.mentalEffect)
+      : mentalState;
 
     const record: DecisionRecord = {
       day: currentDay,
@@ -435,6 +487,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         peakRisk: newPeakRisk,
         unlockedEndings: unlocked,
         messages: updatedMessages,
+        mentalState: newMentalState,
       });
       if (result.statChanges.money) {
         addLedger(get, set, { label: `${event.title} → ${choice.text}`, amount: result.statChanges.money, category: 'event' });
@@ -455,6 +508,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       decisionHistory: [...get().decisionHistory, record],
       peakRisk: newPeakRisk,
       messages: updatedMessages,
+      mentalState: newMentalState,
     });
 
     // Ledger: event choice money
@@ -518,6 +572,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       messages, currentDay, stats, activeTags, peakRisk, artist,
       eventUsageMap, pendingFollowUpEventIds, decisionHistory,
       artistSchedule, companyUpgrades, rival, cosmeticState,
+      mentalState, insurancePolicies,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -632,6 +687,30 @@ export const useGameStore = create<GameStore>((set, get) => ({
       trends = [{ ...rivalTrend, rank: 1 }, ...trends.map(t => ({ ...t, rank: t.rank + 1 }))];
     }
 
+    // 6.5 新系统每日更新：心理状态 + 塌房预警
+    const mentalResult = applyDailyMentalEffects(mentalState, newSchedule);
+    const newMentalState = mentalResult.newState;
+    const { warning: newCollapseWarning, indicators: newRiskIndicators } =
+      calculateCollapseWarning(newStats, newMentalState, nextDay);
+
+    // 6.6 保险年费扣款（每20天续费一次，用购买日判断）
+    let newInsurancePolicies = insurancePolicies;
+    let insurancePremiumLedger: LedgerEntry | null = null;
+    if (insurancePolicies.length > 0) {
+      let totalPremium = 0;
+      newInsurancePolicies = insurancePolicies.map(p => {
+        if (!p.isActive || p.purchasedDay === undefined) return p;
+        const daysSincePurchase = nextDay - p.purchasedDay;
+        if (daysSincePurchase > 0 && daysSincePurchase % 20 === 0) {
+          totalPremium += p.annualPremium;
+        }
+        return p;
+      });
+      if (totalPremium > 0) {
+        insurancePremiumLedger = { label: '保险年费续费', amount: -totalPremium, category: 'upgrade' };
+      }
+    }
+
     set({
       currentDay: nextDay,
       stats: newStats,
@@ -658,6 +737,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       pendingPhoneCall: phoneCall,
       showPhoneCall: !!phoneCall,
       dailyLedger: [], // reset ledger for new day
+      mentalState: newMentalState,
+      collapseWarning: newCollapseWarning,
+      riskIndicators: newRiskIndicators,
+      insurancePolicies: newInsurancePolicies,
     });
 
     // Ledger: daily operating costs
@@ -673,6 +756,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // Ledger: rival action
     if (rivalLedgerEntry) {
       addLedger(get, set, rivalLedgerEntry);
+    }
+    // Ledger: insurance premium
+    if (insurancePremiumLedger) {
+      addLedger(get, set, insurancePremiumLedger);
     }
 
     return true;
@@ -929,6 +1016,13 @@ export const useGameStore = create<GameStore>((set, get) => ({
       pendingPhoneCall: null,
       showPhoneCall: false,
       dailyLedger: [],
+
+      // 重置新系统
+      mentalState: initialMentalState,
+      fansites: initialFansites,
+      collapseWarning: initialCollapseWarning,
+      riskIndicators: initialRiskIndicators,
+      insurancePolicies: [],
     });
   },
 
@@ -945,5 +1039,67 @@ export const useGameStore = create<GameStore>((set, get) => ({
       unlockedEndings: loadUnlockedEndings(),
       unlockedAchievements: loadUnlockedAchievements(),
     });
+  },
+
+  // ===== 新系统 Actions =====
+  interactWithFansite: (fansiteId: string, interaction: FansiteInteraction) => {
+    const { fansites, stats, artist } = get();
+    const fansite = fansites.find(f => f.id === fansiteId);
+    if (!fansite || !artist) return;
+
+    const result = interactWithFansiteImpl(fansites, fansiteId, interaction);
+    const moneyChange = -result.cost;
+    const statChanges: StatChange = moneyChange ? { money: moneyChange } : {};
+    const newStats = moneyChange ? applyStatChanges(stats, statChanges, artist.id) : stats;
+
+    set({
+      fansites: result.newFansites,
+      stats: newStats,
+      lastOutcomeNarration: result.narration,
+      lastStatChanges: moneyChange ? statChanges : null,
+    });
+
+    if (moneyChange) {
+      addLedger(get, set, {
+        label: `站姐互动：${fansite.name}`,
+        amount: moneyChange,
+        category: 'event',
+      });
+    }
+  },
+
+  purchaseInsurance: (policyId: InsuranceType) => {
+    const { insurancePolicies, stats, currentDay } = get();
+    const result = purchaseInsuranceImpl(insurancePolicies, policyId, stats.money, currentDay);
+    if (!result.success) {
+      return { success: false, message: result.message };
+    }
+    set({
+      insurancePolicies: result.newPolicies,
+      stats: { ...stats, money: stats.money - result.cost },
+    });
+    addLedger(get, set, {
+      label: `购买保险`,
+      amount: -result.cost,
+      category: 'upgrade',
+    });
+    return { success: true, message: result.message };
+  },
+
+  cancelInsurance: (policyId: InsuranceType) => {
+    const { insurancePolicies, stats } = get();
+    const result = cancelInsuranceImpl(insurancePolicies, policyId);
+    if (result.refund > 0) {
+      set({
+        insurancePolicies: result.newPolicies,
+        stats: { ...stats, money: stats.money + result.refund },
+      });
+      addLedger(get, set, {
+        label: `退保`,
+        amount: result.refund,
+        category: 'upgrade',
+      });
+    }
+    return { refund: result.refund, message: result.message };
   },
 }));

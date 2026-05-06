@@ -2,10 +2,10 @@
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { useShallow } from 'zustand/react/shallow';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { sfxDisaster } from '@/lib/sounds';
+import { CollapseWarningBadge } from '@/components/game/CollapseWarning';
 
 const statConfig = [
   { key: 'commercialValue' as const, label: '商业', barClass: 'stat-bar-amber', trackColor: 'bg-amber-100/60', max: 100 },
@@ -14,13 +14,10 @@ const statConfig = [
 ];
 
 export default function StatsBar() {
-  const { stats, currentDay, lastStatChanges } = useGameStore(
-    useShallow(s => ({
-      stats: s.stats,
-      currentDay: s.currentDay,
-      lastStatChanges: s.lastStatChanges,
-    })),
-  );
+  const stats = useGameStore(s => s.stats);
+  const currentDay = useGameStore(s => s.currentDay);
+  const lastStatChanges = useGameStore(s => s.lastStatChanges);
+  const collapseWarning = useGameStore(s => s.collapseWarning);
   const barRef = useRef<HTMLDivElement>(null);
   const prevRiskRef = useRef(stats.prRisk);
 
@@ -37,9 +34,12 @@ export default function StatsBar() {
   return (
     <div ref={barRef} className="sticky top-0 z-50 glass-card border-b border-gray-100/60 px-4 py-3 shadow-sm">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-xs font-bold text-gray-400 bg-gradient-to-r from-gray-100 to-gray-50 px-3 py-1 rounded-full shadow-sm shadow-gray-100/50">
-          Day {currentDay}
-        </span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-bold text-gray-400 bg-gradient-to-r from-gray-100 to-gray-50 px-3 py-1 rounded-full shadow-sm shadow-gray-100/50">
+            Day {currentDay}
+          </span>
+          <CollapseWarningBadge level={collapseWarning.level} />
+        </div>
         <div className="flex items-center gap-1.5 relative">
           <span className={cn(
             "text-sm font-bold tabular-nums",
@@ -73,10 +73,10 @@ export default function StatsBar() {
           return (
             <div key={key} className="flex-1">
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] font-medium text-gray-400">{label}</span>
+                <span className="text-[11px] font-medium text-gray-400">{label}</span>
                 <div className="relative">
                   <span className={cn(
-                    "text-[11px] font-bold tabular-nums transition-colors duration-300",
+                    "text-xs font-bold tabular-nums transition-colors duration-300",
                     isDanger ? "text-red-500" : "text-gray-600"
                   )}>
                     {value}
@@ -87,7 +87,7 @@ export default function StatsBar() {
                       animate={{ opacity: 0, y: -18, scale: 0.8 }}
                       transition={{ duration: 1.2, ease: 'easeOut' }}
                       className={cn(
-                        "text-[10px] font-bold absolute -right-1 -top-3",
+                        "text-[11px] font-bold absolute -right-1 -top-3",
                         (inverse ? change < 0 : change > 0) ? "text-green-500" : "text-red-500"
                       )}
                     >

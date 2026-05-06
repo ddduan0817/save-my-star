@@ -12,6 +12,7 @@ import { getAppearanceTier } from '@/engine/cosmeticEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import type { CosmeticCategory } from '@/types/game';
 import { scheduleIconMap, cosmeticIconMap } from '@/components/icons';
+import { getMentalStateLabel } from '@/types/new_systems';
 
 const moodEmojis = [
   { min: 0, emoji: '😰', label: '焦虑' },
@@ -39,8 +40,11 @@ export default function ArtistTab() {
   const decisionHistory = useGameStore(s => s.decisionHistory);
   const cosmeticState = useGameStore(s => s.cosmeticState);
   const performProcedure = useGameStore(s => s.performProcedure);
+  const mentalState = useGameStore(s => s.mentalState);
 
   if (!artist) return null;
+
+  const mentalLabels = getMentalStateLabel(mentalState);
 
   const mood = getMood(stats);
   const isScheduleBusy = artistSchedule && artistSchedule.remainingDays > 0;
@@ -143,6 +147,156 @@ export default function ArtistTab() {
             appearance={cosmeticState.appearance}
             size={200}
           />
+        </div>
+      </motion.div>
+
+      {/* 心理状态面板 */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.06 }}
+        className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
+      >
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-xs font-medium text-gray-400 tracking-wider">艺人状态</div>
+          <span className={cn(
+            "text-[10px] px-2 py-0.5 rounded-full",
+            mentalLabels.overall === 'excellent' ? 'bg-green-100 text-green-600' :
+            mentalLabels.overall === 'good' ? 'bg-blue-100 text-blue-600' :
+            mentalLabels.overall === 'normal' ? 'bg-gray-100 text-gray-600' :
+            mentalLabels.overall === 'tired' ? 'bg-yellow-100 text-yellow-600' :
+            mentalLabels.overall === 'stressed' ? 'bg-orange-100 text-orange-600' :
+            mentalLabels.overall === 'depressed' ? 'bg-purple-100 text-purple-600' :
+            'bg-red-100 text-red-600'
+          )}>
+            {mentalLabels.overall === 'excellent' ? '状态极佳' :
+             mentalLabels.overall === 'good' ? '状态良好' :
+             mentalLabels.overall === 'normal' ? '状态一般' :
+             mentalLabels.overall === 'tired' ? '疲劳' :
+             mentalLabels.overall === 'stressed' ? '压力大' :
+             mentalLabels.overall === 'depressed' ? '情绪低落' : '濒临崩溃'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          {/* 心情 */}
+          <div className="bg-gray-50 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[11px] text-gray-500">心情</span>
+              <span className="text-[10px] text-gray-400">{mentalLabels.moodLabel}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <motion.div
+                className={cn("h-full rounded-full",
+                  mentalState.mood >= 70 ? 'bg-green-400' :
+                  mentalState.mood >= 40 ? 'bg-blue-400' :
+                  mentalState.mood >= 20 ? 'bg-yellow-400' : 'bg-red-400'
+                )}
+                initial={false}
+                animate={{ width: `${mentalState.mood}%` }}
+                transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+              />
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 text-right">{mentalState.mood}%</div>
+          </div>
+
+          {/* 精力 */}
+          <div className="bg-gray-50 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[11px] text-gray-500">精力</span>
+              <span className="text-[10px] text-gray-400">{mentalLabels.energyLabel}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <motion.div
+                className={cn("h-full rounded-full",
+                  mentalState.energy >= 70 ? 'bg-green-400' :
+                  mentalState.energy >= 40 ? 'bg-blue-400' :
+                  mentalState.energy >= 20 ? 'bg-yellow-400' : 'bg-red-400'
+                )}
+                initial={false}
+                animate={{ width: `${mentalState.energy}%` }}
+                transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+              />
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 text-right">{mentalState.energy}%</div>
+          </div>
+
+          {/* 信任 */}
+          <div className="bg-gray-50 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[11px] text-gray-500">信任度</span>
+              <span className="text-[10px] text-gray-400">{mentalLabels.trustLabel}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <motion.div
+                className={cn("h-full rounded-full",
+                  mentalState.trust >= 70 ? 'bg-pink-400' :
+                  mentalState.trust >= 40 ? 'bg-purple-400' :
+                  mentalState.trust >= 20 ? 'bg-orange-400' : 'bg-red-400'
+                )}
+                initial={false}
+                animate={{ width: `${mentalState.trust}%` }}
+                transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+              />
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 text-right">{mentalState.trust}%</div>
+          </div>
+
+          {/* 配合度 */}
+          <div className="bg-gray-50 rounded-xl p-3">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[11px] text-gray-500">配合度</span>
+              <span className="text-[10px] text-gray-400">{mentalState.cooperation >= 70 ? '高' : mentalState.cooperation >= 40 ? '中' : '低'}</span>
+            </div>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <motion.div
+                className={cn("h-full rounded-full",
+                  mentalState.cooperation >= 70 ? 'bg-green-400' :
+                  mentalState.cooperation >= 40 ? 'bg-blue-400' :
+                  mentalState.cooperation >= 20 ? 'bg-yellow-400' : 'bg-red-400'
+                )}
+                initial={false}
+                animate={{ width: `${mentalState.cooperation}%` }}
+                transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+              />
+            </div>
+            <div className="text-[10px] text-gray-400 mt-1 text-right">{mentalState.cooperation}%</div>
+          </div>
+        </div>
+
+        {/* 压力和倦怠 */}
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          <div className={cn("rounded-xl p-3",
+            mentalState.stress >= 70 ? 'bg-red-50' :
+            mentalState.stress >= 40 ? 'bg-yellow-50' : 'bg-green-50'
+          )}>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-500">压力值</span>
+              <span className={cn("text-xs font-bold",
+                mentalState.stress >= 70 ? 'text-red-500' :
+                mentalState.stress >= 40 ? 'text-yellow-600' : 'text-green-600'
+              )}>{mentalState.stress}%</span>
+            </div>
+            {mentalState.stress >= 70 && (
+              <div className="text-[10px] text-red-500 mt-1">⚠️ 压力过高，需要休息</div>
+            )}
+          </div>
+
+          <div className={cn("rounded-xl p-3",
+            mentalState.burnout >= 60 ? 'bg-red-50' :
+            mentalState.burnout >= 30 ? 'bg-yellow-50' : 'bg-green-50'
+          )}>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-gray-500">倦怠指数</span>
+              <span className={cn("text-xs font-bold",
+                mentalState.burnout >= 60 ? 'text-red-500' :
+                mentalState.burnout >= 30 ? 'text-yellow-600' : 'text-green-600'
+              )}>{mentalState.burnout}%</span>
+            </div>
+            {mentalState.burnout >= 60 && (
+              <div className="text-[10px] text-red-500 mt-1">⚠️ 有退圈风险</div>
+            )}
+          </div>
         </div>
       </motion.div>
 
