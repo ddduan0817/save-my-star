@@ -299,7 +299,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     );
 
     const messages = createMessages(events, day);
-    const trends = generateWeiboTrends(stats, artist, [], activeTags);
+    const trends = generateWeiboTrends(stats, artist);
     const comments = generateFanComments(stats, artist);
     const rival = initializeRival(artistId);
     const cosmeticState: CosmeticState = {
@@ -624,7 +624,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       .slice(0, MAX_CARRYOVER_MESSAGES);
 
     // 6. Regenerate social feed
-    let trends = generateWeiboTrends(newStats, artist!, decisionHistory, newActiveTags);
+    let trends = generateWeiboTrends(newStats, artist!);
     const comments = generateFanComments(newStats, artist!);
 
     // Inject rival trend if any

@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useShallow } from 'zustand/react/shallow';
 import type { GameEvent, EventChoice } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { useGameStore } from '@/stores/gameStore';
@@ -14,11 +15,17 @@ interface EventCardProps {
 }
 
 export default function EventCard({ event }: EventCardProps) {
-  const selectChoice = useGameStore(s => s.selectChoice);
-  const closeMessage = useGameStore(s => s.closeMessage);
-  const stats = useGameStore(s => s.stats);
-  const activeMessageId = useGameStore(s => s.activeMessageId);
-  const messages = useGameStore(s => s.messages);
+  // Single shallow-equality subscription replaces 5 separate useGameStore calls
+  // to avoid re-renders when unrelated store fields change.
+  const { selectChoice, closeMessage, stats, activeMessageId, messages } = useGameStore(
+    useShallow(s => ({
+      selectChoice: s.selectChoice,
+      closeMessage: s.closeMessage,
+      stats: s.stats,
+      activeMessageId: s.activeMessageId,
+      messages: s.messages,
+    })),
+  );
 
   const isCrisis = event.category === 'crisis';
   const isBusiness = event.category === 'business';

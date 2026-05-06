@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { useShallow } from 'zustand/react/shallow';
 import { useGameStore } from '@/stores/gameStore';
 import EventCard from '@/components/game/EventCard';
 import EventOutcome from '@/components/game/EventOutcome';
@@ -9,15 +10,25 @@ import { sfxDayTransition } from '@/lib/sounds';
 import { useEffect } from 'react';
 
 export default function MessagesTab() {
-  const gamePhase = useGameStore(s => s.gamePhase);
-  const messages = useGameStore(s => s.messages);
-  const activeMessageId = useGameStore(s => s.activeMessageId);
-  const openMessage = useGameStore(s => s.openMessage);
-  const currentDay = useGameStore(s => s.currentDay);
-  const showDayBanner = useGameStore(s => s.showDayBanner);
-  const dismissDayBanner = useGameStore(s => s.dismissDayBanner);
-
-  const currentEvent = useGameStore(s => s.currentEvents[0]);
+  const {
+    gamePhase,
+    messages,
+    openMessage,
+    currentDay,
+    showDayBanner,
+    dismissDayBanner,
+    currentEvent,
+  } = useGameStore(
+    useShallow(s => ({
+      gamePhase: s.gamePhase,
+      messages: s.messages,
+      openMessage: s.openMessage,
+      currentDay: s.currentDay,
+      showDayBanner: s.showDayBanner,
+      dismissDayBanner: s.dismissDayBanner,
+      currentEvent: s.currentEvents[0],
+    })),
+  );
 
   // Auto-dismiss day banner
   useEffect(() => {

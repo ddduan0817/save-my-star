@@ -1,4 +1,5 @@
-import type { GameStats, Artist, DecisionRecord, WeiboTrend, FanComment, ArtistArchetype } from '@/types/game';
+import type { GameStats, Artist, WeiboTrend, FanComment, ArtistArchetype } from '@/types/game';
+import { SOCIAL_CONFIG } from '@/data/constants';
 
 // ===== Weibo Trends =====
 
@@ -121,9 +122,18 @@ const lowFanTrends = [
   '#{name}活动现场冷清#', '#{name}还有粉丝吗#',
 ];
 
+/**
+ * Fisher-Yates style "good enough" shuffle. Note: `Array.sort(() => random)` is
+ * not a uniform shuffle, but it's acceptable here since trend ordering is
+ * cosmetic, not gameplay-critical. Centralized so we have one place to swap
+ * for a stronger algorithm if needed.
+ */
+function shuffle<T>(arr: T[]): T[] {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
 function pickRandom<T>(arr: T[], count: number): T[] {
-  const shuffled = [...arr].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, Math.min(count, arr.length));
+  return shuffle(arr).slice(0, Math.min(count, arr.length));
 }
 
 function formatHeat(): string {
@@ -135,8 +145,6 @@ function formatHeat(): string {
 export function generateWeiboTrends(
   stats: GameStats,
   artist: Artist,
-  _decisionHistory: DecisionRecord[],
-  _activeTags: string[],
 ): WeiboTrend[] {
   const name = artist.name;
   const trends: WeiboTrend[] = [];
@@ -145,8 +153,11 @@ export function generateWeiboTrends(
   const artistPool = artistSpecificTrends[artist.id];
 
   // High risk → scandal trends (generic + artist-specific)
-  if (stats.prRisk > 60) {
-    const count = stats.prRisk > 80 ? 3 : 2;
+  if (stats.prRisk > SOCIAL_CONFIG.SCANDAL_TREND_RISK_THRESHOLD) {
+    const count =
+      stats.prRisk > SOCIAL_CONFIG.SCANDAL_TREND_HIGH_RISK_THRESHOLD
+        ? SOCIAL_CONFIG.SCANDAL_TREND_COUNT_HIGH
+        : SOCIAL_CONFIG.SCANDAL_TREND_COUNT_NORMAL;
     const allScandal = [...scandalTrends, ...artistPool.scandal];
     const selected = pickRandom(allScandal, count);
     for (const t of selected) {
@@ -161,7 +172,7 @@ export function generateWeiboTrends(
   }
 
   // Low money → financial scandal
-  if (stats.money < 50000) {
+  if (stats.money < SOCIAL_CONFIG.LOW_MONEY_TREND_THRESHOLD) {
     const selected = pickRandom(lowMoneyTrends, 1);
     for (const t of selected) {
       trends.push({
@@ -175,7 +186,7 @@ export function generateWeiboTrends(
   }
 
   // Low fan loyalty → fan exodus
-  if (stats.fanLoyalty < 25) {
+  if (stats.fanLoyalty < SOCIAL_CONFIG.LOW_LOYALTY_TREND_THRESHOLD) {
     const selected = pickRandom(lowFanTrends, 1);
     for (const t of selected) {
       trends.push({
@@ -189,8 +200,11 @@ export function generateWeiboTrends(
   }
 
   // High fan loyalty → fan trends (generic + artist-specific)
-  if (stats.fanLoyalty > 50) {
-    const count = stats.fanLoyalty > 70 ? 2 : 1;
+  if (stats.fanLoyalty > SOCIAL_CONFIG.POSITIVE_TREND_MIN_LOYALTY) {
+    const count =
+      stats.fanLoyalty > SOCIAL_CONFIG.POSITIVE_TREND_HIGH_LOYALTY
+        ? SOCIAL_CONFIG.POSITIVE_TREND_COUNT_HIGH
+        : SOCIAL_CONFIG.POSITIVE_TREND_COUNT_NORMAL;
     const allPositive = [...positiveFanTrends, ...artistPool.positive];
     const selected = pickRandom(allPositive, count);
     for (const t of selected) {
@@ -198,15 +212,18 @@ export function generateWeiboTrends(
         rank: rank++,
         title: t.replace('{name}', name),
         heat: formatHeat(),
-        isHot: stats.fanLoyalty > 70,
+        isHot: stats.fanLoyalty > SOCIAL_CONFIG.POSITIVE_TREND_HIGH_LOYALTY,
         sentiment: 'positive',
       });
     }
   }
 
   // High commercial → business trends
-  if (stats.commercialValue > 50) {
-    const count = stats.commercialValue > 75 ? 2 : 1;
+  if (stats.commercialValue > SOCIAL_CONFIG.BUSINESS_TREND_MIN_COMMERCIAL) {
+    const count =
+      stats.commercialValue > SOCIAL_CONFIG.BUSINESS_TREND_HIGH_COMMERCIAL
+        ? SOCIAL_CONFIG.BUSINESS_TREND_COUNT_HIGH
+        : SOCIAL_CONFIG.BUSINESS_TREND_COUNT_NORMAL;
     const selected = pickRandom(businessTrends, count);
     for (const t of selected) {
       trends.push({
@@ -219,9 +236,14 @@ export function generateWeiboTrends(
     }
   }
 
-  // Fill rest with neutral (aim for 7-9 total)
-  const target = 7 + Math.floor(Math.random() * 3);
-  const remaining = Math.max(2, target - trends.length);
+  // Fill rest with neutral (aim for ~7-9 total)
+  const target =
+    SOCIAL_CONFIG.TARGET_TREND_COUNT_MIN +
+    Math.floor(Math.random() * SOCIAL_CONFIG.TARGET_TREND_COUNT_RANDOM_RANGE);
+  const remaining = Math.max(
+    SOCIAL_CONFIG.TARGET_TREND_COUNT_MIN_FILL,
+    target - trends.length,
+  );
   const neutralSelected = pickRandom(neutralTrends, remaining);
   for (const t of neutralSelected) {
     trends.push({
@@ -467,6 +489,6 @@ export function generateFanComments(stats: GameStats, artist: Artist): FanCommen
     }
   }
 
-  // Shuffle
-  return comments.sort(() => Math.random() - 0.5);
+  // Shuffle for visual variety
+  return shuffle(comments);
 }

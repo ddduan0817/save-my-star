@@ -28,6 +28,40 @@ export const GAME_CONFIG = {
   HIGH_RISK_THRESHOLD: 80,
 } as const;
 
+/**
+ * Thresholds and counts used by socialGenerator.ts to decide which weibo
+ * trends / comment flavors to surface. Centralized here so game designers
+ * can tune without touching engine code.
+ */
+export const SOCIAL_CONFIG = {
+  // PR risk levels that trigger scandal trends
+  SCANDAL_TREND_RISK_THRESHOLD: 60,
+  SCANDAL_TREND_HIGH_RISK_THRESHOLD: 80,
+  SCANDAL_TREND_COUNT_NORMAL: 2,
+  SCANDAL_TREND_COUNT_HIGH: 3,
+
+  // Low-money financial scandal trigger
+  LOW_MONEY_TREND_THRESHOLD: 50_000,
+
+  // Fan loyalty thresholds
+  LOW_LOYALTY_TREND_THRESHOLD: 25,
+  POSITIVE_TREND_MIN_LOYALTY: 50,
+  POSITIVE_TREND_HIGH_LOYALTY: 70,
+  POSITIVE_TREND_COUNT_NORMAL: 1,
+  POSITIVE_TREND_COUNT_HIGH: 2,
+
+  // Commercial value thresholds for business trends
+  BUSINESS_TREND_MIN_COMMERCIAL: 50,
+  BUSINESS_TREND_HIGH_COMMERCIAL: 75,
+  BUSINESS_TREND_COUNT_NORMAL: 1,
+  BUSINESS_TREND_COUNT_HIGH: 2,
+
+  // Target total number of trends to show (randomized in [min, max))
+  TARGET_TREND_COUNT_MIN: 7,
+  TARGET_TREND_COUNT_RANDOM_RANGE: 3, // yields 7, 8, or 9
+  TARGET_TREND_COUNT_MIN_FILL: 2,
+} as const;
+
 export const CATEGORY_EMOJI: Record<string, string> = {
   crisis: '🚨',
   business: '💰',

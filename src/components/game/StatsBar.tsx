@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { useShallow } from 'zustand/react/shallow';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { sfxDisaster } from '@/lib/sounds';
@@ -13,9 +14,13 @@ const statConfig = [
 ];
 
 export default function StatsBar() {
-  const stats = useGameStore(s => s.stats);
-  const currentDay = useGameStore(s => s.currentDay);
-  const lastStatChanges = useGameStore(s => s.lastStatChanges);
+  const { stats, currentDay, lastStatChanges } = useGameStore(
+    useShallow(s => ({
+      stats: s.stats,
+      currentDay: s.currentDay,
+      lastStatChanges: s.lastStatChanges,
+    })),
+  );
   const barRef = useRef<HTMLDivElement>(null);
   const prevRiskRef = useRef(stats.prRisk);
 
