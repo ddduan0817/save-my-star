@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
 import type { InsurancePolicy } from '@/types/new_systems';
 import { INSURANCE_TEMPLATES } from '@/types/new_systems';
+import { insuranceIconMap } from '@/components/icons';
 
 interface InsuranceShopProps {
   policies: InsurancePolicy[];
@@ -49,10 +50,13 @@ export default function InsuranceShop({ policies, onPurchase, onCancel, money, c
             >
               <div className="flex items-start gap-3">
                 {/* 图标 */}
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-2xl ${
-                  isActive ? 'bg-green-100' : 'bg-gray-100'
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${
+                  isActive ? 'bg-green-100 text-green-600' : 'bg-orange-50 text-orange-500'
                 }`}>
-                  {template.emoji}
+                  {(() => {
+                    const Icon = insuranceIconMap[template.id];
+                    return Icon ? <Icon size={26} /> : <span className="text-2xl">{template.emoji}</span>;
+                  })()}
                 </div>
 
                 {/* 信息 */}
@@ -105,7 +109,12 @@ export default function InsuranceShop({ policies, onPurchase, onCancel, money, c
             {policies.filter(p => p.isActive).map(policy => (
               <div key={policy.id} className="flex items-center justify-between bg-white rounded-xl p-3">
                 <div className="flex items-center gap-2">
-                  <span>{policy.emoji}</span>
+                  <span className="text-green-600 inline-flex">
+                    {(() => {
+                      const Icon = insuranceIconMap[policy.id];
+                      return Icon ? <Icon size={18} /> : <span>{policy.emoji}</span>;
+                    })()}
+                  </span>
                   <span className="text-sm font-medium">{policy.name}</span>
                 </div>
                 <button
@@ -143,7 +152,12 @@ export default function InsuranceShop({ policies, onPurchase, onCancel, money, c
             >
               {/* 头部 */}
               <div className="p-6 text-center border-b border-gray-100">
-                <div className="text-5xl mb-2">{selectedPolicy.emoji}</div>
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-orange-50 text-orange-500 mb-2">
+                  {(() => {
+                    const Icon = insuranceIconMap[selectedPolicy.id];
+                    return Icon ? <Icon size={40} /> : <span className="text-5xl">{selectedPolicy.emoji}</span>;
+                  })()}
+                </div>
                 <div className="font-bold text-lg">{selectedPolicy.name}</div>
                 <div className="text-sm text-gray-500 mt-1">{selectedPolicy.description}</div>
               </div>
