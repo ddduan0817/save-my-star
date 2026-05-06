@@ -76,10 +76,37 @@ export interface RiskIndicator {
 export type FansiteAttitude = 'devoted' | 'supportive' | 'neutral' | 'dissatisfied' | 'hostile' | 'betrayed';
 export type FansiteResource = 'photos' | 'videos' | 'info' | 'connections' | 'money';
 
+/**
+ * 大粉的"运营风格" —— 决定她吃哪种互动。
+ * - emotional   情绪型催营业，吃送暖、吃私下吃饭，吃硬刚必炸
+ * - photographer 拍图技术流（前线/红毯/演出生图），吃后台权限/买断独家/买断底片
+ * - warrior     战斗粉/反黑组，吃官方授权和"组联动"，给她图反而没用
+ * - analyst     内容产出/解析（剧评/乐评/角色研究），吃约稿/送物料/官方认证
+ * - data        数据/打榜组，吃打投预算/认证；图对她意义不大
+ * - commerce    种草/带货，吃合作机会/品牌资源/送周边
+ */
+export type FansiteStyle =
+  | 'emotional'
+  | 'photographer'
+  | 'warrior'
+  | 'analyst'
+  | 'data'
+  | 'commerce';
+
+export const FANSITE_STYLE_META: Record<FansiteStyle, { label: string; tag: string; tint: string }> = {
+  emotional:    { label: '情绪型',  tag: '催营业 · 易破防',     tint: 'text-pink-500 bg-pink-50' },
+  photographer: { label: '拍图大神', tag: '前线/红毯生图',       tint: 'text-amber-600 bg-amber-50' },
+  warrior:      { label: '战斗粉',   tag: '反黑/控评/嘴毒',      tint: 'text-red-500 bg-red-50' },
+  analyst:      { label: '内容向',   tag: '剧评/乐评/解析',      tint: 'text-purple-500 bg-purple-50' },
+  data:         { label: '数据组',   tag: '打榜/刷量/组织力',    tint: 'text-blue-500 bg-blue-50' },
+  commerce:     { label: '种草向',   tag: '安利/带货/教程',      tint: 'text-emerald-500 bg-emerald-50' },
+};
+
 export interface FansiteMaster {
   id: string;
   name: string;           // 大粉ID/名字
   avatar: string;         // 头像emoji
+  style: FansiteStyle;    // 运营风格 —— 决定可用互动
   followers: number;      // 粉丝数
   attitude: FansiteAttitude;  // 对你的态度
   loyalty: number;        // 忠诚度 0-100
@@ -96,6 +123,8 @@ export interface FansiteInteraction {
   emoji: string;
   description: string;
   cost?: number;
+  /** 仅以下风格可用；不传 = 所有风格通用 */
+  requiresStyle?: FansiteStyle[];
   effect: {
     loyalty?: number;
     attitude?: FansiteAttitude;

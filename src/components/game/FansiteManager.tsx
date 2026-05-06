@@ -3,6 +3,7 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import type { FansiteMaster, FansiteInteraction } from '@/types/new_systems';
+import { FANSITE_STYLE_META } from '@/types/new_systems';
 import type { ArtistArchetype } from '@/types/game';
 import { fansiteInteractions } from '@/data/fansites';
 import { getFansiteIcon } from '@/components/icons';
@@ -89,10 +90,16 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
 
               {/* 信息 */}
               <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-bold text-gray-800 truncate">{fansite.name}</span>
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${attitudeConfig[fansite.attitude].bg} ${attitudeConfig[fansite.attitude].color}`}>
                     {attitudeConfig[fansite.attitude].label}
+                  </span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full ${FANSITE_STYLE_META[fansite.style].tint}`}
+                    title={FANSITE_STYLE_META[fansite.style].tag}
+                  >
+                    {FANSITE_STYLE_META[fansite.style].label}
                   </span>
                 </div>
 
@@ -160,6 +167,16 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
                     <div className="text-xs text-gray-500">
                       忠诚度: {selectedFansite.loyalty}% · {attitudeConfig[selectedFansite.attitude].label}
                     </div>
+                    <div className="mt-1.5 flex items-center gap-1.5 flex-wrap">
+                      <span
+                        className={`text-[10px] px-1.5 py-0.5 rounded-full ${FANSITE_STYLE_META[selectedFansite.style].tint}`}
+                      >
+                        {FANSITE_STYLE_META[selectedFansite.style].label}
+                      </span>
+                      <span className="text-[10px] text-gray-400">
+                        {FANSITE_STYLE_META[selectedFansite.style].tag}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -206,34 +223,59 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
 
               {/* 互动选项 */}
               <div className="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
-                {fansiteInteractions.map((interaction) => {
-                  const canAfford = !interaction.cost || money >= interaction.cost;
-                  return (
-                    <button
-                      key={interaction.id}
-                      disabled={!canAfford}
-                      onClick={() => handleInteract(interaction)}
-                      className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-colors ${
-                        canAfford
-                          ? 'bg-gray-50 hover:bg-orange-50 active:bg-orange-100'
-                          : 'bg-gray-100 opacity-50 cursor-not-allowed'
-                      }`}
-                    >
-                      <span className="text-xl">{interaction.emoji}</span>
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{interaction.name}</div>
-                        <div className="text-xs text-gray-500">{interaction.description}</div>
-                      </div>
-                      {interaction.cost ? (
-                        <span className={`text-xs font-bold ${canAfford ? 'text-orange-500' : 'text-red-400'}`}>
-                          ¥{interaction.cost.toLocaleString()}
-                        </span>
-                      ) : (
-                        <span className="text-xs text-green-500 font-bold">免费</span>
-                      )}
-                    </button>
+                {(() => {
+                  const styleMatched = fansiteInteractions.filter(
+                    i => !i.requiresStyle || i.requiresStyle.includes(selectedFansite.style),
                   );
-                })}
+                  const universal = fansiteInteractions.filter(i => !i.requiresStyle);
+                  const styleSpecific = styleMatched.filter(i => i.requiresStyle);
+                  const ordered = [...styleSpecific, ...universal];
+                  if (ordered.length === 0) {
+                    return (
+                      <div className="text-xs text-gray-400 py-4 text-center">
+                        当前风格暂无可用互动
+                      </div>
+                    );
+                  }
+                  return ordered.map((interaction) => {
+                    const canAfford = !interaction.cost || money >= interaction.cost;
+                    const isStyleSpecific = !!interaction.requiresStyle;
+                    return (
+                      <button
+                        key={interaction.id}
+                        disabled={!canAfford}
+                        onClick={() => handleInteract(interaction)}
+                        className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-colors ${
+                          canAfford
+                            ? 'bg-gray-50 hover:bg-orange-50 active:bg-orange-100'
+                            : 'bg-gray-100 opacity-50 cursor-not-allowed'
+                        }`}
+                      >
+                        <span className="text-xl">{interaction.emoji}</span>
+                        <div className="flex-1">
+                          <div className="font-medium text-sm flex items-center gap-1.5">
+                            {interaction.name}
+                            {isStyleSpecific && (
+                              <span
+                                className={`text-[9px] px-1 py-0.5 rounded ${FANSITE_STYLE_META[selectedFansite.style].tint}`}
+                              >
+                                专属
+                              </span>
+                            )}
+                          </div>
+                          <div className="text-xs text-gray-500">{interaction.description}</div>
+                        </div>
+                        {interaction.cost ? (
+                          <span className={`text-xs font-bold ${canAfford ? 'text-orange-500' : 'text-red-400'}`}>
+                            ¥{interaction.cost.toLocaleString()}
+                          </span>
+                        ) : (
+                          <span className="text-xs text-green-500 font-bold">免费</span>
+                        )}
+                      </button>
+                    );
+                  });
+                })()}
               </div>
 
               {/* 关闭 */}

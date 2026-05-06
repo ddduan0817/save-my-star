@@ -8,10 +8,8 @@ interface IconProps extends SVGProps<SVGSVGElement> {
 }
 
 /**
- * Hand-drawn stroke icons keyed per artist persona.
- * `fansiteIconMap` is keyed `${artistId}_${fansiteId}`, matching the
- * per-artist roster in `src/data/fansites.ts`. Use `getFansiteIcon` for
- * a graceful fallback to the idol set.
+ * Hand-drawn stroke icons keyed `${artistId}_${fansiteId}` per persona.
+ * See src/data/fansites.ts for persona definitions.
  */
 
 const defaults = {
@@ -22,9 +20,21 @@ const defaults = {
   strokeLinejoin: 'round' as const,
 };
 
-// ===== Idol set =====
+/* ============ Generic glyphs — reused across artists ============ */
 
-/** 星光不负赶路人 — camera + sparkle (技术流大神) */
+/** 情绪型 · 催营业 — megaphone + heart */
+export function IconFansiteMegaphoneHeart({ size = 28, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
+      <path d="M5 13L18 7V25L5 19V13Z" fill="currentColor" fillOpacity="0.18" />
+      <rect x="18" y="10" width="3" height="12" rx="1" fill="currentColor" fillOpacity="0.25" />
+      <path d="M22 13C24 14 24 18 22 19" />
+      <path d="M25 22C25 22 22 20.5 22 18.5C22 17.4 22.9 16.5 24 16.5C24.5 16.5 25 16.8 25 17.2C25 16.8 25.5 16.5 26 16.5C27.1 16.5 28 17.4 28 18.5C28 20.5 25 22 25 22Z" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+/** 拍图技术流 · 相机 + sparkle */
 export function IconFansiteCamera({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
@@ -36,47 +46,65 @@ export function IconFansiteCamera({ size = 28, ...props }: IconProps) {
   );
 }
 
-/** 前线的风 — flag + wind swirl (元老级大粉) */
-export function IconFansiteFlag({ size = 28, ...props }: IconProps) {
+/** 拍图 · 红毯狙击手（长焦 + 准星） */
+export function IconFansiteTelephoto({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <line x1="8" y1="5" x2="8" y2="27" />
-      <path d="M8 7C10 5.5 13 6 15 7.5C17 9 20 9 22 7.5V15C20 16.5 17 16.5 15 15C13 13.5 10 13 8 14.5V7Z" fill="currentColor" fillOpacity="0.18" />
-      <line x1="12" y1="8" x2="12" y2="14" opacity="0.55" />
-      <path d="M5 20C7 19 9 19 11 20" opacity="0.6" />
-      <path d="M14 22.5C16 21.5 18 21.5 20 22.5" opacity="0.6" />
-      <path d="M6 25C8 24 10 24 12 25" opacity="0.6" />
+      <rect x="5" y="11" width="14" height="10" rx="1" fill="currentColor" fillOpacity="0.1" />
+      <rect x="19" y="13" width="8" height="6" rx="1" fill="currentColor" fillOpacity="0.15" />
+      <line x1="23" y1="9" x2="23" y2="12" />
+      <line x1="23" y1="20" x2="23" y2="23" />
+      <line x1="27" y1="16" x2="29" y2="16" />
+      <circle cx="23" cy="16" r="1.4" fill="currentColor" stroke="none" />
     </svg>
   );
 }
 
-/** 熬夜冠军追星人 — crescent moon + small star */
-export function IconFansiteMoon({ size = 28, ...props }: IconProps) {
+/** 战斗粉 · 反黑盾牌 + 剑 */
+export function IconFansiteShieldSword({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <path d="M22 18C17 20 13 16 15 11C15.5 9.8 16.4 8.8 17.5 8C11.5 8 7 12.5 7 18C7 23.5 11.5 28 17 28C22 28 25.5 24 25.5 19C24.4 19.6 23.2 19.9 22 18Z" fill="currentColor" fillOpacity="0.15" />
-      <path d="M10 9L10.5 10.2L11.7 10.7L10.5 11.2L10 12.4L9.5 11.2L8.3 10.7L9.5 10.2Z" fill="currentColor" stroke="none" opacity="0.7" />
-      <circle cx="24" cy="11" r="0.8" fill="currentColor" stroke="none" opacity="0.6" />
+      <path d="M16 4L7 7V15.5C7 21 10.5 25.6 16 27.5C21.5 25.6 25 21 25 15.5V7L16 4Z" fill="currentColor" fillOpacity="0.15" />
+      <line x1="16" y1="10" x2="16" y2="22" strokeWidth="2.2" />
+      <line x1="12.5" y1="14" x2="19.5" y2="14" strokeWidth="2" />
     </svg>
   );
 }
 
-/** 显微镜女孩 — magnifying glass scanning a document */
-export function IconFansiteMagnifier({ size = 28, ...props }: IconProps) {
+/** 内容向 · 书 + 铅笔 */
+export function IconFansiteBook({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <path d="M9 7H19L22 10V23C22 23.55 21.55 24 21 24H9C8.45 24 8 23.55 8 23V8C8 7.45 8.45 7 9 7Z" opacity="0.5" />
-      <line x1="11" y1="12" x2="17" y2="12" opacity="0.5" />
-      <line x1="11" y1="15" x2="15" y2="15" opacity="0.5" />
-      <circle cx="18" cy="18" r="5.5" fill="currentColor" fillOpacity="0.08" />
-      <line x1="22" y1="22" x2="26" y2="26" strokeWidth="2.4" />
+      <path d="M5 7C5 6.45 5.45 6 6 6H14V25H6C5.45 25 5 24.55 5 24V7Z" fill="currentColor" fillOpacity="0.12" />
+      <path d="M14 6H22C22.55 6 23 6.45 23 7V24C23 24.55 22.55 25 22 25H14V6Z" fill="currentColor" fillOpacity="0.06" />
+      <line x1="7.5" y1="11" x2="11.5" y2="11" opacity="0.5" />
+      <line x1="7.5" y1="14" x2="11.5" y2="14" opacity="0.5" />
+      <line x1="7.5" y1="17" x2="11.5" y2="17" opacity="0.5" />
+      <line x1="16" y1="11" x2="20" y2="11" opacity="0.5" />
+      <line x1="16" y1="14" x2="20" y2="14" opacity="0.5" />
+      <line x1="16" y1="17" x2="20" y2="17" opacity="0.5" />
+      {/* pencil */}
+      <path d="M23 22L27 18L25 20L29 16" opacity="0" />
+      <path d="M24.5 15.5L27.5 18.5L23.5 22.5L20.5 22.5L20.5 19.5Z" fill="currentColor" fillOpacity="0.4" stroke="none" />
     </svg>
   );
 }
 
-// ===== Actor set =====
+/** 演技分析 · 剧场双面具 */
+export function IconFansiteMasks({ size = 28, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
+      <path d="M5 9C5 9 7 7 11 7C15 7 17 9 17 9C17 15 15 22 11 25C7 22 5 15 5 9Z" fill="currentColor" fillOpacity="0.12" />
+      <path d="M15 9C15 9 17 7 21 7C25 7 27 9 27 9C27 15 25 22 21 25C17 22 15 15 15 9Z" fill="currentColor" fillOpacity="0.15" />
+      <path d="M8.5 13C9 12.2 10 12.2 10.5 13" />
+      <path d="M18.5 13C19 13.8 20 13.8 20.5 13" />
+      <path d="M9 18C10 17 12 17 13 18" />
+      <path d="M19 19C20 20 22 20 23 19" />
+    </svg>
+  );
+}
 
-/** 剧抛脸研究所 — film clapper (slate) */
+/** 片场 · 场记板 */
 export function IconFansiteClapper({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
@@ -86,101 +114,11 @@ export function IconFansiteClapper({ size = 28, ...props }: IconProps) {
       <path d="M15 13L18 8L23 8.5L20 13Z" fill="currentColor" fillOpacity="0.18" />
       <line x1="5" y1="13" x2="27" y2="13" />
       <line x1="11" y1="18" x2="21" y2="18" opacity="0.6" />
-      <line x1="11" y1="21.5" x2="18" y2="21.5" opacity="0.6" />
     </svg>
   );
 }
 
-/** 场记本子 — clipboard with checklist */
-export function IconFansiteClipboard({ size = 28, ...props }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <rect x="7" y="6" width="18" height="22" rx="2" fill="currentColor" fillOpacity="0.08" />
-      <rect x="12" y="4" width="8" height="4" rx="1" />
-      <path d="M11 14L13 16L17 12" />
-      <line x1="18" y1="14" x2="22" y2="14" opacity="0.6" />
-      <path d="M11 20L13 22L17 18" />
-      <line x1="18" y1="20" x2="22" y2="20" opacity="0.6" />
-    </svg>
-  );
-}
-
-/** 红毯生图老兵 — old-school SLR with strap */
-export function IconFansiteSLR({ size = 28, ...props }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <path d="M5 12H8L10 9H22L24 12H27V24H5V12Z" fill="currentColor" fillOpacity="0.1" />
-      <circle cx="16" cy="17" r="5" />
-      <circle cx="16" cy="17" r="2.4" fill="currentColor" stroke="none" opacity="0.7" />
-      <rect x="22" y="13" width="3" height="2" fill="currentColor" stroke="none" />
-      {/* strap arcs */}
-      <path d="M5 12C3 11 3 9 5 8" opacity="0.5" />
-      <path d="M27 12C29 11 29 9 27 8" opacity="0.5" />
-    </svg>
-  );
-}
-
-// ===== Singer set =====
-
-/** 耳机党党魁 — headphones */
-export function IconFansiteHeadphones({ size = 28, ...props }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <path d="M6 18C6 11.4 10.5 6 16 6C21.5 6 26 11.4 26 18" />
-      <rect x="4" y="17" width="5" height="9" rx="2" fill="currentColor" fillOpacity="0.15" />
-      <rect x="23" y="17" width="5" height="9" rx="2" fill="currentColor" fillOpacity="0.15" />
-      <line x1="9" y1="21.5" x2="11" y2="21.5" opacity="0.5" />
-      <line x1="21" y1="21.5" x2="23" y2="21.5" opacity="0.5" />
-    </svg>
-  );
-}
-
-/** 现场打榜冠军 — microphone */
-export function IconFansiteMic({ size = 28, ...props }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <rect x="13" y="5" width="6" height="14" rx="3" fill="currentColor" fillOpacity="0.15" />
-      <line x1="14.5" y1="9" x2="17.5" y2="9" opacity="0.5" />
-      <line x1="14.5" y1="12" x2="17.5" y2="12" opacity="0.5" />
-      <path d="M9 16C9 19.87 12.13 23 16 23C19.87 23 23 19.87 23 16" />
-      <line x1="16" y1="23" x2="16" y2="27" />
-      <line x1="13" y1="27" x2="19" y2="27" />
-    </svg>
-  );
-}
-
-/** 副歌传教士 — megaphone with notes */
-export function IconFansiteMegaphone({ size = 28, ...props }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <path d="M5 14L18 8V24L5 18V14Z" fill="currentColor" fillOpacity="0.18" />
-      <rect x="18" y="11" width="3" height="10" rx="1" fill="currentColor" fillOpacity="0.25" />
-      <path d="M22 13C24 14 24 18 22 19" />
-      {/* notes */}
-      <circle cx="9" cy="22.5" r="1.6" fill="currentColor" stroke="none" />
-      <line x1="10.6" y1="22.5" x2="10.6" y2="18" />
-      <line x1="10.6" y1="18" x2="13" y2="17" />
-    </svg>
-  );
-}
-
-/** 修音侦探 — equalizer sliders */
-export function IconFansiteEqualizer({ size = 28, ...props }: IconProps) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <line x1="9" y1="6" x2="9" y2="26" />
-      <line x1="16" y1="6" x2="16" y2="26" />
-      <line x1="23" y1="6" x2="23" y2="26" />
-      <rect x="6.5" y="11" width="5" height="3" rx="1" fill="currentColor" />
-      <rect x="13.5" y="18" width="5" height="3" rx="1" fill="currentColor" />
-      <rect x="20.5" y="14" width="5" height="3" rx="1" fill="currentColor" />
-    </svg>
-  );
-}
-
-// ===== Influencer set =====
-
-/** 数据搬运中心 — bar chart */
+/** 数据组 · 条形图 + 上升箭头 */
 export function IconFansiteChart({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
@@ -194,52 +132,101 @@ export function IconFansiteChart({ size = 28, ...props }: IconProps) {
   );
 }
 
-/** 反黑组组长 — shield with sword */
-export function IconFansiteShield({ size = 28, ...props }: IconProps) {
+/** 歌手 · 耳机（现场录音） */
+export function IconFansiteHeadphones({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
-      <path d="M16 4L7 7V15.5C7 21 10.5 25.6 16 27.5C21.5 25.6 25 21 25 15.5V7L16 4Z" fill="currentColor" fillOpacity="0.15" />
-      <line x1="16" y1="11" x2="16" y2="20" strokeWidth="2.2" />
-      <line x1="13" y1="14" x2="19" y2="14" strokeWidth="2" />
+      <path d="M6 18C6 11.4 10.5 6 16 6C21.5 6 26 11.4 26 18" />
+      <rect x="4" y="17" width="5" height="9" rx="2" fill="currentColor" fillOpacity="0.15" />
+      <rect x="23" y="17" width="5" height="9" rx="2" fill="currentColor" fillOpacity="0.15" />
     </svg>
   );
 }
 
-/** 种草小报 — shopping bag with sparkle */
+/** 歌手 · 麦克风 */
+export function IconFansiteMic({ size = 28, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
+      <rect x="13" y="5" width="6" height="14" rx="3" fill="currentColor" fillOpacity="0.15" />
+      <path d="M9 16C9 19.87 12.13 23 16 23C19.87 23 23 19.87 23 16" />
+      <line x1="16" y1="23" x2="16" y2="27" />
+      <line x1="13" y1="27" x2="19" y2="27" />
+    </svg>
+  );
+}
+
+/** 歌手 · 均衡器 */
+export function IconFansiteEqualizer({ size = 28, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
+      <line x1="9" y1="6" x2="9" y2="26" />
+      <line x1="16" y1="6" x2="16" y2="26" />
+      <line x1="23" y1="6" x2="23" y2="26" />
+      <rect x="6.5" y="11" width="5" height="3" rx="1" fill="currentColor" />
+      <rect x="13.5" y="18" width="5" height="3" rx="1" fill="currentColor" />
+      <rect x="20.5" y="14" width="5" height="3" rx="1" fill="currentColor" />
+    </svg>
+  );
+}
+
+/** 网红 · 衣橱 / 购物袋 */
 export function IconFansiteBag({ size = 28, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
       <path d="M8 11H24L22.5 26C22.4 26.55 21.96 27 21.4 27H10.6C10.04 27 9.6 26.55 9.5 26L8 11Z" fill="currentColor" fillOpacity="0.15" />
       <path d="M12 11V8C12 6 13.8 5 16 5C18.2 5 20 6 20 8V11" />
-      {/* sparkle */}
       <path d="M22 7L22.5 8.2L23.7 8.7L22.5 9.2L22 10.4L21.5 9.2L20.3 8.7L21.5 8.2Z" fill="currentColor" stroke="none" opacity="0.8" />
     </svg>
   );
 }
 
-/**
- * Composite-keyed map: `${artistId}_${fansiteId}` → icon component.
- * Use `getFansiteIcon(artistId, fansiteId)` for a fallback to the idol set.
- */
+/** 网红 · 口红（美妆教程） */
+export function IconFansiteLipstick({ size = 28, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
+      <rect x="11" y="15" width="10" height="13" rx="1" fill="currentColor" fillOpacity="0.15" />
+      <path d="M12 15L12 9L20 9L20 15" fill="currentColor" fillOpacity="0.35" stroke="currentColor" />
+      <path d="M12 9L14 4L18 4L20 9" fill="currentColor" fillOpacity="0.55" stroke="currentColor" />
+      <line x1="11" y1="20" x2="21" y2="20" opacity="0.5" />
+    </svg>
+  );
+}
+
+/** 网红 · 扩音器（安利局） */
+export function IconFansiteBullhorn({ size = 28, ...props }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" {...defaults} {...props}>
+      <path d="M4 14L20 7V25L4 18V14Z" fill="currentColor" fillOpacity="0.15" />
+      <rect x="20" y="11" width="4" height="10" rx="1" fill="currentColor" fillOpacity="0.3" />
+      <path d="M25 13C27 14 27 18 25 19" />
+      <path d="M11 22L11 26" opacity="0.6" />
+    </svg>
+  );
+}
+
+/* ============ Composite-keyed map ============ */
+
 export const fansiteIconMap: Record<string, (props: IconProps) => React.JSX.Element> = {
-  // Idol
-  idol_fansite_1: IconFansiteCamera,
-  idol_fansite_2: IconFansiteFlag,
-  idol_fansite_3: IconFansiteMoon,
-  idol_fansite_4: IconFansiteMagnifier,
-  // Actor
-  actor_fansite_1: IconFansiteClapper,
-  actor_fansite_2: IconFansiteClipboard,
-  actor_fansite_3: IconFansiteSLR,
-  // Singer
-  singer_fansite_1: IconFansiteHeadphones,
-  singer_fansite_2: IconFansiteMic,
-  singer_fansite_3: IconFansiteMegaphone,
-  singer_fansite_4: IconFansiteEqualizer,
-  // Influencer
-  influencer_fansite_1: IconFansiteChart,
-  influencer_fansite_2: IconFansiteShield,
-  influencer_fansite_3: IconFansiteBag,
+  // 甄帅（偶像）
+  idol_fansite_1: IconFansiteMegaphoneHeart, // 甄帅今天营业了吗
+  idol_fansite_2: IconFansiteCamera,          // 前线only·帅
+  idol_fansite_3: IconFansiteShieldSword,     // 偷心贼_帅版
+  idol_fansite_4: IconFansiteBook,            // 每天一个爱上甄帅的理由
+  // 郝美丽（演员）
+  actor_fansite_1: IconFansiteCamera,         // 美丽·光影手记
+  actor_fansite_2: IconFansiteMasks,          // 郝美丽角色研究所
+  actor_fansite_3: IconFansiteTelephoto,      // 红毯狙击手
+  actor_fansite_4: IconFansiteClapper,        // 美丽不NG
+  // 高八度（歌手）
+  singer_fansite_1: IconFansiteHeadphones,    // 高八度不插电
+  singer_fansite_2: IconFansiteMic,           // 八度的麦克风
+  singer_fansite_3: IconFansiteChart,         // 打榜少女
+  singer_fansite_4: IconFansiteEqualizer,     // 八度音域探索者
+  // 冷冰凝（网红）
+  influencer_fansite_1: IconFansiteBag,       // 冰凝的衣橱
+  influencer_fansite_2: IconFansiteBullhorn,  // 冷冰凝安利局
+  influencer_fansite_3: IconFansiteShieldSword, // 反黑前线
+  influencer_fansite_4: IconFansiteLipstick,  // 跟着冰凝学变美
 };
 
 /** Helper that prefers the per-artist icon and falls back to the idol set. */
