@@ -29,27 +29,58 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen paper-bg overflow-hidden relative">
-      {/* Decorative doodle stickers — pinned to outer corners, low z-index, semi-transparent */}
-      <span
-        aria-hidden
-        className="absolute top-3 left-2 text-[22px] text-gray-300/70 animate-doodle pointer-events-none z-0"
-        style={{ ['--rot' as string]: '-12deg' }}
-      >
-        ✦
-      </span>
-      <span
-        aria-hidden
-        className="absolute top-2 right-3 text-[18px] text-gray-300/70 animate-doodle pointer-events-none z-0"
-        style={{ ['--rot' as string]: '14deg' }}
-      >
-        ★
-      </span>
-      <span
-        aria-hidden
-        className="absolute top-[420px] left-2 text-[14px] text-[#ff2e2e]/70 font-bold rotate-[-15deg] pointer-events-none z-0"
-      >
-        !!!
-      </span>
+      {/* Mobile-first container: on desktop, hug the content like Xiaohongshu web */}
+      <div className="relative mx-auto w-full max-w-[440px]">
+
+        {/* ===== Decorative doodle stickers — restored to original size & color, just repositioned to corners ===== */}
+        <span
+          aria-hidden
+          className="absolute top-4 left-2 text-[26px] animate-doodle pointer-events-none z-0"
+          style={{ ['--rot' as string]: '-12deg' }}
+        >
+          ✦
+        </span>
+        <span
+          aria-hidden
+          className="absolute top-3 right-3 text-[20px] animate-doodle pointer-events-none z-0"
+          style={{ ['--rot' as string]: '14deg' }}
+        >
+          ★
+        </span>
+        {/* Handwritten "!!!" near the polaroid to dramatize the scandal shot */}
+        <span
+          aria-hidden
+          className="absolute top-[420px] -left-1 text-[16px] text-[#ff2e2e] font-black rotate-[-15deg] pointer-events-none z-20"
+        >
+          !!!
+        </span>
+        {/* Arrow doodle pointing from title toward polaroid */}
+        <span
+          aria-hidden
+          className="absolute top-[215px] right-6 text-[18px] text-[#FF2E2E]/80 rotate-[20deg] pointer-events-none z-10 font-black"
+        >
+          ↘ 看这里
+        </span>
+        {/* Sticky note: "P 过的吧" — anchored to polaroid right side */}
+        <motion.span
+          aria-hidden
+          initial={{ opacity: 0, scale: 0.8, rotate: 8 }}
+          animate={{ opacity: 1, scale: 1, rotate: 6 }}
+          transition={{ delay: 0.8, type: 'spring', stiffness: 200, damping: 18 }}
+          className="absolute top-[360px] right-0 text-[10px] font-bold text-[#7A4A00] bg-[#FFE9C7] px-2 py-1 shadow-[1px_2px_0_rgba(0,0,0,0.08)] pointer-events-none z-20"
+        >
+          P过的吧？
+        </motion.span>
+        {/* Small red urgency badge near hero */}
+        <motion.span
+          aria-hidden
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1, rotate: -8 }}
+          transition={{ delay: 0.4, type: 'spring', stiffness: 260, damping: 16 }}
+          className="absolute top-[78px] right-3 text-[9px] font-black text-[#FF2E2E] border-2 border-[#FF2E2E] px-1.5 py-0.5 rounded-sm tracking-wider pointer-events-none z-20"
+        >
+          SCANDAL
+        </motion.span>
 
       {/* ========= Hero ========= */}
       <div className="relative px-5 pt-10 pb-6">
@@ -213,6 +244,7 @@ export default function HomePage() {
             made with caffeine &amp; regret
           </div>
         </motion.div>
+      </div>
       </div>
     </div>
   );
