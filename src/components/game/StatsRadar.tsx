@@ -9,6 +9,13 @@ interface StatsRadarProps {
   prRisk: number;           // 0-100 (inverted display: 100-risk = displayed value)
   appearance: number;       // 0-100
   size?: number;            // SVG size in px, default 200
+  /** Optional rival overlay — drawn underneath the player polygon for comparison */
+  rival?: {
+    commercialValue: number;
+    fanLoyalty: number;
+    prRisk: number;
+    appearance: number;
+  };
 }
 
 const AXES = [
@@ -30,6 +37,7 @@ export default function StatsRadar({
   prRisk,
   appearance,
   size = 200,
+  rival,
 }: StatsRadarProps) {
   const n = AXES.length;
   const center = size / 2;
@@ -65,6 +73,25 @@ export default function StatsRadar({
       })
       .join(' ');
   }, [values]);
+
+  // Rival polygon (optional)
+  const rivalValues = useMemo(
+    () =>
+      rival
+        ? [rival.commercialValue, rival.fanLoyalty, 100 - rival.prRisk, rival.appearance]
+        : null,
+    [rival],
+  );
+  const rivalPoints = useMemo(() => {
+    if (!rivalValues) return null;
+    return rivalValues
+      .map((v, i) => {
+        const clamped = Math.max(0, Math.min(100, v)) / 100;
+        const p = getPoint(i, clamped);
+        return `${p.x},${p.y}`;
+      })
+      .join(' ');
+  }, [rivalValues]);
 
   // Ring polygons
   const rings = useMemo(
@@ -122,6 +149,10 @@ export default function StatsRadar({
           <stop offset="0%" stopColor="#f59e0b" stopOpacity="0.35" />
           <stop offset="100%" stopColor="#f97316" stopOpacity="0.15" />
         </linearGradient>
+        <linearGradient id="radarGradientRival" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#64748b" stopOpacity="0.18" />
+          <stop offset="100%" stopColor="#475569" stopOpacity="0.08" />
+        </linearGradient>
       </defs>
 
       {/* Concentric rings */}
@@ -147,6 +178,21 @@ export default function StatsRadar({
           strokeWidth={0.8}
         />
       ))}
+
+      {/* Rival polygon (drawn first so player sits on top) */}
+      {rivalPoints && (
+        <motion.polygon
+          points={rivalPoints}
+          fill="url(#radarGradientRival)"
+          stroke="#64748b"
+          strokeWidth={1.2}
+          strokeDasharray="3 2"
+          strokeLinejoin="round"
+          initial={false}
+          animate={{ points: rivalPoints }}
+          transition={{ type: 'spring', stiffness: 60, damping: 20 }}
+        />
+      )}
 
       {/* Data polygon with animation */}
       <motion.polygon

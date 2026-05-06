@@ -42,6 +42,7 @@ export default function ArtistTab() {
   const cosmeticState = useGameStore(s => s.cosmeticState);
   const performProcedure = useGameStore(s => s.performProcedure);
   const mentalState = useGameStore(s => s.mentalState);
+  const rival = useGameStore(s => s.rival);
 
   if (!artist) return null;
 
@@ -139,16 +140,56 @@ export default function ArtistTab() {
         transition={{ delay: 0.05 }}
         className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
       >
-        <div className="text-xs font-medium text-gray-400 tracking-wider mb-2">能力雷达</div>
+        <div className="flex items-center justify-between mb-2">
+          <div className="text-xs font-medium text-gray-400 tracking-wider">对位分析</div>
+          <div className="flex items-center gap-3 text-[10px]">
+            <span className="flex items-center gap-1">
+              <span className="inline-block w-2.5 h-2.5 rounded-full bg-amber-400" />
+              <span className="text-gray-600 font-medium">{artist.name}</span>
+            </span>
+            {rival && (
+              <span className="flex items-center gap-1">
+                <span className="inline-block w-2.5 h-2.5 rounded-full bg-slate-400" />
+                <span className="text-gray-500">{rival.name}</span>
+              </span>
+            )}
+          </div>
+        </div>
         <div className="flex justify-center">
           <StatsRadar
             commercialValue={stats.commercialValue}
             fanLoyalty={stats.fanLoyalty}
             prRisk={stats.prRisk}
             appearance={cosmeticState.appearance}
+            rival={rival ? {
+              commercialValue: rival.stats.commercialValue,
+              fanLoyalty: rival.stats.fanLoyalty,
+              prRisk: rival.stats.prRisk,
+              appearance: rival.stats.appearance,
+            } : undefined}
             size={200}
           />
         </div>
+        {rival && (() => {
+          const diffs = [
+            { label: '商业', mine: stats.commercialValue,        theirs: rival.stats.commercialValue },
+            { label: '粉丝', mine: stats.fanLoyalty,              theirs: rival.stats.fanLoyalty },
+            { label: '舆情', mine: 100 - stats.prRisk,            theirs: 100 - rival.stats.prRisk }, // 风险越低越好
+            { label: '颜值', mine: cosmeticState.appearance,      theirs: rival.stats.appearance },
+          ];
+          const lead = diffs.filter(d => d.mine > d.theirs).length;
+          const trail = diffs.filter(d => d.mine < d.theirs).length;
+          const summary = lead > trail
+            ? `领先 ${lead} 项，${trail > 0 ? `${diffs.filter(d => d.mine < d.theirs).map(d => d.label).join('/')} 仍被压制` : '全面碾压'}`
+            : lead < trail
+              ? `落后 ${trail} 项，重点补 ${diffs.filter(d => d.mine < d.theirs).map(d => d.label).join('/')}`
+              : '势均力敌，看接下来谁先翻车';
+          return (
+            <div className="mt-2 text-center text-[11px] text-gray-500">
+              {summary}
+            </div>
+          );
+        })()}
       </motion.div>
 
       {/* 心理状态面板 */}
