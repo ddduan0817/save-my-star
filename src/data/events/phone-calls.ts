@@ -367,7 +367,7 @@ export const phoneCallEvents: GameEvent[] = [
       },
     },
     minDay: 5,
-    statConditions: { minCommercial: 40 },
+    statConditions: { minCommercialValue: 40 },
     choices: [
       {
         id: 'tv_accept',

@@ -61,6 +61,10 @@ import {
   initialRiskIndicators,
   calculateCollapseWarning,
   interactWithFansite as interactWithFansiteImpl,
+  applyFansiteNeglectDecay,
+  consoleFansiteByArtist,
+  DAILY_FANSITE_INTERACTION_QUOTA,
+  CONSOLE_TRUST_COST,
   purchaseInsurance as purchaseInsuranceImpl,
   cancelInsurance as cancelInsuranceImpl,
   applyMentalEffect,
@@ -148,6 +152,8 @@ interface GameStore {
   collapseWarning: CollapseWarning;
   riskIndicators: RiskIndicator[];
   insurancePolicies: InsurancePolicy[];
+  /** 当日已用的大粉互动次数 */
+  fansiteInteractionsUsed: number;
 
   // Actions
   startGame: (artistId: ArtistArchetype) => void;
@@ -177,7 +183,10 @@ interface GameStore {
     cost: number;
     loyaltyDelta: number;
     attitudeChanged: boolean;
+    /** 'quota_exceeded' 时表示当日额度已满，调用方应弹提示 */
+    blocked?: 'quota_exceeded' | 'no_money';
   };
+  consoleFansite: (fansiteId: string) => { success: boolean; message: string };
   purchaseInsurance: (policyId: InsuranceType) => { success: boolean; message: string };
   cancelInsurance: (policyId: InsuranceType) => { refund: number; message: string };
   loadCollection: () => void;
@@ -191,6 +200,15 @@ const MAX_CARRYOVER_MESSAGES = 2;
 function addLedger(get: () => GameStore, set: (partial: Partial<GameStore>) => void, entry: LedgerEntry) {
   if (entry.amount === 0) return;
   set({ dailyLedger: [...get().dailyLedger, entry] });
+}
+
+// Build a new ledger array atomically — useful when several entries need to
+// land alongside another set() in the same transaction (avoids the race where
+// an upstream set() wipes dailyLedger before addLedger appends).
+function appendLedger(currentLedger: LedgerEntry[], ...entries: (LedgerEntry | null | undefined)[]): LedgerEntry[] {
+  const filtered = entries.filter((e): e is LedgerEntry => !!e && e.amount !== 0);
+  if (filtered.length === 0) return currentLedger;
+  return [...currentLedger, ...filtered];
 }
 
 // 成就检查 helper
@@ -329,7 +347,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   collapseWarning: initialCollapseWarning,
   riskIndicators: initialRiskIndicators,
   insurancePolicies: [],
-
+  fansiteInteractionsUsed: 0,
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
@@ -401,6 +419,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       collapseWarning: initialCollapseWarning,
       riskIndicators: initialRiskIndicators,
       insurancePolicies: [],
+      fansiteInteractionsUsed: 0,
     });
 
     // Day 1 daily operating cost
@@ -450,6 +469,12 @@ export const useGameStore = create<GameStore>((set, get) => ({
   selectChoice: (choice: EventChoice) => {
     const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState, mentalState } = get();
     const event = currentEvents[currentEventIndex];
+
+    // Enforce选项门槛 — silently ignore when requirements aren't met. UI should
+    // disable the button, but we still guard here so data edits can't bypass it.
+    if (choice.requireMinMoney !== undefined && stats.money < choice.requireMinMoney) return;
+    if (choice.requireMinFanLoyalty !== undefined && stats.fanLoyalty < choice.requireMinFanLoyalty) return;
+    if (choice.requireMaxPrRisk !== undefined && stats.prRisk > choice.requireMaxPrRisk) return;
 
     const appMultiplier = getAppearanceMultiplier(cosmeticState.appearance);
     const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk, appMultiplier, cosmeticState.stiffFaceActive);
@@ -577,7 +602,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       messages, currentDay, stats, activeTags, peakRisk, artist,
       eventUsageMap, pendingFollowUpEventIds, decisionHistory,
       artistSchedule, companyUpgrades, rival, cosmeticState,
-      mentalState, insurancePolicies,
+      mentalState, insurancePolicies, fansites,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -591,8 +616,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
     let scheduleLedgerEntry: LedgerEntry | null = null;
     if (artistSchedule) {
       if (artistSchedule.remainingDays <= 1) {
-        // Schedule completes
-        newStats = applyStatChanges(newStats, artistSchedule.activity.statChanges, artist?.id);
+        // Schedule completes — apply with the same颜值倍率/僵脸 modifiers used by event choices
+        const scheduleAppMultiplier = getAppearanceMultiplier(cosmeticState.appearance);
+        newStats = applyStatChanges(
+          newStats,
+          artistSchedule.activity.statChanges,
+          artist?.id,
+          scheduleAppMultiplier,
+          cosmeticState.stiffFaceActive,
+        );
         if (artistSchedule.activity.statChanges.money) {
           scheduleLedgerEntry = { label: `${artistSchedule.activity.name}完成`, amount: artistSchedule.activity.statChanges.money, category: 'schedule' };
         }
@@ -667,14 +699,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     const newMessages = createMessages(events, nextDay);
 
-    // Separate phone call events (max 1 per day, from day 3+)
+    // Separate phone call events (max 1 per day as fullscreen ring, from day 3+).
+    // Any additional phone-call events that happen to be generated on the same
+    // day fall back into the regular message list so they aren't silently dropped.
     let phoneCall: GameEvent | null = null;
     let filteredMessages = newMessages;
     if (nextDay >= 3) {
-      const phoneCallMsg = newMessages.find(m => m.event.isPhoneCall);
-      if (phoneCallMsg) {
-        phoneCall = phoneCallMsg.event;
-        filteredMessages = newMessages.filter(m => m.id !== phoneCallMsg.id);
+      const phoneCallMsgs = newMessages.filter(m => m.event.isPhoneCall);
+      if (phoneCallMsgs.length > 0) {
+        phoneCall = phoneCallMsgs[0].event;
+        // Remove ONLY the one that's going to ring; keep the rest as inbox items
+        filteredMessages = newMessages.filter(m => m.id !== phoneCallMsgs[0].id);
       }
     }
 
@@ -701,20 +736,56 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // 6.6 保险年费扣款（每20天续费一次，用购买日判断）
     let newInsurancePolicies = insurancePolicies;
     let insurancePremiumLedger: LedgerEntry | null = null;
+    let lapsedPolicyNames: string[] = [];
     if (insurancePolicies.length > 0) {
       let totalPremium = 0;
-      newInsurancePolicies = insurancePolicies.map(p => {
-        if (!p.isActive || p.purchasedDay === undefined) return p;
+      const dueRenewals: { id: string; premium: number; name: string }[] = [];
+      for (const p of insurancePolicies) {
+        if (!p.isActive || p.purchasedDay === undefined) continue;
         const daysSincePurchase = nextDay - p.purchasedDay;
         if (daysSincePurchase > 0 && daysSincePurchase % 20 === 0) {
           totalPremium += p.annualPremium;
+          dueRenewals.push({ id: p.id, premium: p.annualPremium, name: p.name });
         }
-        return p;
-      });
+      }
       if (totalPremium > 0) {
-        insurancePremiumLedger = { label: '保险年费续费', amount: -totalPremium, category: 'upgrade' };
+        if (newStats.money >= totalPremium) {
+          newStats = { ...newStats, money: newStats.money - totalPremium };
+          insurancePremiumLedger = { label: '保险年费续费', amount: -totalPremium, category: 'upgrade' };
+        } else {
+          // Insufficient funds → lapse the policies due for renewal
+          const dueIds = new Set(dueRenewals.map(r => r.id));
+          newInsurancePolicies = insurancePolicies.map(p =>
+            dueIds.has(p.id) ? { ...p, isActive: false } : p,
+          );
+          lapsedPolicyNames = dueRenewals.map(r => r.name);
+        }
       }
     }
+
+    // 6.7 大粉冷落衰减
+    const { newFansites: decayedFansites, alerts: neglectAlerts } = applyFansiteNeglectDecay(fansites, nextDay);
+
+    // Build the fresh daily ledger atomically so it lands in the same set()
+    // as the rest of the day-transition state. Any entries with amount=0 are
+    // dropped by appendLedger.
+    const dailyCostEntry: LedgerEntry = {
+      label: '日常运营开支',
+      amount: GAME_CONFIG.DAILY_MONEY_COST,
+      category: 'daily',
+    };
+    const loyaltyBonusEntry: LedgerEntry | null =
+      stats.fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD
+        ? { label: '粉丝周边收入', amount: 3000, category: 'daily' }
+        : null;
+    const freshLedger = appendLedger(
+      [],
+      dailyCostEntry,
+      loyaltyBonusEntry,
+      scheduleLedgerEntry,
+      rivalLedgerEntry,
+      insurancePremiumLedger,
+    );
 
     set({
       currentDay: nextDay,
@@ -741,30 +812,21 @@ export const useGameStore = create<GameStore>((set, get) => ({
       activeTags: newActiveTags,
       pendingPhoneCall: phoneCall,
       showPhoneCall: !!phoneCall,
-      dailyLedger: [], // reset ledger for new day
+      dailyLedger: freshLedger,
       mentalState: newMentalState,
       collapseWarning: newCollapseWarning,
       riskIndicators: newRiskIndicators,
       insurancePolicies: newInsurancePolicies,
+      fansites: decayedFansites,
+      fansiteInteractionsUsed: 0,
     });
 
-    // Ledger: daily operating costs
-    addLedger(get, set, { label: '日常运营开支', amount: GAME_CONFIG.DAILY_MONEY_COST, category: 'daily' });
-    // Ledger: fan loyalty bonus
-    if (stats.fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD) {
-      addLedger(get, set, { label: '粉丝周边收入', amount: 3000, category: 'daily' });
+    if (neglectAlerts.length > 0 && process.env.NODE_ENV !== 'production') {
+      // Surface in dev console; UI shows degraded state via fansite list itself.
+      console.warn('[fansite neglect]', neglectAlerts);
     }
-    // Ledger: schedule completion
-    if (scheduleLedgerEntry) {
-      addLedger(get, set, scheduleLedgerEntry);
-    }
-    // Ledger: rival action
-    if (rivalLedgerEntry) {
-      addLedger(get, set, rivalLedgerEntry);
-    }
-    // Ledger: insurance premium
-    if (insurancePremiumLedger) {
-      addLedger(get, set, insurancePremiumLedger);
+    if (lapsedPolicyNames.length > 0 && process.env.NODE_ENV !== 'production') {
+      console.warn('[insurance lapsed — insufficient funds]', lapsedPolicyNames);
     }
 
     return true;
@@ -934,7 +996,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   hangUpPhoneCall: () => {
-    const { pendingPhoneCall, stats, artist, activeTags, peakRisk, currentDay, decisionHistory } = get();
+    const { pendingPhoneCall, stats, artist, activeTags, peakRisk, currentDay, decisionHistory, messages } = get();
     if (!pendingPhoneCall?.phoneCallMeta) return;
 
     const hangUpOutcome = pendingPhoneCall.phoneCallMeta.hangUpOutcome;
@@ -950,6 +1012,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
       statChanges: hangUpOutcome.statChanges,
     };
 
+    // Inject a resolved message so the call still appears in 消息 history
+    const msg = createMessages([pendingPhoneCall], currentDay)[0];
+    const updatedMessages = [{ ...msg, status: 'resolved' as const }, ...messages];
+
     set({
       showPhoneCall: false,
       pendingPhoneCall: null,
@@ -958,6 +1024,11 @@ export const useGameStore = create<GameStore>((set, get) => ({
       lastOutcomeNarration: hangUpOutcome.narration,
       lastStatChanges: hangUpOutcome.statChanges,
       gamePhase: 'showing_outcome',
+      // Populate currentEvents so MessagesTab renders the outcome view
+      currentEvents: [pendingPhoneCall],
+      currentEventIndex: 0,
+      messages: updatedMessages,
+      activeMessageId: msg.id,
       decisionHistory: [...decisionHistory, record],
       peakRisk: Math.max(peakRisk, newStats.prRisk),
       showDayBanner: true,
@@ -1028,6 +1099,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       collapseWarning: initialCollapseWarning,
       riskIndicators: initialRiskIndicators,
       insurancePolicies: [],
+      fansiteInteractionsUsed: 0,
     });
   },
 
@@ -1048,13 +1120,35 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   // ===== 新系统 Actions =====
   interactWithFansite: (fansiteId: string, interaction: FansiteInteraction) => {
-    const { fansites, stats, artist } = get();
+    const { fansites, stats, artist, currentDay, fansiteInteractionsUsed } = get();
     const fansite = fansites.find(f => f.id === fansiteId);
     if (!fansite || !artist) {
       return { narration: '', cost: 0, loyaltyDelta: 0, attitudeChanged: false };
     }
 
-    const result = interactWithFansiteImpl(fansites, fansiteId, interaction);
+    // 每日额度
+    if (fansiteInteractionsUsed >= DAILY_FANSITE_INTERACTION_QUOTA) {
+      return {
+        narration: `今天的精力用完了（${DAILY_FANSITE_INTERACTION_QUOTA}/${DAILY_FANSITE_INTERACTION_QUOTA}），明天再来吧`,
+        cost: 0,
+        loyaltyDelta: 0,
+        attitudeChanged: false,
+        blocked: 'quota_exceeded' as const,
+      };
+    }
+
+    // 资金不足
+    if (interaction.cost && stats.money < interaction.cost) {
+      return {
+        narration: `资金不足，差 ¥${(interaction.cost - stats.money).toLocaleString()}`,
+        cost: 0,
+        loyaltyDelta: 0,
+        attitudeChanged: false,
+        blocked: 'no_money' as const,
+      };
+    }
+
+    const result = interactWithFansiteImpl(fansites, fansiteId, interaction, currentDay);
     const moneyChange = -result.cost;
     const statChanges: StatChange = moneyChange ? { money: moneyChange } : {};
     const newStats = moneyChange ? applyStatChanges(stats, statChanges, artist.id) : stats;
@@ -1068,6 +1162,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       stats: newStats,
       lastOutcomeNarration: result.narration,
       lastStatChanges: moneyChange ? statChanges : null,
+      fansiteInteractionsUsed: fansiteInteractionsUsed + 1,
     });
 
     if (moneyChange) {
@@ -1084,6 +1179,23 @@ export const useGameStore = create<GameStore>((set, get) => ({
       loyaltyDelta,
       attitudeChanged,
     };
+  },
+
+  consoleFansite: (fansiteId: string) => {
+    const { fansites, mentalState, currentDay } = get();
+    if (mentalState.trust < CONSOLE_TRUST_COST) {
+      return { success: false, message: `艺人信任度不足 ${CONSOLE_TRUST_COST}，TA 现在不愿意为你出面` };
+    }
+    const result = consoleFansiteByArtist(fansites, fansiteId, currentDay);
+    if (!result.success) return { success: false, message: result.message };
+
+    const newMental = applyMentalEffect(mentalState, { trust: -CONSOLE_TRUST_COST });
+    set({
+      fansites: result.newFansites,
+      mentalState: newMental,
+      lastOutcomeNarration: result.message,
+    });
+    return { success: true, message: result.message };
   },
 
   purchaseInsurance: (policyId: InsuranceType) => {

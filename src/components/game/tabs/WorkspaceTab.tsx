@@ -35,6 +35,9 @@ export default function WorkspaceTab() {
   const collapseWarning = useGameStore(s => s.collapseWarning);
   const riskIndicators = useGameStore(s => s.riskIndicators);
   const currentDay = useGameStore(s => s.currentDay);
+  const fansiteInteractionsUsed = useGameStore(s => s.fansiteInteractionsUsed);
+  const consoleFansite = useGameStore(s => s.consoleFansite);
+  const mentalState = useGameStore(s => s.mentalState);
 
   // Active buffs
   const activeBuffs: string[] = [];
@@ -92,6 +95,12 @@ export default function WorkspaceTab() {
                 onInteract={interactWithFansite}
                 money={stats.money}
                 artistId={artist?.id}
+                interactionsUsed={fansiteInteractionsUsed}
+                interactionsQuota={3}
+                currentDay={currentDay}
+                artistTrust={mentalState.trust}
+                consoleTrustCost={8}
+                onConsole={consoleFansite}
               />
             </div>
           </motion.div>

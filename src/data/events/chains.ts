@@ -608,7 +608,7 @@ export const chainEvents: GameEvent[] = [
     description: '某国际奢侈品牌邀请你的艺人参与一个"东方美学"主题的联名企划。合作形式很创新——不只是代言，而是让艺人参与设计。但圈内有人说这个品牌之前的联名都翻车了...',
     emoji: '🤝',
     minDay: 12,
-    statConditions: { minCommercial: 40 },
+    statConditions: { minCommercialValue: 40 },
     choices: [
       {
         id: 'collab_full',

@@ -8,7 +8,7 @@ export const businessEvents: GameEvent[] = [
     title: '顶奢品牌邀约！',
     description: '邮件是半夜收到的，发件人后缀是某国际一线奢侈品。你反复读了三遍确认不是钓鱼邮件——"诚邀贵方艺人担任亚太区品牌大使"。你激动得差点截图发朋友圈，但理智告诉你：谈判才刚刚开始。',
     emoji: '💎',
-    statConditions: { minCommercial: 50 },
+    statConditions: { minCommercialValue: 50 },
     choices: [
       {
         id: 'accept_luxury',

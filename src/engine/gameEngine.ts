@@ -56,18 +56,20 @@ function resolveTwist(twist: Twist | undefined): boolean {
 // 给数值变动加随机波动（±30%，money ±20%），增加重玩性
 function randomizeStatChanges(changes: StatChange): StatChange {
   const result: StatChange = {};
-  for (const [key, value] of Object.entries(changes)) {
-    if (value === undefined || value === 0) {
-      (result as Record<string, number>)[key] = value as number;
+  for (const [key, rawValue] of Object.entries(changes) as [keyof StatChange, number | undefined][]) {
+    if (rawValue === undefined) continue; // skip absent fields
+    if (rawValue === 0) {
+      (result as Record<string, number>)[key] = 0;
       continue;
     }
+    const value = rawValue;
     const rate = key === 'money' ? 0.2 : 0.3;
-    const variance = Math.max(1, Math.round(Math.abs(value as number) * rate));
+    const variance = Math.max(1, Math.round(Math.abs(value) * rate));
     const delta = Math.floor(Math.random() * (variance * 2 + 1)) - variance;
-    let newValue = (value as number) + delta;
+    let newValue = value + delta;
     // 保持正负号不变
-    if ((value as number) > 0 && newValue <= 0) newValue = 1;
-    if ((value as number) < 0 && newValue >= 0) newValue = -1;
+    if (value > 0 && newValue <= 0) newValue = 1;
+    if (value < 0 && newValue >= 0) newValue = -1;
     (result as Record<string, number>)[key] = newValue;
   }
   return result;
@@ -111,18 +113,15 @@ export function resolveChoice(
 
   const newStats = applyStatChanges(currentStats, statChanges, artistId, appearanceMultiplier, stiffFaceActive);
 
-  // Singer special: can survive one critical crisis
+  // Singer special: can survive one critical crisis. Clamp the risk and add a
+  // narrative tag, but DON'T skip downstream twist/ending logic.
+  let shieldNarration = '';
+  let shieldUnlockTag: string | undefined;
   if (artistId === 'singer' && newStats.prRisk >= GAME_CONFIG.CANCELLATION_THRESHOLD) {
     if (!activeTags.includes('used_singer_shield')) {
       newStats.prRisk = 85;
-      return {
-        newStats,
-        narration: narration + '\n\n🛡️ 【作品说话】天赋技能发动！凭借过硬的作品口碑，你的艺人扛住了这次致命危机。但这张护身符只能用一次...',
-        statChanges,
-        specialEffect: choice.outcome.specialEffect,
-        unlockTag: 'used_singer_shield',
-        twist: null,
-      };
+      shieldNarration = '\n\n🛡️ 【作品说话】天赋技能发动！凭借过硬的作品口碑，你的艺人扛住了这次致命危机。但这张护身符只能用一次...';
+      shieldUnlockTag = 'used_singer_shield';
     }
   }
 
@@ -139,16 +138,17 @@ export function resolveChoice(
   const newPeakRisk = Math.max(peakRisk, newStats.prRisk);
   const tags = [...activeTags];
   if (unlockTag) tags.push(unlockTag);
+  if (shieldUnlockTag) tags.push(shieldUnlockTag);
 
   // Check for immediate endings
   const immediateEnding = checkImmediateEnding(newStats, newPeakRisk, tags);
 
   return {
     newStats,
-    narration,
+    narration: narration + shieldNarration,
     statChanges,
     specialEffect: choice.outcome.specialEffect,
-    unlockTag,
+    unlockTag: shieldUnlockTag ?? unlockTag,
     ending: immediateEnding,
     followUpEventId: choice.outcome.followUpEventId,
     twist: twistResult,

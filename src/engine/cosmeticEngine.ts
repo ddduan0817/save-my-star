@@ -19,7 +19,7 @@ export interface ProcedureResult {
  */
 function checkStiffFace(history: CosmeticRecord[], currentDay: number): boolean {
   const recentCount = history.filter(
-    r => currentDay - r.day < STIFF_FACE_WINDOW_DAYS
+    r => currentDay - r.day <= STIFF_FACE_WINDOW_DAYS
   ).length;
   return recentCount >= STIFF_FACE_PROCEDURE_THRESHOLD;
 }

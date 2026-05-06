@@ -453,7 +453,7 @@ const chainEmpireEvents: GameEvent[] = [
     description: '有投资方找上门，提议和你的艺人联名创建自有品牌。初始投入不小，但回报可能巨大。',
     emoji: '🏢',
     minDay: 10,
-    statConditions: { minMoney: 200000, minCommercial: 50 },
+    statConditions: { minMoney: 200000, minCommercialValue: 50 },
     choices: [
       {
         id: 'empire_fashion',

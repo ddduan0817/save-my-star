@@ -136,7 +136,7 @@ export const absurdEvents: GameEvent[] = [
     description: '今天最大的瓜不是别人出事了——而是全网顶流在直播里说了句"最想合作的人是XX"，XX就是你的艺人。话题直接爆了，两家粉丝已经开始组CP了。你的手机响个不停，全是问"什么时候官宣"的。',
     emoji: '🌟',
     minDay: 10,
-    statConditions: { minCommercial: 40 },
+    statConditions: { minCommercialValue: 40 },
     choices: [
       {
         id: 'celeb_collab_accept',

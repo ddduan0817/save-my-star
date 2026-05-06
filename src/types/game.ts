@@ -103,8 +103,8 @@ export interface GameEvent {
   requiredTags?: string[];
   excludeTags?: string[];
   statConditions?: {
-    minCommercial?: number;
-    maxCommercial?: number;
+    minCommercialValue?: number;
+    maxCommercialValue?: number;
     minFanLoyalty?: number;
     maxFanLoyalty?: number;
     maxPrRisk?: number;

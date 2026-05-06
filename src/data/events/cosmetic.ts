@@ -9,7 +9,7 @@ export const cosmeticEvents: GameEvent[] = [
     description: '某奢侈品牌在谈代言，对方总监委婉地说"形象再精致一点就完美了"。言外之意……你懂的。',
     emoji: '💄',
     minDay: 4,
-    statConditions: { minCommercial: 35 },
+    statConditions: { minCommercialValue: 35 },
     choices: [
       {
         id: 'brand_go_cosmetic',

@@ -76,7 +76,7 @@ export const lateGameEvents: GameEvent[] = [
     description: '一位手握数十亿资源的影视集团老板亲自约你吃饭，说想把你的艺人打造成"下一个十年的顶流"。听起来很美好，但江湖传言这位大佬的合约条件...很苛刻。',
     emoji: '🤝',
     minDay: 13,
-    statConditions: { minCommercial: 60 },
+    statConditions: { minCommercialValue: 60 },
     choices: [
       {
         id: 'accept_bigwig',

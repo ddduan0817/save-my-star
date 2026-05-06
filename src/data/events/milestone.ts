@@ -10,7 +10,7 @@ export const milestoneEvents: GameEvent[] = [
     title: '品牌方开始抢人了！',
     description: '你的艺人商业价值太高了，三家一线品牌同时发来邀约，互相抬价。这种局面看着美好，但选了一家就得罪另外两家。',
     emoji: '💎',
-    statConditions: { minCommercial: 70 },
+    statConditions: { minCommercialValue: 70 },
     minDay: 8,
     choices: [
       {
@@ -40,7 +40,7 @@ export const milestoneEvents: GameEvent[] = [
     title: '天价代言！但有对赌条款',
     description: '有品牌开出千万级代言费，但合同里藏着对赌条款：如果代言期内出任何负面新闻，不仅没钱拿还要倒赔。你的艺人现在商业价值顶天，但风险永远在路上。',
     emoji: '📈',
-    statConditions: { minCommercial: 75 },
+    statConditions: { minCommercialValue: 75 },
     minDay: 8,
     choices: [
       {

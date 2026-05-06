@@ -13,6 +13,7 @@ interface InteractionResult {
   cost: number;
   loyaltyDelta: number;
   attitudeChanged: boolean;
+  blocked?: 'quota_exceeded' | 'no_money';
 }
 
 interface FansiteManagerProps {
@@ -20,6 +21,18 @@ interface FansiteManagerProps {
   onInteract: (fansiteId: string, interaction: FansiteInteraction) => InteractionResult;
   money: number;
   artistId?: ArtistArchetype;
+  /** 当日已用次数 */
+  interactionsUsed?: number;
+  /** 当日额度 */
+  interactionsQuota?: number;
+  /** 当前游戏天数 —— 用于判断冷落 */
+  currentDay?: number;
+  /** 艺人信任值 —— 决定能否使用"安抚"功能 */
+  artistTrust?: number;
+  /** 安抚消耗的信任值阈值 */
+  consoleTrustCost?: number;
+  /** 让艺人帮你安抚某个大粉。返回是否成功+消息 */
+  onConsole?: (fansiteId: string) => { success: boolean; message: string };
 }
 
 const attitudeConfig: Record<string, { label: string; color: string; bg: string }> = {
@@ -31,7 +44,20 @@ const attitudeConfig: Record<string, { label: string; color: string; bg: string 
   betrayed: { label: '脱粉回踩', color: 'text-red-500', bg: 'bg-red-50' },
 };
 
-export default function FansiteManager({ fansites, onInteract, money, artistId }: FansiteManagerProps) {
+const NEGLECT_THRESHOLD_DAYS = 4;
+
+export default function FansiteManager({
+  fansites,
+  onInteract,
+  money,
+  artistId,
+  interactionsUsed = 0,
+  interactionsQuota = 3,
+  currentDay = 0,
+  artistTrust = 0,
+  consoleTrustCost = 8,
+  onConsole,
+}: FansiteManagerProps) {
   const [selectedFansiteId, setSelectedFansiteId] = useState<string | null>(null);
   const [showInteractions, setShowInteractions] = useState(false);
   const [lastResult, setLastResult] = useState<InteractionResult | null>(null);
@@ -42,11 +68,17 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
     : null;
 
   const activeFansites = fansites.filter(f => f.attitude !== 'betrayed');
+  const quotaExhausted = interactionsUsed >= interactionsQuota;
+
+  const isNeglected = (f: FansiteMaster) => {
+    if (currentDay <= 0 || f.lastInteraction === 0) return false;
+    return currentDay - f.lastInteraction > NEGLECT_THRESHOLD_DAYS;
+  };
 
   // Auto-dismiss the inline result banner after a few seconds.
   useEffect(() => {
     if (!lastResult) return;
-    const t = setTimeout(() => setLastResult(null), 2600);
+    const t = setTimeout(() => setLastResult(null), 2800);
     return () => clearTimeout(t);
   }, [lastResult]);
 
@@ -61,6 +93,17 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
     setLastResult(result);
   };
 
+  const handleConsole = () => {
+    if (!selectedFansiteId || !onConsole) return;
+    const r = onConsole(selectedFansiteId);
+    setLastResult({
+      narration: r.message,
+      cost: 0,
+      loyaltyDelta: 0,
+      attitudeChanged: false,
+    });
+  };
+
   const renderAvatar = (fansite: FansiteMaster, glyphSize = 26) => {
     const Icon = getFansiteIcon(artistId, fansite.id);
     return Icon ? <Icon size={glyphSize} /> : <span className="text-2xl">{fansite.avatar}</span>;
@@ -68,9 +111,25 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
 
   return (
     <div className="space-y-4">
+      {/* 当日额度计数器 */}
+      <div className="flex items-center justify-between text-xs px-1">
+        <span className="text-gray-500">
+          今日互动 <span className={`font-bold ${quotaExhausted ? 'text-red-500' : 'text-orange-500'}`}>
+            {interactionsUsed}/{interactionsQuota}
+          </span>
+        </span>
+        {quotaExhausted && (
+          <span className="text-[11px] text-red-500 bg-red-50 px-2 py-0.5 rounded-full">
+            额度已满，明天再来
+          </span>
+        )}
+      </div>
+
       {/* 大粉列表 */}
       <div className="grid gap-3">
-        {activeFansites.map((fansite, idx) => (
+        {activeFansites.map((fansite, idx) => {
+          const neglected = isNeglected(fansite);
+          return (
           <motion.div
             key={fansite.id}
             initial={{ opacity: 0, y: 20 }}
@@ -80,7 +139,9 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
               setSelectedFansiteId(fansite.id);
               setShowInteractions(true);
             }}
-            className="bg-white rounded-2xl p-4 ring-1 ring-gray-200/60 shadow-sm cursor-pointer active:scale-[0.98] transition-transform"
+            className={`bg-white rounded-2xl p-4 ring-1 shadow-sm cursor-pointer active:scale-[0.98] transition-transform ${
+              neglected ? 'ring-amber-300/70' : 'ring-gray-200/60'
+            }`}
           >
             <div className="flex items-start gap-3">
               {/* 头像 */}
@@ -101,10 +162,20 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
                   >
                     {FANSITE_STYLE_META[fansite.style].label}
                   </span>
+                  {neglected && (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-600">
+                      🥶 被冷落
+                    </span>
+                  )}
                 </div>
 
                 <div className="text-xs text-gray-500 mt-0.5">
                   粉丝 {fansite.followers.toLocaleString()} · 忠诚度 {fansite.loyalty}%
+                  {fansite.lastInteraction > 0 && currentDay > 0 && (
+                    <span className="ml-2 text-gray-400">
+                      · 上次互动 Day {fansite.lastInteraction}
+                    </span>
+                  )}
                 </div>
 
                 <div className="text-xs text-gray-400 mt-1 line-clamp-1">
@@ -135,7 +206,8 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
               <div className="text-gray-300">›</div>
             </div>
           </motion.div>
-        ))}
+          );
+        })}
       </div>
 
       {/* 互动弹窗 */}
@@ -178,6 +250,12 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
                       </span>
                     </div>
                   </div>
+                  <div className="text-right">
+                    <div className="text-[10px] text-gray-400">今日额度</div>
+                    <div className={`text-sm font-bold ${quotaExhausted ? 'text-red-500' : 'text-orange-500'}`}>
+                      {interactionsUsed}/{interactionsQuota}
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -190,36 +268,70 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="px-4 py-3 bg-amber-50 border-b border-amber-100 text-xs text-gray-700"
+                    className={`px-4 py-3 border-b text-xs text-gray-700 ${
+                      lastResult.blocked
+                        ? 'bg-red-50 border-red-100'
+                        : 'bg-amber-50 border-amber-100'
+                    }`}
                   >
                     <div className="leading-relaxed">{lastResult.narration}</div>
-                    <div className="mt-1.5 flex flex-wrap gap-2 text-[11px]">
-                      {lastResult.cost > 0 && (
-                        <span className="px-1.5 py-0.5 rounded bg-red-50 text-red-500 font-medium">
-                          -¥{lastResult.cost.toLocaleString()}
-                        </span>
-                      )}
-                      {lastResult.loyaltyDelta !== 0 && (
-                        <span
-                          className={`px-1.5 py-0.5 rounded font-medium ${
-                            lastResult.loyaltyDelta > 0
-                              ? 'bg-pink-50 text-pink-500'
-                              : 'bg-gray-100 text-gray-500'
-                          }`}
-                        >
-                          忠诚度 {lastResult.loyaltyDelta > 0 ? '+' : ''}
-                          {lastResult.loyaltyDelta}
-                        </span>
-                      )}
-                      {lastResult.attitudeChanged && (
-                        <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-500 font-medium">
-                          态度变化
-                        </span>
-                      )}
-                    </div>
+                    {!lastResult.blocked && (
+                      <div className="mt-1.5 flex flex-wrap gap-2 text-[11px]">
+                        {lastResult.cost > 0 && (
+                          <span className="px-1.5 py-0.5 rounded bg-red-50 text-red-500 font-medium">
+                            -¥{lastResult.cost.toLocaleString()}
+                          </span>
+                        )}
+                        {lastResult.loyaltyDelta !== 0 && (
+                          <span
+                            className={`px-1.5 py-0.5 rounded font-medium ${
+                              lastResult.loyaltyDelta > 0
+                                ? 'bg-pink-50 text-pink-500'
+                                : 'bg-gray-100 text-gray-500'
+                            }`}
+                          >
+                            忠诚度 {lastResult.loyaltyDelta > 0 ? '+' : ''}
+                            {lastResult.loyaltyDelta}
+                          </span>
+                        )}
+                        {lastResult.attitudeChanged && (
+                          <span className="px-1.5 py-0.5 rounded bg-purple-50 text-purple-500 font-medium">
+                            态度变化
+                          </span>
+                        )}
+                      </div>
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {/* 安抚（艺人出面）*/}
+              {onConsole && isNeglected(selectedFansite) && (
+                <div className="px-4 pt-3">
+                  <button
+                    disabled={artistTrust < consoleTrustCost}
+                    onClick={handleConsole}
+                    className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-colors ${
+                      artistTrust >= consoleTrustCost
+                        ? 'bg-purple-50 hover:bg-purple-100'
+                        : 'bg-gray-100 opacity-60 cursor-not-allowed'
+                    }`}
+                  >
+                    <span className="text-xl">💞</span>
+                    <div className="flex-1">
+                      <div className="font-medium text-sm flex items-center gap-1.5">
+                        请艺人出面安抚
+                        <span className="text-[9px] px-1 py-0.5 rounded bg-purple-100 text-purple-600">
+                          不占额度
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        消耗艺人信任 -{consoleTrustCost}（当前 {artistTrust}）
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
 
               {/* 互动选项 */}
               <div className="p-4 space-y-2 max-h-[60vh] overflow-y-auto">
@@ -240,13 +352,14 @@ export default function FansiteManager({ fansites, onInteract, money, artistId }
                   return ordered.map((interaction) => {
                     const canAfford = !interaction.cost || money >= interaction.cost;
                     const isStyleSpecific = !!interaction.requiresStyle;
+                    const disabled = !canAfford || quotaExhausted;
                     return (
                       <button
                         key={interaction.id}
-                        disabled={!canAfford}
+                        disabled={disabled}
                         onClick={() => handleInteract(interaction)}
                         className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition-colors ${
-                          canAfford
+                          !disabled
                             ? 'bg-gray-50 hover:bg-orange-50 active:bg-orange-100'
                             : 'bg-gray-100 opacity-50 cursor-not-allowed'
                         }`}

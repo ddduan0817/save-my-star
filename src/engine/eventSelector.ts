@@ -112,8 +112,8 @@ function isEventEligible(
 
   if (event.statConditions) {
     const c = event.statConditions;
-    if (c.minCommercial !== undefined && stats.commercialValue < c.minCommercial) return false;
-    if (c.maxCommercial !== undefined && stats.commercialValue > c.maxCommercial) return false;
+    if (c.minCommercialValue !== undefined && stats.commercialValue < c.minCommercialValue) return false;
+    if (c.maxCommercialValue !== undefined && stats.commercialValue > c.maxCommercialValue) return false;
     if (c.minFanLoyalty !== undefined && stats.fanLoyalty < c.minFanLoyalty) return false;
     if (c.maxFanLoyalty !== undefined && stats.fanLoyalty > c.maxFanLoyalty) return false;
     if (c.minPrRisk !== undefined && stats.prRisk < c.minPrRisk) return false;
