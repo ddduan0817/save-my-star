@@ -12,6 +12,7 @@ import { getAppearanceTier } from '@/engine/cosmeticEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import type { CosmeticCategory } from '@/types/game';
 import { scheduleIconMap, cosmeticIconMap } from '@/components/icons';
+import ArtistAvatarSVG from '@/components/landing/ArtistAvatarSVG';
 import { getMentalStateLabel } from '@/types/new_systems';
 
 const moodEmojis = [
@@ -74,8 +75,8 @@ export default function ArtistTab() {
         className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
       >
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-50 flex items-center justify-center text-3xl overflow-hidden shadow-sm">
-            {artist.avatar}
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center overflow-hidden shadow-sm shrink-0">
+            <ArtistAvatarSVG artistId={artist.id} size={64} />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2">
