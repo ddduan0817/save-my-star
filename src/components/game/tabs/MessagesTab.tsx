@@ -20,6 +20,8 @@ export default function MessagesTab() {
     showDayBanner,
     dismissDayBanner,
     currentEvent,
+    dailyBriefing,
+    seasonalModifiers,
   } = useGameStore(
     useShallow(s => ({
       gamePhase: s.gamePhase,
@@ -29,6 +31,8 @@ export default function MessagesTab() {
       showDayBanner: s.showDayBanner,
       dismissDayBanner: s.dismissDayBanner,
       currentEvent: s.currentEvents[0],
+      dailyBriefing: s.dailyBriefing,
+      seasonalModifiers: s.seasonalModifiers,
     })),
   );
 
@@ -156,6 +160,44 @@ export default function MessagesTab() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-orange-100/80 to-amber-100/60 ring-1 ring-orange-200/40">
               <span className="text-xs font-bold text-orange-500 tracking-wider">DAY {currentDay}</span>
               <span className="text-xs text-orange-400/70">新的一天开始了</span>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Morning Briefing —— 持续展示直到下一天，不强制 dismiss */}
+        {!isViewingMessage && dailyBriefing && (
+          <motion.div
+            key={`briefing-${currentDay}`}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+            className="mx-3 mt-2"
+          >
+            <div className="rounded-2xl bg-gradient-to-br from-amber-50/90 via-orange-50/70 to-rose-50/80 ring-1 ring-amber-200/50 px-4 py-3 shadow-sm">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] font-bold tracking-[0.18em] text-orange-500/80">MORNING DESK</span>
+                  <span className="text-[10px] text-orange-400/60">·</span>
+                  <span className="text-[10px] text-orange-500/70">DAY {currentDay}</span>
+                </div>
+                {seasonalModifiers.length > 0 && (
+                  <div className="flex items-center gap-1">
+                    {seasonalModifiers.map((m) => (
+                      <span
+                        key={m.id}
+                        title={m.name}
+                        className="text-[11px] leading-none"
+                      >
+                        {m.emoji}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="text-[12.5px] leading-relaxed text-gray-700 whitespace-pre-line">
+                {dailyBriefing}
+              </div>
             </div>
           </motion.div>
         )}
