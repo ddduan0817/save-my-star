@@ -67,8 +67,8 @@
 
 ## 特色
 
-- **4 位性格迥异的艺人**：流量偶像 / 实力演员 / 唱跳歌手 / 网红转型，各自有专属事件
-- **80+ 精心设计的事件**，每个选项都没有"正确答案"
+- **5 位性格迥异的艺人**：流量偶像 / 实力演员 / 唱跳歌手 / 网红转型 / 花瓶小生，各自都有签名黑料和专属事件池
+- **180+ 精心设计的事件**，每个选项都没有"正确答案"
 - **紧急来电系统**：全屏来电界面，接听或挂断都有后果
 - **10 种结局**：从顶流巅峰到全网封杀
 - **竞争对手系统**：会反向偷塔、抢资源
@@ -110,7 +110,7 @@ src/
 │   ├── icons/            # SVG 图标
 │   └── landing/          # 落地页组件
 ├── data/                 # 游戏数据（事件、艺人、结局、成就...）
-│   ├── events/           # 80+ 事件按类别分文件
+│   ├── events/           # 180+ 事件按类别分文件（含 5 位艺人的专属事件池）
 │   ├── artists.ts
 │   ├── endings.ts
 │   ├── achievements.ts
@@ -182,7 +182,7 @@ npm run dev
 1. 在 `src/data/artists.ts` 中添加艺人定义
 2. 在 `src/types/game.ts` 的 `ArtistArchetype` 联合类型里加入新 ID
 3. 在 `src/components/icons/ArtistAvatars.tsx` 添加头像
-4. 可选：在 `src/data/events/idol-specific.ts` 添加专属事件
+4. 可选：在 `src/data/events/` 新建 `<artist>-specific.ts` 添加专属事件（参考 `idol-specific.ts`、`socialite-specific.ts`）
 
 ### 添加新结局
 
