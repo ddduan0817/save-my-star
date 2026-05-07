@@ -137,7 +137,7 @@ export const achievements: Achievement[] = [
   {
     id: 'try_all_artists',
     title: '一个都不放过',
-    description: '尝试过所有4位艺人（需多局游戏）',
+    description: '尝试过所有5位艺人（需多局游戏）',
     emoji: '🎭',
     rarity: 'legendary',
     // 这个需要跨局检测，在 store 里特殊处理
@@ -399,7 +399,7 @@ export function checkAchievements(ctx: AchievementContext): Achievement[] {
     // 特殊处理：尝试所有艺人
     if (ach.id === 'try_all_artists') {
       const used = loadArtistsUsed();
-      if (used.length >= 4) {
+      if (used.length >= 5) {
         saveAchievement(ach.id);
         newlyUnlocked.push(ach);
       }
