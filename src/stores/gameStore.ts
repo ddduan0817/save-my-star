@@ -161,7 +161,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (choice.requireMaxPrRisk !== undefined && stats.prRisk > choice.requireMaxPrRisk) return;
 
     const appMultiplier = getAppearanceMultiplier(cosmeticState.appearance);
-    const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk, appMultiplier, cosmeticState.stiffFaceActive);
+    const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk, appMultiplier, cosmeticState.stiffFaceActive, mentalState);
 
     const newTags = [...activeTags];
     if (result.unlockTag) newTags.push(result.unlockTag);

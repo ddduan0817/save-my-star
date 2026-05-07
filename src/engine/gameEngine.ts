@@ -109,6 +109,7 @@ export function resolveChoice(
   peakRisk: number,
   appearanceMultiplier?: number,
   stiffFaceActive?: boolean,
+  mental?: ArtistMentalState,
 ): ChoiceResult {
   // 1. 检查是否有条件分支匹配
   const conditionalOutcome = resolveConditionalOutcome(
@@ -155,7 +156,7 @@ export function resolveChoice(
   if (shieldUnlockTag) tags.push(shieldUnlockTag);
 
   // Check for immediate endings
-  const immediateEnding = checkImmediateEnding(newStats, newPeakRisk, tags);
+  const immediateEnding = checkImmediateEnding(newStats, newPeakRisk, tags, mental);
 
   return {
     newStats,
@@ -173,10 +174,11 @@ export function checkDayEnd(
   day: number,
   stats: GameStats,
   activeTags: string[],
-  peakRisk: number
+  peakRisk: number,
+  mental?: ArtistMentalState,
 ): Ending | null {
   if (day >= GAME_CONFIG.MAX_DAYS) {
-    return evaluateEnding(stats, activeTags, day, peakRisk);
+    return evaluateEnding(stats, activeTags, day, peakRisk, mental);
   }
   return null;
 }

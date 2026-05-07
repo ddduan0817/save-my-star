@@ -104,7 +104,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
 
     // 3. Check for endings
     const newPeakRisk = Math.max(peakRisk, newStats.prRisk);
-    const dayEndEnding = checkDayEnd(currentDay, newStats, newActiveTags, newPeakRisk);
+    const dayEndEnding = checkDayEnd(currentDay, newStats, newActiveTags, newPeakRisk, mentalState);
     if (dayEndEnding) {
       const unlocked = saveUnlockedEnding(dayEndEnding.id);
       set({

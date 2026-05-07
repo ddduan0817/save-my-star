@@ -150,7 +150,10 @@ export type EndingId =
   | 'transformed'
   | 'scandal_king'
   | 'money_god'
-  | 'fan_favorite';
+  | 'fan_favorite'
+  | 'retirement_declaration'
+  | 'manager_breakup'
+  | 'true_friends';
 
 export interface Ending {
   id: EndingId;
@@ -160,7 +163,13 @@ export interface Ending {
   emoji: string;
   rarity: 'common' | 'rare' | 'legendary';
   color: string;
-  conditions: (stats: GameStats, tags: string[], day: number, peakRisk: number) => boolean;
+  conditions: (
+    stats: GameStats,
+    tags: string[],
+    day: number,
+    peakRisk: number,
+    mental?: { mood: number; energy: number; trust: number; cooperation: number; stress: number; burnout: number },
+  ) => boolean;
   priority: number;
 }
 

@@ -1,6 +1,18 @@
 import type { GameStats, Ending, EndingId } from '@/types/game';
+import type { ArtistMentalState } from '@/types/new_systems';
 
 export const endings: Ending[] = [
+  {
+    id: 'retirement_declaration',
+    title: '退圈宣言',
+    subtitle: '燃尽之后的转身',
+    description: '退圈声明是TA凌晨两点发的，没跟你商量。文案很短：\n\n"我累了，对不起。"\n\n热搜爆了整整两天。有人说是炒作，有人说是真的，粉丝在超话发最后一条告别帖。你翻到聊天记录最底下——三周前TA跟你说"我真的不想干了"的那条消息，你回的是"这月代言签完再说"。那之后TA没再主动找过你。今天你看着这条声明，终于明白：你错过的不是一次情绪，是一个人。',
+    emoji: '🕯️',
+    rarity: 'legendary',
+    color: 'from-slate-700 to-slate-500',
+    priority: 120, // 高于所有普通结局：倦怠到顶就直接触发，覆盖商业/粉丝层面的结局
+    conditions: (_stats, _tags, _day, _peakRisk, mental) => (mental?.burnout ?? 0) >= 90,
+  },
   {
     id: 'cancelled',
     title: '全网封杀',
@@ -24,6 +36,18 @@ export const endings: Ending[] = [
     conditions: (stats) => stats.prRisk >= 80 && stats.commercialValue < 20,
   },
   {
+    id: 'manager_breakup',
+    title: '一拍两散',
+    subtitle: '"我们不合适"',
+    description: 'TA让助理递给你一份解约协议，末尾一句话："我想换个人，能懂我的。"\n\n你在办公室坐到天亮。想起第一次见面TA怯生生问"以后就靠你了"的样子，想起TA第一次上热搜时你们喝掉的那瓶酒，想起所有你以为是"为TA好"但TA其实不需要的安排。你签了字。\n\n后来TA去了别家，你在新闻里看到TA的笑容——那是你已经很久没见过的表情。',
+    emoji: '💔',
+    rarity: 'rare',
+    color: 'from-zinc-600 to-zinc-400',
+    priority: 85,
+    conditions: (_stats, _tags, day, _peakRisk, mental) =>
+      day >= 15 && (mental?.trust ?? 100) <= 5,
+  },
+  {
     id: 'money_god',
     title: '捞金达人',
     subtitle: '赚到了，但代价是什么',
@@ -33,6 +57,22 @@ export const endings: Ending[] = [
     color: 'from-green-800 to-emerald-500',
     priority: 80,
     conditions: (stats) => stats.money >= 400000 && stats.fanLoyalty < 30,
+  },
+  {
+    id: 'true_friends',
+    title: '我们是朋友',
+    subtitle: '超越合约的关系',
+    description: 'MAX_DAYS 那天，TA拉着你去吃烧烤。啤酒喝到第三瓶，TA突然说："其实我最怕退圈那天没人送我。"你翻白眼："滚，我肯定在。"\n\nTA笑了："所以你不是我的经纪人。你是我朋友。"\n\n你没接话，但把酒喝完了。这个行业里多的是合作，少的是朋友。你们算是走狗屎运了。',
+    emoji: '🫂',
+    rarity: 'legendary',
+    color: 'from-teal-400 to-cyan-500',
+    priority: 75,
+    // 高信任 + 没让艺人崩溃过 + 坚持到最后
+    conditions: (_stats, tags, day, _peakRisk, mental) =>
+      day >= 20 &&
+      (mental?.trust ?? 0) >= 80 &&
+      (mental?.burnout ?? 100) < 50 &&
+      !tags.includes('artist_breakdown'),
   },
   {
     id: 'top_star',
@@ -121,18 +161,24 @@ export function evaluateEnding(
   stats: GameStats,
   tags: string[],
   day: number,
-  peakRisk: number
+  peakRisk: number,
+  mental?: ArtistMentalState,
 ): Ending | null {
   const sorted = [...endings].sort((a, b) => b.priority - a.priority);
   for (const ending of sorted) {
-    if (ending.conditions(stats, tags, day, peakRisk)) {
+    if (ending.conditions(stats, tags, day, peakRisk, mental)) {
       return ending;
     }
   }
   return null;
 }
 
-export function checkImmediateEnding(stats: GameStats, peakRisk: number, tags: string[]): Ending | null {
+export function checkImmediateEnding(
+  stats: GameStats,
+  peakRisk: number,
+  tags: string[],
+  mental?: ArtistMentalState,
+): Ending | null {
   // Only check endings that can trigger mid-game
   if (stats.prRisk >= 95) {
     return endings.find(e => e.id === 'cancelled')!;
@@ -142,6 +188,10 @@ export function checkImmediateEnding(stats: GameStats, peakRisk: number, tags: s
   }
   if (tags.includes('retired')) {
     return endings.find(e => e.id === 'retired')!;
+  }
+  // 心理状态突破性结局：倦怠满 90 立刻触发退圈宣言
+  if (mental && mental.burnout >= 90) {
+    return endings.find(e => e.id === 'retirement_declaration')!;
   }
   return null;
 }
