@@ -30,7 +30,6 @@ import { generateWeiboTrends, generateFanComments } from '@/engine/socialGenerat
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { resolveWeiboPost } from '@/engine/weiboPostEngine';
 import { initializeRival } from '@/engine/rivalEngine';
-import { applyStatChanges as applyStatChangesEngine } from '@/engine/outcomeCalculator';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import { resolveProcedure, getAppearanceMultiplier } from '@/engine/cosmeticEngine';
 import { loadUnlockedAchievements, saveArtistUsed } from '@/data/achievements';
@@ -335,7 +334,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const result = resolveWeiboPost(template, stats, artist.id, artist.name);
 
     // Apply stat changes through engine (artist modifiers apply)
-    const newStats = applyStatChangesEngine(stats, result.statChanges, artist.id);
+    const newStats = applyStatChanges(stats, result.statChanges, artist.id);
 
     // Inject trend at #1, re-rank others
     const updatedTrends = [
@@ -396,7 +395,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // Apply stat changes from procedure through engine
     const appearanceMultiplier = getAppearanceMultiplier(result.newCosmeticState.appearance);
-    const newStats = applyStatChangesEngine(
+    const newStats = applyStatChanges(
       afterCost,
       result.statChanges,
       artist.id,

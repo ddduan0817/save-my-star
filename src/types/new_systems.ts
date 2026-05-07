@@ -152,7 +152,7 @@ export interface InsurancePolicy {
   exclusions: string[];       // 免责条款
   maxPayout: number;          // 最高赔付
   isActive: boolean;
-  purchasedDay?: number;      // 购买日期
+  purchasedDay: number;       // 购买日期（写入 policy 时一定已确定）
 }
 
 export interface InsuranceClaim {

@@ -172,7 +172,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       let totalPremium = 0;
       const dueRenewals: { id: string; premium: number; name: string }[] = [];
       for (const p of insurancePolicies) {
-        if (!p.isActive || p.purchasedDay === undefined) continue;
+        if (!p.isActive) continue;
         const daysSincePurchase = nextDay - p.purchasedDay;
         if (daysSincePurchase > 0 && daysSincePurchase % 20 === 0) {
           totalPremium += p.annualPremium;

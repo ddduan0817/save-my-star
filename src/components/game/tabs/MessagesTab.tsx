@@ -37,8 +37,11 @@ export default function MessagesTab() {
   const [swipeOffset, setSwipeOffset] = useState(0);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
   const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
   const touchCurrentX = useRef(0);
   const isSwiping = useRef(false);
+  // 'unknown' = 还没决定方向; 'horizontal' = 锁死成滑删; 'vertical' = 让位给页面滚动
+  const swipeAxis = useRef<'unknown' | 'horizontal' | 'vertical'>('unknown');
 
   // Auto-dismiss day banner
   useEffect(() => {
@@ -66,24 +69,59 @@ export default function MessagesTab() {
   // Touch handlers for swipe-to-dismiss (only attached to resolved rows)
   const handleTouchStart = useCallback((e: React.TouchEvent, msgId: string) => {
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
     touchCurrentX.current = e.touches[0].clientX;
     isSwiping.current = true;
+    swipeAxis.current = 'unknown';
     setSwipedId(msgId);
     setSwipeOffset(0);
   }, []);
 
   const handleTouchMove = useCallback((e: React.TouchEvent) => {
     if (!isSwiping.current) return;
-    touchCurrentX.current = e.touches[0].clientX;
-    const diff = touchCurrentX.current - touchStartX.current;
+    const x = e.touches[0].clientX;
+    const y = e.touches[0].clientY;
+    const dx = x - touchStartX.current;
+    const dy = y - touchStartY.current;
+
+    // 首次移动超过阈值时锁定方向，避免"滑删 vs 页面滚动"争抢同一笔手势
+    if (swipeAxis.current === 'unknown') {
+      const AXIS_LOCK_PX = 8;
+      if (Math.abs(dx) > AXIS_LOCK_PX || Math.abs(dy) > AXIS_LOCK_PX) {
+        // 水平滑动更明显 → 锁定为滑删；垂直更明显 → 让位给页面滚动
+        swipeAxis.current = Math.abs(dx) > Math.abs(dy) ? 'horizontal' : 'vertical';
+      } else {
+        return;
+      }
+    }
+
+    if (swipeAxis.current !== 'horizontal') {
+      // 垂直滚动：不处理滑删，让页面正常滚动
+      return;
+    }
+
+    // 锁定为水平后阻止后续垂直滚动（passive 事件下浏览器可能忽略，
+    // 但 React 这里 cancelable 的 touchmove 一般仍能生效）
+    if (e.cancelable) e.preventDefault();
+
+    touchCurrentX.current = x;
     // Only allow left swipe (negative diff), clamp at 0
-    const clampedDiff = Math.min(0, diff);
+    const clampedDiff = Math.min(0, dx);
     setSwipeOffset(clampedDiff);
   }, []);
 
   const handleTouchEnd = useCallback((msgId: string) => {
     if (!isSwiping.current) return;
     isSwiping.current = false;
+    const axis = swipeAxis.current;
+    swipeAxis.current = 'unknown';
+
+    // 如果这一笔本来就是垂直滚动，直接收尾，不触发删除动画
+    if (axis !== 'horizontal') {
+      setSwipeOffset(0);
+      setSwipedId(null);
+      return;
+    }
 
     if (swipeOffset <= -SWIPE_THRESHOLD_DELETE) {
       // Swipe exceeded delete threshold - dismiss the message

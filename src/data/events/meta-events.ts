@@ -208,7 +208,7 @@ export const metaEvents: GameEvent[] = [
           conditionalOutcomes: [
             {
               // 50%概率不是你（通过随机逻辑在engine中实现，这里用条件模拟）
-              condition: { maxPrRisk: 50 },
+              condition: { maxPrRisk: 49 },
               narration: '第二天12点，狗仔发的是另一位顶流。你的粉丝在评论区刷屏"还好不是我们家"。虚惊一场，但你也什么都没做，错失了虐粉固粉的机会。',
               statChanges: { fanLoyalty: -2 },
             },
