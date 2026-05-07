@@ -49,6 +49,23 @@ const allEvents: GameEvent[] = [
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复
 
+/**
+ * 按艺人解析事件变体：如果事件定义了 artistVariants 且当前艺人有对应变体，
+ * 则用变体字段覆盖 title/description/emoji/choices，其它字段保留共享。
+ */
+export function resolveEventForArtist(event: GameEvent, artistId?: ArtistArchetype): GameEvent {
+  if (!event.artistVariants || !artistId) return event;
+  const variant = event.artistVariants[artistId];
+  if (!variant) return event;
+  return {
+    ...event,
+    title: variant.title ?? event.title,
+    description: variant.description ?? event.description,
+    emoji: variant.emoji ?? event.emoji,
+    choices: variant.choices ?? event.choices,
+  };
+}
+
 // 查找事件（用于事件链 followUpEventId）
 export function findEventById(id: string): GameEvent | undefined {
   return allEvents.find(e => e.id === id);
@@ -256,5 +273,5 @@ export function selectEventsForDay(
     }
   }
 
-  return selected;
+  return selected.map(e => resolveEventForArtist(e, artistId));
 }

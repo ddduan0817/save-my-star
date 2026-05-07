@@ -127,6 +127,13 @@ export interface GameEvent {
   timeLimit?: number;
   // 艺人专属事件
   forArtist?: ArtistArchetype | ArtistArchetype[];
+  // 共享事件的艺人变体：按当前艺人 override 描述 / 标题 / 选项，保留其它字段共享
+  artistVariants?: Partial<Record<ArtistArchetype, {
+    title?: string;
+    description?: string;
+    emoji?: string;
+    choices?: EventChoice[];
+  }>>;
   // 后续事件ID（事件链）
   followUpEventId?: string;
   // 紧急来电事件：以全屏来电界面弹出

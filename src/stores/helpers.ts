@@ -9,7 +9,7 @@ import type {
 import type { ArtistMentalState } from '@/types/new_systems';
 import { checkAchievements, loadUnlockedAchievements, type Achievement } from '@/data/achievements';
 import { startNewDay } from '@/engine/gameEngine';
-import { findEventById } from '@/engine/eventSelector';
+import { findEventById, resolveEventForArtist } from '@/engine/eventSelector';
 import { breakingEvents } from '@/data/events/breaking';
 
 // 突发事件触发概率 (每天 25%)
@@ -83,6 +83,7 @@ export function maybeInjectBreaking(
   events: GameEvent[],
   day: number,
   eventUsageMap: Record<string, number>,
+  artistId?: ArtistArchetype,
 ): GameEvent[] {
   if (day <= 3 || Math.random() > BREAKING_CHANCE) return events;
 
@@ -96,7 +97,7 @@ export function maybeInjectBreaking(
   if (available.length === 0) return events;
 
   const breaking = available[Math.floor(Math.random() * available.length)];
-  return [breaking, ...events];
+  return [resolveEventForArtist(breaking, artistId), ...events];
 }
 
 export function generateEventsForDay(
@@ -118,13 +119,13 @@ export function generateEventsForDay(
     for (const id of pendingFollowUpEventIds) {
       const followUpEvent = findEventById(id);
       if (followUpEvent) {
-        events = [followUpEvent, ...events];
+        events = [resolveEventForArtist(followUpEvent, artistId), ...events];
       }
     }
   }
 
   // Maybe inject breaking event
-  events = maybeInjectBreaking(events, day, eventUsageMap);
+  events = maybeInjectBreaking(events, day, eventUsageMap, artistId);
 
   const newUsageMap = { ...eventUsageMap };
   for (const e of events) {
