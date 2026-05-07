@@ -72,7 +72,7 @@ export const artists: Artist[] = [
   {
     id: 'socialite',
     name: '南陌',
-    title: '贵公子',
+    title: '花瓶小生',
     description: '古偶新贵、高奢代言常客——可他"出道前"的那段经历，云端还存着',
     avatar: '🥂',
     gender: 'male',
