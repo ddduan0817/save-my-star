@@ -469,6 +469,8 @@ export function applyDailyMentalEffects(
         newState.energy = Math.min(100, newState.energy + 20);
         newState.stress = Math.max(0, newState.stress - 15);
         newState.burnout = Math.max(0, newState.burnout - 10);
+        newState.mood = Math.min(100, newState.mood + 8);
+        newState.trust = Math.min(100, newState.trust + 3);
         effects.push('休息让艺人恢复了精力');
         break;
       case 'training':
@@ -476,6 +478,7 @@ export function applyDailyMentalEffects(
         newState.cooperation = Math.min(100, newState.cooperation + 5);
         effects.push('培训提升了艺人的专业能力');
         break;
+      case 'filming':
       case 'film':
       case 'variety':
       case 'endorsement':

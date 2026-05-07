@@ -33,6 +33,7 @@ export function makeFreshGameState(): GameState {
     currentEventIndex: 0,
     lastOutcomeNarration: '',
     lastStatChanges: null,
+    lastMentalEffect: null,
     pendingTwist: null,
     pendingFollowUpEventIds: [],
     decisionHistory: [],

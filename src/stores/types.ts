@@ -57,6 +57,15 @@ export interface GameState {
   // Outcome display
   lastOutcomeNarration: string;
   lastStatChanges: StatChange | null;
+  /** 最近一次事件选择/反转施加的心理状态变化，用于 Outcome 面板展示 */
+  lastMentalEffect: {
+    mood?: number;
+    energy?: number;
+    trust?: number;
+    cooperation?: number;
+    stress?: number;
+    burnout?: number;
+  } | null;
   pendingTwist: {
     narration: string;
     statChanges: StatChange;

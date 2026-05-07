@@ -193,6 +193,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         stats: result.newStats,
         lastOutcomeNarration: result.narration,
         lastStatChanges: result.statChanges,
+        lastMentalEffect: choice.outcome.mentalEffect ?? null,
         pendingTwist: null,
         gamePhase: 'ended',
         ending: result.ending,
@@ -213,6 +214,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       stats: result.newStats,
       lastOutcomeNarration: result.narration,
       lastStatChanges: result.statChanges,
+      lastMentalEffect: choice.outcome.mentalEffect ?? null,
       pendingTwist: result.twist ?? null,
       pendingFollowUpEventIds: result.followUpEventId
         ? [...get().pendingFollowUpEventIds, result.followUpEventId]
@@ -253,6 +255,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         stats: twistStats,
         lastOutcomeNarration: pendingTwist.narration,
         lastStatChanges: pendingTwist.statChanges,
+        lastMentalEffect: pendingTwist.mentalEffect ?? null,
         pendingTwist: null,
         activeTags: newTags,
         peakRisk: Math.max(get().peakRisk, twistStats.prRisk),
@@ -270,6 +273,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       gamePhase: 'playing',
       lastOutcomeNarration: '',
       lastStatChanges: null,
+      lastMentalEffect: null,
       currentEvents: [],
       currentEventIndex: 0,
     });
@@ -282,6 +286,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
       gamePhase: 'playing',
       lastOutcomeNarration: '',
       lastStatChanges: null,
+      lastMentalEffect: null,
       currentEvents: [],
       currentEventIndex: 0,
     });

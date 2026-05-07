@@ -235,6 +235,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       peakRisk: newPeakRisk,
       lastOutcomeNarration: '',
       lastStatChanges: null,
+      lastMentalEffect: null,
       artistSchedule: newSchedule,
       weiboTrends: trends,
       fanComments: comments,

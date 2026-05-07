@@ -29,7 +29,7 @@ export const scheduleActivities: ScheduleActivity[] = [
     id: 'rest',
     name: '休息',
     emoji: '🛏️',
-    description: '让艺人休息调整，降低风险',
+    description: '让艺人好好睡一觉、关机、不营业——体力+20、压力-15、倦怠-10、心情+8，长期跑路的救命稻草',
     durationDays: 1,
     statChanges: { prRisk: -4, commercialValue: -1 },
   },
