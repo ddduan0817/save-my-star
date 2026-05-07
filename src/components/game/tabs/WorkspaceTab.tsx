@@ -117,8 +117,8 @@ export default function WorkspaceTab() {
               <div className="text-xs font-medium text-gray-400 tracking-wider mb-3">塌房保险</div>
               <InsuranceShop
                 policies={insurancePolicies}
-                onPurchase={(id) => purchaseInsurance(id as any)}
-                onCancel={(id) => cancelInsurance(id as any)}
+                onPurchase={purchaseInsurance}
+                onCancel={cancelInsurance}
                 money={stats.money}
                 currentDay={currentDay}
               />

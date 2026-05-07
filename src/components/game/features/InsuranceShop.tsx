@@ -2,14 +2,14 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState } from 'react';
-import type { InsurancePolicy } from '@/types/new_systems';
+import type { InsurancePolicy, InsuranceType } from '@/types/new_systems';
 import { INSURANCE_TEMPLATES } from '@/types/new_systems';
 import { insuranceIconMap } from '@/components/icons';
 
 interface InsuranceShopProps {
   policies: InsurancePolicy[];
-  onPurchase: (policyId: string) => void;
-  onCancel: (policyId: string) => void;
+  onPurchase: (policyId: InsuranceType) => void;
+  onCancel: (policyId: InsuranceType) => void;
   money: number;
   currentDay: number;
 }

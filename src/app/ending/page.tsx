@@ -1,12 +1,52 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { toPng } from 'html-to-image';
 import { sfxEnding, sfxDisaster, sfxClick } from '@/lib/sounds';
+import { findEventById } from '@/engine/eventSelector';
+import type { StatChange } from '@/types/game';
+
+// 统计关键字段的加权绝对值——作为"决策影响力"的粗排序指标
+function decisionImpactScore(sc: StatChange): number {
+  return (
+    Math.abs(sc.commercialValue ?? 0) * 3 +
+    Math.abs(sc.fanLoyalty ?? 0) * 3 +
+    Math.abs(sc.prRisk ?? 0) * 3 +
+    Math.abs(sc.money ?? 0) / 50000
+  );
+}
+
+// 把 statChanges 渲染成一行易读的小 chips
+function StatChangeChips({ sc }: { sc: StatChange }) {
+  const items: { label: string; value: number; positive: boolean }[] = [];
+  if (sc.commercialValue) items.push({ label: '商业', value: sc.commercialValue, positive: sc.commercialValue > 0 });
+  if (sc.fanLoyalty) items.push({ label: '粉忠', value: sc.fanLoyalty, positive: sc.fanLoyalty > 0 });
+  if (sc.prRisk !== undefined && sc.prRisk !== 0) items.push({ label: '风险', value: sc.prRisk, positive: sc.prRisk < 0 });
+  if (sc.money) items.push({ label: '资金', value: Math.round(sc.money / 10000), positive: sc.money > 0 });
+
+  if (items.length === 0) return <span className="text-[10px] text-gray-300">无显著影响</span>;
+  return (
+    <div className="flex flex-wrap gap-1">
+      {items.map((it, i) => (
+        <span
+          key={i}
+          className={cn(
+            'text-[10px] px-1.5 py-0.5 rounded-md tabular-nums',
+            it.positive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-500'
+          )}
+        >
+          {it.label} {it.value > 0 ? '+' : ''}
+          {it.value}
+          {it.label === '资金' ? '万' : ''}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 export default function EndingPage() {
   const router = useRouter();
@@ -18,6 +58,15 @@ export default function EndingPage() {
   const resetGame = useGameStore(s => s.resetGame);
   const shareRef = useRef<HTMLDivElement>(null);
   const [showContent, setShowContent] = useState(false);
+  const [showFullTimeline, setShowFullTimeline] = useState(false);
+
+  // 按"决策影响力"挑出最关键的 5 个决策——数据驱动取代简单 slice(-5)
+  const keyDecisions = useMemo(() => {
+    return [...decisionHistory]
+      .sort((a, b) => decisionImpactScore(b.statChanges) - decisionImpactScore(a.statChanges))
+      .slice(0, 5)
+      .sort((a, b) => a.day - b.day);
+  }, [decisionHistory]);
 
   useEffect(() => {
     if (!ending) {
@@ -33,8 +82,6 @@ export default function EndingPage() {
   }, [ending, router]);
 
   if (!ending || !artist) return null;
-
-  const keyDecisions = decisionHistory.slice(-5);
 
   const handleShare = async () => {
     if (!shareRef.current) return;
@@ -214,21 +261,76 @@ export default function EndingPage() {
           {/* Key decisions */}
           {keyDecisions.length > 0 && (
             <div className="border-t border-gray-100/60 pt-3">
-              <div className="text-[10px] text-gray-300 mb-2 tracking-wider font-medium">关键决策回顾</div>
-              <div className="space-y-2">
-                {keyDecisions.map((d, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1 + i * 0.06 }}
-                    className="flex items-start gap-2 text-xs"
-                  >
-                    <span className="text-gray-300 shrink-0 bg-gray-50 px-1.5 py-0.5 rounded-md text-[10px]">Day {d.day}</span>
-                    <span className="text-gray-500 truncate">{d.eventTitle} → {d.choiceText}</span>
-                  </motion.div>
-                ))}
+              <div className="flex items-center justify-between mb-2">
+                <div className="text-[10px] text-gray-300 tracking-wider font-medium">关键决策 · 按影响力排序</div>
+                <div className="text-[10px] text-gray-300">共 {decisionHistory.length} 次决策</div>
               </div>
+              <div className="space-y-2.5">
+                {keyDecisions.map((d, i) => {
+                  const event = findEventById(d.eventId);
+                  const alternatives = event?.choices.filter(c => c.id !== d.choiceId) ?? [];
+                  return (
+                    <motion.div
+                      key={i}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 1 + i * 0.08 }}
+                      className="text-xs"
+                    >
+                      <div className="flex items-start gap-2">
+                        <span className="text-gray-300 shrink-0 bg-gray-50 px-1.5 py-0.5 rounded-md text-[10px] tabular-nums">Day {d.day}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-gray-600 font-medium truncate">{d.eventTitle}</div>
+                          <div className="text-gray-400 text-[11px] mt-0.5">→ {d.choiceText}</div>
+                          <div className="mt-1">
+                            <StatChangeChips sc={d.statChanges} />
+                          </div>
+                          {alternatives.length > 0 && (
+                            <div className="mt-1.5 text-[10px] text-gray-300 italic">
+                              当时你本可以：{alternatives.map(a => a.text).join('、')}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  );
+                })}
+              </div>
+
+              {decisionHistory.length > keyDecisions.length && (
+                <motion.button
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 1.4 }}
+                  onClick={() => { sfxClick(); setShowFullTimeline(v => !v); }}
+                  className="mt-3 w-full text-[11px] text-gray-400 py-1.5 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
+                >
+                  {showFullTimeline ? '收起完整时间线 ▴' : `展开完整时间线（${decisionHistory.length} 条）▾`}
+                </motion.button>
+              )}
+
+              <AnimatePresence>
+                {showFullTimeline && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25 }}
+                    className="overflow-hidden"
+                  >
+                    <div className="mt-3 pt-3 border-t border-gray-100/60 space-y-1.5 max-h-72 overflow-y-auto pr-1">
+                      {decisionHistory.map((d, i) => (
+                        <div key={i} className="flex items-start gap-2 text-[11px]">
+                          <span className="text-gray-300 shrink-0 tabular-nums w-10">D{d.day}</span>
+                          <span className="text-gray-500 flex-1 truncate">
+                            {d.eventTitle} <span className="text-gray-300">→</span> {d.choiceText}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           )}
 
