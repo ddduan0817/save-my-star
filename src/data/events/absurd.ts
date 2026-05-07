@@ -137,17 +137,28 @@ export const absurdEvents: GameEvent[] = [
     emoji: '🌟',
     minDay: 10,
     statConditions: { minCommercialValue: 40 },
+    artistVariants: {
+      actor: {
+        description: '今天最大的瓜不是别人出事了——而是某位同咖位顶流演员在采访里说"最想合作的演员是XX"，XX就是你的艺人。话题直接爆了，两家粉丝已经开始脑补"双男/女主电影"了。你的手机响个不停，全是问"是不是要一起拍戏"的。',
+      },
+      influencer: {
+        description: '今天最大的瓜不是别人出事了——而是全网顶流主播在自己的直播间说了句"最想合作的姐妹是XX"，XX就是你的艺人。话题直接爆了，两家粉丝已经开始催"双播联名"了。你的手机响个不停，全是问"什么时候官宣合体直播"的。',
+      },
+      socialite: {
+        description: '今天最大的瓜不是别人出事了——而是某位同级别"贵公子/名媛"在时尚活动上说了句"最想合作的人是XX"，XX就是你的艺人。话题直接爆了，时尚圈已经开始脑补"双封面联动"了。你的手机响个不停，全是问"是不是要一起出杂志"的。',
+      },
+    },
     choices: [
       {
         id: 'celeb_collab_accept',
         text: '积极促成合作',
         subtext: '联系对方经纪人',
         outcome: {
-          narration: '你打通了对方经纪人的电话——对方显然也在等。合作企划两天就定了：一首合唱单曲。录音那天两人默契得吓人，制作人在玻璃后面比了个OK。单曲上线一小时破千万播放，你觉得自己见证了历史。',
+          narration: '你打通了对方经纪人的电话——对方显然也在等。合作企划两天就定了。对接那天两人默契得吓人，现场工作人员在监视器后面比了个OK。合作官宣一小时冲上热搜第一，你觉得自己见证了历史。',
           statChanges: { commercialValue: 8, fanLoyalty: 5, money: 50000 },
           twist: {
             chance: 0.2,
-            narration: '但是！两家粉丝因为"谁是主唱谁是副唱""歌词分配不公平"吵起来了。超话里已经有人烧专辑照片了。你深刻理解了什么叫"顶流联动一时爽，粉丝互撕火葬场"。',
+            narration: '但是！两家粉丝因为"谁的番位/C位/镜头更多""资源分配不公平"吵起来了。超话里已经有人烧周边照片了。你深刻理解了什么叫"顶流联动一时爽，粉丝互撕火葬场"。',
             statChanges: { prRisk: 8, fanLoyalty: -5 },
           },
         },
@@ -262,6 +273,7 @@ export const absurdEvents: GameEvent[] = [
     description: '演唱会进行到煽情环节，台下突然有个男粉举起了LED牌子——不是应援牌，是"嫁给我"。全场尖叫。镜头怼了过去。你的艺人站在台上，手里拿着话筒，表情凝固了两秒。大屏幕正在直播TA的脸。你在侧台急得直跺脚。',
     emoji: '💍',
     minDay: 8,
+    forArtist: ['idol', 'singer'],
     choices: [
       {
         id: 'proposal_wingman',

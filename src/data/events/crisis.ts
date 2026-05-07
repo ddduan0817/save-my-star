@@ -157,6 +157,7 @@ export const crisisEvents: GameEvent[] = [
     description: '一位现场观众拍到你的艺人在演唱会上疑似对口型。视频被专业音频博主分析后，"假唱"的结论冲上了热搜第一。',
     emoji: '🎤',
     minDay: 8,
+    forArtist: ['idol', 'singer'],
     choices: [
       {
         id: 'admit_tech',

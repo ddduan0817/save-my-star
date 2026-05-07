@@ -148,7 +148,7 @@ export const randomEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: '粉丝自制纪录片火了',
-    description: '一位粉丝花了半年时间剪了一部你艺人的出道纪录片，从练习生时期一直到现在。质量高到离谱，B站播放量已经破千万。',
+    description: '一位粉丝花了半年时间剪了一部你艺人的出道纪录片，从出道前一直到现在。质量高到离谱，B站播放量已经破千万。',
     emoji: '🎬',
     choices: [
       {

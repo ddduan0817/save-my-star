@@ -221,7 +221,7 @@ export const mentalStateEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: '艺人今天状态特别好',
-    description: '艺人今天心情很好，主动要求多拍几条物料，还在片场跟工作人员开玩笑。这种好状态不多见。',
+    description: '艺人今天心情很好，主动要求多拍几条物料，还在工作现场跟工作人员开玩笑。这种好状态不多见。',
     emoji: '😊',
     minDay: 3,
     choices: [

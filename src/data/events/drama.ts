@@ -307,8 +307,8 @@ export const dramaEvents: GameEvent[] = [
     id: 'drama_trainee_scandal',
     category: 'drama',
     severity: 'medium',
-    title: '前练习生爆料内幕',
-    description: '一个曾经和你艺人一起练习的淘汰选手在社交媒体上爆料："那个人当年根本不努力，全靠公司砸资源。"帖子正在发酵...',
+    title: '同期旧人爆料内幕',
+    description: '一个当年和你艺人一起起步、后来没能走出来的同期旧人在社交媒体上爆料：「那个人当年根本不努力，全靠公司砸资源。」帖子正在发酵……',
     emoji: '🗣️',
     minDay: 8,
     artistVariants: {
@@ -331,10 +331,10 @@ export const dramaEvents: GameEvent[] = [
     choices: [
       {
         id: 'show_evidence',
-        text: '放出练习视频',
+        text: '放出当年物料',
         subtext: '用事实打脸',
         outcome: {
-          narration: '团队翻出了当年的练习室视频——凌晨三点还在练舞。"努力的人不需要解释"刷屏了，爆料人被反噬。',
+          narration: '团队翻出了当年的工作记录和幕后素材——凌晨三点还在打磨作品。「努力的人不需要解释」刷屏了，爆料人被反噬。',
           statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
         },
       },
@@ -353,8 +353,8 @@ export const dramaEvents: GameEvent[] = [
     id: 'drama_dating_rumor_costar',
     category: 'drama',
     severity: 'high',
-    title: '和搭档暧昧上热搜',
-    description: '你的艺人和新剧的搭档最近互动频繁，粉丝开始磕CP。但今天两人被拍到深夜同回酒店，虽然可能只是剧组聚餐后一起回去，但标题已经写好了："实锤！"',
+    title: '和合作对象暧昧上热搜',
+    description: '你的艺人和新项目的合作对象最近互动频繁，粉丝开始磕CP。但今天两人被拍到深夜同回酒店，虽然可能只是工作收工后一起回去，但狗仔的标题已经写好了：「实锤！」',
     emoji: '💑',
     minDay: 12,
     artistVariants: {

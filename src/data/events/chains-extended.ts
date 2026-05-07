@@ -59,11 +59,11 @@ const chainRealityEvents: GameEvent[] = [
     choices: [
       {
         id: 'reality_popular_ally',
-        text: '和人气选手组队',
+        text: '和人气嘉宾组队',
         subtext: '蹭到热度但容易被比下去',
         emoji: '⭐',
         outcome: {
-          narration: '和人气选手组队后，虽然镜头少了一些，但整体热度蹭到不少。两人的互动片段被剪进了预告。',
+          narration: '和人气嘉宾组队后，虽然镜头少了一些，但整体热度蹭到不少。两人的互动片段被剪进了预告。',
           statChanges: { fanLoyalty: 2, commercialValue: 1 },
           followUpEventId: 'chain_reality_3_finale',
           unlockTag: 'reality_popular_ally',
@@ -71,11 +71,11 @@ const chainRealityEvents: GameEvent[] = [
       },
       {
         id: 'reality_underdog_ally',
-        text: '和素人选手组队',
+        text: '和冷门嘉宾组队',
         subtext: '可能收获意外好评',
         emoji: '💪',
         outcome: {
-          narration: '选择了最不被看好的素人搭档。现场一片质疑，但你的艺人反而激发了斗志。',
+          narration: '选择了最不被看好的冷门搭档。现场一片质疑，但你的艺人反而激发了斗志。',
           statChanges: { fanLoyalty: 1, prRisk: 1 },
           followUpEventId: 'chain_reality_3_underdog',
           unlockTag: 'reality_underdog_ally',
@@ -156,7 +156,7 @@ const chainRealityEvents: GameEvent[] = [
     category: 'pr',
     severity: 'medium',
     title: '逆袭之路引发热议',
-    description: '你的艺人和素人搭档的逆袭故事在网上疯传，"不被看好却最打动人"。',
+    description: '你的艺人和冷门搭档的逆袭故事在网上疯传，"不被看好却最打动人"。',
     emoji: '🌟',
     requiredTags: ['reality_underdog_ally'],
     choices: [
