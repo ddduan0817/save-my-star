@@ -111,7 +111,19 @@ export function applyDailyPassiveEffects(stats: GameStats, prTeamLevel: number =
 
   // High fan loyalty provides a small money bonus (merch etc.)
   if (fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD) {
-    money += 3000;
+    money += 4000;
+  } else if (fanLoyalty >= 60) {
+    // 中高忠诚也有基础周边/打投返点
+    money += 2000;
+  }
+
+  // 商业价值带来的日常分成（代言商务的长期尾单分摊）
+  if (commercialValue >= 80) {
+    money += 6000;
+  } else if (commercialValue >= 60) {
+    money += 3500;
+  } else if (commercialValue >= 40) {
+    money += 1500;
   }
 
   return { commercialValue, fanLoyalty, prRisk, money };

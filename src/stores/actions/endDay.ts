@@ -199,8 +199,21 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       }
     }
 
-    // 6.7 大粉冷落衰减
-    const { newFansites: decayedFansites, alerts: neglectAlerts } = applyFansiteNeglectDecay(fansites, nextDay);
+    // 6.7 大粉日结：冷落衰减 + 全局影响 + 周边分成
+    const fansiteResult = applyFansiteNeglectDecay(fansites, nextDay);
+    const { newFansites: decayedFansites, alerts: neglectAlerts, statDelta: fansiteStatDelta, merchIncome: fansiteMerchIncome } = fansiteResult;
+    if (fansiteStatDelta.fanLoyalty || fansiteStatDelta.prRisk || fansiteStatDelta.commercialValue || fansiteStatDelta.money) {
+      newStats = applyStatChangesEngine(newStats, {
+        fanLoyalty: fansiteStatDelta.fanLoyalty,
+        prRisk: fansiteStatDelta.prRisk,
+        commercialValue: fansiteStatDelta.commercialValue,
+        money: fansiteStatDelta.money,
+      }, artist?.id);
+    }
+    let fansiteMerchLedger: LedgerEntry | null = null;
+    if (fansiteMerchIncome > 0) {
+      fansiteMerchLedger = { label: '大粉带动周边销售', amount: fansiteMerchIncome, category: 'daily' };
+    }
 
     // Build the fresh daily ledger atomically so it lands in the same set()
     // as the rest of the day-transition state. Any entries with amount=0 are
@@ -212,15 +225,27 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     };
     const loyaltyBonusEntry: LedgerEntry | null =
       stats.fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD
-        ? { label: '粉丝周边收入', amount: 3000, category: 'daily' }
-        : null;
+        ? { label: '粉丝周边收入（高忠诚）', amount: 4000, category: 'daily' }
+        : stats.fanLoyalty >= 60
+          ? { label: '粉丝周边收入', amount: 2000, category: 'daily' }
+          : null;
+    const commercialBonusEntry: LedgerEntry | null =
+      stats.commercialValue >= 80
+        ? { label: '商务尾单分成（顶流）', amount: 6000, category: 'daily' }
+        : stats.commercialValue >= 60
+          ? { label: '商务尾单分成', amount: 3500, category: 'daily' }
+          : stats.commercialValue >= 40
+            ? { label: '商务尾单分成（基础）', amount: 1500, category: 'daily' }
+            : null;
     const freshLedger = appendLedger(
       [],
       dailyCostEntry,
       loyaltyBonusEntry,
+      commercialBonusEntry,
       scheduleLedgerEntry,
       rivalLedgerEntry,
       insurancePremiumLedger,
+      fansiteMerchLedger,
     );
 
     set({

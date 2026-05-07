@@ -270,12 +270,30 @@ export function interactWithFansite(
   return { newFansites, cost, narration, branch };
 }
 
-/** 冷落衰减 —— 每天结束时调用。返回新的大粉数组和事件描述。 */
+/** 冷落衰减 —— 每天结束时调用。返回新的大粉数组、事件描述，以及当天大粉造成的全局影响。
+ *
+ *  全局影响规则（让"不维护大粉"真的有代价，也让"维护大粉"真的有回报）：
+ *  - 每个忠诚>=70 且态度非敌对/脱粉的大粉：+1 fanLoyalty 贡献（封顶 +4/天）+ 周边分成 ¥1,500
+ *  - 每个 dissatiated（抱怨）大粉：-1 fanLoyalty, +1 prRisk
+ *  - 每个 hostile（敌对）大粉：-2 fanLoyalty, +3 prRisk, -2 commercialValue
+ *  - 每个今日刚 betrayed（脱粉回踩）的大粉：-4 fanLoyalty, +6 prRisk, -3 commercialValue（一次性惩罚）
+ */
 export function applyFansiteNeglectDecay(
   fansites: FansiteMaster[],
   nextDay: number,
-): { newFansites: FansiteMaster[]; alerts: string[] } {
+): {
+  newFansites: FansiteMaster[];
+  alerts: string[];
+  statDelta: { fanLoyalty: number; prRisk: number; commercialValue: number; money: number };
+  merchIncome: number;
+  newlyBetrayedNames: string[];
+} {
   const alerts: string[] = [];
+  const newlyBetrayedNames: string[] = [];
+  const statDelta = { fanLoyalty: 0, prRisk: 0, commercialValue: 0, money: 0 };
+  let merchIncome = 0;
+  let productiveCount = 0;
+
   const newFansites = fansites.map(f => {
     if (f.attitude === 'betrayed') return f;
     // 从未互动过：把开始时间锚定到当前天，后续才会算冷落
@@ -283,10 +301,11 @@ export function applyFansiteNeglectDecay(
       return { ...f, lastInteraction: nextDay };
     }
     const daysSince = nextDay - f.lastInteraction;
-    if (daysSince <= NEGLECT_DAYS_THRESHOLD) return f;
-
-    const decay = (daysSince - NEGLECT_DAYS_THRESHOLD) * NEGLECT_DAILY_DECAY;
-    const newLoyalty = Math.max(0, f.loyalty - decay);
+    let newLoyalty = f.loyalty;
+    if (daysSince > NEGLECT_DAYS_THRESHOLD) {
+      const decay = (daysSince - NEGLECT_DAYS_THRESHOLD) * NEGLECT_DAILY_DECAY;
+      newLoyalty = Math.max(0, f.loyalty - decay);
+    }
 
     let newAttitude: FansiteMaster['attitude'] = f.attitude;
     if (newLoyalty <= 0) newAttitude = 'betrayed';
@@ -301,11 +320,38 @@ export function applyFansiteNeglectDecay(
             ? `${f.name} 因长期被冷落转为敌对`
             : `${f.name} 开始抱怨被冷落`,
       );
+      if (newAttitude === 'betrayed') {
+        newlyBetrayedNames.push(f.name);
+        statDelta.fanLoyalty -= 4;
+        statDelta.prRisk += 6;
+        statDelta.commercialValue -= 3;
+      }
     }
 
     return { ...f, loyalty: newLoyalty, attitude: newAttitude };
   });
-  return { newFansites, alerts };
+
+  // 每日持续影响：根据当下状态对全局 stats 加减（脱粉的一次性惩罚已在上面算过）
+  for (const f of newFansites) {
+    if (f.attitude === 'betrayed') continue;
+    if (f.attitude === 'hostile') {
+      statDelta.fanLoyalty -= 2;
+      statDelta.prRisk += 3;
+      statDelta.commercialValue -= 2;
+    } else if (f.attitude === 'dissatisfied') {
+      statDelta.fanLoyalty -= 1;
+      statDelta.prRisk += 1;
+    } else if (f.loyalty >= 70 && productiveCount < 4) {
+      // 高质量大粉带来正向贡献：路人转化 + 周边分成
+      productiveCount += 1;
+      statDelta.fanLoyalty += 1;
+      merchIncome += 1500;
+    }
+  }
+
+  statDelta.money += merchIncome;
+
+  return { newFansites, alerts, statDelta, merchIncome, newlyBetrayedNames };
 }
 
 /** 艺人帮你安抚一个被冷落的大粉 —— 消耗信任值，但不占当日互动额度。 */
