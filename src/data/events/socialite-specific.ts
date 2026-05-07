@@ -1,6 +1,6 @@
 import type { GameEvent } from '@/types/game';
 
-// 南陌（网红转型演员/男，贵公子人设）专属事件
+// 南陌格（网红转型演员/男，贵公子人设）专属事件
 // 招牌黑料：出道前做过"商务男模"，云端有照片视频 + 私密群流传的"服务价目表"
 export const socialiteSpecificEvents: GameEvent[] = [
   // ===== 日常非黑料事件（和其他艺人风格对齐） =====
@@ -9,7 +9,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
     category: 'business',
     severity: 'medium',
     title: '高奢品牌全球代言找来了',
-    description: '一个欧洲顶级奢侈品牌想签南陌做全球亚太区代言，合同金额八位数。但品牌方的合规部对"艺人历史背景"要求特别严，会做详细背调。',
+    description: '一个欧洲顶级奢侈品牌想签南陌格做全球亚太区代言，合同金额八位数。但品牌方的合规部对"艺人历史背景"要求特别严，会做详细背调。',
     emoji: '💼',
     forArtist: 'socialite',
     minDay: 5,
@@ -19,7 +19,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
         text: '接！值这个险',
         subtext: '签下八位数代言',
         outcome: {
-          narration: '合同签下，一笔巨款到账。南陌穿着品牌当季大片出街，"亚太区全球代言人"的名号一挂，圈内其他贵公子全靠边站。',
+          narration: '合同签下，一笔巨款到账。南陌格穿着品牌当季大片出街，"亚太区全球代言人"的名号一挂，圈内其他贵公子全靠边站。',
           statChanges: { money: 2000000, commercialValue: 8, prRisk: 4 },
           unlockTag: 'global_lux_deal',
         },
@@ -50,7 +50,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
         text: '去',
         subtext: '赴宴 + 资源链接',
         outcome: {
-          narration: '南陌到场，谈下两个品牌。但当晚有狗仔拍到他和某位富婆单独进电梯的侧影——"暧昧"话题上了热搜，团队连夜公关。',
+          narration: '南陌格到场，谈下两个品牌。但当晚有狗仔拍到他和某位富婆单独进电梯的侧影——"暧昧"话题上了热搜，团队连夜公关。',
           statChanges: { money: 300000, commercialValue: 5, prRisk: 6 },
         },
       },
@@ -68,7 +68,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
         text: '带粉丝后援会代表去',
         subtext: '用"粉丝陪同"做挡箭牌',
         outcome: {
-          narration: '你安排了三位粉丝代表作为"陪同"跟着去，全程直播。富婆们很不爽，但舆论层面你赢了——"南陌把粉丝带进京圈晚宴"成了当晚粉圈最大瓜。',
+          narration: '你安排了三位粉丝代表作为"陪同"跟着去，全程直播。富婆们很不爽，但舆论层面你赢了——"南陌格把粉丝带进京圈晚宴"成了当晚粉圈最大瓜。',
           statChanges: { money: 120000, fanLoyalty: 7, commercialValue: 3 },
         },
       },
@@ -81,7 +81,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '私密群"服务价目表"开始外传',
-    description: '某个高档富婆圈的微信私密群里，一张"商务男模价目表"截图被人传到圈外。表里第三行用首字母打码，但"某 M 姓、1米85、全套价格 X 万"的描述指向很明确——就是南陌出道前那段经历。已经有几家娱乐号私信工作室了："买还是不买，给个说法。"',
+    description: '某个高档富婆圈的微信私密群里，一张"商务男模价目表"截图被人传到圈外。表里第三行用首字母打码，但"某 M 姓、1米85、全套价格 X 万"的描述指向很明确——就是南陌格出道前那段经历。已经有几家娱乐号私信工作室了："买还是不买，给个说法。"',
     emoji: '📋',
     forArtist: 'socialite',
     minDay: 5,
@@ -92,7 +92,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
         subtext: '给每家娱乐号封口费 (-80万)',
         requireMinMoney: 800000,
         outcome: {
-          narration: '八十万撒下去，十几家娱乐号集体沉默，热搜词条被手动压下去。但圈内开始暗流涌动——"南陌团队很怕这张图"成了行业内幕。每过一阵就会有新的号想碰这块钱。',
+          narration: '八十万撒下去，十几家娱乐号集体沉默，热搜词条被手动压下去。但圈内开始暗流涌动——"南陌格团队很怕这张图"成了行业内幕。每过一阵就会有新的号想碰这块钱。',
           statChanges: { money: -800000, prRisk: -3, commercialValue: 3 },
           unlockTag: 'price_list_buried',
         },
@@ -114,7 +114,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
         subtext: '顺着私密群揪出截图人 (-20万)',
         requireMinMoney: 200000,
         outcome: {
-          narration: '你花钱让专业人士顺着截图反查群号、管理员、发送设备。三天后锁定了一个过气男模——一个和南陌同期但没火起来的竞争者。查到了，下一步怎么处理成了新问题。',
+          narration: '你花钱让专业人士顺着截图反查群号、管理员、发送设备。三天后锁定了一个过气男模——一个和南陌格同期但没火起来的竞争者。查到了，下一步怎么处理成了新问题。',
           statChanges: { money: -200000, prRisk: 3, commercialValue: -3 },
           unlockTag: 'found_leak_source',
         },
@@ -126,7 +126,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'critical',
     title: '云端照片视频被人"意外"下载',
-    description: '当年南陌用的一个旧云盘账号据说被人破解，里面存着他做商务男模那段时间的照片和视频——部分场合穿着、部分和富婆的合照。一个匿名账号在暗网挂牌："50 枚比特币 or 500 万人民币。"某营销号开始放出打码版本的"预告图"造势。',
+    description: '当年南陌格用的一个旧云盘账号据说被人破解，里面存着他做商务男模那段时间的照片和视频——部分场合穿着、部分和富婆的合照。一个匿名账号在暗网挂牌："50 枚比特币 or 500 万人民币。"某营销号开始放出打码版本的"预告图"造势。',
     emoji: '☁️',
     forArtist: 'socialite',
     minDay: 9,
@@ -162,7 +162,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
       {
         id: 'preemptive_strike',
         text: '自曝"过去"',
-        subtext: '南陌主动开直播讲当年打工史',
+        subtext: '南陌格主动开直播讲当年打工史',
         outcome: {
           narration: '他开了一场两小时直播，没提"商务男模"四个字，只讲了当年"穷到在夜店给人端盘子、给贵妇拎包挣时薪"——把故事重塑成"苦出身的逆袭"。等营销号放完整照片时，粉丝的第一反应是"我们姐姐当年太苦了"。大事化小。',
           statChanges: { fanLoyalty: 10, prRisk: -8, commercialValue: -3 },
@@ -181,7 +181,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
     category: 'drama',
     severity: 'critical',
     title: '某富婆突然认亲"当年小男朋友"',
-    description: '一位 45 岁的阔太太在社交账号发了九宫格：南陌当年给她"做商务"的合影、礼物单、转账记录。配文："我的小男朋友现在火了，忘了姐姐了？姐姐可是一直留着呢。"阔太太有三百万粉，帖子两小时转发破五万。',
+    description: '一位 45 岁的阔太太在社交账号发了九宫格：南陌格当年给她"做商务"的合影、礼物单、转账记录。配文："我的小男朋友现在火了，忘了姐姐了？姐姐可是一直留着呢。"阔太太有三百万粉，帖子两小时转发破五万。',
     emoji: '👠',
     forArtist: 'socialite',
     minDay: 13,
@@ -203,7 +203,7 @@ export const socialiteSpecificEvents: GameEvent[] = [
         subtext: '"这人疯了我不认识她" (-20万)',
         requireMinMoney: 200000,
         outcome: {
-          narration: '律师函满天飞。但阔太太直接放出了转账截图和开房记录——实锤越来越硬。南陌的工作室被挤爆，品牌方连夜开会开始切割。',
+          narration: '律师函满天飞。但阔太太直接放出了转账截图和开房记录——实锤越来越硬。南陌格的工作室被挤爆，品牌方连夜开会开始切割。',
           statChanges: { money: -200000, prRisk: 20, fanLoyalty: -15, commercialValue: -10 },
           unlockTag: 'rich_wife_escalated',
         },
@@ -214,12 +214,12 @@ export const socialiteSpecificEvents: GameEvent[] = [
         subtext: '找她婚姻里的把柄反向施压 (-50万)',
         requireMinMoney: 500000,
         outcome: {
-          narration: '团队花了一周查出她和现任老公的离婚协议有瑕疵，把这份信息"匿名"发给她。她当晚删博，从此再没提起过南陌。但你知道这种操作触碰了底线——那位阔太太的圈子里有很多比她更大的人物。',
+          narration: '团队花了一周查出她和现任老公的离婚协议有瑕疵，把这份信息"匿名"发给她。她当晚删博，从此再没提起过南陌格。但你知道这种操作触碰了底线——那位阔太太的圈子里有很多比她更大的人物。',
           statChanges: { money: -500000, prRisk: -3, fanLoyalty: -3 },
           unlockTag: 'counter_blackmail_lady',
           twist: {
             chance: 0.4,
-            narration: '三周后，你反制用的那份信息被人反手泄露给另一家媒体。"南陌团队涉嫌威胁女性"的热搜炸了。',
+            narration: '三周后，你反制用的那份信息被人反手泄露给另一家媒体。"南陌格团队涉嫌威胁女性"的热搜炸了。',
             statChanges: { prRisk: 15, commercialValue: -6 },
           },
         },

@@ -252,11 +252,11 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
     },
   ],
 
-  // ===== 南陌（贵公子） =====
+  // ===== 南陌格（贵公子） =====
   socialite: [
     {
       id: 'fansite_1',
-      name: '南陌的衣帽间',
+      name: '南陌格的衣帽间',
       avatar: '🕶️',
       style: 'photographer',
       followers: 98000,
@@ -280,11 +280,11 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
       hasBlackmail: false,
       blackmailValue: 0,
       lastInteraction: 0,
-      specialTrait: '写深度人设安利，"南陌=当代贵公子"就是她带火的词',
+      specialTrait: '写深度人设安利，"南陌格=当代贵公子"就是她带火的词',
     },
     {
       id: 'fansite_3',
-      name: '南陌私照圈内人',
+      name: '南陌格私照圈内人',
       avatar: '🔒',
       style: 'photographer',
       followers: 41000,
@@ -294,11 +294,11 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
       hasBlackmail: true,
       blackmailValue: 80000,
       lastInteraction: 0,
-      specialTrait: '据说认识"出道前"就认识南陌的人，手里有几张"你不会想看到"的图',
+      specialTrait: '据说认识"出道前"就认识南陌格的人，手里有几张"你不会想看到"的图',
     },
     {
       id: 'fansite_4',
-      name: '南陌代言榜',
+      name: '南陌格代言榜',
       avatar: '💼',
       style: 'data',
       followers: 38000,
