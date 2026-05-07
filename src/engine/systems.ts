@@ -1,7 +1,7 @@
-// 新系统的 store 扩展
-// 这个文件包含四大新系统的状态和操作方法
+// 新系统的纯函数 helper：心理状态 / 塌房预警 / 大粉互动 / 保险
+// 这里只放纯函数和初始常量，store 仅引用不拥有。
 
-import type { 
+import type {
   ArtistMentalState, 
   FansiteMaster, 
   InsurancePolicy, 

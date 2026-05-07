@@ -3,9 +3,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { useShallow } from 'zustand/react/shallow';
 import { useGameStore } from '@/stores/gameStore';
-import EventCard from '@/components/game/EventCard';
-import EventOutcome from '@/components/game/EventOutcome';
-import MessageRow from '@/components/game/MessageRow';
+import EventCard from '@/components/game/events/EventCard';
+import EventOutcome from '@/components/game/overlays/EventOutcome';
+import MessageRow from '@/components/game/events/MessageRow';
 import { sfxDayTransition } from '@/lib/sounds';
 import { useCallback, useEffect, useRef, useState } from 'react';
 

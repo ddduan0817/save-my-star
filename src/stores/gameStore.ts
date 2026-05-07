@@ -1,34 +1,27 @@
+// gameStore —— 主入口。
+// 拆分策略：
+//   - 类型定义:   ./types.ts
+//   - 初始状态:   ./initialState.ts
+//   - 共享 helper: ./helpers.ts
+//   - 大 action:  ./actions/endDay.ts (其他中小 action 保留在本文件，避免过度拆分)
+// 消费方始终只 import useGameStore，内部怎么拆都不影响。
+
 import { create } from 'zustand';
 import type {
-  GameStats,
-  GameEvent,
-  EventChoice,
-  Artist,
   ArtistArchetype,
-  GamePhase,
-  DecisionRecord,
-  Ending,
-  EndingId,
-  StatChange,
+  EventChoice,
   TabId,
-  GameMessage,
-  ActiveSchedule,
   ScheduleActivityId,
   UpgradeId,
-  WeiboTrend,
-  FanComment,
-  WeiboPostRecord,
-  RivalState,
-  CosmeticState,
   CosmeticProcedureId,
-  LedgerEntry,
+  CosmeticState,
+  DecisionRecord,
+  StatChange,
 } from '@/types/game';
 import { artists } from '@/data/artists';
-import { startNewDay, resolveChoice, checkDayEnd } from '@/engine/gameEngine';
-import { applyDailyPassiveEffects, applyStatChanges } from '@/engine/outcomeCalculator';
+import { resolveChoice } from '@/engine/gameEngine';
+import { applyStatChanges } from '@/engine/outcomeCalculator';
 import { loadUnlockedEndings, saveUnlockedEnding } from '@/lib/storage';
-import { breakingEvents } from '@/data/events/breaking';
-import { findEventById } from '@/engine/eventSelector';
 import { createMessages } from '@/engine/messageFactory';
 import { scheduleActivities } from '@/data/schedules';
 import { GAME_CONFIG } from '@/data/constants';
@@ -36,318 +29,35 @@ import { companyUpgradesData } from '@/data/upgrades';
 import { generateWeiboTrends, generateFanComments } from '@/engine/socialGenerator';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { resolveWeiboPost } from '@/engine/weiboPostEngine';
-import { initializeRival, selectRivalAction, resolveRivalAction } from '@/engine/rivalEngine';
+import { initializeRival } from '@/engine/rivalEngine';
 import { applyStatChanges as applyStatChangesEngine } from '@/engine/outcomeCalculator';
 import { cosmeticProcedures } from '@/data/cosmetics';
-import { resolveProcedure, tickCosmeticState, getAppearanceMultiplier } from '@/engine/cosmeticEngine';
-import {
-  checkAchievements,
-  loadUnlockedAchievements,
-  saveArtistUsed,
-  type Achievement,
-} from '@/data/achievements';
-import type {
-  ArtistMentalState,
-  FansiteMaster,
-  InsurancePolicy,
-  CollapseWarning,
-  RiskIndicator,
-  FansiteInteraction,
-  InsuranceType,
-} from '@/types/new_systems';
+import { resolveProcedure, getAppearanceMultiplier } from '@/engine/cosmeticEngine';
+import { loadUnlockedAchievements, saveArtistUsed } from '@/data/achievements';
+import type { FansiteInteraction, InsuranceType } from '@/types/new_systems';
 import {
   initialMentalState,
   initialCollapseWarning,
   initialRiskIndicators,
-  calculateCollapseWarning,
   interactWithFansite as interactWithFansiteImpl,
-  applyFansiteNeglectDecay,
   consoleFansiteByArtist,
   DAILY_FANSITE_INTERACTION_QUOTA,
   CONSOLE_TRUST_COST,
   purchaseInsurance as purchaseInsuranceImpl,
   cancelInsurance as cancelInsuranceImpl,
   applyMentalEffect,
-  applyDailyMentalEffects,
-} from './newSystemsStore';
-import { initialFansites, getFansitesForArtist } from '@/data/fansites';
-
-interface GameStore {
-  // Core state
-  gamePhase: GamePhase;
-  currentDay: number;
-  artist: Artist | null;
-  stats: GameStats;
-
-  // Tab system
-  activeTab: TabId;
-
-  // Message system (replaces old currentEvents)
-  messages: GameMessage[];
-  activeMessageId: string | null;
-
-  // Legacy compat: current event being processed
-  currentEvents: GameEvent[];
-  currentEventIndex: number;
-
-  // Outcome display
-  lastOutcomeNarration: string;
-  lastStatChanges: StatChange | null;
-  pendingTwist: { narration: string; statChanges: StatChange; unlockTag?: string } | null;
-  pendingFollowUpEventIds: string[];
-
-  // Game history
-  decisionHistory: DecisionRecord[];
-  activeTags: string[];
-  eventUsageMap: Record<string, number>;
-  ending: Ending | null;
-  peakRisk: number;
-
-  // Collection
-  unlockedEndings: EndingId[];
-  pendingAchievement: Achievement | null;
-  unlockedAchievements: string[];
-
-  // Schedule system
-  artistSchedule: ActiveSchedule | null;
-
-  // Company upgrades
-  companyUpgrades: Record<UpgradeId, number>;
-
-  // Social feed
-  weiboTrends: WeiboTrend[];
-  fanComments: FanComment[];
-
-  // Day transition banner
-  showDayBanner: boolean;
-
-  // Weibo posting system
-  dailyPostUsed: boolean;
-  weiboPostHistory: WeiboPostRecord[];
-  lastPostNarration: string;
-  lastPostStatChanges: StatChange | null;
-  showPostResult: boolean;
-
-  // Rival manager system
-  rival: RivalState | null;
-  rivalActionNarration: string;
-  showRivalAction: boolean;
-
-  // Cosmetic / Appearance system
-  cosmeticState: CosmeticState;
-  lastCosmeticNarration: string;
-  lastCosmeticStatChanges: StatChange | null;
-  showCosmeticResult: boolean;
-
-  // Phone call system
-  pendingPhoneCall: GameEvent | null;
-  showPhoneCall: boolean;
-
-  // Daily ledger (收支明细)
-  dailyLedger: LedgerEntry[];
-
-  // ===== 新系统状态 =====
-  mentalState: ArtistMentalState;
-  fansites: FansiteMaster[];
-  collapseWarning: CollapseWarning;
-  riskIndicators: RiskIndicator[];
-  insurancePolicies: InsurancePolicy[];
-  /** 当日已用的大粉互动次数 */
-  fansiteInteractionsUsed: number;
-
-  // Actions
-  startGame: (artistId: ArtistArchetype) => void;
-  setActiveTab: (tab: TabId) => void;
-  openMessage: (messageId: string) => void;
-  closeMessage: () => void;
-  selectChoice: (choice: EventChoice) => void;
-  dismissOutcome: () => void;
-  dismissTwist: () => void;
-  endDay: () => boolean; // returns false if blocked by urgent messages
-  setArtistSchedule: (activityId: ScheduleActivityId) => void;
-  purchaseUpgrade: (upgradeId: UpgradeId) => void;
-  postWeibo: (templateId: string) => void;
-  dismissPostResult: () => void;
-  dismissRivalAction: () => void;
-  performProcedure: (procedureId: CosmeticProcedureId) => void;
-  dismissCosmeticResult: () => void;
-  answerPhoneCall: () => void;
-  hangUpPhoneCall: () => void;
-  dismissAchievement: () => void;
-  dismissDayBanner: () => void;
-  resetGame: () => void;
-
-  // ===== 新系统 Actions =====
-  interactWithFansite: (fansiteId: string, interaction: FansiteInteraction) => {
-    narration: string;
-    cost: number;
-    loyaltyDelta: number;
-    attitudeChanged: boolean;
-    /** 'quota_exceeded' 时表示当日额度已满，调用方应弹提示 */
-    blocked?: 'quota_exceeded' | 'no_money';
-  };
-  consoleFansite: (fansiteId: string) => { success: boolean; message: string };
-  purchaseInsurance: (policyId: InsuranceType) => { success: boolean; message: string };
-  cancelInsurance: (policyId: InsuranceType) => { refund: number; message: string };
-  loadCollection: () => void;
-}
-
-// 突发事件触发概率 (每天 25%)
-const BREAKING_CHANCE = 0.25;
-const MAX_CARRYOVER_MESSAGES = 2;
-
-// 收支明细 helper
-function addLedger(get: () => GameStore, set: (partial: Partial<GameStore>) => void, entry: LedgerEntry) {
-  if (entry.amount === 0) return;
-  set({ dailyLedger: [...get().dailyLedger, entry] });
-}
-
-// Build a new ledger array atomically — useful when several entries need to
-// land alongside another set() in the same transaction (avoids the race where
-// an upstream set() wipes dailyLedger before addLedger appends).
-function appendLedger(currentLedger: LedgerEntry[], ...entries: (LedgerEntry | null | undefined)[]): LedgerEntry[] {
-  const filtered = entries.filter((e): e is LedgerEntry => !!e && e.amount !== 0);
-  if (filtered.length === 0) return currentLedger;
-  return [...currentLedger, ...filtered];
-}
-
-// 成就检查 helper
-function runAchievementCheck(get: () => GameStore, set: (partial: Partial<GameStore>) => void) {
-  const { stats, currentDay, artist, activeTags, decisionHistory, peakRisk, cosmeticState } = get();
-  if (!artist) return;
-  const newAchs = checkAchievements({
-    stats,
-    day: currentDay,
-    artistId: artist.id,
-    activeTags,
-    decisionHistory,
-    peakRisk,
-    cosmeticState,
-  });
-  if (newAchs.length > 0) {
-    set({
-      pendingAchievement: newAchs[0],
-      unlockedAchievements: loadUnlockedAchievements(),
-    });
-  }
-}
-
-function maybeInjectBreaking(
-  events: GameEvent[],
-  day: number,
-  eventUsageMap: Record<string, number>
-): GameEvent[] {
-  if (day <= 3 || Math.random() > BREAKING_CHANCE) return events;
-
-  const available = breakingEvents.filter(e => {
-    const lastUsed = eventUsageMap[e.id];
-    if (lastUsed !== undefined) return false;
-    if (e.minDay && day < e.minDay) return false;
-    return true;
-  });
-
-  if (available.length === 0) return events;
-
-  const breaking = available[Math.floor(Math.random() * available.length)];
-  return [breaking, ...events];
-}
-
-function generateEventsForDay(
-  day: number,
-  stats: GameStats,
-  eventUsageMap: Record<string, number>,
-  activeTags: string[],
-  artistId?: ArtistArchetype,
-  pendingFollowUpEventIds?: string[],
-): { events: GameEvent[]; newUsageMap: Record<string, number> } {
-  let { events } = startNewDay(day, stats, eventUsageMap, activeTags, artistId);
-
-  // Inject follow-up events (event chains — supports multiple simultaneous chains)
-  if (pendingFollowUpEventIds && pendingFollowUpEventIds.length > 0) {
-    for (const id of pendingFollowUpEventIds) {
-      const followUpEvent = findEventById(id);
-      if (followUpEvent) {
-        events = [followUpEvent, ...events];
-      }
-    }
-  }
-
-  // Maybe inject breaking event
-  events = maybeInjectBreaking(events, day, eventUsageMap);
-
-  const newUsageMap = { ...eventUsageMap };
-  for (const e of events) {
-    newUsageMap[e.id] = day;
-  }
-
-  return { events, newUsageMap };
-}
+} from '@/engine/systems';
+import { getFansitesForArtist } from '@/data/fansites';
+import type { GameStore } from './types';
+import { makeFreshGameState } from './initialState';
+import { addLedger, runAchievementCheck, generateEventsForDay } from './helpers';
+import { createEndDayAction } from './actions/endDay';
 
 export const useGameStore = create<GameStore>((set, get) => ({
-  gamePhase: 'not_started',
-  currentDay: 0,
-  artist: null,
-  stats: { commercialValue: 0, fanLoyalty: 0, prRisk: 0, money: 0 },
+  // ===== 初始状态（从 initialState 展开，Create 和 resetGame 共用） =====
+  ...makeFreshGameState(),
 
-  activeTab: 'messages',
-  messages: [],
-  activeMessageId: null,
-
-  currentEvents: [],
-  currentEventIndex: 0,
-  lastOutcomeNarration: '',
-  lastStatChanges: null,
-  pendingTwist: null,
-  pendingFollowUpEventIds: [],
-  decisionHistory: [],
-  activeTags: [],
-  eventUsageMap: {},
-  ending: null,
-  peakRisk: 0,
-  unlockedEndings: [],
-  pendingAchievement: null,
-  unlockedAchievements: [],
-
-  artistSchedule: null,
-  companyUpgrades: { pr_team: 0, data_analysis: 0, network: 0, legal: 0 },
-
-  weiboTrends: [],
-  fanComments: [],
-
-  showDayBanner: false,
-
-  dailyPostUsed: false,
-  weiboPostHistory: [],
-  lastPostNarration: '',
-  lastPostStatChanges: null,
-  showPostResult: false,
-
-  rival: null,
-  rivalActionNarration: '',
-  showRivalAction: false,
-
-  cosmeticState: {
-    appearance: 50,
-    procedureHistory: [],
-    stiffFaceActive: false,
-    stiffFaceDaysRemaining: 0,
-    recoveryDaysRemaining: 0,
-  },
-  lastCosmeticNarration: '',
-  lastCosmeticStatChanges: null,
-  showCosmeticResult: false,
-
-  pendingPhoneCall: null,
-  showPhoneCall: false,
-  dailyLedger: [],
-
-  // 新系统初始状态
-  mentalState: initialMentalState,
-  fansites: initialFansites,
-  collapseWarning: initialCollapseWarning,
-  riskIndicators: initialRiskIndicators,
-  insurancePolicies: [],
-  fansiteInteractionsUsed: 0,
+  // ===== Actions =====
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
@@ -373,53 +83,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
       recoveryDaysRemaining: 0,
     };
 
+    // 先把 freshGameState 铺一遍，再覆盖这局的入局字段，保证未显式设置的
+    // 字段（比如 pendingTwist / showCosmeticResult）也被重置。
     set({
+      ...makeFreshGameState(),
       gamePhase: 'playing',
       currentDay: day,
       artist,
       stats,
-      activeTab: 'messages',
       messages,
-      activeMessageId: null,
-      currentEvents: [],
-      currentEventIndex: 0,
-      lastOutcomeNarration: '',
-      lastStatChanges: null,
-      pendingTwist: null,
-      pendingFollowUpEventIds: [],
-      decisionHistory: [],
-      activeTags,
       eventUsageMap: newUsageMap,
-      ending: null,
       peakRisk: artist.initialStats.prRisk,
-      artistSchedule: null,
-      companyUpgrades: { pr_team: 0, data_analysis: 0, network: 0, legal: 0 },
       weiboTrends: trends,
       fanComments: comments,
       showDayBanner: true,
-      dailyPostUsed: false,
-      weiboPostHistory: [],
-      lastPostNarration: '',
-      lastPostStatChanges: null,
-      showPostResult: false,
       rival,
-      rivalActionNarration: '',
-      showRivalAction: false,
       cosmeticState,
-      lastCosmeticNarration: '',
-      lastCosmeticStatChanges: null,
-      showCosmeticResult: false,
-      pendingPhoneCall: null,
-      showPhoneCall: false,
-      dailyLedger: [],
-
-      // 新系统初始化
+      // 新系统：保留首日 mental state / collapse warning 的默认值，
+      // 只替换艺人专属的 fansites
       mentalState: initialMentalState,
       fansites: getFansitesForArtist(artistId),
       collapseWarning: initialCollapseWarning,
       riskIndicators: initialRiskIndicators,
-      insurancePolicies: [],
-      fansiteInteractionsUsed: 0,
     });
 
     // Day 1 daily operating cost
@@ -597,240 +282,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     });
   },
 
-  endDay: () => {
-    const {
-      messages, currentDay, stats, activeTags, peakRisk, artist,
-      eventUsageMap, pendingFollowUpEventIds, decisionHistory,
-      artistSchedule, companyUpgrades, rival, cosmeticState,
-      mentalState, insurancePolicies, fansites,
-    } = get();
-
-    // Block if urgent messages unresolved (except on final day — force ending)
-    const hasUnresolvedUrgent = messages.some(m => m.isUrgent && m.status !== 'resolved');
-    if (hasUnresolvedUrgent && currentDay < GAME_CONFIG.MAX_DAYS) return false;
-
-    let newStats = { ...stats };
-
-    // 1. Resolve artist schedule
-    let newSchedule = artistSchedule;
-    let scheduleLedgerEntry: LedgerEntry | null = null;
-    if (artistSchedule) {
-      if (artistSchedule.remainingDays <= 1) {
-        // Schedule completes — apply with the same颜值倍率/僵脸 modifiers used by event choices
-        const scheduleAppMultiplier = getAppearanceMultiplier(cosmeticState.appearance);
-        newStats = applyStatChanges(
-          newStats,
-          artistSchedule.activity.statChanges,
-          artist?.id,
-          scheduleAppMultiplier,
-          cosmeticState.stiffFaceActive,
-        );
-        if (artistSchedule.activity.statChanges.money) {
-          scheduleLedgerEntry = { label: `${artistSchedule.activity.name}完成`, amount: artistSchedule.activity.statChanges.money, category: 'schedule' };
-        }
-        newSchedule = null;
-      } else {
-        newSchedule = {
-          ...artistSchedule,
-          remainingDays: artistSchedule.remainingDays - 1,
-        };
-      }
-    }
-
-    // 2. Apply daily passive effects (with upgrade bonuses)
-    newStats = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team);
-
-    // 2.1 Tick cosmetic state (recovery & stiff face countdown)
-    let newCosmeticState = tickCosmeticState(cosmeticState);
-    // Manage stiff_face_active tag
-    let newActiveTags = [...activeTags];
-    if (newCosmeticState.stiffFaceActive && !newActiveTags.includes('stiff_face_active')) {
-      newActiveTags.push('stiff_face_active');
-    } else if (!newCosmeticState.stiffFaceActive) {
-      newActiveTags = newActiveTags.filter(t => t !== 'stiff_face_active');
-    }
-
-    // 2.5 Rival daily action
-    let newRival = rival;
-    let rivalNarration = '';
-    let rivalTrend: import('@/types/game').WeiboTrend | null = null;
-    let rivalLedgerEntry: LedgerEntry | null = null;
-    if (rival && artist) {
-      const rivalAction = selectRivalAction(rival, currentDay, newStats);
-      if (rivalAction) {
-        const result = resolveRivalAction(rivalAction, rival, artist, currentDay);
-        if (result.playerStatChanges) {
-          newStats = applyStatChangesEngine(newStats, result.playerStatChanges, artist.id);
-          if (result.playerStatChanges.money) {
-            rivalLedgerEntry = { label: `竞争对手：${rivalAction.title}`, amount: result.playerStatChanges.money, category: 'rival' };
-          }
-        }
-        newRival = result.newRivalState;
-        rivalNarration = result.narration;
-        rivalTrend = result.trend;
-      }
-    }
-
-    // 3. Check for endings
-    const newPeakRisk = Math.max(peakRisk, newStats.prRisk);
-    const dayEndEnding = checkDayEnd(currentDay, newStats, newActiveTags, newPeakRisk);
-    if (dayEndEnding) {
-      const unlocked = saveUnlockedEnding(dayEndEnding.id);
-      set({
-        ending: dayEndEnding,
-        gamePhase: 'ended',
-        stats: newStats,
-        unlockedEndings: unlocked,
-        peakRisk: newPeakRisk,
-        artistSchedule: newSchedule,
-        cosmeticState: newCosmeticState,
-        activeTags: newActiveTags,
-      });
-      return true;
-    }
-
-    // 4. Advance day
-    const nextDay = currentDay + 1;
-
-    // 5. Generate new events for next day
-    const { events, newUsageMap } = generateEventsForDay(
-      nextDay, newStats, eventUsageMap, newActiveTags, artist?.id, pendingFollowUpEventIds
-    );
-
-    const newMessages = createMessages(events, nextDay);
-
-    // Separate phone call events (max 1 per day as fullscreen ring, from day 3+).
-    // Any additional phone-call events that happen to be generated on the same
-    // day fall back into the regular message list so they aren't silently dropped.
-    let phoneCall: GameEvent | null = null;
-    let filteredMessages = newMessages;
-    if (nextDay >= 3) {
-      const phoneCallMsgs = newMessages.filter(m => m.event.isPhoneCall);
-      if (phoneCallMsgs.length > 0) {
-        phoneCall = phoneCallMsgs[0].event;
-        // Remove ONLY the one that's going to ring; keep the rest as inbox items
-        filteredMessages = newMessages.filter(m => m.id !== phoneCallMsgs[0].id);
-      }
-    }
-
-    // Carry over unresolved non-urgent messages (max 2)
-    const carryOver = messages
-      .filter(m => m.status !== 'resolved' && !m.isUrgent)
-      .slice(0, MAX_CARRYOVER_MESSAGES);
-
-    // 6. Regenerate social feed
-    let trends = generateWeiboTrends(newStats, artist!);
-    const comments = generateFanComments(newStats, artist!);
-
-    // Inject rival trend if any
-    if (rivalTrend) {
-      trends = [{ ...rivalTrend, rank: 1 }, ...trends.map(t => ({ ...t, rank: t.rank + 1 }))];
-    }
-
-    // 6.5 新系统每日更新：心理状态 + 塌房预警
-    const mentalResult = applyDailyMentalEffects(mentalState, newSchedule);
-    const newMentalState = mentalResult.newState;
-    const { warning: newCollapseWarning, indicators: newRiskIndicators } =
-      calculateCollapseWarning(newStats, newMentalState, nextDay);
-
-    // 6.6 保险年费扣款（每20天续费一次，用购买日判断）
-    let newInsurancePolicies = insurancePolicies;
-    let insurancePremiumLedger: LedgerEntry | null = null;
-    let lapsedPolicyNames: string[] = [];
-    if (insurancePolicies.length > 0) {
-      let totalPremium = 0;
-      const dueRenewals: { id: string; premium: number; name: string }[] = [];
-      for (const p of insurancePolicies) {
-        if (!p.isActive || p.purchasedDay === undefined) continue;
-        const daysSincePurchase = nextDay - p.purchasedDay;
-        if (daysSincePurchase > 0 && daysSincePurchase % 20 === 0) {
-          totalPremium += p.annualPremium;
-          dueRenewals.push({ id: p.id, premium: p.annualPremium, name: p.name });
-        }
-      }
-      if (totalPremium > 0) {
-        if (newStats.money >= totalPremium) {
-          newStats = { ...newStats, money: newStats.money - totalPremium };
-          insurancePremiumLedger = { label: '保险年费续费', amount: -totalPremium, category: 'upgrade' };
-        } else {
-          // Insufficient funds → lapse the policies due for renewal
-          const dueIds = new Set(dueRenewals.map(r => r.id));
-          newInsurancePolicies = insurancePolicies.map(p =>
-            dueIds.has(p.id) ? { ...p, isActive: false } : p,
-          );
-          lapsedPolicyNames = dueRenewals.map(r => r.name);
-        }
-      }
-    }
-
-    // 6.7 大粉冷落衰减
-    const { newFansites: decayedFansites, alerts: neglectAlerts } = applyFansiteNeglectDecay(fansites, nextDay);
-
-    // Build the fresh daily ledger atomically so it lands in the same set()
-    // as the rest of the day-transition state. Any entries with amount=0 are
-    // dropped by appendLedger.
-    const dailyCostEntry: LedgerEntry = {
-      label: '日常运营开支',
-      amount: GAME_CONFIG.DAILY_MONEY_COST,
-      category: 'daily',
-    };
-    const loyaltyBonusEntry: LedgerEntry | null =
-      stats.fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD
-        ? { label: '粉丝周边收入', amount: 3000, category: 'daily' }
-        : null;
-    const freshLedger = appendLedger(
-      [],
-      dailyCostEntry,
-      loyaltyBonusEntry,
-      scheduleLedgerEntry,
-      rivalLedgerEntry,
-      insurancePremiumLedger,
-    );
-
-    set({
-      currentDay: nextDay,
-      stats: newStats,
-      messages: [...carryOver, ...filteredMessages],
-      activeMessageId: null,
-      activeTab: 'messages',
-      gamePhase: 'playing',
-      eventUsageMap: newUsageMap,
-      pendingFollowUpEventIds: [],
-      peakRisk: newPeakRisk,
-      lastOutcomeNarration: '',
-      lastStatChanges: null,
-      artistSchedule: newSchedule,
-      weiboTrends: trends,
-      fanComments: comments,
-      showDayBanner: !phoneCall, // don't show day banner if phone call is pending (will show after call ends)
-      dailyPostUsed: false,
-      showPostResult: false,
-      rival: newRival,
-      rivalActionNarration: rivalNarration,
-      showRivalAction: !!rivalNarration,
-      cosmeticState: newCosmeticState,
-      activeTags: newActiveTags,
-      pendingPhoneCall: phoneCall,
-      showPhoneCall: !!phoneCall,
-      dailyLedger: freshLedger,
-      mentalState: newMentalState,
-      collapseWarning: newCollapseWarning,
-      riskIndicators: newRiskIndicators,
-      insurancePolicies: newInsurancePolicies,
-      fansites: decayedFansites,
-      fansiteInteractionsUsed: 0,
-    });
-
-    if (neglectAlerts.length > 0 && process.env.NODE_ENV !== 'production') {
-      // Surface in dev console; UI shows degraded state via fansite list itself.
-      console.warn('[fansite neglect]', neglectAlerts);
-    }
-    if (lapsedPolicyNames.length > 0 && process.env.NODE_ENV !== 'production') {
-      console.warn('[insurance lapsed — insufficient funds]', lapsedPolicyNames);
-    }
-
-    return true;
-  },
+  endDay: createEndDayAction(get, set),
 
   setArtistSchedule: (activityId: ScheduleActivityId) => {
     const { artistSchedule, currentDay, cosmeticState } = get();
@@ -1046,61 +498,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   resetGame: () => {
-    set({
-      gamePhase: 'not_started',
-      currentDay: 0,
-      artist: null,
-      stats: { commercialValue: 0, fanLoyalty: 0, prRisk: 0, money: 0 },
-      activeTab: 'messages',
-      messages: [],
-      activeMessageId: null,
-      currentEvents: [],
-      currentEventIndex: 0,
-      lastOutcomeNarration: '',
-      lastStatChanges: null,
-      pendingTwist: null,
-      pendingFollowUpEventIds: [],
-      decisionHistory: [],
-      activeTags: [],
-      eventUsageMap: {},
-      ending: null,
-      peakRisk: 0,
-      pendingAchievement: null,
-      artistSchedule: null,
-      companyUpgrades: { pr_team: 0, data_analysis: 0, network: 0, legal: 0 },
-      weiboTrends: [],
-      fanComments: [],
-      showDayBanner: false,
-      dailyPostUsed: false,
-      weiboPostHistory: [],
-      lastPostNarration: '',
-      lastPostStatChanges: null,
-      showPostResult: false,
-      rival: null,
-      rivalActionNarration: '',
-      showRivalAction: false,
-      cosmeticState: {
-        appearance: 50,
-        procedureHistory: [],
-        stiffFaceActive: false,
-        stiffFaceDaysRemaining: 0,
-        recoveryDaysRemaining: 0,
-      },
-      lastCosmeticNarration: '',
-      lastCosmeticStatChanges: null,
-      showCosmeticResult: false,
-      pendingPhoneCall: null,
-      showPhoneCall: false,
-      dailyLedger: [],
-
-      // 重置新系统
-      mentalState: initialMentalState,
-      fansites: initialFansites,
-      collapseWarning: initialCollapseWarning,
-      riskIndicators: initialRiskIndicators,
-      insurancePolicies: [],
-      fansiteInteractionsUsed: 0,
-    });
+    // 回到完全未开始的状态；保留 unlockedEndings / unlockedAchievements 不动，
+    // 这两个是跨局档案，属于 loadCollection 的领域。
+    const { unlockedEndings, unlockedAchievements } = get();
+    set({ ...makeFreshGameState(), unlockedEndings, unlockedAchievements });
   },
 
   dismissRivalAction: () => {

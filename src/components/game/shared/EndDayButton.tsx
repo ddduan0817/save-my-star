@@ -6,7 +6,6 @@ import { cn } from '@/lib/utils';
 import { sfxClick } from '@/lib/sounds';
 
 export default function EndDayButton() {
-  const currentDay = useGameStore(s => s.currentDay);
   const endDay = useGameStore(s => s.endDay);
   const messages = useGameStore(s => s.messages);
   const gamePhase = useGameStore(s => s.gamePhase);
@@ -37,7 +36,7 @@ export default function EndDayButton() {
               : "bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 text-white shadow-orange-200/50 hover:shadow-xl hover:shadow-orange-200/60",
           )}
         >
-          {hasUnresolvedUrgent ? '有紧急消息未处理' : `结束第${currentDay}天`}
+          {hasUnresolvedUrgent ? '有紧急消息未处理' : '下班 💤'}
         </motion.button>
       </div>
     </div>

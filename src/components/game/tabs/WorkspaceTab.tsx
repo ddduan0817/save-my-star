@@ -7,9 +7,9 @@ import { cn, formatMoney } from '@/lib/utils';
 import { companyUpgradesData } from '@/data/upgrades';
 import { sfxClick, sfxMoney } from '@/lib/sounds';
 import { upgradeIconMap, IconOverview, IconFansite, IconInsurance } from '@/components/icons';
-import FansiteManager from '@/components/game/FansiteManager';
-import InsuranceShop from '@/components/game/InsuranceShop';
-import CollapseWarningPanel from '@/components/game/CollapseWarning';
+import FansiteManager from '@/components/game/features/FansiteManager';
+import InsuranceShop from '@/components/game/features/InsuranceShop';
+import CollapseWarningPanel from '@/components/game/stats/CollapseWarning';
 
 const FAME_LABELS: Record<string, { text: string; color: string }> = {
   low: { text: '低迷', color: 'text-gray-400' },

@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn, formatMoney } from '@/lib/utils';
 import { sfxDisaster } from '@/lib/sounds';
-import { CollapseWarningBadge } from '@/components/game/CollapseWarning';
+import { CollapseWarningBadge } from '@/components/game/stats/CollapseWarning';
 
 const statConfig = [
   { key: 'commercialValue' as const, label: '商业', barClass: 'stat-bar-amber', trackColor: 'bg-amber-100/60', max: 100 },
