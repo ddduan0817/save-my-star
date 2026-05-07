@@ -56,6 +56,15 @@ export interface Twist {
   narration: string;
   statChanges: StatChange;
   unlockTag?: string;
+  // 反转可以独立影响心理状态（在原 outcome.mentalEffect 之上叠加施加）
+  mentalEffect?: {
+    mood?: number;
+    energy?: number;
+    trust?: number;
+    cooperation?: number;
+    stress?: number;
+    burnout?: number;
+  };
 }
 
 export interface EventOutcome {

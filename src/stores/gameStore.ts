@@ -239,10 +239,15 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
     // If twist pending, transition to twist phase
     if (pendingTwist) {
-      const { stats, artist, activeTags } = get();
+      const { stats, artist, activeTags, mentalState } = get();
       const twistStats = applyStatChanges(stats, pendingTwist.statChanges, artist?.id);
       const newTags = [...activeTags];
       if (pendingTwist.unlockTag) newTags.push(pendingTwist.unlockTag);
+
+      // 反转如果带 mentalEffect，在原选项已施加的心理状态之上再叠加一层
+      const newMentalState = pendingTwist.mentalEffect
+        ? applyMentalEffect(mentalState, pendingTwist.mentalEffect)
+        : mentalState;
 
       set({
         gamePhase: 'showing_twist',
@@ -252,6 +257,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
         pendingTwist: null,
         activeTags: newTags,
         peakRisk: Math.max(get().peakRisk, twistStats.prRisk),
+        mentalState: newMentalState,
       });
       if (pendingTwist.statChanges.money) {
         addLedger(get, set, { label: '反转！', amount: pendingTwist.statChanges.money, category: 'event' });

@@ -21,6 +21,14 @@ export interface ChoiceResult {
     narration: string;
     statChanges: StatChange;
     unlockTag?: string;
+    mentalEffect?: {
+      mood?: number;
+      energy?: number;
+      trust?: number;
+      cooperation?: number;
+      stress?: number;
+      burnout?: number;
+    };
   } | null;
 }
 
@@ -132,6 +140,7 @@ export function resolveChoice(
       narration: choice.outcome.twist!.narration,
       statChanges: choice.outcome.twist!.statChanges,
       unlockTag: choice.outcome.twist!.unlockTag,
+      mentalEffect: choice.outcome.twist!.mentalEffect,
     };
   }
 

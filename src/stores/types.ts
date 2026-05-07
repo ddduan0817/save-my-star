@@ -57,7 +57,19 @@ export interface GameState {
   // Outcome display
   lastOutcomeNarration: string;
   lastStatChanges: StatChange | null;
-  pendingTwist: { narration: string; statChanges: StatChange; unlockTag?: string } | null;
+  pendingTwist: {
+    narration: string;
+    statChanges: StatChange;
+    unlockTag?: string;
+    mentalEffect?: {
+      mood?: number;
+      energy?: number;
+      trust?: number;
+      cooperation?: number;
+      stress?: number;
+      burnout?: number;
+    };
+  } | null;
   pendingFollowUpEventIds: string[];
 
   // Game history
