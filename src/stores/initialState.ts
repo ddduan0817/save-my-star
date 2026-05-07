@@ -73,6 +73,7 @@ export function makeFreshGameState(): GameState {
 
     // 新系统初始状态
     mentalState: { ...initialMentalState },
+    lowMoodStreak: 0,
     fansites: [...initialFansites],
     collapseWarning: { ...initialCollapseWarning, indicators: [...initialCollapseWarning.indicators] },
     riskIndicators: initialRiskIndicators.map(r => ({ ...r })),

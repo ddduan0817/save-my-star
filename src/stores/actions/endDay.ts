@@ -33,7 +33,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       messages, currentDay, stats, activeTags, peakRisk, artist,
       eventUsageMap, pendingFollowUpEventIds,
       artistSchedule, companyUpgrades, rival, cosmeticState,
-      mentalState, insurancePolicies, fansites,
+      mentalState, insurancePolicies, fansites, lowMoodStreak,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -123,9 +123,16 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     // 4. Advance day
     const nextDay = currentDay + 1;
 
+    // 4.5 新系统每日更新：心理状态（需要先于事件生成，以便心理阈值被动事件可用）
+    const mentalResult = applyDailyMentalEffects(mentalState, newSchedule);
+    const newMentalState = mentalResult.newState;
+    // 低落连击计数：mood<20 连续天数（用于触发失眠微博）
+    const newLowMoodStreak = newMentalState.mood < 20 ? lowMoodStreak + 1 : 0;
+
     // 5. Generate new events for next day
     const { events, newUsageMap } = generateEventsForDay(
-      nextDay, newStats, eventUsageMap, newActiveTags, artist?.id, pendingFollowUpEventIds
+      nextDay, newStats, eventUsageMap, newActiveTags, artist?.id, pendingFollowUpEventIds,
+      { mental: newMentalState, lowMoodStreak: newLowMoodStreak },
     );
 
     const newMessages = createMessages(events, nextDay);
@@ -158,9 +165,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       trends = [{ ...rivalTrend, rank: 1 }, ...trends.map(t => ({ ...t, rank: t.rank + 1 }))];
     }
 
-    // 6.5 新系统每日更新：心理状态 + 塌房预警
-    const mentalResult = applyDailyMentalEffects(mentalState, newSchedule);
-    const newMentalState = mentalResult.newState;
+    // 6.5 新系统每日更新：塌房预警（心理状态已在步骤4.5提前计算）
     const { warning: newCollapseWarning, indicators: newRiskIndicators } =
       calculateCollapseWarning(newStats, newMentalState, nextDay);
 
@@ -245,6 +250,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       showPhoneCall: !!phoneCall,
       dailyLedger: freshLedger,
       mentalState: newMentalState,
+      lowMoodStreak: newLowMoodStreak,
       collapseWarning: newCollapseWarning,
       riskIndicators: newRiskIndicators,
       insurancePolicies: newInsurancePolicies,

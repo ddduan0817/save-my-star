@@ -124,6 +124,8 @@ export interface GameState {
 
   // ===== 新系统状态 =====
   mentalState: ArtistMentalState;
+  /** 连续 mood<20 的天数，用于失眠微博触发 */
+  lowMoodStreak: number;
   fansites: FansiteMaster[];
   collapseWarning: CollapseWarning;
   riskIndicators: RiskIndicator[];

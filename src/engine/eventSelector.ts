@@ -20,6 +20,8 @@ import { phoneCallEvents } from '@/data/events/phone-calls';
 import { absurdEvents } from '@/data/events/absurd';
 import { metaEvents } from '@/data/events/meta-events';
 import { mentalStateEvents } from '@/data/events/mental-state';
+import { mentalTriggerEvents, mentalTriggerIds, getActiveMentalTriggers } from '@/data/events/mental-triggers';
+import type { ArtistMentalState } from '@/types/new_systems';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -42,6 +44,7 @@ const allEvents: GameEvent[] = [
   ...absurdEvents,
   ...metaEvents,
   ...mentalStateEvents,
+  ...mentalTriggerEvents,
 ];
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复
@@ -137,7 +140,11 @@ export function selectEventsForDay(
   stats: GameStats,
   eventUsageMap: Record<string, number>,
   activeTags: string[],
-  artistId?: ArtistArchetype
+  artistId?: ArtistArchetype,
+  mentalContext?: {
+    mental: ArtistMentalState;
+    lowMoodStreak: number;
+  }
 ): GameEvent[] {
   const eligible = allEvents.filter(e =>
     isEventEligible(e, day, stats, eventUsageMap, activeTags, artistId)
@@ -145,13 +152,32 @@ export function selectEventsForDay(
 
   if (eligible.length === 0) return [];
 
+  // 心理阈值被动事件：跨过阈值就强制注入（单局一次，由 EVENT_COOLDOWN 保证）
+  let triggeredMentalEvent: GameEvent | null = null;
+  if (mentalContext) {
+    const activeIds = getActiveMentalTriggers({
+      mood: mentalContext.mental.mood,
+      trust: mentalContext.mental.trust,
+      burnout: mentalContext.mental.burnout,
+      stress: mentalContext.mental.stress,
+      energy: mentalContext.mental.energy,
+      lowMoodStreak: mentalContext.lowMoodStreak,
+    });
+    const firstUnused = activeIds
+      .map(id => eligible.find(e => e.id === id))
+      .find((e): e is GameEvent => !!e);
+    triggeredMentalEvent = firstUnused ?? null;
+  }
+
   // 里程碑事件强制注入（满足条件就触发，不和普通事件竞争）
   const triggeredMilestones = eligible.filter(e => milestoneIds.has(e.id));
   // 艺人作妖事件：每2-3天强制注入一个（从第2天起，偶数天必触发，奇数天50%概率）
   const troubleEligible = eligible.filter(e => troubleIds.has(e.id));
   const shouldTriggerTrouble = day >= 2 && troubleEligible.length > 0 &&
     (day % 2 === 0 || Math.random() < 0.5);
-  const normalEligible = eligible.filter(e => !milestoneIds.has(e.id) && !troubleIds.has(e.id));
+  const normalEligible = eligible.filter(e =>
+    !milestoneIds.has(e.id) && !troubleIds.has(e.id) && !mentalTriggerIds.has(e.id)
+  );
 
   // Determine how many normal events this day
   const rand = Math.random();
@@ -168,7 +194,11 @@ export function selectEventsForDay(
   // 里程碑事件占位后，剩余名额给普通事件
   const milestoneCount = Math.min(triggeredMilestones.length, 1); // 每天最多1个里程碑
   const troubleCount = shouldTriggerTrouble ? 1 : 0; // 艺人作妖事件最多1个
-  const normalCount = Math.min(Math.max(eventCount - milestoneCount - troubleCount, 1), normalEligible.length);
+  const mentalCount = triggeredMentalEvent ? 1 : 0; // 心理阈值事件最多1个
+  const normalCount = Math.min(
+    Math.max(eventCount - milestoneCount - troubleCount - mentalCount, 1),
+    normalEligible.length,
+  );
 
   // Prefer unused events, then oldest used events
   const weighted = normalEligible.map(event => {
@@ -182,11 +212,19 @@ export function selectEventsForDay(
   const selected: GameEvent[] = [];
   const usedCategories = new Set<string>();
 
-  // 先放入里程碑事件
+  // 心理阈值事件最先放入（最重要，玩家最该看）
+  if (triggeredMentalEvent) {
+    selected.push(triggeredMentalEvent);
+    usedCategories.add(triggeredMentalEvent.category);
+  }
+
+  // 再放入里程碑事件
   if (milestoneCount > 0 && triggeredMilestones.length > 0) {
     const ms = triggeredMilestones[Math.floor(Math.random() * triggeredMilestones.length)];
-    selected.push(ms);
-    usedCategories.add(ms.category);
+    if (!selected.includes(ms)) {
+      selected.push(ms);
+      usedCategories.add(ms.category);
+    }
   }
 
   // 再放入艺人作妖事件

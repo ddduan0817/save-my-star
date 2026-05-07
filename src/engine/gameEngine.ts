@@ -1,4 +1,5 @@
 import type { GameStats, GameEvent, EventChoice, StatChange, Ending, ConditionalOutcome, Twist, ArtistArchetype } from '@/types/game';
+import type { ArtistMentalState } from '@/types/new_systems';
 import { GAME_CONFIG } from '@/data/constants';
 import { applyStatChanges } from './outcomeCalculator';
 import { selectEventsForDay } from './eventSelector';
@@ -88,9 +89,13 @@ export function startNewDay(
   stats: GameStats,
   eventUsageMap: Record<string, number>,
   activeTags: string[],
-  artistId?: ArtistArchetype
+  artistId?: ArtistArchetype,
+  mentalContext?: {
+    mental: ArtistMentalState;
+    lowMoodStreak: number;
+  }
 ): DayResult {
-  const events = selectEventsForDay(day, stats, eventUsageMap, activeTags, artistId);
+  const events = selectEventsForDay(day, stats, eventUsageMap, activeTags, artistId, mentalContext);
   return { events };
 }
 

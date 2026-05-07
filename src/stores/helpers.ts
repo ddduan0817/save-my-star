@@ -6,6 +6,7 @@ import type {
   ArtistArchetype,
   LedgerEntry,
 } from '@/types/game';
+import type { ArtistMentalState } from '@/types/new_systems';
 import { checkAchievements, loadUnlockedAchievements, type Achievement } from '@/data/achievements';
 import { startNewDay } from '@/engine/gameEngine';
 import { findEventById } from '@/engine/eventSelector';
@@ -105,8 +106,12 @@ export function generateEventsForDay(
   activeTags: string[],
   artistId?: ArtistArchetype,
   pendingFollowUpEventIds?: string[],
+  mentalContext?: {
+    mental: ArtistMentalState;
+    lowMoodStreak: number;
+  },
 ): { events: GameEvent[]; newUsageMap: Record<string, number> } {
-  let { events } = startNewDay(day, stats, eventUsageMap, activeTags, artistId);
+  let { events } = startNewDay(day, stats, eventUsageMap, activeTags, artistId, mentalContext);
 
   // Inject follow-up events (event chains — supports multiple simultaneous chains)
   if (pendingFollowUpEventIds && pendingFollowUpEventIds.length > 0) {
