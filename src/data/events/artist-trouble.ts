@@ -842,4 +842,209 @@ export const artistTroubleEvents: GameEvent[] = [
       },
     ],
   },
+
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  // 💼 南陌格 (socialite) — 贵公子出身焦虑、资源嫉妒、过度"精致"
+  // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+  {
+    id: 'trouble_socialite_watch_flex',
+    category: 'drama',
+    severity: 'medium',
+    title: '南陌格红毯戴了一块百万限量表',
+    description: '南陌格自己没跟你商量，戴了一块圈内都知道是"贵妇资源方"送的百万限量表走了某时尚晚宴红毯。钟表论坛的人半小时内就扒出了表的来源、编号、当年曾出现在另一位阔太太腕上的合照。#南陌格百万表身份# 冲到热搜第 9。他的高奢女表代言品牌的商务总监已经在问"这块表是借的还是送的"。',
+    emoji: '⌚',
+    forArtist: 'socialite',
+    choices: [
+      {
+        id: 'watch_claim_own',
+        text: '放通稿"自己买的"',
+        subtext: '工作室硬挺"全款到账"',
+        outcome: {
+          narration: '通稿放出去的同时你就在后悔——钟表论坛几个老 ID 当晚把当年那笔"阔太太—专柜—专属编号"的流水扒了出来，截图精准到分钟。"贵公子全款自购"成了饭后笑料，代言品牌法务部的邮件发进来了。',
+          statChanges: { prRisk: 7, fanLoyalty: -3, commercialValue: -3 },
+        },
+      },
+      {
+        id: 'watch_gift_spin',
+        text: '包装成"前辈馈赠"',
+        subtext: '"圈内长辈送的成年礼"',
+        outcome: {
+          narration: '工作室发了条温情小作文——"谢谢 X 姐当年的照拂"，配上南陌格十八岁生日老照片。高级饭圈吃这套，"有情有义"挂了个正面 tag。但圈里人都看懂了：这位 X 姐就是当年那位阔太太。你知道这张牌以后再打就贵了。',
+          statChanges: { prRisk: -3, fanLoyalty: 3, commercialValue: -2 },
+          unlockTag: 'owe_rich_wife_favor',
+        },
+      },
+      {
+        id: 'watch_donate',
+        text: '当场捐给公益拍卖',
+        subtext: '直接把表捐出去断争议',
+        outcome: {
+          narration: '你安排南陌格在下一场公益夜把表捐了，当场拍出两百三十万。"贵公子的体面"冲到热搜正面位，代言品牌方撤回邮件还加订了一季合作。但那位"送表的姐姐"据说气得在群里发了条半小时的语音。',
+          statChanges: { money: -150000, prRisk: -4, fanLoyalty: 4, commercialValue: 3 },
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'trouble_socialite_english_flex',
+    category: 'drama',
+    severity: 'low',
+    title: '南陌格直播时飙了一段塑料英文',
+    description: '高奢品牌全球线上活动，南陌格要在直播里用英文跟总部连线。他提前三天没背稿，现场一句 "I am a Chinese gentleman, nice to meet you" 外加几次卡壳让全场沉默三秒。切片十分钟内出了鬼畜版，#南陌格英文水平# 冲到热搜第 14。粉丝在超话刷"哥哥勇气可嘉"，黑粉在做"贵公子英文测评"系列。',
+    emoji: '🗣️',
+    forArtist: 'socialite',
+    choices: [
+      {
+        id: 'english_humor',
+        text: '连夜发自嘲小作文',
+        subtext: '"确实翻车了，在补课"',
+        outcome: {
+          narration: '南陌格亲自发了一条"作业本上英语单词"的图，配文"老师说下次不许交白卷"。路人笑了，粉丝哭笑不得说"这才是真实的哥哥"。代言品牌方反倒赞了一句"他很坦诚"——比装精英分更讨巧。',
+          statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 2 },
+        },
+      },
+      {
+        id: 'english_deny',
+        text: '工作室硬洗"是镜头问题"',
+        subtext: '"现场网络延迟导致"',
+        outcome: {
+          narration: '工作室小作文刚发出来，网友就把现场四机位的原画切片全贴上来了——网络一点毛病没有。"镜头延迟"和"号被盗"又凑成一对。贵公子人设再掉一格。',
+          statChanges: { prRisk: 5, fanLoyalty: -3 },
+        },
+      },
+      {
+        id: 'english_tutor',
+        text: '买"贵公子学英文"营销',
+        subtext: '直接立一个成长人设',
+        outcome: {
+          narration: '你让宣传组把南陌格和知名英语老师合作的 Vlog 企划提前推了——"贵公子学英文·第一课"当晚上了 B 站首页推荐。翻车被洗成了"上进人设"，还顺手捧了个英语老师合作款。',
+          statChanges: { money: -20000, commercialValue: 3, fanLoyalty: 3 },
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'trouble_socialite_host_rich_friend',
+    category: 'drama',
+    severity: 'medium',
+    title: '南陌格让一个"圈外富二代朋友"上他的综艺',
+    description: '南陌格录一档观察类综艺时，自作主张把自己一个"圈外富二代朋友"带进了镜头——对方在节目里露脸十分钟，还聊了几句"我和陌陌当年一起泡夜店"。节目播出当晚，那位"朋友"的身份被扒：是某地产商的二公子，两年前有过一起未结案的 PUA 指控。#南陌格 朋友背景# 冲到热搜第 11。',
+    emoji: '🥃',
+    forArtist: 'socialite',
+    choices: [
+      {
+        id: 'friend_cut_clean',
+        text: '工作室连夜发切割声明',
+        subtext: '"仅为节目嘉宾，无私交"',
+        outcome: {
+          narration: '切割声明措辞干净，但南陌格本人朋友圈之前发过多条和对方的合照被网友翻出来了。"切割打脸实时播报"成了热搜联想词。朋友那边也发了条冷笑话："有意思。"你知道，这个朋友以后是敌人。',
+          statChanges: { prRisk: 3, fanLoyalty: -3, commercialValue: -2 },
+        },
+      },
+      {
+        id: 'friend_stand_by',
+        text: '南陌格亲自发声"疑罪从无"',
+        subtext: '力挺到底',
+        outcome: {
+          narration: '他写了条长微博"案子没结，我不会弃友"。粉丝哭着说"哥哥讲义气"，但路人和女性向话题的评论区骂惨了——"PUA 指控都敢挺"成了标签。两个合作品牌发来"暂停合作"的邮件。',
+          statChanges: { fanLoyalty: 4, prRisk: 7, commercialValue: -5 },
+          twist: {
+            chance: 0.3,
+            narration: '三周后那位朋友的案子被法院判了——证据确凿的 PUA。南陌格当初那条"疑罪从无"微博被翻出来做成了图鉴。',
+            statChanges: { prRisk: 8, fanLoyalty: -5, commercialValue: -4 },
+          },
+        },
+      },
+      {
+        id: 'friend_mute',
+        text: '不回应，让节目组剪了这段',
+        subtext: '花钱让节目组重剪',
+        outcome: {
+          narration: '你和节目组连夜谈判，把那十分钟从重播版里剪掉，但首播已经录屏了。"原版 VS 重播"的对比图在贴吧流传。争议压住了一半，但没压干净。',
+          statChanges: { money: -40000, prRisk: 3 },
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'trouble_socialite_mocked_hometown',
+    category: 'drama',
+    severity: 'medium',
+    title: '南陌格评论区翻车："老家那种小县城"',
+    description: '南陌格在一条美食 vlog 评论区回一个粉丝时打了句"老家那种小县城吃的你真下得去口"，半小时后自己删了。但截图已经传疯。#南陌格 嘲笑小县城# 挂热搜第 6。那位粉丝的主页地址栏真的写着"湖南 [ph_CITY_1_ph]"。地域话题加人设反差，双重暴雷。',
+    emoji: '🙄',
+    forArtist: 'socialite',
+    choices: [
+      {
+        id: 'hometown_apologize',
+        text: '南陌格亲自手写道歉',
+        subtext: '长文承认"凡尔赛过头了"',
+        outcome: {
+          narration: '他写了三百字手写信，承认"嘴上没把门"，并说以后每年去一个县城做公益美食探店。小县城粉丝感动哭了，但路人嘲"立马找 PR 救场"。至少热度没炸更大。',
+          statChanges: { fanLoyalty: 3, prRisk: -3, money: -20000 },
+        },
+      },
+      {
+        id: 'hometown_doubledown',
+        text: '工作室硬洗"玩笑话"',
+        subtext: '"粉丝之间的熟人玩笑"',
+        outcome: {
+          narration: '这套说辞把那位粉丝气到直接发帖："我压根不认识他，哪来的熟人玩笑？"截图传到微博又火了一轮。"贵公子瞧不起穷人"的标签糊到脸上，两个国民级品牌立刻撤了合作邀约。',
+          statChanges: { prRisk: 10, fanLoyalty: -5, commercialValue: -5 },
+        },
+      },
+      {
+        id: 'hometown_visit',
+        text: '直接带团队去那个县城直播',
+        subtext: '全程带货当地土特产',
+        outcome: {
+          narration: '三天后南陌格真的落地那个县城，直播间挂着"来看看南陌格嘴里的小县城"。当地文旅局配合得天衣无缝——全场两小时把县城所有土特产卖空。"贵公子反向打脸"上了正面热搜。',
+          statChanges: { money: 60000, fanLoyalty: 5, prRisk: -5, commercialValue: 3 },
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'trouble_socialite_birthday_flex',
+    category: 'business',
+    severity: 'low',
+    title: '南陌格晒自己的生日派对花了两百万',
+    description: '南陌格生日当晚自己发了九宫格——私人会所包场、米其林主厨、顶级 DJ 台、某奢侈品牌当季限定摆件。宠粉配文："给自己的小礼物。"一个本地生活博主扒出场地、菜单、摆件总价接近两百万。#南陌格 生日排面# 第 8 位，但评论区一半在夸"有排面"，一半在骂"经济下行你这样发"。',
+    emoji: '🎂',
+    forArtist: 'socialite',
+    choices: [
+      {
+        id: 'birthday_delete',
+        text: '连夜删博',
+        subtext: '装作没发过',
+        outcome: {
+          narration: '他凌晨两点删了博，但九宫格早就被营销号存档。"删博承认 = 心虚"的帖子反而更火了。评论区最高赞："早知道就别晒，晒了又删最难看。"',
+          statChanges: { prRisk: 4, fanLoyalty: -3 },
+        },
+      },
+      {
+        id: 'birthday_donate_match',
+        text: '同步宣布向公益捐同等金额',
+        subtext: '用两百万公益捐款对冲',
+        outcome: {
+          narration: '工作室公告"南陌格向山区教育捐款 200 万"配转账截图。风向立刻扭转——"花得起也捐得起"成了正面 tag。这一波等于花四百万买了个"贵公子的体面"，但人设立住了。',
+          statChanges: { money: -2000000, prRisk: -5, fanLoyalty: 5, commercialValue: 5 },
+        },
+      },
+      {
+        id: 'birthday_embrace',
+        text: '干脆做一期"南陌格的一天"纪录片',
+        subtext: '把炫富做成付费内容',
+        outcome: {
+          narration: '你和视频平台谈下了一档付费纪录片——"南陌格的一天：24 小时 X 万元"。节目爆火，但"把炫富变成生意"的争议也从未停过。两年后经济环境再变的时候，这节目会被翻出来鞭尸。',
+          statChanges: { money: 300000, commercialValue: 4, prRisk: 5 },
+        },
+      },
+    ],
+  },
 ];

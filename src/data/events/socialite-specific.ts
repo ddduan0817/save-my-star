@@ -226,4 +226,137 @@ export const socialiteSpecificEvents: GameEvent[] = [
       },
     ],
   },
+
+  // ===== 转型 / 资源 / 同期相关的非赎金类专属事件 =====
+  {
+    id: 'socialite_serious_role_audition',
+    category: 'business',
+    severity: 'medium',
+    title: '一位文艺片大导找他试镜"反派矿工"',
+    description: '某金棕榈入围过的文艺片导演给南陌格的工作室发来一份剧本——男二号"南方某矿区下井工头"，全程方言、毁容妆。导演直接说："你脸上那股贵气我想毁掉看看。"这是南陌格出道以来第一次被非偶像剧/非高奢广告体系认真邀约。但试镜要去剧组深山待两周，期间他三个高奢代言的拍摄要全部推。',
+    emoji: '🎞️',
+    forArtist: 'socialite',
+    minDay: 8,
+    choices: [
+      {
+        id: 'serious_take',
+        text: '推掉广告进组',
+        subtext: '赌一次"贵公子转演员"',
+        outcome: {
+          narration: '南陌格剃了头、晒黑了一档，进组前两天因为方言被导演骂哭过两次。三个月后片子拿了某海外电影节的展映，"南陌格 演技# 第一次冲上热搜正面位。但被推掉的两个高奢品牌悄悄把代言转给了他的圈内对手。',
+          statChanges: { money: -200000, commercialValue: 3, fanLoyalty: 7, prRisk: -3 },
+          unlockTag: 'transform',
+        },
+      },
+      {
+        id: 'serious_decline',
+        text: '婉拒，专注高奢主线',
+        subtext: '"贵公子不需要去演矿工"',
+        outcome: {
+          narration: '工作室回了"档期冲突"。导演半年后用了一个新人男演员，那个新人因这部片子提名了影帝。每次刷到提名新闻，南陌格都会沉默。但这一季他的高奢代言费报价又涨了 20%。',
+          statChanges: { money: 150000, commercialValue: 4, fanLoyalty: -3 },
+        },
+      },
+      {
+        id: 'serious_negotiate',
+        text: '试镜，但要求改戏份',
+        subtext: '"我可以演，但不能毁容"',
+        outcome: {
+          narration: '你和导演谈了两小时，对方冷笑："那就不是这个角色。"导演当场撤了邀约，业内传开了"南陌格摆贵公子谱"的话头。圈内导演群组里你被点名讨论了一周。',
+          statChanges: { commercialValue: -3, prRisk: 4 },
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'socialite_pua_counter_rumor',
+    category: 'drama',
+    severity: 'high',
+    title: '"南陌格其实是 PUA 富婆的"反向传闻',
+    description: '一篇豆瓣长文火了——标题是《那些被"贵公子"PUA 过的姐姐们》，匿名拼凑了三段"被冷暴力—被借钱—被消失"的女性叙述，矛头隐约指向南陌格。文章没有点名，但行文里提到的"M 姓男模、出道于某选秀"几乎实锤。#南陌格 PUA# 冲到热搜第 4。这次不是富婆来撕他，是一群自称"受害者"的女性集体发声。',
+    emoji: '🚩',
+    forArtist: 'socialite',
+    minDay: 11,
+    choices: [
+      {
+        id: 'pua_legal_full',
+        text: '法务全网起诉造谣',
+        subtext: '律师函+公安立案 (-30万)',
+        requireMinMoney: 300000,
+        outcome: {
+          narration: '律师函下午就挂了官博。三天后两位"匿名受害者"撤回了帖子，但第三位放出了一段语音对话——南陌格的声音清楚说出了"姐你不借我这笔钱以后就别再找我"。"实锤"两字冲到热搜第 1。代言连掉两个。',
+          statChanges: { money: -300000, prRisk: 12, fanLoyalty: -7, commercialValue: -5 },
+        },
+      },
+      {
+        id: 'pua_female_endorse',
+        text: '请合作过的女性艺人发声背书',
+        subtext: '让搭档姐姐们站出来 (-50万人情)',
+        outcome: {
+          narration: '你动用了所有人情，三位和南陌格合作过古偶剧的女演员一起发了"陌弟弟一直很尊重对手"的暖文。话题被掰回"职场风评 vs 情感传闻"。受害者帖子没撤，但讨论度被冲淡了一半。但你这三笔人情，以后是要还的。',
+          statChanges: { money: -50000, prRisk: -5, fanLoyalty: 4, commercialValue: -2 },
+          unlockTag: 'owe_industry_favor',
+        },
+      },
+      {
+        id: 'pua_self_disclose',
+        text: '南陌格自己直播谈感情史',
+        subtext: '主动掰开揉碎讲',
+        outcome: {
+          narration: '他开了一场两小时直播，承认"年轻时确实从某些姐姐身上得到过帮助，没有处理好"，没具体回应任何指控但姿态放得很低。粉丝哭了一片，部分路人买账："至少他没装无辜。" 但圈内有人说："这种事情你越承认越脱不开身。"',
+          statChanges: { fanLoyalty: 6, prRisk: -3, commercialValue: -3 },
+          twist: {
+            chance: 0.3,
+            narration: '直播第二天，那位匿名受害者放出了和直播内容矛盾的转账记录。"自爆翻车"的标签贴上来了。',
+            statChanges: { prRisk: 9, fanLoyalty: -5 },
+          },
+        },
+      },
+    ],
+  },
+
+  {
+    id: 'socialite_old_modelmate_offer',
+    category: 'business',
+    severity: 'medium',
+    title: '一位同期男模找他"合作出道"',
+    description: '当年和南陌格一起做"商务男模"的同期男生 W 在朋友圈发了条九宫格——他这两年靠健身和自拍混到了 50 万粉，今天给南陌格发了私信："陌哥，我想签你的工作室，你带带我，咱们当年的故事我可以帮你说也可以帮你不说。"言外之意非常清楚。',
+    emoji: '🤝',
+    forArtist: 'socialite',
+    minDay: 10,
+    choices: [
+      {
+        id: 'sign_him',
+        text: '签！把人攥在手里',
+        subtext: '工作室签下他做艺人 (-40万)',
+        requireMinMoney: 400000,
+        outcome: {
+          narration: '签约合同当晚就盖了章，对方第二天把"南陌格的好兄弟"挂在主页。你给他规划了健身博主路线，他配合得很好。但你心里清楚——你养的不是一个艺人，是一颗你自己埋的雷。',
+          statChanges: { money: -400000, prRisk: -5, commercialValue: 3 },
+          unlockTag: 'kept_old_modelmate',
+        },
+      },
+      {
+        id: 'pay_him_off',
+        text: '一次性给笔钱让他消失',
+        subtext: '直接打钱断关系 (-100万)',
+        requireMinMoney: 1000000,
+        outcome: {
+          narration: '一百万到账后他删了朋友圈，承诺"再不联系"。你松了一口气，但你也知道——这种承诺有保鲜期。这个人手里的料，就是一份他随时可以再开的存款。',
+          statChanges: { money: -1000000, prRisk: 3 },
+          unlockTag: 'paid_off_modelmate',
+        },
+      },
+      {
+        id: 'reject_modelmate',
+        text: '直接回"不熟"',
+        subtext: '装不认识他',
+        outcome: {
+          narration: '南陌格本人回了"先生，我们似乎没认识"。三小时后对方在豆瓣鹅组发了张当年两人合照，配文"陌哥别装"。截图传到微博，#南陌格 不认旧友# 上了热搜。这把硬刚等于把雷自己挑起来引爆。',
+          statChanges: { prRisk: 9, fanLoyalty: -3, commercialValue: -3 },
+        },
+      },
+    ],
+  },
 ];
