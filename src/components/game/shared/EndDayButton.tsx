@@ -36,7 +36,33 @@ export default function EndDayButton() {
               : "bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 text-white shadow-orange-200/50 hover:shadow-xl hover:shadow-orange-200/60",
           )}
         >
-          {hasUnresolvedUrgent ? '有紧急消息未处理' : '下班 💤'}
+          {hasUnresolvedUrgent ? (
+            '有紧急消息未处理'
+          ) : (
+            <span className="inline-flex items-center gap-1.5">
+              下班
+              <svg
+                width="22"
+                height="16"
+                viewBox="0 0 28 20"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                {/* 月牙 */}
+                <path
+                  d="M13 11.5 A6 6 0 1 1 6.8 5.5 A4.5 4.5 0 0 0 13 11.5 Z"
+                  strokeWidth="1.8"
+                />
+                {/* 飘起来的 Zzz —— 从小到大、往右上飘 */}
+                <path d="M15 15.5 h2.5 l-2.5 2.5 h2.5" strokeWidth="1.6" />
+                <path d="M18.5 9.5 h3 l-3 3 h3" strokeWidth="1.7" />
+                <path d="M22 3 h4 l-4 4 h4" strokeWidth="1.8" />
+              </svg>
+            </span>
+          )}
         </motion.button>
       </div>
     </div>
