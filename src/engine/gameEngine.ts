@@ -1,5 +1,6 @@
 import type { GameStats, GameEvent, EventChoice, StatChange, Ending, ConditionalOutcome, Twist, ArtistArchetype } from '@/types/game';
 import type { ArtistMentalState } from '@/types/new_systems';
+import type { SeasonalModifier } from '@/data/seasonalModifiers';
 import { GAME_CONFIG } from '@/data/constants';
 import { applyStatChanges } from './outcomeCalculator';
 import { selectEventsForDay } from './eventSelector';
@@ -93,9 +94,10 @@ export function startNewDay(
   mentalContext?: {
     mental: ArtistMentalState;
     lowMoodStreak: number;
-  }
+  },
+  modifiers?: SeasonalModifier[],
 ): DayResult {
-  const events = selectEventsForDay(day, stats, eventUsageMap, activeTags, artistId, mentalContext);
+  const events = selectEventsForDay(day, stats, eventUsageMap, activeTags, artistId, mentalContext, modifiers);
   return { events };
 }
 
@@ -110,6 +112,7 @@ export function resolveChoice(
   appearanceMultiplier?: number,
   stiffFaceActive?: boolean,
   mental?: ArtistMentalState,
+  modifiers?: SeasonalModifier[],
 ): ChoiceResult {
   // 1. 检查是否有条件分支匹配
   const conditionalOutcome = resolveConditionalOutcome(
@@ -125,7 +128,7 @@ export function resolveChoice(
   // 加随机波动，让同一选项每次结果不同
   const statChanges = randomizeStatChanges(baseStatChanges);
 
-  const newStats = applyStatChanges(currentStats, statChanges, artistId, appearanceMultiplier, stiffFaceActive);
+  const newStats = applyStatChanges(currentStats, statChanges, artistId, appearanceMultiplier, stiffFaceActive, event.category, modifiers);
 
   // Singer special: can survive one critical crisis. Clamp the risk and add a
   // narrative tag, but DON'T skip downstream twist/ending logic.

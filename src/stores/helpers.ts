@@ -7,6 +7,7 @@ import type {
   LedgerEntry,
 } from '@/types/game';
 import type { ArtistMentalState } from '@/types/new_systems';
+import type { SeasonalModifier } from '@/data/seasonalModifiers';
 import { checkAchievements, loadUnlockedAchievements, type Achievement } from '@/data/achievements';
 import { startNewDay } from '@/engine/gameEngine';
 import { findEventById, resolveEventForArtist } from '@/engine/eventSelector';
@@ -111,8 +112,9 @@ export function generateEventsForDay(
     mental: ArtistMentalState;
     lowMoodStreak: number;
   },
+  modifiers?: SeasonalModifier[],
 ): { events: GameEvent[]; newUsageMap: Record<string, number> } {
-  let { events } = startNewDay(day, stats, eventUsageMap, activeTags, artistId, mentalContext);
+  let { events } = startNewDay(day, stats, eventUsageMap, activeTags, artistId, mentalContext, modifiers);
 
   // Inject follow-up events (event chains — supports multiple simultaneous chains)
   if (pendingFollowUpEventIds && pendingFollowUpEventIds.length > 0) {

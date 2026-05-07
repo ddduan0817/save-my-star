@@ -23,6 +23,10 @@ import {
   applyDailyMentalEffects,
 } from '@/engine/systems';
 import { appendLedger, generateEventsForDay, MAX_CARRYOVER_MESSAGES } from '../helpers';
+import { findEventById, resolveEventForArtist } from '@/engine/eventSelector';
+import { generateDailyBriefing } from '@/engine/briefingGenerator';
+import { pickConsequenceCallback } from '@/data/consequenceCallbacks';
+import { pickFansiteArcEvent } from '@/data/fansiteArcs';
 
 type Getter = () => GameStore;
 type Setter = (partial: Partial<GameStore>) => void;
@@ -34,6 +38,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       eventUsageMap, pendingFollowUpEventIds,
       artistSchedule, companyUpgrades, rival, cosmeticState,
       mentalState, insurancePolicies, fansites, lowMoodStreak,
+      seasonalModifiers, firedCallbackIds, fansiteArcStep,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -68,8 +73,8 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       }
     }
 
-    // 2. Apply daily passive effects (with upgrade bonuses)
-    newStats = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team);
+    // 2. Apply daily passive effects (with upgrade bonuses + seasonal modifier)
+    newStats = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team, seasonalModifiers);
 
     // 2.1 Tick cosmetic state (recovery & stiff face countdown)
     const newCosmeticState = tickCosmeticState(cosmeticState);
@@ -133,9 +138,57 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     const { events, newUsageMap } = generateEventsForDay(
       nextDay, newStats, eventUsageMap, newActiveTags, artist?.id, pendingFollowUpEventIds,
       { mental: newMentalState, lowMoodStreak: newLowMoodStreak },
+      seasonalModifiers,
     );
 
-    const newMessages = createMessages(events, nextDay);
+    // 5.1 Forced seasonal event injection (e.g. paparazzi era每4天偷拍)
+    let augmentedEvents = events;
+    let augmentedUsageMap = newUsageMap;
+    for (const m of seasonalModifiers) {
+      if (!m.forcedEvent) continue;
+      const { eventId, everyNDays } = m.forcedEvent;
+      if (everyNDays <= 0) continue;
+      if (nextDay > 1 && nextDay % everyNDays === 0) {
+        const ev = findEventById(eventId);
+        if (ev && !augmentedEvents.some(e => e.id === eventId)) {
+          augmentedEvents = [resolveEventForArtist(ev, artist?.id), ...augmentedEvents];
+          augmentedUsageMap = { ...augmentedUsageMap, [eventId]: nextDay };
+        }
+      }
+    }
+
+    // 5.2 Consequence callback injection — late-game payoff for early-game tags
+    let newFiredCallbackIds = firedCallbackIds;
+    if (artist) {
+      const callback = pickConsequenceCallback({
+        day: nextDay,
+        activeTags: newActiveTags,
+        firedIds: firedCallbackIds,
+        artistId: artist.id,
+      });
+      if (callback) {
+        augmentedEvents = [resolveEventForArtist(callback, artist.id), ...augmentedEvents];
+        augmentedUsageMap = { ...augmentedUsageMap, [callback.id]: nextDay };
+        newFiredCallbackIds = [...firedCallbackIds, callback.id];
+      }
+    }
+
+    // 5.3 Fansite story arc injection — long-form per-artist arc
+    let newFansiteArcStep = fansiteArcStep;
+    if (artist) {
+      const arcResult = pickFansiteArcEvent({
+        day: nextDay,
+        artistId: artist.id,
+        fansiteArcStep,
+      });
+      if (arcResult) {
+        augmentedEvents = [resolveEventForArtist(arcResult.event, artist.id), ...augmentedEvents];
+        augmentedUsageMap = { ...augmentedUsageMap, [arcResult.event.id]: nextDay };
+        newFansiteArcStep = { ...fansiteArcStep, [arcResult.fansiteId]: arcResult.nextStep };
+      }
+    }
+
+    const newMessages = createMessages(augmentedEvents, nextDay);
 
     // Separate phone call events (max 1 per day as fullscreen ring, from day 3+).
     // Any additional phone-call events that happen to be generated on the same
@@ -248,6 +301,18 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       fansiteMerchLedger,
     );
 
+    // Generate daily briefing for the new day
+    const newBriefing = artist
+      ? generateDailyBriefing({
+          day: nextDay,
+          stats: newStats,
+          artist,
+          modifiers: seasonalModifiers,
+          mentalState: newMentalState,
+          firstDay: false,
+        })
+      : null;
+
     set({
       currentDay: nextDay,
       stats: newStats,
@@ -255,7 +320,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       activeMessageId: null,
       activeTab: 'messages',
       gamePhase: 'playing',
-      eventUsageMap: newUsageMap,
+      eventUsageMap: augmentedUsageMap,
       pendingFollowUpEventIds: [],
       peakRisk: newPeakRisk,
       lastOutcomeNarration: '',
@@ -279,6 +344,9 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       lowMoodStreak: newLowMoodStreak,
       collapseWarning: newCollapseWarning,
       riskIndicators: newRiskIndicators,
+      dailyBriefing: newBriefing,
+      firedCallbackIds: newFiredCallbackIds,
+      fansiteArcStep: newFansiteArcStep,
       insurancePolicies: newInsurancePolicies,
       fansites: decayedFansites,
       fansiteInteractionsUsed: 0,

@@ -1,6 +1,14 @@
 import type { GameStats, StatChange } from '@/types/game';
+import type { SeasonalModifier } from '@/data/seasonalModifiers';
 import { GAME_CONFIG } from '@/data/constants';
 import { clampStat } from '@/lib/utils';
+import {
+  aggregateMoneyMultiplier,
+  aggregatePrRiskDecay,
+  aggregateFameRisk,
+  aggregateBusinessMoney,
+  aggregateCrisisMoney,
+} from '@/data/seasonalModifiers';
 
 // 递减收益：数值越高，正面增长越难
 function applyDiminishingReturns(currentValue: number, change: number): number {
@@ -16,6 +24,8 @@ export function applyStatChanges(
   artistId?: string,
   appearanceMultiplier?: number,
   stiffFaceActive?: boolean,
+  eventCategory?: string,
+  modifiers?: SeasonalModifier[],
 ): GameStats {
   let { commercialValue, fanLoyalty, prRisk, money } = stats;
 
@@ -23,6 +33,15 @@ export function applyStatChanges(
   let fl = changes.fanLoyalty ?? 0;
   let pr = changes.prRisk ?? 0;
   let mn = changes.money ?? 0;
+
+  // Seasonal modifier: per-category money multiplier (business gains / crisis losses)
+  if (modifiers && modifiers.length > 0 && mn !== 0 && eventCategory) {
+    if (eventCategory === 'business' && mn > 0) {
+      mn = Math.round(mn * aggregateBusinessMoney(modifiers));
+    } else if (eventCategory === 'crisis' && mn < 0) {
+      mn = Math.round(mn * aggregateCrisisMoney(modifiers));
+    }
+  }
 
   // 颜值倍率：正向 cv/fl 乘以 appearance multiplier
   if (appearanceMultiplier && appearanceMultiplier !== 1.0) {
@@ -82,49 +101,59 @@ export function applyStatChanges(
   return { commercialValue, fanLoyalty, prRisk, money };
 }
 
-export function applyDailyPassiveEffects(stats: GameStats, prTeamLevel: number = 0): GameStats {
+export function applyDailyPassiveEffects(
+  stats: GameStats,
+  prTeamLevel: number = 0,
+  modifiers?: SeasonalModifier[],
+): GameStats {
   let { commercialValue, fanLoyalty, prRisk, money } = stats;
 
+  const moneyMult = modifiers ? aggregateMoneyMultiplier(modifiers) : 1.0;
+  const decayMult = modifiers ? aggregatePrRiskDecay(modifiers) : 1.0;
+  const fameRiskMult = modifiers ? aggregateFameRisk(modifiers) : 1.0;
+
   // Natural risk decay (+ PR team upgrade bonus)
-  prRisk = clampStat(prRisk + GAME_CONFIG.DAILY_RISK_DECAY - prTeamLevel);
+  // DAILY_RISK_DECAY is negative; higher decayMult => faster decay => more negative
+  const naturalDecay = Math.round(GAME_CONFIG.DAILY_RISK_DECAY * decayMult) - prTeamLevel;
+  prRisk = clampStat(prRisk + naturalDecay);
 
   // High risk drains commercial value
   if (prRisk > GAME_CONFIG.HIGH_RISK_THRESHOLD) {
     commercialValue = clampStat(commercialValue + GAME_CONFIG.HIGH_RISK_COMMERCIAL_DRAIN);
   }
 
-  // 人红是非多：名气越高，每天被动吸引风险
+  // 人红是非多：名气越高，每天被动吸引风险（受 modifier 放大/缩小）
   const fame = commercialValue + fanLoyalty;
-  if (fame >= 140) {
-    // 顶级名气：每天+3风险
-    prRisk = clampStat(prRisk + 3);
-  } else if (fame >= 110) {
-    // 高名气：每天+2风险
-    prRisk = clampStat(prRisk + 2);
-  } else if (fame >= 80) {
-    // 中等名气：每天+1风险
-    prRisk = clampStat(prRisk + 1);
+  let fameRiskAdd = 0;
+  if (fame >= 140) fameRiskAdd = 3;
+  else if (fame >= 110) fameRiskAdd = 2;
+  else if (fame >= 80) fameRiskAdd = 1;
+  if (fameRiskAdd > 0) {
+    prRisk = clampStat(prRisk + Math.max(1, Math.round(fameRiskAdd * fameRiskMult)));
   }
 
   // Daily operating costs
   money += GAME_CONFIG.DAILY_MONEY_COST;
 
   // High fan loyalty provides a small money bonus (merch etc.)
+  let bonusMoney = 0;
   if (fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD) {
-    money += 4000;
+    bonusMoney += 4000;
   } else if (fanLoyalty >= 60) {
-    // 中高忠诚也有基础周边/打投返点
-    money += 2000;
+    bonusMoney += 2000;
   }
 
   // 商业价值带来的日常分成（代言商务的长期尾单分摊）
   if (commercialValue >= 80) {
-    money += 6000;
+    bonusMoney += 6000;
   } else if (commercialValue >= 60) {
-    money += 3500;
+    bonusMoney += 3500;
   } else if (commercialValue >= 40) {
-    money += 1500;
+    bonusMoney += 1500;
   }
+
+  // Modifier multiplier only scales the bonus (not the fixed daily cost — costs are固定的)
+  money += Math.round(bonusMoney * moneyMult);
 
   return { commercialValue, fanLoyalty, prRisk, money };
 }

@@ -47,6 +47,8 @@ import {
   applyMentalEffect,
 } from '@/engine/systems';
 import { getFansitesForArtist } from '@/data/fansites';
+import { rollSeasonalModifiers } from '@/data/seasonalModifiers';
+import { generateDailyBriefing } from '@/engine/briefingGenerator';
 import type { GameStore } from './types';
 import { makeFreshGameState } from './initialState';
 import { addLedger, runAchievementCheck, generateEventsForDay } from './helpers';
@@ -65,9 +67,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
     const stats = { ...artist.initialStats };
     const eventUsageMap: Record<string, number> = {};
     const activeTags: string[] = [];
+    const modifiers = rollSeasonalModifiers();
 
     const { events, newUsageMap } = generateEventsForDay(
-      day, stats, eventUsageMap, activeTags, artistId
+      day, stats, eventUsageMap, activeTags, artistId, undefined, undefined, modifiers,
     );
 
     const messages = createMessages(events, day);
@@ -104,6 +107,17 @@ export const useGameStore = create<GameStore>((set, get) => ({
       fansites: getFansitesForArtist(artistId),
       collapseWarning: initialCollapseWarning,
       riskIndicators: initialRiskIndicators,
+      // 大环境 modifier
+      seasonalModifiers: modifiers,
+      showSeasonalIntro: modifiers.length > 0,
+      dailyBriefing: generateDailyBriefing({
+        day,
+        stats,
+        artist,
+        modifiers,
+        mentalState: initialMentalState,
+        firstDay: true,
+      }),
     });
 
     // Day 1 daily operating cost
@@ -151,7 +165,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   selectChoice: (choice: EventChoice) => {
-    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState, mentalState } = get();
+    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState, mentalState, seasonalModifiers } = get();
     const event = currentEvents[currentEventIndex];
 
     // Enforce选项门槛 — silently ignore when requirements aren't met. UI should
@@ -161,7 +175,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
     if (choice.requireMaxPrRisk !== undefined && stats.prRisk > choice.requireMaxPrRisk) return;
 
     const appMultiplier = getAppearanceMultiplier(cosmeticState.appearance);
-    const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk, appMultiplier, cosmeticState.stiffFaceActive, mentalState);
+    const result = resolveChoice(event, choice, stats, artist!.id, currentDay, activeTags, peakRisk, appMultiplier, cosmeticState.stiffFaceActive, mentalState, seasonalModifiers);
 
     const newTags = [...activeTags];
     if (result.unlockTag) newTags.push(result.unlockTag);
@@ -520,6 +534,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   dismissAchievement: () => {
     set({ pendingAchievement: null });
+  },
+
+  dismissSeasonalIntro: () => {
+    set({ showSeasonalIntro: false });
   },
 
   loadCollection: () => {

@@ -80,5 +80,16 @@ export function makeFreshGameState(): GameState {
     riskIndicators: initialRiskIndicators.map(r => ({ ...r })),
     insurancePolicies: [],
     fansiteInteractionsUsed: 0,
+
+    // 开局大环境 —— startGame 里抽取；makeFresh 默认空
+    seasonalModifiers: [],
+    showSeasonalIntro: false,
+    dailyBriefing: null,
+
+    // 因果回调
+    firedCallbackIds: [],
+
+    // 大粉剧情弧
+    fansiteArcStep: {},
   };
 }

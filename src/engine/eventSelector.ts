@@ -21,7 +21,11 @@ import { absurdEvents } from '@/data/events/absurd';
 import { metaEvents } from '@/data/events/meta-events';
 import { mentalStateEvents } from '@/data/events/mental-state';
 import { mentalTriggerEvents, mentalTriggerIds, getActiveMentalTriggers } from '@/data/events/mental-triggers';
+import { consequenceCallbackEvents } from '@/data/consequenceCallbacks';
+import { fansiteArcEvents } from '@/data/fansiteArcs';
 import type { ArtistMentalState } from '@/types/new_systems';
+import type { SeasonalModifier } from '@/data/seasonalModifiers';
+import { aggregateCategoryWeight } from '@/data/seasonalModifiers';
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -45,6 +49,8 @@ const allEvents: GameEvent[] = [
   ...metaEvents,
   ...mentalStateEvents,
   ...mentalTriggerEvents,
+  ...consequenceCallbackEvents,
+  ...fansiteArcEvents,
 ];
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复
@@ -161,7 +167,8 @@ export function selectEventsForDay(
   mentalContext?: {
     mental: ArtistMentalState;
     lowMoodStreak: number;
-  }
+  },
+  modifiers?: SeasonalModifier[],
 ): GameEvent[] {
   const eligible = allEvents.filter(e =>
     isEventEligible(e, day, stats, eventUsageMap, activeTags, artistId)
@@ -220,10 +227,13 @@ export function selectEventsForDay(
   // Prefer unused events, then oldest used events
   const weighted = normalEligible.map(event => {
     const baseWeight = getCategoryWeight(event.category, stats, day);
+    const modifierWeight = modifiers && modifiers.length > 0
+      ? aggregateCategoryWeight(modifiers, event.category)
+      : 1.0;
     const lastUsed = eventUsageMap[event.id];
     // Never-used events get 2x weight; older usage = higher weight
     const freshnessBonus = lastUsed === undefined ? 2.0 : 1.0 + (day - lastUsed - EVENT_COOLDOWN) * 0.1;
-    return { event, weight: baseWeight * Math.max(freshnessBonus, 0.5) };
+    return { event, weight: baseWeight * modifierWeight * Math.max(freshnessBonus, 0.5) };
   });
 
   const selected: GameEvent[] = [];

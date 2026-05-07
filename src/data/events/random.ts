@@ -16,6 +16,7 @@ export const randomEvents: GameEvent[] = [
         outcome: {
           narration: '艺人亲自转发了最火的表情包，配文"你们够了哈哈哈"。这条微博转发破百万，"本人下场玩梗第一人"成了新标签。',
           statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: -3 },
+          unlockTag: 'embraced_meme',
         },
       },
       {

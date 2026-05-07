@@ -35,6 +35,7 @@ import type {
   FansiteInteraction,
   InsuranceType,
 } from '@/types/new_systems';
+import type { SeasonalModifier } from '@/data/seasonalModifiers';
 
 export interface GameState {
   // Core state
@@ -141,6 +142,22 @@ export interface GameState {
   insurancePolicies: InsurancePolicy[];
   /** 当日已用的大粉互动次数 */
   fansiteInteractionsUsed: number;
+
+  // ===== 开局大环境 modifier =====
+  /** 本局随机抽到的娱乐圈大环境卡（1-2 张） */
+  seasonalModifiers: SeasonalModifier[];
+  /** 开局卡展示 flag —— 让 UI 控制何时弹"本季大环境"弹窗 */
+  showSeasonalIntro: boolean;
+  /** 每日晨间简报文本（Briefing 系统） */
+  dailyBriefing: string | null;
+
+  // ===== 因果回调（Consequence Callback）系统 =====
+  /** 已触发过的因果回调事件 id，避免重复 */
+  firedCallbackIds: string[];
+
+  // ===== 大粉剧情弧 =====
+  /** 每条弧按 fansiteId 记录推进步数 (0=未开始, 1=intro已触发, 2=mid已触发, 3=finale已触发) */
+  fansiteArcStep: Record<string, number>;
 }
 
 export interface GameActions {
@@ -178,6 +195,7 @@ export interface GameActions {
   purchaseInsurance: (policyId: InsuranceType) => { success: boolean; message: string };
   cancelInsurance: (policyId: InsuranceType) => { refund: number; message: string };
   loadCollection: () => void;
+  dismissSeasonalIntro: () => void;
 }
 
 export type GameStore = GameState & GameActions;
