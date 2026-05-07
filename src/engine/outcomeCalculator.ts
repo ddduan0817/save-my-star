@@ -64,6 +64,13 @@ export function applyStatChanges(
     if (mn > 0) mn = Math.round(mn * 1.5);
     fanLoyalty = clampStat(fanLoyalty + fl);
     commercialValue = clampStat(commercialValue + cv);
+  } else if (artistId === 'socialite') {
+    // 贵公子体质：大额代言（金额 >= 500000）收益×1.5，其它正向金额×1.2；私密黑料的风险×2
+    if (mn >= 500000) mn = Math.round(mn * 1.5);
+    else if (mn > 0) mn = Math.round(mn * 1.2);
+    if (pr > 0) pr = Math.round(pr * 2);
+    fanLoyalty = clampStat(fanLoyalty + fl);
+    commercialValue = clampStat(commercialValue + cv);
   } else {
     fanLoyalty = clampStat(fanLoyalty + fl);
     commercialValue = clampStat(commercialValue + cv);

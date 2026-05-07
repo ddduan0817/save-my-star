@@ -9,6 +9,7 @@ import { idolSpecificEvents } from '@/data/events/idol-specific';
 import { actorSpecificEvents } from '@/data/events/actor-specific';
 import { singerSpecificEvents } from '@/data/events/singer-specific';
 import { influencerSpecificEvents } from '@/data/events/influencer-specific';
+import { socialiteSpecificEvents } from '@/data/events/socialite-specific';
 import { lateGameEvents } from '@/data/events/late-game';
 import { milestoneEvents } from '@/data/events/milestone';
 import { chainEvents } from '@/data/events/chains';
@@ -30,6 +31,7 @@ const allEvents: GameEvent[] = [
   ...actorSpecificEvents,
   ...singerSpecificEvents,
   ...influencerSpecificEvents,
+  ...socialiteSpecificEvents,
   ...lateGameEvents,
   ...milestoneEvents,
   ...chainEvents,

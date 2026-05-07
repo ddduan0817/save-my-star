@@ -69,7 +69,7 @@ export const rivalDefinitions: RivalDefinition[] = [
   {
     id: 'wang_sc',
     forArtist: 'influencer',
-    name: '王诗畅',
+    name: '王思琪',
     avatar: '🎀',
     title: '正统小花·未来青衣',
     backstory: '正经影视公司签约小花，童星出身从小拍戏，剧组经验丰富，被业内看好为"未来青衣"。和冷冰凝颜值路线相似，常撞戏、撞代言、撞造型。最反感冷冰凝这种"网红跨界分资源"——粉丝看不起"网红咖"，而冷冰凝粉丝嘲她"颜值不够热度凑"。',
@@ -80,6 +80,22 @@ export const rivalDefinitions: RivalDefinition[] = [
       fanLoyalty: 45,
       prRisk: 15,
       appearance: 55,
+    },
+  },
+  {
+    id: 'gu_junting',
+    forArtist: 'socialite',
+    name: '顾君庭',
+    avatar: '💎',
+    title: '学院派小生·科班贵公子',
+    backstory: '北电表演系科班出身，家里是搞艺术的世家。和南陌一样走"贵公子"路线，但他是"真贵族"——家世清白、演技在线、从不拍商业大片。南陌每拿一个高奢代言，他的粉丝都要嘲一轮"网红夹子音也配穿定制"。南陌粉丝反嘲"学院派穷酸"。',
+    initialFameLevel: 'medium',
+    initialAggression: 50,
+    stats: {
+      commercialValue: 45,
+      fanLoyalty: 55,
+      prRisk: 15,
+      appearance: 72,
     },
   },
 ];

@@ -136,4 +136,138 @@ export const actorSpecificEvents: GameEvent[] = [
       },
     ],
   },
+
+  // ===== 招牌黑料：金鸡人情 + 剧组难搞 =====
+  {
+    id: 'actor_ex_director_shade',
+    category: 'drama',
+    severity: 'high',
+    title: '前合作导演采访里阴阳她',
+    description: '一位和郝美丽合作过的导演在综艺采访里说："现在有些演员，戏还没拍完就开始关心自己的海报占多少面积、C位站哪儿。"主持人追问"说谁呢"，他笑了笑没接话。全圈都知道在说谁。',
+    emoji: '🎞️',
+    forArtist: 'actor',
+    minDay: 6,
+    choices: [
+      {
+        id: 'counter_interview',
+        text: '发采访正面回应',
+        subtext: '"我关心的从来不是 C 位"',
+        outcome: {
+          narration: '郝美丽接受了一家主流媒体的专访，详细讲了当年和那位导演的合作细节——最后一句："他说的那个演员不是我，我不会为不存在的事情道歉。"态度强硬但有条理，影迷站她。',
+          statChanges: { fanLoyalty: 4, prRisk: 3, commercialValue: -3 },
+          unlockTag: 'publicly_defended',
+        },
+      },
+      {
+        id: 'call_director_apologize',
+        text: '私下电话求和',
+        subtext: '"老师我那时候不懂事"',
+        outcome: {
+          narration: '你让她给导演打了个电话。导演在电话里"呵呵"了半天，最后说："你们团队会做人。"第二天他发了条微博："那天采访被断章取义，和郝美丽合作愉快。"危机解了，但她在电话挂掉之后摔了杯子。',
+          statChanges: { prRisk: -3, fanLoyalty: -3, commercialValue: 3 },
+          unlockTag: 'bent_knee',
+        },
+      },
+      {
+        id: 'let_it_cool',
+        text: '不回应等它冷',
+        subtext: '舆论不会烧太久',
+        outcome: {
+          narration: '三天内有更大的瓜盖过去了。但"郝美丽耍大牌"的标签被人悄悄记下了——下次再有事，这会是第一条被翻出来的"旧账"。',
+          statChanges: { prRisk: 3, fanLoyalty: -3 },
+        },
+      },
+    ],
+  },
+  {
+    id: 'actor_goldrooster_leak',
+    category: 'crisis',
+    severity: 'critical',
+    title: '金鸡奖内部投票流出',
+    description: '颁奖季前夕，一份"某届金鸡新人奖最终评委会名单和投票倾向"在圈内疯传。第一个被点名的就是郝美丽——那届评委里确实有她本科班导师，而且那位导师明确投了她。#金鸡人情奖 挂上主榜。',
+    emoji: '🏆',
+    forArtist: 'actor',
+    minDay: 9,
+    choices: [
+      {
+        id: 'prove_with_work',
+        text: '作品回应',
+        subtext: '晒出那届其他入围作品对比',
+        outcome: {
+          narration: '团队整理了一条长视频："郝美丽那部文艺片在海外三大电影节的评价、票房、豆瓣评分"——横向对比后确实站得住脚。影迷转发："评委是人情，但戏是真的好。"路人被说服了一部分。',
+          statChanges: { prRisk: -3, fanLoyalty: 4, commercialValue: 3 },
+        },
+      },
+      {
+        id: 'mentor_statement',
+        text: '让导师发声说明',
+        subtext: '请导师发长文解释评委规则',
+        outcome: {
+          narration: '导师发了两千字长文："金鸡评委会的投票流程是双盲、多轮制，我投她因为那是她应得的。"这篇文有理有据，但"老师护犊子"的调子压不下去。',
+          statChanges: { prRisk: 3, fanLoyalty: 3 },
+        },
+      },
+      {
+        id: 'return_award',
+        text: '大动作——退还奖杯',
+        subtext: '"如果这个奖有争议，我可以还回去"',
+        outcome: {
+          narration: '郝美丽发了一条微博："如果我的获奖让这个奖项本身承受了质疑，我愿意把它送回评委会。"这招把所有人都震住了。金鸡官方连夜发声明"郝美丽获奖合规"，反而帮她洗白了一轮。',
+          statChanges: { fanLoyalty: 8, prRisk: -7, commercialValue: 5 },
+          unlockTag: 'returned_award',
+          twist: {
+            chance: 0.3,
+            narration: '但是！有人扒出她其实是提前知道评委会不会接受退还的。"作秀"的标签贴上来了。',
+            statChanges: { fanLoyalty: -5, prRisk: 3 },
+          },
+        },
+      },
+    ],
+  },
+  {
+    id: 'actor_old_feud_director',
+    category: 'business',
+    severity: 'high',
+    title: '她当年得罪过的前辈拿着剧本找来了',
+    description: '一部投资两亿的年度正剧，导演正是她五年前在片场顶撞过的那位老前辈——那次她当众说他"不懂女性角色"。现在对方亲自把剧本递过来，女一。剧本写得很好，但这个人——你真的敢让她接吗？',
+    emoji: '🎭',
+    forArtist: 'actor',
+    minDay: 13,
+    choices: [
+      {
+        id: 'take_the_role',
+        text: '接！冰释前嫌',
+        subtext: '借这部戏洗白"难搞"标签',
+        outcome: {
+          narration: '她接了。开机仪式上两人对镜头微笑握手，"捐弃前嫌"上了热搜。剧组第一周相安无事——你屏住呼吸等着看什么时候爆。',
+          statChanges: { money: 400000, commercialValue: 6, prRisk: 3 },
+          unlockTag: 'accepted_old_feud_project',
+          twist: {
+            chance: 0.45,
+            narration: '第二周导演在围读会上故意把她的戏全改成群戏。她当场摔了剧本，"女演员片场摔剧本"视频疯传。剧要不要继续拍都成了问题。',
+            statChanges: { prRisk: 12, commercialValue: -6, fanLoyalty: -5 },
+          },
+        },
+      },
+      {
+        id: 'decline_politely',
+        text: '礼貌推掉',
+        subtext: '"档期不合适"',
+        outcome: {
+          narration: '她亲自给对方打了电话致谢并推了剧本。导演表面客气，背地里在圈内说"她果然还是那个毛病"。这件事没上热搜，但下一次奖项评选会变成暗伤。',
+          statChanges: { prRisk: 3, fanLoyalty: 3 },
+        },
+      },
+      {
+        id: 'counter_offer',
+        text: '提条件：换编剧',
+        subtext: '"我接，但剧本必须我签过才行"',
+        outcome: {
+          narration: '导演没想到她敢提条件——更没想到是在行业会上当众提。现场一半人觉得"她疯了"，一半人觉得"有种"。最后导演真的让了一步：剧本由她和原编剧共同署名。这部戏还没拍，她先在圈内立住了一个新人设。',
+          statChanges: { fanLoyalty: 6, commercialValue: 4, prRisk: 4 },
+          unlockTag: 'earned_credit',
+        },
+      },
+    ],
+  },
 ];

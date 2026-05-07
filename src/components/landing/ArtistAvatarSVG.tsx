@@ -72,6 +72,14 @@ const themes: Record<string, FaceTheme> = {
     cheek: '#FF8896',
     accent: '#F43F5E',
   },
+  socialite: {
+    bgFrom: '#F5E9D4',
+    bgTo: '#D4B572',
+    faceFill: '#FBF4E3',
+    faceStroke: '#4A3714',
+    cheek: '#E7B07A',
+    accent: '#B8883F',
+  },
 };
 
 // ===== Signature props: each is a small SVG group on the right of the face =====
@@ -160,11 +168,40 @@ function PhoneProp({ accent, stroke }: { accent: string; stroke: string }) {
   );
 }
 
+function ChampagneProp({ accent, stroke }: { accent: string; stroke: string }) {
+  // 贵公子 — champagne flute
+  return (
+    <g>
+      {/* flute bowl (elongated cone) */}
+      <path
+        d="M70 54 L80 54 L78 68 Q75 70 72 68 Z"
+        fill={accent}
+        opacity="0.85"
+        stroke={stroke}
+        strokeWidth="1.4"
+      />
+      {/* liquid surface */}
+      <ellipse cx="75" cy="55" rx="5" ry="1.1" fill="#fff" opacity="0.55" />
+      {/* stem */}
+      <line x1="75" y1="70" x2="75" y2="82" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" />
+      {/* base */}
+      <ellipse cx="75" cy="83" rx="5" ry="1.4" fill={stroke} />
+      {/* bubbles */}
+      <circle cx="73" cy="60" r="0.9" fill="#fff" opacity="0.9" />
+      <circle cx="76" cy="63" r="0.8" fill="#fff" opacity="0.85" />
+      <circle cx="74" cy="65" r="0.7" fill="#fff" opacity="0.8" />
+      {/* sparkle */}
+      <path d="M84 48 L85 50.5 L87.5 51 L85 51.5 L84 54 L83 51.5 L80.5 51 L83 50.5 Z" fill={accent} opacity="0.75" />
+    </g>
+  );
+}
+
 const SIGNATURE_MAP: Record<string, (props: { accent: string; stroke: string }) => JSX.Element> = {
   idol: MicProp,
   actor: ClapperProp,
   singer: HeadphonesProp,
   influencer: PhoneProp,
+  socialite: ChampagneProp,
 };
 
 export default function ArtistAvatarSVG({
@@ -203,6 +240,11 @@ export default function ArtistAvatarSVG({
       leftEye:  { cx: 40, cy: 44, rx: 2.4, ry: 2.8 }, // big anime eyes
       rightEye: { cx: 56, cy: 44, rx: 2.4, ry: 2.8 },
       mouth: 'M43.5 54 Q50 58.5 56.5 54', // wider smile
+    },
+    socialite: {
+      leftEye:  { cx: 40, cy: 44, rx: 2, ry: 2.3 },
+      rightEye: { cx: 56, cy: 44, rx: 2, ry: 2.3 },
+      mouth: 'M44 55 Q50 53.5 56 55', // half-smirk (贵公子式浅笑)
     },
   };
   const exp = expressions[artistId] || expressions.idol;

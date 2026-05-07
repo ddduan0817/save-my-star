@@ -45,6 +45,12 @@ const artistThemes: Record<string, {
     ringColor: 'ring-[#F5969F]/60',
     tilt: 'rotate-[1deg]',
   },
+  socialite: {
+    tagBg: 'bg-[#D4B572]',
+    tagText: 'text-[#4A3714]',
+    ringColor: 'ring-[#C9A34A]/60',
+    tilt: '-rotate-[0.9deg]',
+  },
 };
 
 export default function ArtistSelector({ artists, onSelect }: ArtistSelectorProps) {

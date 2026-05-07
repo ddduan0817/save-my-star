@@ -7,7 +7,7 @@ export interface GameStats {
 }
 
 // ===== Artist =====
-export type ArtistArchetype = 'idol' | 'actor' | 'singer' | 'influencer';
+export type ArtistArchetype = 'idol' | 'actor' | 'singer' | 'influencer' | 'socialite';
 
 export interface Artist {
   id: ArtistArchetype;
