@@ -27,6 +27,7 @@ import { findEventById, resolveEventForArtist } from '@/engine/eventSelector';
 import { generateDailyBriefing } from '@/engine/briefingGenerator';
 import { pickConsequenceCallback } from '@/data/consequenceCallbacks';
 import { pickFansiteArcEvent } from '@/data/fansiteArcs';
+import { awardDailyXp, checkLevelUp, getLevelFromXp } from '@/engine/managerProgression';
 
 type Getter = () => GameStore;
 type Setter = (partial: Partial<GameStore>) => void;
@@ -39,6 +40,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       artistSchedule, companyUpgrades, rival, cosmeticState,
       mentalState, insurancePolicies, fansites, lowMoodStreak,
       seasonalModifiers, firedCallbackIds, fansiteArcStep,
+      managerXp, highLoyaltyStreak, recentXpDeltas,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -313,6 +315,24 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
         })
       : null;
 
+    // 7. 经纪人 XP 每日结算
+    const dailyNetMoney = freshLedger.reduce((sum, e) => sum + e.amount, 0);
+    const newHighLoyaltyStreak = newStats.fanLoyalty > 60 ? highLoyaltyStreak + 1 : 0;
+    const dailyXpAward = awardDailyXp({
+      prevStats: stats,
+      nextStats: newStats,
+      dailyNetMoney,
+      highLoyaltyStreak: newHighLoyaltyStreak,
+    });
+    const newManagerXp = Math.max(0, managerXp + dailyXpAward.xpDelta);
+    const levelUp = checkLevelUp(managerXp, newManagerXp);
+    const newManagerLevel = getLevelFromXp(newManagerXp).lv;
+    const newRecentXpDeltas = [...recentXpDeltas, dailyXpAward.xpDelta].slice(-3);
+    // 升到 Lv4 注入 manager_lv4 tag，解锁专属事件
+    if (levelUp.leveledUp && newManagerLevel >= 4 && !newActiveTags.includes('manager_lv4')) {
+      newActiveTags.push('manager_lv4');
+    }
+
     set({
       currentDay: nextDay,
       stats: newStats,
@@ -350,6 +370,18 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       insurancePolicies: newInsurancePolicies,
       fansites: decayedFansites,
       fansiteInteractionsUsed: 0,
+      managerXp: newManagerXp,
+      managerLevel: newManagerLevel,
+      highLoyaltyStreak: newHighLoyaltyStreak,
+      recentXpDeltas: newRecentXpDeltas,
+      pendingLevelUp: levelUp.leveledUp && levelUp.newLevel
+        ? {
+            lv: levelUp.newLevel.lv,
+            title: levelUp.newLevel.title,
+            emoji: levelUp.newLevel.emoji,
+            perk: levelUp.newLevel.perk,
+          }
+        : get().pendingLevelUp,
     });
 
     if (neglectAlerts.length > 0 && process.env.NODE_ENV !== 'production') {

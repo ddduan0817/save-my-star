@@ -13,6 +13,7 @@ import RivalActionNotice from '@/components/game/overlays/RivalActionNotice';
 import CosmeticResultModal from '@/components/game/overlays/CosmeticResultModal';
 import PhoneCallOverlay from '@/components/game/overlays/PhoneCallOverlay';
 import SeasonalIntroModal from '@/components/game/overlays/SeasonalIntroModal';
+import LevelUpToast from '@/components/game/overlays/LevelUpToast';
 import MessagesTab from '@/components/game/tabs/MessagesTab';
 import ArtistTab from '@/components/game/tabs/ArtistTab';
 import WorkspaceTab from '@/components/game/tabs/WorkspaceTab';
@@ -80,6 +81,9 @@ export default function GamePage() {
 
       {/* Opening modifier intro (first day after startGame) */}
       <SeasonalIntroModal />
+
+      {/* Manager level-up celebration */}
+      <LevelUpToast />
 
       {/* Tab content */}
       <AnimatePresence mode="wait">

@@ -91,5 +91,12 @@ export function makeFreshGameState(): GameState {
 
     // 大粉剧情弧
     fansiteArcStep: {},
+
+    // 经纪人成长系统
+    managerXp: 0,
+    managerLevel: 1,
+    pendingLevelUp: null,
+    recentXpDeltas: [],
+    highLoyaltyStreak: 0,
   };
 }

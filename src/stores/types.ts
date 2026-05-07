@@ -158,6 +158,23 @@ export interface GameState {
   // ===== 大粉剧情弧 =====
   /** 每条弧按 fansiteId 记录推进步数 (0=未开始, 1=intro已触发, 2=mid已触发, 3=finale已触发) */
   fansiteArcStep: Record<string, number>;
+
+  // ===== 经纪人成长系统（Manager XP）=====
+  /** 累计 XP。事件结算 + 每日结算都会发放。 */
+  managerXp: number;
+  /** 缓存当前等级（方便 UI 直接读，升级时由 action 覆盖） */
+  managerLevel: number;
+  /** 最近升级 toast —— 有值时 UI 弹窗，玩家点掉后清空 */
+  pendingLevelUp: {
+    lv: number;
+    title: string;
+    emoji: string;
+    perk: string;
+  } | null;
+  /** 最近 3 天每日 XP 净值（用于"状态滑坡"提示），最新在尾部 */
+  recentXpDeltas: number[];
+  /** 连续 fanLoyalty>60 的天数（用于高忠诚连击 XP） */
+  highLoyaltyStreak: number;
 }
 
 export interface GameActions {
@@ -196,6 +213,7 @@ export interface GameActions {
   cancelInsurance: (policyId: InsuranceType) => { refund: number; message: string };
   loadCollection: () => void;
   dismissSeasonalIntro: () => void;
+  dismissLevelUp: () => void;
 }
 
 export type GameStore = GameState & GameActions;

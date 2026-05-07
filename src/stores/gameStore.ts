@@ -49,6 +49,7 @@ import {
 import { getFansitesForArtist } from '@/data/fansites';
 import { rollSeasonalModifiers } from '@/data/seasonalModifiers';
 import { generateDailyBriefing } from '@/engine/briefingGenerator';
+import { awardChoiceXp, checkLevelUp, getLevelFromXp } from '@/engine/managerProgression';
 import type { GameStore } from './types';
 import { makeFreshGameState } from './initialState';
 import { addLedger, runAchievementCheck, generateEventsForDay } from './helpers';
@@ -165,7 +166,7 @@ export const useGameStore = create<GameStore>((set, get) => ({
   },
 
   selectChoice: (choice: EventChoice) => {
-    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState, mentalState, seasonalModifiers } = get();
+    const { currentEvents, currentEventIndex, stats, artist, currentDay, activeTags, peakRisk, messages, activeMessageId, cosmeticState, mentalState, seasonalModifiers, managerXp } = get();
     const event = currentEvents[currentEventIndex];
 
     // Enforce选项门槛 — silently ignore when requirements aren't met. UI should
@@ -201,6 +202,26 @@ export const useGameStore = create<GameStore>((set, get) => ({
       m.id === activeMessageId ? { ...m, status: 'resolved' as const } : m
     );
 
+    // 计算经纪人 XP（判定 urgent 和 arc finale）
+    const msg = messages.find(m => m.id === activeMessageId);
+    const wasUrgent = msg?.isUrgent ?? false;
+    const wasArcFinale = event.id.startsWith('arc_') && event.id.endsWith('_step2');
+    const xpAward = awardChoiceXp({
+      severity: event.severity,
+      statChanges: result.statChanges,
+      prevStats: stats,
+      nextStats: result.newStats,
+      wasUrgent,
+      wasArcFinale,
+    });
+    const newManagerXp = Math.max(0, managerXp + xpAward.xpDelta);
+    const levelUp = checkLevelUp(managerXp, newManagerXp);
+    const newManagerLevel = getLevelFromXp(newManagerXp).lv;
+    // 升到某些关键等级时注入 activeTag，用作事件门槛
+    if (levelUp.leveledUp && newManagerLevel >= 4 && !newTags.includes('manager_lv4')) {
+      newTags.push('manager_lv4');
+    }
+
     if (result.ending) {
       const unlocked = saveUnlockedEnding(result.ending.id);
       set({
@@ -217,6 +238,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
         unlockedEndings: unlocked,
         messages: updatedMessages,
         mentalState: newMentalState,
+        managerXp: newManagerXp,
+        managerLevel: newManagerLevel,
       });
       if (result.statChanges.money) {
         addLedger(get, set, { label: `${event.title} → ${choice.text}`, amount: result.statChanges.money, category: 'event' });
@@ -239,6 +262,16 @@ export const useGameStore = create<GameStore>((set, get) => ({
       peakRisk: newPeakRisk,
       messages: updatedMessages,
       mentalState: newMentalState,
+      managerXp: newManagerXp,
+      managerLevel: newManagerLevel,
+      pendingLevelUp: levelUp.leveledUp && levelUp.newLevel
+        ? {
+            lv: levelUp.newLevel.lv,
+            title: levelUp.newLevel.title,
+            emoji: levelUp.newLevel.emoji,
+            perk: levelUp.newLevel.perk,
+          }
+        : get().pendingLevelUp,
     });
 
     // Ledger: event choice money
@@ -538,6 +571,10 @@ export const useGameStore = create<GameStore>((set, get) => ({
 
   dismissSeasonalIntro: () => {
     set({ showSeasonalIntro: false });
+  },
+
+  dismissLevelUp: () => {
+    set({ pendingLevelUp: null });
   },
 
   loadCollection: () => {

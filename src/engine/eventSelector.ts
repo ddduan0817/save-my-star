@@ -23,6 +23,7 @@ import { mentalStateEvents } from '@/data/events/mental-state';
 import { mentalTriggerEvents, mentalTriggerIds, getActiveMentalTriggers } from '@/data/events/mental-triggers';
 import { consequenceCallbackEvents } from '@/data/consequenceCallbacks';
 import { fansiteArcEvents } from '@/data/fansiteArcs';
+import { managerMilestoneEvents } from '@/data/events/manager-milestone';
 import type { ArtistMentalState } from '@/types/new_systems';
 import type { SeasonalModifier } from '@/data/seasonalModifiers';
 import { aggregateCategoryWeight } from '@/data/seasonalModifiers';
@@ -51,6 +52,7 @@ const allEvents: GameEvent[] = [
   ...mentalTriggerEvents,
   ...consequenceCallbackEvents,
   ...fansiteArcEvents,
+  ...managerMilestoneEvents,
 ];
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复

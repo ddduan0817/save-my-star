@@ -3,65 +3,13 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
-// 经纪人等级定义（按优先级从高到低排列）
-const MANAGER_LEVELS = [
-  { lv: 1, title: '实习经纪人', emoji: '📋', minDay: 0, hint: '坚持到第3天晋升' },
-  { lv: 2, title: '见习经纪人', emoji: '📝', minDay: 3, hint: '坚持到第6天晋升' },
-  { lv: 3, title: '初级经纪人', emoji: '👔', minDay: 6, hint: '坚持到第12天晋升' },
-  { lv: 4, title: '资深经纪人', emoji: '💼', minDay: 12, hint: '坚持到第15天且风险<30晋升' },
-  { lv: 5, title: '稳健经纪人', emoji: '🛡️', minDay: 15, hint: '商业≥70+粉丝≥60晋升' },
-  { lv: 6, title: '金牌经纪人', emoji: '🏆', minDay: 0, hint: '商业≥80+粉丝≥70+风险<20成为传奇' },
-  { lv: 7, title: '传奇经纪人', emoji: '👑', minDay: 0, hint: '已达最高等级！' },
-];
-
-// 特殊称号（覆盖普通等级）
-const SPECIAL_TITLES: { check: (d: number, s: { commercialValue: number; fanLoyalty: number; prRisk: number }, m: number) => boolean; title: string; emoji: string }[] = [
-  { check: (_, s) => s.prRisk > 90, title: '走钢丝的疯子', emoji: '🤡' },
-  { check: (_, __, m) => m < -50000, title: '负债经纪人', emoji: '💀' },
-  { check: (_, s) => s.fanLoyalty <= 5, title: '全网最惨经纪人', emoji: '🪦' },
-  { check: (_, s, m) => m > 300000 && s.fanLoyalty < 20, title: '黑心资本家', emoji: '🦈' },
-  { check: (_, s) => s.prRisk > 70, title: '危机经纪人', emoji: '🔥' },
-];
-
-function getManagerInfo(day: number, stats: { commercialValue: number; fanLoyalty: number; prRisk: number }, money: number) {
-  // 检查特殊称号
-  for (const sp of SPECIAL_TITLES) {
-    if (sp.check(day, stats, money)) {
-      return { title: sp.title, emoji: sp.emoji, isSpecial: true, lv: 0, progress: 0, hint: '' };
-    }
-  }
-
-  // 普通等级（从高往低匹配）
-  let currentLv = 0;
-  if (stats.commercialValue >= 80 && stats.fanLoyalty >= 70 && stats.prRisk < 20) currentLv = 6;
-  else if (stats.commercialValue >= 70 && stats.fanLoyalty >= 60) currentLv = 5;
-  else if (day >= 15 && stats.prRisk < 30) currentLv = 4;
-  else if (day >= 12) currentLv = 3;
-  else if (day >= 6) currentLv = 2;
-  else if (day >= 3) currentLv = 1;
-  else currentLv = 0;
-
-  const level = MANAGER_LEVELS[currentLv];
-  const nextLevel = MANAGER_LEVELS[Math.min(currentLv + 1, MANAGER_LEVELS.length - 1)];
-  const isMax = currentLv >= MANAGER_LEVELS.length - 1;
-
-  // 计算到下一级的进度
-  let progress = 1;
-  if (!isMax && nextLevel.minDay > 0) {
-    const currentMin = level.minDay;
-    const nextMin = nextLevel.minDay;
-    progress = Math.min(1, Math.max(0, (day - currentMin) / (nextMin - currentMin)));
-  }
-
-  return {
-    title: level.title,
-    emoji: level.emoji,
-    isSpecial: false,
-    lv: level.lv,
-    progress: isMax ? 1 : progress,
-    hint: isMax ? '已达最高等级！' : `下一级：${nextLevel.title}`,
-  };
-}
+import {
+  MANAGER_LEVELS,
+  getLevelFromXp,
+  getNextLevel,
+  getLevelProgress,
+  matchSpecialTitle,
+} from '@/engine/managerProgression';
 
 export default function MeTab() {
   const stats = useGameStore(s => s.stats);
@@ -70,8 +18,16 @@ export default function MeTab() {
   const fanComments = useGameStore(s => s.fanComments);
   const artist = useGameStore(s => s.artist);
   const dailyLedger = useGameStore(s => s.dailyLedger);
+  const managerXp = useGameStore(s => s.managerXp);
+  const recentXpDeltas = useGameStore(s => s.recentXpDeltas);
 
-  const manager = getManagerInfo(currentDay, stats, stats.money);
+  // 先看特殊称号（状态异常 overlay 在普通等级之上）
+  const special = matchSpecialTitle(stats);
+  const level = getLevelFromXp(managerXp);
+  const nextLevel = getNextLevel(level.lv);
+  const progress = getLevelProgress(managerXp, level.lv);
+  const recentNet = recentXpDeltas.reduce((a, b) => a + b, 0);
+  const slumping = recentXpDeltas.length === 3 && recentNet < 0;
 
   return (
     <div className="flex-1 px-4 py-4 space-y-4 pb-24">
@@ -79,39 +35,92 @@ export default function MeTab() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm text-center"
+        className="bg-white rounded-2xl p-5 ring-1 ring-gray-100/60 shadow-sm"
       >
-        <span className="text-4xl">{manager.emoji}</span>
-        <div className="flex items-center justify-center gap-2 mt-2">
-          <span className="text-sm font-bold text-gray-800">{manager.title}</span>
-          {!manager.isSpecial && (
-            <span className="text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full">
-              Lv.{manager.lv}
-            </span>
-          )}
-          {manager.isSpecial && (
-            <span className="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded-full">
-              特殊
-            </span>
-          )}
-        </div>
-        {!manager.isSpecial && (
-          <div className="mt-2.5 px-6">
-            <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-orange-300 to-orange-500"
-                initial={false}
-                animate={{ width: `${manager.progress * 100}%` }}
-                transition={{ type: 'spring', stiffness: 80, damping: 18 }}
-              />
+        {special ? (
+          // 特殊称号卡 —— 显眼红色，覆盖普通等级
+          <div className="text-center">
+            <span className="text-4xl">{special.emoji}</span>
+            <div className="flex items-center justify-center gap-2 mt-2">
+              <span className="text-sm font-bold text-gray-800">{special.title}</span>
+              <span className="text-[10px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded-full">
+                状态异常
+              </span>
             </div>
-            <div className="text-[10px] text-gray-400 mt-1">{manager.hint}</div>
+            <div className="text-[10px] text-gray-400 mt-1.5">
+              {artist?.name}的经纪人 · 第{currentDay}天
+            </div>
+            <div className="text-[10px] text-red-400 mt-1">
+              原等级 {level.title}（Lv.{level.lv}）· 先把状态扳回来
+            </div>
+          </div>
+        ) : (
+          <div>
+            {/* 头部：emoji + 等级 + XP */}
+            <div className="flex items-center gap-3">
+              <span className="text-4xl leading-none">{level.emoji}</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm font-bold text-gray-800 truncate">{level.title}</span>
+                  <span className="text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full shrink-0">
+                    Lv.{level.lv}
+                  </span>
+                  {level.lv === MANAGER_LEVELS.length && (
+                    <span className="text-[10px] font-bold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full shrink-0">
+                      MAX
+                    </span>
+                  )}
+                </div>
+                <div className="text-[10px] text-gray-400 mt-0.5 truncate">
+                  {level.hint}
+                </div>
+              </div>
+              <div className="text-right shrink-0">
+                <div className="text-[10px] text-gray-400">经验</div>
+                <div className="text-xs font-bold text-gray-700 tabular-nums">
+                  {managerXp}
+                  {nextLevel && <span className="text-gray-300"> / {nextLevel.minXp}</span>}
+                </div>
+              </div>
+            </div>
+
+            {/* 进度条 */}
+            <div className="mt-3">
+              <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
+                <motion.div
+                  className="h-full rounded-full bg-gradient-to-r from-orange-300 to-orange-500"
+                  initial={false}
+                  animate={{ width: `${progress * 100}%` }}
+                  transition={{ type: 'spring', stiffness: 80, damping: 18 }}
+                />
+              </div>
+              <div className="flex items-center justify-between mt-1">
+                <span className="text-[10px] text-gray-400">
+                  {nextLevel
+                    ? `距离${nextLevel.title}还差 ${Math.max(0, nextLevel.minXp - managerXp)} 经验`
+                    : '已达最高等级 · 结局有专属彩蛋'}
+                </span>
+                <span className="text-[10px] text-gray-400">
+                  第{currentDay}天
+                </span>
+              </div>
+            </div>
+
+            {/* 状态滑坡提示 */}
+            {slumping && (
+              <div className="mt-3 px-3 py-1.5 bg-amber-50 rounded-lg text-[10px] text-amber-600 flex items-center gap-1.5">
+                <span>⚠️</span>
+                <span>最近 3 天状态滑坡（净 {recentNet} XP）· 老板在看你</span>
+              </div>
+            )}
+
+            <div className="mt-3 text-[10px] text-gray-400 text-center">
+              {artist?.name}的经纪人
+            </div>
           </div>
         )}
-        <div className="text-[10px] text-gray-400 mt-1.5">
-          {artist?.name}的经纪人 · 第{currentDay}天
-        </div>
       </motion.div>
+
 
       {/* Daily Ledger 今日账单 */}
       <motion.div
