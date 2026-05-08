@@ -68,7 +68,7 @@ export const MANAGER_LEVELS: ManagerLevel[] = [
   },
   {
     lv: 5,
-    title: '行业教父/教母',
+    title: '行业教母/教父',
     emoji: '👑',
     minXp: 700,
     perk: '你说一句话，热搜榜会听',
