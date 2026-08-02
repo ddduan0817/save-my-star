@@ -22,6 +22,8 @@ export default function MessagesTab() {
     currentEvent,
     dailyBriefing,
     seasonalModifiers,
+    tutorialSeen,
+    dismissTutorial,
   } = useGameStore(
     useShallow(s => ({
       gamePhase: s.gamePhase,
@@ -33,6 +35,8 @@ export default function MessagesTab() {
       currentEvent: s.currentEvents[0],
       dailyBriefing: s.dailyBriefing,
       seasonalModifiers: s.seasonalModifiers,
+      tutorialSeen: s.tutorialSeen,
+      dismissTutorial: s.dismissTutorial,
     })),
   );
 
@@ -234,6 +238,32 @@ export default function MessagesTab() {
             transition={{ duration: 0.15 }}
             className="flex-1"
           >
+            {/* 首次玩法引导 —— 只在没看过时展示一次，看过标记随存档持久化 */}
+            {!tutorialSeen && (
+              <motion.div
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25 }}
+                className="mx-3 mt-3 rounded-2xl bg-gradient-to-br from-rose-50/90 to-amber-50/80 ring-1 ring-rose-200/50 px-4 py-3.5 shadow-sm"
+              >
+                <div className="flex items-center gap-1.5 mb-2">
+                  <span className="text-[13px]">👋</span>
+                  <span className="text-[12.5px] font-black text-gray-800">第一次当经纪人？三步就懂</span>
+                </div>
+                <ol className="space-y-1.5 text-[12px] leading-relaxed text-gray-600">
+                  <li><span className="font-bold text-rose-500">1.</span> 点开下面的<span className="font-semibold text-gray-800">消息</span>，读事件、做选择</li>
+                  <li><span className="font-bold text-rose-500">2.</span> 每个选择都会影响顶部的<span className="font-semibold text-gray-800">四个数值</span>——没有标准答案</li>
+                  <li><span className="font-bold text-rose-500">3.</span> 处理完点右下角<span className="font-semibold text-gray-800">「下班」</span>推进到第二天，撑满 20 天</li>
+                </ol>
+                <button
+                  onClick={dismissTutorial}
+                  className="mt-3 w-full py-2 rounded-xl bg-gray-900 text-white text-[12.5px] font-bold active:scale-[0.98] transition-transform"
+                >
+                  知道了，开始吧
+                </button>
+              </motion.div>
+            )}
+
             {visibleMessages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-gray-300">
                 <span className="text-3xl mb-3">📭</span>

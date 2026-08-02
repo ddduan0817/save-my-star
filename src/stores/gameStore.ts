@@ -66,6 +66,8 @@ export const useGameStore = create<GameStore>()(
   startGame: (artistId: ArtistArchetype) => {
     const artist = artists.find(a => a.id === artistId)!;
     saveArtistUsed(artistId);
+    // 引导「看过」是跨局标记，开新局时保留，不因 makeFreshGameState 被重置
+    const tutorialSeen = get().tutorialSeen;
 
     const day = 1;
     const stats = { ...artist.initialStats };
@@ -97,6 +99,7 @@ export const useGameStore = create<GameStore>()(
       currentDay: day,
       artist,
       stats,
+      tutorialSeen,
       messages,
       eventUsageMap: newUsageMap,
       peakRisk: artist.initialStats.prRisk,
@@ -559,11 +562,12 @@ export const useGameStore = create<GameStore>()(
 
   resetGame: () => {
     // 回到完全未开始的状态；保留 unlockedEndings / unlockedAchievements 不动，
-    // 这两个是跨局档案，属于 loadCollection 的领域。
-    const { unlockedEndings, unlockedAchievements } = get();
-    set({ ...makeFreshGameState(), unlockedEndings, unlockedAchievements });
-    // 清掉「进行中存档」，避免下次进首页残留半局数据
+    // 这两个是跨局档案，属于 loadCollection 的领域。tutorialSeen 同为跨局标记，保留。
+    const { unlockedEndings, unlockedAchievements, tutorialSeen } = get();
+    // 先清「进行中存档」，再 set —— set 会把 tutorialSeen 等重新持久化，
+    // 顺序反了会把刚保留的标记又擦掉。
     useGameStore.persist.clearStorage();
+    set({ ...makeFreshGameState(), unlockedEndings, unlockedAchievements, tutorialSeen });
   },
 
   dismissRivalAction: () => {
@@ -580,6 +584,10 @@ export const useGameStore = create<GameStore>()(
 
   dismissLevelUp: () => {
     set({ pendingLevelUp: null });
+  },
+
+  dismissTutorial: () => {
+    set({ tutorialSeen: true });
   },
 
   loadCollection: () => {

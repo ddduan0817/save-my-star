@@ -98,5 +98,8 @@ export function makeFreshGameState(): GameState {
     pendingLevelUp: null,
     recentXpDeltas: [],
     highLoyaltyStreak: 0,
+
+    // 新手引导：默认未看过
+    tutorialSeen: false,
   };
 }

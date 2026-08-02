@@ -175,6 +175,10 @@ export interface GameState {
   recentXpDeltas: number[];
   /** 连续 fanLoyalty>60 的天数（用于高忠诚连击 XP） */
   highLoyaltyStreak: number;
+
+  // ===== 新手引导 =====
+  /** 是否已看过首次玩法引导（跟随 persist 存储，看过后不再弹） */
+  tutorialSeen: boolean;
 }
 
 export interface GameActions {
@@ -214,6 +218,8 @@ export interface GameActions {
   loadCollection: () => void;
   dismissSeasonalIntro: () => void;
   dismissLevelUp: () => void;
+  /** 标记首次玩法引导已看过 */
+  dismissTutorial: () => void;
 }
 
 export type GameStore = GameState & GameActions;

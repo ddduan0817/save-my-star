@@ -116,10 +116,17 @@ export default function HomePage() {
           <div className="mt-3 flex items-center gap-2 text-[12px] text-gray-500">
             <span className="marker-pink font-medium">20 天</span>
             <span>·</span>
-            <span>4 个艺人</span>
+            <span>5 个艺人</span>
             <span>·</span>
-            <span className="font-medium">12 种结局</span>
+            <span className="font-medium">13 种结局</span>
           </div>
+
+          {/* 一句话玩法说明 —— 让第一次打开的人立刻懂这是什么 */}
+          <p className="mt-2.5 text-[12.5px] leading-relaxed text-gray-600">
+            你是娱乐圈经纪人。用 <span className="font-semibold text-gray-800">20 天</span>，在
+            <span className="font-semibold text-gray-800">钱、商业价值、粉丝、舆论风险</span>之间做取舍，
+            帮 TA 别塌房——<span className="marker-yellow font-medium">没有正确答案，只有更糟和更不糟。</span>
+          </p>
         </motion.div>
 
         {/* Polaroid scoop card */}
@@ -218,7 +225,7 @@ export default function HomePage() {
             </span>
           </div>
           <div className="text-[11px] text-gray-400 mt-0.5 ml-5">
-            *选错了就重开吧 反正都会塌
+            点一个艺人即可开始 · <span className="text-gray-400">选错了就重开吧，反正都会塌</span>
           </div>
         </motion.div>
 
