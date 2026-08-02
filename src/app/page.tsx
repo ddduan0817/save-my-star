@@ -113,12 +113,14 @@ export default function HomePage() {
             </span>
           </h1>
 
-          <div className="mt-3 flex items-center gap-2 text-[12px] text-gray-500">
+          <div className="mt-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-gray-500">
             <span className="marker-pink font-medium">20 天</span>
             <span>·</span>
             <span>5 个艺人</span>
             <span>·</span>
             <span className="font-medium">13 种结局</span>
+            <span>·</span>
+            <span>33 个成就</span>
           </div>
 
           {/* 一句话玩法说明 —— 让第一次打开的人立刻懂这是什么 */}
