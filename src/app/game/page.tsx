@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/stores/gameStore';
@@ -34,12 +34,23 @@ export default function GamePage() {
   const pendingAchievement = useGameStore(s => s.pendingAchievement);
   const dismissAchievement = useGameStore(s => s.dismissAchievement);
 
-  // Redirect if no game started
+  // persist 用了 skipHydration，需在 client 端手动从 localStorage 回灌存档。
+  // 回灌完成前不做「无存档 → 跳首页」判断，否则静态导出的首屏(not_started)
+  // 会在存档恢复前误跳走，导致刷新丢档。
+  const [hydrated, setHydrated] = useState(false);
   useEffect(() => {
-    if (gamePhase === 'not_started') {
+    const unsub = useGameStore.persist.onFinishHydration(() => setHydrated(true));
+    useGameStore.persist.rehydrate();
+    if (useGameStore.persist.hasHydrated()) setHydrated(true);
+    return unsub;
+  }, []);
+
+  // Redirect if no game started (仅在回灌完成后判断)
+  useEffect(() => {
+    if (hydrated && gamePhase === 'not_started') {
       router.replace('/');
     }
-  }, [gamePhase, router]);
+  }, [hydrated, gamePhase, router]);
 
   // Navigate to ending page when game ends
   useEffect(() => {
@@ -57,7 +68,7 @@ export default function GamePage() {
     }
   }, [pendingAchievement, dismissAchievement]);
 
-  if (gamePhase === 'not_started') return null;
+  if (!hydrated || gamePhase === 'not_started') return null;
 
   return (
     <div className="min-h-screen flex flex-col pb-[56px]">

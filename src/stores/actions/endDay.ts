@@ -10,7 +10,6 @@ import type { GameStore } from '../types';
 import type { GameEvent, LedgerEntry, WeiboTrend } from '@/types/game';
 import { checkDayEnd } from '@/engine/gameEngine';
 import { applyDailyPassiveEffects, applyStatChanges } from '@/engine/outcomeCalculator';
-import { applyStatChanges as applyStatChangesEngine } from '@/engine/outcomeCalculator';
 import { createMessages } from '@/engine/messageFactory';
 import { GAME_CONFIG } from '@/data/constants';
 import { saveUnlockedEnding } from '@/lib/storage';
@@ -76,7 +75,8 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     }
 
     // 2. Apply daily passive effects (with upgrade bonuses + seasonal modifier)
-    newStats = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team, seasonalModifiers);
+    const passive = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team, seasonalModifiers);
+    newStats = passive.stats;
 
     // 2.1 Tick cosmetic state (recovery & stiff face countdown)
     const newCosmeticState = tickCosmeticState(cosmeticState);
@@ -98,7 +98,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       if (rivalAction) {
         const result = resolveRivalAction(rivalAction, rival, artist, currentDay);
         if (result.playerStatChanges) {
-          newStats = applyStatChangesEngine(newStats, result.playerStatChanges, artist.id);
+          newStats = applyStatChanges(newStats, result.playerStatChanges, artist.id);
           if (result.playerStatChanges.money) {
             rivalLedgerEntry = { label: `竞争对手：${rivalAction.title}`, amount: result.playerStatChanges.money, category: 'rival' };
           }
@@ -258,7 +258,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     const fansiteResult = applyFansiteNeglectDecay(fansites, nextDay);
     const { newFansites: decayedFansites, alerts: neglectAlerts, statDelta: fansiteStatDelta, merchIncome: fansiteMerchIncome } = fansiteResult;
     if (fansiteStatDelta.fanLoyalty || fansiteStatDelta.prRisk || fansiteStatDelta.commercialValue || fansiteStatDelta.money) {
-      newStats = applyStatChangesEngine(newStats, {
+      newStats = applyStatChanges(newStats, {
         fanLoyalty: fansiteStatDelta.fanLoyalty,
         prRisk: fansiteStatDelta.prRisk,
         commercialValue: fansiteStatDelta.commercialValue,
@@ -278,20 +278,29 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       amount: GAME_CONFIG.DAILY_MONEY_COST,
       category: 'daily',
     };
+    // 收支明细直接消费引擎返回的 breakdown（金额已含 seasonal modifier、
+    // 档位口径与实际扣款完全同源），不再在此处重算，避免明细与实际资金背离。
     const loyaltyBonusEntry: LedgerEntry | null =
-      stats.fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD
-        ? { label: '粉丝周边收入（高忠诚）', amount: 4000, category: 'daily' }
-        : stats.fanLoyalty >= 60
-          ? { label: '粉丝周边收入', amount: 2000, category: 'daily' }
-          : null;
+      passive.breakdown.loyaltyBonus > 0
+        ? {
+            label: passive.breakdown.loyaltyTier === 'high' ? '粉丝周边收入（高忠诚）' : '粉丝周边收入',
+            amount: passive.breakdown.loyaltyBonus,
+            category: 'daily',
+          }
+        : null;
     const commercialBonusEntry: LedgerEntry | null =
-      stats.commercialValue >= 80
-        ? { label: '商务尾单分成（顶流）', amount: 6000, category: 'daily' }
-        : stats.commercialValue >= 60
-          ? { label: '商务尾单分成', amount: 3500, category: 'daily' }
-          : stats.commercialValue >= 40
-            ? { label: '商务尾单分成（基础）', amount: 1500, category: 'daily' }
-            : null;
+      passive.breakdown.commercialBonus > 0
+        ? {
+            label:
+              passive.breakdown.commercialTier === 'top'
+                ? '商务尾单分成（顶流）'
+                : passive.breakdown.commercialTier === 'high'
+                  ? '商务尾单分成'
+                  : '商务尾单分成（基础）',
+            amount: passive.breakdown.commercialBonus,
+            category: 'daily',
+          }
+        : null;
     const freshLedger = appendLedger(
       [],
       dailyCostEntry,

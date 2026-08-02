@@ -7,6 +7,7 @@
 // 消费方始终只 import useGameStore，内部怎么拆都不影响。
 
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import type {
   ArtistArchetype,
   EventChoice,
@@ -55,9 +56,11 @@ import { makeFreshGameState } from './initialState';
 import { addLedger, runAchievementCheck, generateEventsForDay } from './helpers';
 import { createEndDayAction } from './actions/endDay';
 
-export const useGameStore = create<GameStore>((set, get) => ({
-  // ===== 初始状态（从 initialState 展开，Create 和 resetGame 共用） =====
-  ...makeFreshGameState(),
+export const useGameStore = create<GameStore>()(
+  persist(
+    (set, get) => ({
+      // ===== 初始状态（从 initialState 展开，Create 和 resetGame 共用） =====
+      ...makeFreshGameState(),
 
   // ===== Actions =====
   startGame: (artistId: ArtistArchetype) => {
@@ -559,6 +562,8 @@ export const useGameStore = create<GameStore>((set, get) => ({
     // 这两个是跨局档案，属于 loadCollection 的领域。
     const { unlockedEndings, unlockedAchievements } = get();
     set({ ...makeFreshGameState(), unlockedEndings, unlockedAchievements });
+    // 清掉「进行中存档」，避免下次进首页残留半局数据
+    useGameStore.persist.clearStorage();
   },
 
   dismissRivalAction: () => {
@@ -698,4 +703,28 @@ export const useGameStore = create<GameStore>((set, get) => ({
     }
     return { refund: result.refund, message: result.message };
   },
-}));
+    }),
+    {
+      name: 'celebrity-sim-active-game', // localStorage key（区别于跨局档案 celebrity-sim-endings）
+      storage: createJSONStorage(() => localStorage),
+      version: 1, // 存档结构变更时 +1，配 migrate 做向后兼容
+      skipHydration: true, // 由页面在 client 端手动 rehydrate，规避静态导出的时序陷阱
+      // 只持久化「对局数据」，排除纯瞬态 UI 弹窗开关，
+      // 否则刷新后弹窗状态会卡住 / 重复弹。actions（函数）会被 JSON 自动忽略。
+      partialize: (s) => {
+        const {
+          showDayBanner,
+          showPostResult,
+          showRivalAction,
+          showCosmeticResult,
+          showPhoneCall,
+          showSeasonalIntro,
+          pendingAchievement,
+          pendingLevelUp,
+          ...rest
+        } = s;
+        return rest;
+      },
+    },
+  ),
+);

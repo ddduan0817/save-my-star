@@ -101,11 +101,20 @@ export function applyStatChanges(
   return { commercialValue, fanLoyalty, prRisk, money };
 }
 
+// 每日被动收入的收支明细。金额均为「已乘 seasonal modifier」后的最终值，
+// 与实际扣款同源，供 endDay 直接写入 ledger，避免两处各算一遍导致背离。
+export interface DailyMoneyBreakdown {
+  loyaltyBonus: number; // 粉丝周边收入（已含 modifier）
+  commercialBonus: number; // 商务尾单分成（已含 modifier）
+  loyaltyTier: 'high' | 'mid' | 'none';
+  commercialTier: 'top' | 'high' | 'base' | 'none';
+}
+
 export function applyDailyPassiveEffects(
   stats: GameStats,
   prTeamLevel: number = 0,
   modifiers?: SeasonalModifier[],
-): GameStats {
+): { stats: GameStats; breakdown: DailyMoneyBreakdown } {
   let { commercialValue, fanLoyalty, prRisk, money } = stats;
 
   const moneyMult = modifiers ? aggregateMoneyMultiplier(modifiers) : 1.0;
@@ -136,24 +145,37 @@ export function applyDailyPassiveEffects(
   money += GAME_CONFIG.DAILY_MONEY_COST;
 
   // High fan loyalty provides a small money bonus (merch etc.)
-  let bonusMoney = 0;
+  let loyaltyBonusRaw = 0;
+  let loyaltyTier: DailyMoneyBreakdown['loyaltyTier'] = 'none';
   if (fanLoyalty > GAME_CONFIG.HIGH_LOYALTY_THRESHOLD) {
-    bonusMoney += 4000;
+    loyaltyBonusRaw = 4000;
+    loyaltyTier = 'high';
   } else if (fanLoyalty >= 60) {
-    bonusMoney += 2000;
+    loyaltyBonusRaw = 2000;
+    loyaltyTier = 'mid';
   }
 
   // 商业价值带来的日常分成（代言商务的长期尾单分摊）
+  let commercialBonusRaw = 0;
+  let commercialTier: DailyMoneyBreakdown['commercialTier'] = 'none';
   if (commercialValue >= 80) {
-    bonusMoney += 6000;
+    commercialBonusRaw = 6000;
+    commercialTier = 'top';
   } else if (commercialValue >= 60) {
-    bonusMoney += 3500;
+    commercialBonusRaw = 3500;
+    commercialTier = 'high';
   } else if (commercialValue >= 40) {
-    bonusMoney += 1500;
+    commercialBonusRaw = 1500;
+    commercialTier = 'base';
   }
 
   // Modifier multiplier only scales the bonus (not the fixed daily cost — costs are固定的)
-  money += Math.round(bonusMoney * moneyMult);
+  const loyaltyBonus = Math.round(loyaltyBonusRaw * moneyMult);
+  const commercialBonus = Math.round(commercialBonusRaw * moneyMult);
+  money += loyaltyBonus + commercialBonus;
 
-  return { commercialValue, fanLoyalty, prRisk, money };
+  return {
+    stats: { commercialValue, fanLoyalty, prRisk, money },
+    breakdown: { loyaltyBonus, commercialBonus, loyaltyTier, commercialTier },
+  };
 }
