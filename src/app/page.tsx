@@ -143,7 +143,7 @@ export default function HomePage() {
             aria-hidden
           />
 
-          {/* Photo area — 狗仔偷拍现场图（人物头部已烧入马赛克，维持"未知当事人"悬念） */}
+          {/* Photo area — 狗仔偷拍现场图（人物面部自带马赛克，维持"未知当事人"悬念） */}
           <div className="relative h-[140px] rounded-sm overflow-hidden bg-[#1a1a2e]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
