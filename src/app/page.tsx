@@ -57,7 +57,7 @@ export default function HomePage() {
         {/* Arrow doodle — now pointing directly at the central mosaic blob */}
         <span
           aria-hidden
-          className="absolute top-[300px] right-[88px] text-[16px] text-[#FF2E2E] rotate-[28deg] pointer-events-none z-20 font-black drop-shadow-[1px_1px_0_rgba(255,255,255,0.9)]"
+          className="absolute top-[300px] right-[150px] text-[16px] text-[#FF2E2E] rotate-[28deg] pointer-events-none z-20 font-black drop-shadow-[1px_1px_0_rgba(255,255,255,0.9)]"
         >
           ↙ 看这里
         </span>
