@@ -143,20 +143,23 @@ export default function HomePage() {
             aria-hidden
           />
 
-          {/* Photo area — gradient placeholder, looks like a redacted paparazzi shot */}
-          <div className="relative h-[140px] rounded-sm overflow-hidden bg-gradient-to-br from-[#fff5e8] via-[#ffe4c4] to-[#ffc7b5]">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-20 h-20 rounded-full bg-gradient-to-b from-[#a0764a]/40 to-[#5a3a1f]/30 blur-[6px]" />
-            </div>
+          {/* Photo area — 狗仔偷拍现场图（人物头部已烧入马赛克，维持"未知当事人"悬念） */}
+          <div className="relative h-[140px] rounded-sm overflow-hidden bg-[#1a1a2e]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/scoop/paparazzi.png"
+              alt="狗仔偷拍现场"
+              className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: 'center 42%' }}
+              loading="eager"
+              draggable={false}
+            />
+            {/* 底部暗角，让白色贴纸文字更清晰 */}
             <div
               aria-hidden
-              className="absolute inset-0 mix-blend-overlay opacity-40"
-              style={{
-                backgroundImage:
-                  "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.85'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E\")",
-              }}
+              className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/55 to-transparent"
             />
-            <span className="absolute bottom-1 right-1.5 text-[9px] font-mono text-white/80 tracking-wider">
+            <span className="absolute bottom-1 right-1.5 text-[9px] font-mono text-white/90 tracking-wider">
               EXCLUSIVE · 03:47AM
             </span>
             <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-black/70 text-white text-[9px] font-bold tracking-wider">
