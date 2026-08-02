@@ -5,7 +5,7 @@ export const artists: Artist[] = [
     id: 'idol',
     name: '甄帅',
     title: '流量偶像',
-    description: '选秀节目亚军出道，万人迷体质，粉丝极度敏感——但他有个你不知道的"女友"',
+    description: '选秀节目亚军出道，万人迷体质，粉丝极度敏感，但他有个你不知道的"女友"',
     avatar: '🌟',
     gender: 'male',
     initialStats: {
@@ -22,7 +22,7 @@ export const artists: Artist[] = [
     id: 'actor',
     name: '郝美丽',
     title: '实力派演员',
-    description: '金鸡新人奖得主、路人缘好——但那个奖和那份路人缘都有点经不起细查',
+    description: '金鸡新人奖得主、路人缘好，但那个奖和那份路人缘都有点经不起细查',
     avatar: '🎬',
     gender: 'female',
     initialStats: {
@@ -39,7 +39,7 @@ export const artists: Artist[] = [
     id: 'singer',
     name: '高八度',
     title: '唱跳歌手',
-    description: '从livehouse到万人体育场，艺术家倔脾气——可那首成名曲《我爱吃饭》，真的是他写的吗',
+    description: '从livehouse到万人体育场，艺术家倔脾气，可那首成名曲《我爱吃饭》，真的是他写的吗',
     avatar: '🎤',
     gender: 'male',
     initialStats: {
@@ -56,7 +56,7 @@ export const artists: Artist[] = [
     id: 'influencer',
     name: '冷冰凝',
     title: '网红转型',
-    description: '抖音两千万粉、带货女王——但她曾经替"NOFAKE"带过一批假货，烂脸粉丝还在维权',
+    description: '抖音两千万粉、带货女王，但她曾经替"NOFAKE"带过一批假货，烂脸粉丝还在维权',
     avatar: '📱',
     gender: 'female',
     initialStats: {
@@ -73,7 +73,7 @@ export const artists: Artist[] = [
     id: 'socialite',
     name: '南陌格',
     title: '花瓶小生',
-    description: '古偶新贵、高奢代言常客——可他"出道前"的那段经历，云端还存着',
+    description: '古偶新贵、高奢代言常客，可他"出道前"的那段经历，云端还存着',
     avatar: '🥂',
     gender: 'male',
     initialStats: {
