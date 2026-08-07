@@ -60,6 +60,17 @@ export default function EndingPage() {
   const [showContent, setShowContent] = useState(false);
   const [showFullTimeline, setShowFullTimeline] = useState(false);
 
+  // persist 用了 skipHydration，需先在 client 端从 localStorage 回灌存档。
+  // 回灌完成前不做"无结局 → 跳首页"判断，否则静态导出的首帧(ending=null)
+  // 会在存档恢复前把玩家误踢回首页——表现为"到了结局却没展示就回到初始页"。
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => {
+    const unsub = useGameStore.persist.onFinishHydration(() => setHydrated(true));
+    useGameStore.persist.rehydrate();
+    if (useGameStore.persist.hasHydrated()) setHydrated(true);
+    return unsub;
+  }, []);
+
   // 按"决策影响力"挑出最关键的 5 个决策——数据驱动取代简单 slice(-5)
   const keyDecisions = useMemo(() => {
     return [...decisionHistory]
@@ -69,6 +80,7 @@ export default function EndingPage() {
   }, [decisionHistory]);
 
   useEffect(() => {
+    if (!hydrated) return; // 等存档回灌完成再判断
     if (!ending) {
       router.replace('/');
       return;
@@ -79,9 +91,9 @@ export default function EndingPage() {
     else sfxEnding();
     const timer = setTimeout(() => setShowContent(true), 1800);
     return () => clearTimeout(timer);
-  }, [ending, router]);
+  }, [hydrated, ending, router]);
 
-  if (!ending || !artist) return null;
+  if (!hydrated || !ending || !artist) return null;
 
   const handleShare = async () => {
     if (!shareRef.current) return;
