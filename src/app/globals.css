@@ -152,7 +152,11 @@ body::before {
 
 /* Glass card effect */
 .glass-card {
-  background: rgba(255, 255, 255, 0.85);
+  /* 不透明度拉高到 0.97：仅用于顶部 StatsBar / 底部 TabBar 两个悬浮栏。
+     iOS Safari 上 sticky/fixed + backdrop-filter 有已知渲染 bug，滚动时
+     半透明背景会"穿屏"（下方内容透上来）。用近乎不透明的实底兜底，
+     backdrop-filter 仅作锦上添花，失效也不会穿屏。 */
+  background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
 }
