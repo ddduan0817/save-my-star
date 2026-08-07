@@ -31,7 +31,7 @@ export default function TabBar() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 flex justify-center">
-      <div className="w-full max-w-lg glass-card border-t border-gray-100/60 px-2 py-1 safe-area-bottom">
+      <div className="w-full max-w-lg bg-[#faf8f5] border-t border-gray-100/60 px-2 py-1 safe-area-bottom">
         <div className="flex">
           {tabs.map(tab => {
             const isActive = activeTab === tab.id;

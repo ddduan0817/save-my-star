@@ -209,7 +209,7 @@ export default function WorkspaceTab() {
                     </div>
                     {/* Aggression bar */}
                     <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-[11px] text-gray-400 w-8 shrink-0">攻击性</span>
+                      <span className="text-[11px] text-gray-400 shrink-0 whitespace-nowrap">攻击性</span>
                       <div className="flex-1 h-1.5 rounded-full bg-gray-100 overflow-hidden">
                         <motion.div
                           className={cn(
