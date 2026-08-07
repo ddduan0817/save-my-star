@@ -975,7 +975,7 @@ export const artistTroubleEvents: GameEvent[] = [
     category: 'drama',
     severity: 'medium',
     title: '南陌格评论区翻车："老家那种小县城"',
-    description: '南陌格在一条美食 vlog 评论区回一个粉丝时打了句"老家那种小县城吃的你真下得去口"，半小时后自己删了。但截图已经传疯。#南陌格 嘲笑小县城# 挂热搜第 6。那位粉丝的主页地址栏真的写着"湖南 [ph_CITY_1_ph]"。地域话题加人设反差，双重暴雷。',
+    description: '南陌格在一条美食 vlog 评论区回一个粉丝时打了句"老家那种小县城吃的你真下得去口"，半小时后自己删了。但截图已经传疯。#南陌格 嘲笑小县城# 挂热搜第 6。那位粉丝的主页地址栏真的写着"湖南·某县城"。地域话题加人设反差，双重暴雷。',
     emoji: '🙄',
     forArtist: 'socialite',
     choices: [

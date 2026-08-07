@@ -177,7 +177,7 @@ export const singerSpecificEvents: GameEvent[] = [
         text: '全盘坦白 + 补署名',
         subtext: '公开承认 + 补发版税和署名',
         outcome: {
-          narration: '高八度直播里说："《我爱吃饭》的词曲作者是我的室友 [ph_USER_ACCOUNT_4_ph]，他叫低音炮。我欠他一个道歉，也欠他这首歌全部的版税。"低音炮转发："谢谢你终于开口了。"路人盘被这份坦诚打动，但音乐圈对他彻底失望。',
+          narration: '高八度直播里说："《我爱吃饭》的词曲作者是我的大学室友，他叫低音炮。我欠他一个道歉，也欠他这首歌全部的版税。"低音炮转发："谢谢你终于开口了。"路人盘被这份坦诚打动，但音乐圈对他彻底失望。',
           statChanges: { money: -200000, fanLoyalty: -10, prRisk: -5, commercialValue: -5 },
           unlockTag: 'full_confession_plagiarism',
         },
