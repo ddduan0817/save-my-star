@@ -317,4 +317,142 @@ export const platformEvents: GameEvent[] = [
       },
     ],
   },
+
+  // 8. 考古文化：翻出三年前的黑历史
+  {
+    id: 'platform_dig_history',
+    category: 'crisis',
+    severity: 'medium',
+    title: '被"考古"扒出三年前的争议发言',
+    description:
+      '你艺人红了，代价是被"考古大军"逐帧扒历史。有人翻出三年前 TA 一条早已删除的微博截图——当年一句"努力不一定成功，但不努力真的很舒服"被解读成"躺平价值观不正"。#XX 三年前旧账# 空降热搜。评论区在吵"三年前的话也要算账吗"，但通稿号已经闻着味来了。',
+    emoji: '⏳',
+    minDay: 6,
+    choices: [
+      {
+        id: 'dig_own',
+        text: '大方认领，"那会儿是没长大"',
+        subtext: '真诚复盘，别嘴硬',
+        outcome: {
+          narration:
+            '艺人回应："是我说的，三年前确实幼稚，谢谢考古让我看到自己的成长。"这波"敢认"的态度反而圈了一波路人。最高赞：比那些"盗号了""被断章取义"的强一万倍。',
+          statChanges: { fanLoyalty: 4, prRisk: -3 },
+        },
+      },
+      {
+        id: 'dig_hack',
+        text: '甩锅"当年账号被盗"',
+        subtext: '经典危机话术',
+        outcome: {
+          narration:
+            '工作室发"该账号当年疑似被盗"。网友当场笑喷——"被盗了三年才发现？""盗号的还挺有文采"。"盗号文学"再添一员，越描越黑。',
+          statChanges: { prRisk: 6, fanLoyalty: -3 },
+        },
+      },
+      {
+        id: 'dig_counter',
+        text: '让粉丝反向考古"正主做的好事"',
+        subtext: '数据组连夜出"正主贡献图"',
+        outcome: {
+          narration:
+            '粉丝数据组连夜整理了"正主这三年做的公益+作品"长图刷屏对冲。舆论被拉回中间，但也有路人吐槽"控评控得好累"。饭圈战力惊人，只是这场仗打得你也很累。',
+          statChanges: { fanLoyalty: 2, prRisk: -1, commercialValue: 1 },
+          mentalEffect: { stress: 3 },
+        },
+      },
+    ],
+  },
+
+  // 9. 私生 / 代拍江湖
+  {
+    id: 'platform_saesang',
+    category: 'crisis',
+    severity: 'high',
+    title: '私生饭蹲守酒店，代拍要"合作分成"',
+    description:
+      '几个私生饭连续三天蹲你艺人的酒店房间，甚至跟拍到了机场安检内部。更离谱的是，一个头部代拍私信你："姐，我手里有独家跟拍图，咱们合作呗——我不发黑的，你给点「车费」，我还能帮忙冲数据。"这是饭圈灰色产业链最真实的一面。#XX 被私生跟拍# 已经有粉丝在报警了。',
+    emoji: '📷',
+    minDay: 7,
+    choices: [
+      {
+        id: 'saesang_law',
+        text: '报警+公开跟拍证据',
+        subtext: '硬刚灰产，不给钱',
+        outcome: {
+          narration:
+            '你报警并公开了跟拍视频呼吁抵制私生。路人一片叫好"艺人也是人"，但代拍圈把你拉黑名单，扬言"以后只发你家难看的图"。你守住了底线，也树了敌。最高赞：支持！追星追到跟踪就是犯罪。',
+          statChanges: { fanLoyalty: 5, prRisk: -2, commercialValue: 2 },
+        },
+      },
+      {
+        id: 'saesang_pay',
+        text: '私下给"车费"换好图',
+        subtext: '花钱消灾，要面子 (-3万)',
+        requireMinMoney: 30000,
+        outcome: {
+          narration:
+            '你付了钱，代拍果然发了组神图，数据也好看。但没有不透风的墙——转账记录被扒，"官方喂养代拍"实锤，粉丝集体破防"原来我们骂的代拍是你请的"。塌房塌在了自己人手里。',
+          statChanges: { money: -30000, prRisk: 8, fanLoyalty: -6 },
+        },
+      },
+      {
+        id: 'saesang_ignore',
+        text: '加强安保，冷处理',
+        subtext: '不报警不给钱，自己扛',
+        outcome: {
+          narration:
+            '你自费加了安保团队，闷头保护艺人。私生短期收敛，但成本高企。艺人私下跟你说"谢谢你没把我当摇钱树"——信任是这么攒起来的。',
+          statChanges: { money: -20000, prRisk: -1 },
+          mentalEffect: { trust: 8, mood: 4 },
+        },
+      },
+    ],
+  },
+
+  // 10. 退圈文学
+  {
+    id: 'platform_quit_letter',
+    category: 'drama',
+    severity: 'medium',
+    title: '艺人半夜发了篇"小作文"暗示想退圈',
+    description:
+      '凌晨 1 点，你艺人没跟你报备，自己发了条几百字长文——"这个圈子太累了，也许我不适合……感谢一路以来的你们。"没有明说退圈，但字里行间全是"退圈文学"的味道。粉丝瞬间破防刷屏"哥哥别走"，#XX 疑似退圈# 30 分钟冲上热搜第一。而你，作为经纪人，是从热搜上才知道这件事的。',
+    emoji: '🌙',
+    minDay: 8,
+    choices: [
+      {
+        id: 'quit_support',
+        text: '尊重 TA，陪 TA 缓一缓',
+        subtext: '人比热搜重要',
+        outcome: {
+          narration:
+            '你没有第一时间想公关，而是打电话陪 TA 聊到天亮。第二天 TA 自己发"谢谢大家，我缓过来了，不走了"。这波"真实的脆弱"反而让粉丝黏性更强。最高赞：这才是把艺人当人的团队。',
+          statChanges: { fanLoyalty: 6, commercialValue: -1 },
+          mentalEffect: { trust: 10, mood: 8, burnout: -10 },
+        },
+      },
+      {
+        id: 'quit_hype',
+        text: '顺势营销"感动全网"',
+        subtext: '把情绪变成热度和数据',
+        outcome: {
+          narration:
+            '你连夜发通稿把这波炒成"艺人的真情流露"，代言询单确实涨了。但艺人看到满屏营销通稿，冷冷发了句"原来我的崩溃也是你们的KPI"。数据涨了，人心凉了。',
+          statChanges: { commercialValue: 4, money: 60000, fanLoyalty: -3 },
+          mentalEffect: { trust: -12, burnout: 8 },
+        },
+      },
+      {
+        id: 'quit_delete',
+        text: '强行删文，"就当没发过"',
+        subtext: '止损，维持人设稳定',
+        outcome: {
+          narration:
+            '你让团队删了文发"账号异常"。但截图早传疯了，"删得掉小作文删不掉那句累"上了热评。艺人的情绪没被接住，反而被捂住了——这颗雷，迟早还要炸。',
+          statChanges: { prRisk: 4, fanLoyalty: -2 },
+          mentalEffect: { trust: -8, burnout: 6 },
+        },
+      },
+    ],
+  },
 ];
