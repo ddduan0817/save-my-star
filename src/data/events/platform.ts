@@ -455,4 +455,139 @@ export const platformEvents: GameEvent[] = [
       },
     ],
   },
+
+  // 11. 打投集资
+  {
+    id: 'platform_fan_fundraising',
+    category: 'drama',
+    severity: 'medium',
+    title: '粉丝为了打投给你艺人集资了两百万',
+    description:
+      '你艺人要参加一个人气榜的决赛，后援会没打招呼就发起了集资打投，48 小时众筹了两百多万，晒出的转账截图里有人备注“这个月生活费”“花呗先垫上”。#XX 粉丝集资两百万# 挂上热搜，路人开始质疑“又是收割未成年”，但粉丝群里还在刷“为哥哥花钱我愿意”。这笔钱怎么处理，全看你。',
+    emoji: '💸',
+    minDay: 5,
+    choices: [
+      {
+        id: 'fund_refund',
+        text: '公开劝退集资并退款',
+        subtext: '理性追星，守住底线',
+        outcome: {
+          narration:
+            '你让艺人发声明“心意领了，钱请大家留着好好生活，学生党别垫花呗”，并督促后援会原路退款。路人缘暴涨，“最清醒艺人团队”上了热搜。最高赞：这才是把粉丝当人而不是当提款机。',
+          statChanges: { fanLoyalty: 5, prRisk: -4, commercialValue: 2 },
+          mentalEffect: { mood: 4 },
+        },
+      },
+      {
+        id: 'fund_use',
+        text: '默许集资，冲榜要紧',
+        subtext: '数据好看第一位',
+        outcome: {
+          narration:
+            '你没拦，钱花出去榜也冲到了第一。但决赛后有家长实名举报“未成年人大额集资”，#XX 后援会集资去向# 被要求公示。账目一笔笔被扒，路人只记住一句：赢了榜单，输了人心。',
+          statChanges: { commercialValue: 4, prRisk: 7, fanLoyalty: -3 },
+        },
+      },
+      {
+        id: 'fund_official',
+        text: '改成官方公益应援',
+        subtext: '把集资的钱捐出去做公益',
+        outcome: {
+          narration:
+            '你把这笔集资引导成了“以艺人名义的助学捐赠”，既没浪费粉丝心意，又把风险变成了正面新闻。“饭圈集资的正确打开方式”被官媒点名表扬。粉丝与有荣焉，路人也挑不出错。',
+          statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
+        },
+      },
+    ],
+  },
+
+  // 12. 粉丝接机名场面
+  {
+    id: 'platform_airport_mob',
+    category: 'crisis',
+    severity: 'medium',
+    title: '几百个粉丝堵机场，差点出踩踏',
+    description:
+      '你艺人一条私人行程被代拍卖给了粉丝站，几百人凌晨堵在机场到达口，闪光灯糊脸、有人被挤倒、安检通道瘫痪，一个拉着行李的老人被人流冲得站不稳。现场视频传上网，#XX 机场差点踩踏# 冲上热搜，舆论一半心疼一半骂“这种粉丝不要也罢”。',
+    emoji: '✈️',
+    minDay: 6,
+    choices: [
+      {
+        id: 'airport_condemn',
+        text: '发文谴责接机，公开行程反制',
+        subtext: '安全第一，宁可得罪粉丝',
+        outcome: {
+          narration:
+            '艺人发文“请不要来机场，你们的安全比什么都重要”，并宣布以后主动公开行程避免代拍倒卖。理智粉一片叫好，代拍生意被断了财路。最高赞：真正爱他的人，是他让你们别来你们就不来。',
+          statChanges: { fanLoyalty: 4, prRisk: -3 },
+        },
+      },
+      {
+        id: 'airport_pose',
+        text: '现场停下来营业签名',
+        subtext: '宠粉要紧，摆拍几张',
+        outcome: {
+          narration:
+            '艺人停下来签名合影，场面更失控了，后排粉丝为了挤到前面直接推搡。第二天“XX 纵容粉丝聚集”被拿来做反面教材，那位被挤倒的老人受访片段流传，你的宠粉变成了众矢之的。',
+          statChanges: { fanLoyalty: 2, prRisk: 6, commercialValue: -2 },
+        },
+      },
+      {
+        id: 'airport_silent',
+        text: '低头快步走，不回应',
+        subtext: '冷处理，等热度过去',
+        outcome: {
+          narration:
+            '艺人全程低头快走，没理会也没表态。粉丝觉得被冷落，路人觉得“出了事装没看见”，两头不讨好。热搜挂了一天自己沉了，但那句“连句安全提醒都没有”留在了评论区顶楼。',
+          statChanges: { prRisk: 3, fanLoyalty: -2 },
+        },
+      },
+    ],
+  },
+
+  // 13. 综艺剪辑陷害
+  {
+    id: 'platform_edit_trap',
+    category: 'crisis',
+    severity: 'high',
+    title: '综艺把你艺人剪成了“耍大牌反派”',
+    description:
+      '一档热门综艺播出，你艺人被剪出一段“对工作人员甩脸、对队友翻白眼、独自霸占镜头”的画面，配上阴间 BGM，坐实了“耍大牌”人设。可你清楚记得，原始素材里那个白眼是在跟好友开玩笑。#XX 耍大牌# 冲上热搜第一，节目组不回应，但你手里有未播花絮的原始时间轴。',
+    emoji: '✂️',
+    minDay: 7,
+    choices: [
+      {
+        id: 'edit_release_raw',
+        text: '放出原始花絮自证',
+        subtext: '用完整素材打脸恶意剪辑',
+        outcome: {
+          narration:
+            '你放出了那段完整的原始录像，前因后果一目了然，白眼其实是跟好友的玩笑。舆论瞬间反转，矛头调转指向节目组“恶意剪辑”。#还XX一个清白# 反超热搜。最高赞：这年头艺人得自己带摄像机进组防剪。',
+          statChanges: { fanLoyalty: 5, prRisk: -5, commercialValue: 2 },
+          specialEffect: 'viral',
+        },
+      },
+      {
+        id: 'edit_sue_show',
+        text: '发律师函硬刚节目组',
+        subtext: '走法律，要求公开道歉',
+        outcome: {
+          narration:
+            '律师函发出去，节目组嘴上道歉却拖着不删片段。“告是告了，热搜还挂着”，维权的速度追不上传播的速度。粉丝帮你冲了几天，但路人早就划走看下一个瓜了。',
+          statChanges: { prRisk: 2, money: -30000, fanLoyalty: 1 },
+        },
+      },
+      {
+        id: 'edit_swallow',
+        text: '忍了，别得罪平台',
+        subtext: '以后还要合作，吞下去',
+        outcome: {
+          narration:
+            '你劝艺人忍下这口气，毕竟平台得罪不起。“耍大牌”的标签就这么坐实了，商务方开始犹豫。艺人私下问你一句“是不是我不红就活该被这么剪”，你没答上来。',
+          statChanges: { commercialValue: -4, prRisk: 4, fanLoyalty: -2 },
+          mentalEffect: { trust: -6, mood: -5 },
+        },
+      },
+    ],
+  },
 ];
