@@ -43,7 +43,7 @@ export default function SeasonalIntroModal() {
               <div className="text-[11px] font-bold tracking-[0.2em] opacity-80">THIS SEASON</div>
               <div className="text-xl font-bold mt-1">本季娱乐圈大环境</div>
               <div className="text-xs opacity-90 mt-1.5 leading-relaxed">
-                影响整局走向的关键词 · 这一局的"行情"已经定了
+                影响整局走向的关键词 · 这一局的“行情”已经定了
               </div>
             </div>
 

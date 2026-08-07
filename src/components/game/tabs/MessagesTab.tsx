@@ -252,7 +252,7 @@ export default function MessagesTab() {
                 </div>
                 <ol className="space-y-1.5 text-[12px] leading-relaxed text-gray-600">
                   <li><span className="font-bold text-rose-500">1.</span> 点开下面的<span className="font-semibold text-gray-800">消息</span>，读事件、做选择</li>
-                  <li><span className="font-bold text-rose-500">2.</span> 每个选择都会影响顶部的<span className="font-semibold text-gray-800">四个数值</span>——没有标准答案</li>
+                  <li><span className="font-bold text-rose-500">2.</span> 每个选择都会影响顶部的<span className="font-semibold text-gray-800">四个数值</span>，没有标准答案</li>
                   <li><span className="font-bold text-rose-500">3.</span> 处理完点右下角<span className="font-semibold text-gray-800">「下班」</span>推进到第二天，撑满 20 天</li>
                 </ol>
                 <button

@@ -88,7 +88,7 @@ export default function EventOutcome({ isTwist = false }: EventOutcomeProps) {
           "text-xs font-medium mb-3 tracking-wider",
           isTwist ? "text-orange-500" : "text-gray-300"
         )}>
-          {isTwist ? '但是——' : '事件结果'}
+          {isTwist ? '但是…' : '事件结果'}
         </div>
 
         {/* Twist dramatic entrance */}

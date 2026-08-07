@@ -3,12 +3,12 @@ import type { ArtistArchetype } from '@/types/game';
 
 /**
  * 每个艺人 4 个大粉，风格差异化：
- * - emotional（情绪型）吃"私下见面 / 送暖 / 后台权限"，吃硬刚必炸
- * - photographer（拍图）吃"后台权限 / 买断独家 / 买断底片"，发周边对她没用
- * - warrior（战斗粉/反黑）吃"官方授权 / 组联动 / 反黑预算"，给相机没意义
- * - analyst（内容向）吃"约稿 / 独家物料 / 官方认证"
- * - data（数据组）吃"打投预算 / 认证 / 组联动"
- * - commerce（种草带货）吃"品牌合作 / 送周边 / 曝光位"
+ * - emotional（情绪型）吃“私下见面 / 送暖 / 后台权限”，吃硬刚必炸
+ * - photographer（拍图）吃“后台权限 / 买断独家 / 买断底片”，发周边对她没用
+ * - warrior（战斗粉/反黑）吃“官方授权 / 组联动 / 反黑预算”，给相机没意义
+ * - analyst（内容向）吃“约稿 / 独家物料 / 官方认证”
+ * - data（数据组）吃“打投预算 / 认证 / 组联动”
+ * - commerce（种草带货）吃“品牌合作 / 送周边 / 曝光位”
  */
 
 const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
@@ -114,7 +114,7 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
       hasBlackmail: true,
       blackmailValue: 40000,
       lastInteraction: 0,
-      specialTrait: '专门拍红毯和活动，偶尔会放一些"角度刁钻"的生图',
+      specialTrait: '专门拍红毯和活动，偶尔会放一些“角度刁钻”的生图',
     },
     {
       id: 'fansite_4',
@@ -266,7 +266,7 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
       hasBlackmail: false,
       blackmailValue: 0,
       lastInteraction: 0,
-      specialTrait: '时装周现场拍图大神，镜头审美在线，给他拍出"老钱感"',
+      specialTrait: '时装周现场拍图大神，镜头审美在线，给他拍出“老钱感”',
     },
     {
       id: 'fansite_2',
@@ -280,7 +280,7 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
       hasBlackmail: false,
       blackmailValue: 0,
       lastInteraction: 0,
-      specialTrait: '写深度人设安利，"南陌格=当代贵公子"就是她带火的词',
+      specialTrait: '写深度人设安利，“南陌格=当代贵公子”就是她带火的词',
     },
     {
       id: 'fansite_3',
@@ -294,7 +294,7 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
       hasBlackmail: true,
       blackmailValue: 80000,
       lastInteraction: 0,
-      specialTrait: '据说认识"出道前"就认识南陌格的人，手里有几张"你不会想看到"的图',
+      specialTrait: '据说认识“出道前”就认识南陌格的人，手里有几张“你不会想看到”的图',
     },
     {
       id: 'fansite_4',
@@ -308,7 +308,7 @@ const fansitesByArtist: Record<ArtistArchetype, FansiteMaster[]> = {
       hasBlackmail: false,
       blackmailValue: 0,
       lastInteraction: 0,
-      specialTrait: '追踪所有品牌合作数据，"今年超越顾君庭"是她的年度 KPI',
+      specialTrait: '追踪所有品牌合作数据，“今年超越顾君庭”是她的年度 KPI',
     },
   ],
 };
@@ -325,7 +325,7 @@ export function getFansitesForArtist(artistId: ArtistArchetype): FansiteMaster[]
 /**
  * 大粉互动选项。
  * `requiresStyle` 限定哪类风格可用：
- * - 给战斗粉发"签名周边"没意义，给拍图大神开"反黑控评预算"更是浪费
+ * - 给战斗粉发“签名周边”没意义，给拍图大神开“反黑控评预算”更是浪费
  * - 只有 `ignore` 和 `threaten_legal` 是所有人通用
  */
 export const fansiteInteractions: FansiteInteraction[] = [
@@ -464,7 +464,7 @@ export const fansiteEvents = [
     id: 'fansite_blackmail',
     trigger: { hasBlackmail: true, minLoyalty: 40 },
     title: '大粉暗示要好处',
-    description: '大粉私信你："最近手头紧，想卖点独家图，你觉得呢？"',
+    description: '大粉私信你：“最近手头紧，想卖点独家图，你觉得呢？”',
     choices: [
       { text: '给钱', cost: 30000, effect: { loyalty: 5, hasBlackmail: false } },
       { text: '拒绝', effect: { loyalty: -20, attitude: 'hostile' } },

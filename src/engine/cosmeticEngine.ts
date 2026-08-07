@@ -53,7 +53,7 @@ export function resolveProcedure(
       const fanLoss = procedure.category === 'major' ? -6 : procedure.category === 'medium' ? -4 : -2;
       statChanges.prRisk = riskAdd;
       statChanges.fanLoyalty = fanLoss;
-      narration = `手术很成功，颜值+${procedure.appearanceGain}！但是……你的艺人被拍到走出医美机构，"整容实锤"的话题正在发酵。`;
+      narration = `手术很成功，颜值+${procedure.appearanceGain}！但是……你的艺人被拍到走出医美机构，“整容实锤”的话题正在发酵。`;
     } else {
       narration = `${procedure.name}效果很好！颜值+${procedure.appearanceGain}。没有引起任何注意，一切悄悄进行。`;
     }
@@ -67,7 +67,7 @@ export function resolveProcedure(
     if (wasDiscovered) {
       statChanges.prRisk = 15;
       statChanges.fanLoyalty = -8;
-      narration = `手术失败了！颜值-${procedure.failAppearanceLoss}，还额外花了¥${(extraCost / 10000).toFixed(1)}万处理并发症。更糟糕的是，整件事被媒体曝光了——"整容翻车"冲上热搜。`;
+      narration = `手术失败了！颜值-${procedure.failAppearanceLoss}，还额外花了¥${(extraCost / 10000).toFixed(1)}万处理并发症。更糟糕的是，整件事被媒体曝光了，“整容翻车”冲上热搜。`;
     } else {
       narration = `手术出了问题……颜值-${procedure.failAppearanceLoss}，还额外花了¥${(extraCost / 10000).toFixed(1)}万处理并发症。好在没有被发现。`;
     }

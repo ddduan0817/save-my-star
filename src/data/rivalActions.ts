@@ -40,7 +40,7 @@ export const rivalActions: RivalAction[] = [
     id: 'rival_poach_fans',
     title: '挖走了你的粉丝',
     emoji: '💔',
-    description: '对方艺人最近势头很猛，你的一些粉丝开始"墙头"了。',
+    description: '对方艺人最近势头很猛，你的一些粉丝开始“墙头”了。',
     type: 'attack',
     playerEffects: { fanLoyalty: -3 },
     rivalFameChange: 0,

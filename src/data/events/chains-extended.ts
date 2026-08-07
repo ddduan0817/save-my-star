@@ -30,7 +30,7 @@ const chainRealityEvents: GameEvent[] = [
         subtext: '高曝光但压力大',
         emoji: '👑',
         outcome: {
-          narration: '经过一番谈判，成功拿下队长位置！但节目组暗示——队长要对收视率负责。',
+          narration: '经过一番谈判，成功拿下队长位置！但节目组暗示，队长要对收视率负责。',
           statChanges: { commercialValue: 3, prRisk: 2 },
           followUpEventId: 'chain_reality_2_captain',
           unlockTag: 'reality_captain',
@@ -98,7 +98,7 @@ const chainRealityEvents: GameEvent[] = [
         subtext: '展现领袖魅力',
         emoji: '🎯',
         outcome: {
-          narration: '在镜头前真诚地给队员加油打气，这段被剪进了正片。弹幕刷屏"好温暖""真正的队长"。',
+          narration: '在镜头前真诚地给队员加油打气，这段被剪进了正片。弹幕刷屏“好温暖”“真正的队长”。',
           statChanges: { fanLoyalty: 4, commercialValue: 1 },
           followUpEventId: 'chain_reality_3_finale',
           unlockTag: 'reality_leader',
@@ -133,7 +133,7 @@ const chainRealityEvents: GameEvent[] = [
         subtext: '高风险高回报',
         emoji: '🔥',
         outcome: {
-          narration: '全力以赴的表演引爆全场！直播间弹幕爆炸，"太绝了""封神""YYDS"。节目收视率创新高！',
+          narration: '全力以赴的表演引爆全场！直播间弹幕爆炸，“太绝了”“封神”“YYDS”。节目收视率创新高！',
           statChanges: { commercialValue: 6, fanLoyalty: 5, money: 100000 },
           unlockTag: 'reality_won',
         },
@@ -156,7 +156,7 @@ const chainRealityEvents: GameEvent[] = [
     category: 'pr',
     severity: 'medium',
     title: '逆袭之路引发热议',
-    description: '你的艺人和冷门搭档的逆袭故事在网上疯传，"不被看好却最打动人"。',
+    description: '你的艺人和冷门搭档的逆袭故事在网上疯传，“不被看好却最打动人”。',
     emoji: '🌟',
     requiredTags: ['reality_underdog_ally'],
     choices: [
@@ -166,7 +166,7 @@ const chainRealityEvents: GameEvent[] = [
         subtext: '人品加分',
         emoji: '🤗',
         outcome: {
-          narration: '"把掌声给我的搭档"——这句话被截图疯传。路人好感度暴涨，"太真诚了""这才是偶像该有的样子"。',
+          narration: '“把掌声给我的搭档”，这句话被截图疯传。路人好感度暴涨，“太真诚了”“这才是偶像该有的样子”。',
           statChanges: { fanLoyalty: 8, prRisk: -5 },
           unlockTag: 'reality_underdog_won',
         },
@@ -189,7 +189,7 @@ const chainRealityEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '综艺剪辑争议',
-    description: '节目组的剪辑让你的艺人看起来"甩锅队友"，#XX综艺剪辑争议# 上了热搜。',
+    description: '节目组的剪辑让你的艺人看起来“甩锅队友”，#XX综艺剪辑争议# 上了热搜。',
     emoji: '✂️',
     requiredTags: ['reality_blamed'],
     choices: [
@@ -199,7 +199,7 @@ const chainRealityEvents: GameEvent[] = [
         subtext: '冒险但可能赢得同情',
         emoji: '📢',
         outcome: {
-          narration: '公开发文指出剪辑不公正。一部分人支持"敢说真话"，但节目组发声明暗怼"不专业"。争议进一步扩大。',
+          narration: '公开发文指出剪辑不公正。一部分人支持“敢说真话”，但节目组发声明暗怼“不专业”。争议进一步扩大。',
           statChanges: { prRisk: 3, fanLoyalty: 3, commercialValue: -2 },
           unlockTag: 'reality_controversy_end',
         },
@@ -210,7 +210,7 @@ const chainRealityEvents: GameEvent[] = [
         subtext: '委屈但安全',
         emoji: '😌',
         outcome: {
-          narration: '"节目组很辛苦，不怪他们。"这个回应让很多路人路转粉——"格局大""不是一般艺人"。',
+          narration: '“节目组很辛苦，不怪他们。”这个回应让很多路人路转粉，“格局大”“不是一般艺人”。',
           statChanges: { fanLoyalty: 4, prRisk: -2, commercialValue: 1 },
           unlockTag: 'reality_controversy_end',
         },
@@ -258,11 +258,11 @@ const chainFanCrisisEvents: GameEvent[] = [
       },
       {
         id: 'fancrisis_thank',
-        text: '感谢"热情粉丝"',
+        text: '感谢“热情粉丝”',
         subtext: '讨好粉丝但可能纵容',
         emoji: '💖',
         outcome: {
-          narration: '"谢谢大家的热情~"这条微博发出后，被解读为"鼓励私生"。理性粉丝直接炸了。',
+          narration: '“谢谢大家的热情~”这条微博发出后，被解读为“鼓励私生”。理性粉丝直接炸了。',
           statChanges: { prRisk: 5, fanLoyalty: -3 },
           followUpEventId: 'chain_fancrisis_2_backfire',
           unlockTag: 'fan_thanked_stalkers',
@@ -297,7 +297,7 @@ const chainFanCrisisEvents: GameEvent[] = [
         subtext: '谁也不得罪',
         emoji: '🤷',
         outcome: {
-          narration: '试图两边都安抚的做法被双方都批评——"骑墙""没有原则"。事情变得更混乱了。',
+          narration: '试图两边都安抚的做法被双方都批评，“骑墙”“没有原则”。事情变得更混乱了。',
           statChanges: { fanLoyalty: -2, prRisk: 3 },
           followUpEventId: 'chain_fancrisis_3_mess',
           unlockTag: 'fan_both_sides',
@@ -345,7 +345,7 @@ const chainFanCrisisEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '感谢私生被全网批评',
-    description: '"你的感谢就是在纵容私生！"——话题 #抵制纵容私生# 上了热搜。',
+    description: '“你的感谢就是在纵容私生！”，话题 #抵制纵容私生# 上了热搜。',
     emoji: '💥',
     requiredTags: ['fan_thanked_stalkers'],
     choices: [
@@ -355,7 +355,7 @@ const chainFanCrisisEvents: GameEvent[] = [
         subtext: '亡羊补牢',
         emoji: '🙏',
         outcome: {
-          narration: '紧急发布道歉声明，承认之前的回应不当。大部分人选择了原谅——"知错能改，善莫大焉"。',
+          narration: '紧急发布道歉声明，承认之前的回应不当。大部分人选择了原谅，“知错能改，善莫大焉”。',
           statChanges: { prRisk: -2, fanLoyalty: 1 },
           followUpEventId: 'chain_fancrisis_3_resolution',
           unlockTag: 'fan_apologized',
@@ -367,7 +367,7 @@ const chainFanCrisisEvents: GameEvent[] = [
         subtext: '硬扛到底',
         emoji: '😤',
         outcome: {
-          narration: '"我感谢粉丝有什么错？"——这个回应让事情彻底失控了。粉丝大面积脱粉，路人好感归零。',
+          narration: '“我感谢粉丝有什么错？”，这个回应让事情彻底失控了。粉丝大面积脱粉，路人好感归零。',
           statChanges: { prRisk: 6, fanLoyalty: -5 },
           followUpEventId: 'chain_fancrisis_3_mess',
           unlockTag: 'fan_stubborn',
@@ -391,7 +391,7 @@ const chainFanCrisisEvents: GameEvent[] = [
         subtext: '重建信任',
         emoji: '💫',
         outcome: {
-          narration: '线上见面会气氛温馨，粉丝们感动落泪。"经历过风雨，感情更深了。"粉丝生态进入了健康的新阶段。',
+          narration: '线上见面会气氛温馨，粉丝们感动落泪。“经历过风雨，感情更深了。”粉丝生态进入了健康的新阶段。',
           statChanges: { fanLoyalty: 5, prRisk: -3 },
           unlockTag: 'fan_crisis_resolved',
         },
@@ -519,7 +519,7 @@ const chainEmpireEvents: GameEvent[] = [
         subtext: '定价亲民，受众广',
         emoji: '🛍️',
         outcome: {
-          narration: '走亲民路线！粉丝群直接炸了——"终于买得起了""已经准备好钱包"。预售链接还没放出就有人催了。',
+          narration: '走亲民路线！粉丝群直接炸了，“终于买得起了”“已经准备好钱包”。预售链接还没放出就有人催了。',
           statChanges: { fanLoyalty: 3, money: -30000 },
           followUpEventId: 'chain_empire_3_launch',
           unlockTag: 'empire_affordable',
@@ -542,7 +542,7 @@ const chainEmpireEvents: GameEvent[] = [
         subtext: '迎合健康趋势',
         emoji: '🥗',
         outcome: {
-          narration: '健康轻食的定位非常契合当下趋势。"明星都在吃"本身就是最好的广告。',
+          narration: '健康轻食的定位非常契合当下趋势。“明星都在吃”本身就是最好的广告。',
           statChanges: { commercialValue: 2, prRisk: -2 },
           followUpEventId: 'chain_empire_3_launch',
           unlockTag: 'empire_health',
@@ -554,7 +554,7 @@ const chainEmpireEvents: GameEvent[] = [
         subtext: '爆款潜力大但竞争激烈',
         emoji: '🧋',
         outcome: {
-          narration: '网红奶茶赛道太卷了！但团队有信心——"有你家艺人的名字就够了。"预计首月流水就能回本。',
+          narration: '网红奶茶赛道太卷了！但团队有信心，“有你家艺人的名字就够了。”预计首月流水就能回本。',
           statChanges: { money: 20000 },
           followUpEventId: 'chain_empire_3_launch',
           unlockTag: 'empire_trendy',
@@ -596,7 +596,7 @@ const chainEmpireEvents: GameEvent[] = [
         subtext: '省钱但曝光有限',
         emoji: '📱',
         outcome: {
-          narration: '线上悄悄开售，粉丝群自发传播。虽然没有大场面，但口碑意外地好。"品质说话，不需要花哨"。',
+          narration: '线上悄悄开售，粉丝群自发传播。虽然没有大场面，但口碑意外地好。“品质说话，不需要花哨”。',
           statChanges: { commercialValue: 2, money: 60000, fanLoyalty: 3 },
           unlockTag: 'empire_launched',
         },
@@ -613,7 +613,7 @@ const chainScandalEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '匿名爆料帖出现',
-    description: '某论坛出现匿名帖，声称握有你的艺人"惊天黑料"，配了模糊的截图。帖子正在迅速传播。',
+    description: '某论坛出现匿名帖，声称握有你的艺人“惊天黑料”，配了模糊的截图。帖子正在迅速传播。',
     emoji: '🕵️',
     minDay: 8,
     statConditions: { minPrRisk: 30 },
@@ -625,7 +625,7 @@ const chainScandalEvents: GameEvent[] = [
         emoji: '🔍',
         requireMinMoney: 50000,
         outcome: {
-          narration: '花了一笔钱请专业团队追踪IP。很快有了线索——发帖人疑似是前助理。',
+          narration: '花了一笔钱请专业团队追踪IP。很快有了线索，发帖人疑似是前助理。',
           statChanges: { money: -50000, prRisk: 2 },
           followUpEventId: 'chain_scandal_2_investigate',
           unlockTag: 'scandal_investigating',
@@ -637,7 +637,7 @@ const chainScandalEvents: GameEvent[] = [
         subtext: '以退为进',
         emoji: '🤚',
         outcome: {
-          narration: '在爆料扩散前主动发长文承认了一些事情。舆论反应两极——有人说"真诚"，有人说"果然有料"。',
+          narration: '在爆料扩散前主动发长文承认了一些事情。舆论反应两极，有人说“真诚”，有人说“果然有料”。',
           statChanges: { prRisk: 3, fanLoyalty: 2 },
           followUpEventId: 'chain_scandal_2_confess',
           unlockTag: 'scandal_confessing',
@@ -649,7 +649,7 @@ const chainScandalEvents: GameEvent[] = [
         subtext: '法律手段应对',
         emoji: '⚖️',
         outcome: {
-          narration: '律师函一出，爆料帖暂时被删了。但"发律师函 = 心虚"的论调也出来了……',
+          narration: '律师函一出，爆料帖暂时被删了。但“发律师函 = 心虚”的论调也出来了……',
           statChanges: { money: -30000, prRisk: 1 },
           followUpEventId: 'chain_scandal_2_legal',
           unlockTag: 'scandal_legal_action',
@@ -662,7 +662,7 @@ const chainScandalEvents: GameEvent[] = [
     category: 'drama',
     severity: 'high',
     title: '查到了：是前助理',
-    description: '调查结果出来了——发帖人是三个月前被辞退的前助理。手里确实有一些尴尬的聊天记录。',
+    description: '调查结果出来了，发帖人是三个月前被辞退的前助理。手里确实有一些尴尬的聊天记录。',
     emoji: '🎭',
     requiredTags: ['scandal_investigating'],
     choices: [
@@ -672,7 +672,7 @@ const chainScandalEvents: GameEvent[] = [
         subtext: '激进反击',
         emoji: '💣',
         outcome: {
-          narration: '公开揭露前助理的身份和动机。舆论大反转——"原来是被开除心怀不满""职场报复"。但也有人质疑"为什么要开除她？"',
+          narration: '公开揭露前助理的身份和动机。舆论大反转，“原来是被开除心怀不满”“职场报复”。但也有人质疑“为什么要开除她？”',
           statChanges: { prRisk: -4, fanLoyalty: 2, commercialValue: 1 },
           followUpEventId: 'chain_scandal_3_expose',
           unlockTag: 'scandal_exposed_source',
@@ -707,7 +707,7 @@ const chainScandalEvents: GameEvent[] = [
         subtext: '彻底坦诚',
         emoji: '💯',
         outcome: {
-          narration: '又发了一篇更详细的文章，把来龙去脉讲得清清楚楚。大部分人被打动了——"至少是个真诚的人"。',
+          narration: '又发了一篇更详细的文章，把来龙去脉讲得清清楚楚。大部分人被打动了，“至少是个真诚的人”。',
           statChanges: { prRisk: -6, fanLoyalty: 4 },
           followUpEventId: 'chain_scandal_3_redemption',
           unlockTag: 'scandal_full_truth',
@@ -719,7 +719,7 @@ const chainScandalEvents: GameEvent[] = [
         subtext: '见好就收',
         emoji: '🤐',
         outcome: {
-          narration: '选择不再深入解释。支持者觉得"已经够了"，但质疑者认为"还有隐瞒"。舆论悬而未决。',
+          narration: '选择不再深入解释。支持者觉得“已经够了”，但质疑者认为“还有隐瞒”。舆论悬而未决。',
           statChanges: { prRisk: -1 },
           unlockTag: 'scandal_half_truth',
         },
@@ -731,7 +731,7 @@ const chainScandalEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '律师函的后续',
-    description: '律师函发出后，对方不仅没退缩，反而放出了更多"证据"。事情闹大了。',
+    description: '律师函发出后，对方不仅没退缩，反而放出了更多“证据”。事情闹大了。',
     emoji: '⚡',
     requiredTags: ['scandal_legal_action'],
     choices: [
@@ -741,7 +741,7 @@ const chainScandalEvents: GameEvent[] = [
         subtext: '走法律程序',
         emoji: '🏛️',
         outcome: {
-          narration: '正式提起诉讼。漫长的法律程序开始了，但至少表明了立场——"我们不怕查"。',
+          narration: '正式提起诉讼。漫长的法律程序开始了，但至少表明了立场，“我们不怕查”。',
           statChanges: { money: -60000, prRisk: -2 },
           followUpEventId: 'chain_scandal_3_court',
           unlockTag: 'scandal_suing',
@@ -775,7 +775,7 @@ const chainScandalEvents: GameEvent[] = [
         text: '表示不追究，展现大度',
         emoji: '🕊️',
         outcome: {
-          narration: '"大家都不容易，不追究了。"——这个表态直接上了热搜。路人好感拉满，"格局！"。',
+          narration: '“大家都不容易，不追究了。”，这个表态直接上了热搜。路人好感拉满，“格局！”。',
           statChanges: { fanLoyalty: 5, prRisk: -5, commercialValue: 2 },
           unlockTag: 'scandal_resolved',
         },
@@ -786,7 +786,7 @@ const chainScandalEvents: GameEvent[] = [
         subtext: '杀鸡儆猴',
         emoji: '⚔️',
         outcome: {
-          narration: '决定追究法律责任。虽然维护了权益，但也有人觉得"太狠了""赢了官司输了人品"。',
+          narration: '决定追究法律责任。虽然维护了权益，但也有人觉得“太狠了”“赢了官司输了人品”。',
           statChanges: { prRisk: -2, fanLoyalty: 1, money: -20000 },
           unlockTag: 'scandal_resolved',
         },
@@ -818,7 +818,7 @@ const chainScandalEvents: GameEvent[] = [
     category: 'pr',
     severity: 'medium',
     title: '坦诚赢得尊重',
-    description: '完全坦诚的态度赢得了公众的尊重。"虽然不完美，但至少真诚。"',
+    description: '完全坦诚的态度赢得了公众的尊重。“虽然不完美，但至少真诚。”',
     emoji: '🌟',
     requiredTags: ['scandal_full_truth'],
     choices: [
@@ -827,7 +827,7 @@ const chainScandalEvents: GameEvent[] = [
         text: '用作品证明自己',
         emoji: '🎯',
         outcome: {
-          narration: '坦诚之后，反而收获了一波"真实人设"的好评。品牌方也觉得这种人设更有辨识度。',
+          narration: '坦诚之后，反而收获了一波“真实人设”的好评。品牌方也觉得这种人设更有辨识度。',
           statChanges: { fanLoyalty: 5, commercialValue: 3, prRisk: -8 },
           unlockTag: 'scandal_redeemed',
         },
@@ -848,7 +848,7 @@ const chainScandalEvents: GameEvent[] = [
         text: '发声明宣布胜诉',
         emoji: '🏆',
         outcome: {
-          narration: '"正义也许会迟到，但不会缺席。"胜诉声明获得大量转发。名声和信誉都得到了恢复。',
+          narration: '“正义也许会迟到，但不会缺席。”胜诉声明获得大量转发。名声和信誉都得到了恢复。',
           statChanges: { prRisk: -6, commercialValue: 3, money: 30000, fanLoyalty: 2 },
           unlockTag: 'scandal_resolved',
         },

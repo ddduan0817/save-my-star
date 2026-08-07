@@ -9,8 +9,8 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { fanLoyalty: 2, commercialValue: 1 },
     backfireConditions: { minPrRisk: 65 },
     backfireEffects: { prRisk: 5, fanLoyalty: -1 },
-    backfireNarration: '全网都在骂你，你还有心情晒工作照？评论区炸了："避重就轻""装什么岁月静好"……',
-    successNarration: '工作照引发大量转发，粉丝纷纷表示"好敬业""营业好勤快"，路人好感度上升。',
+    backfireNarration: '全网都在骂你，你还有心情晒工作照？评论区炸了：“避重就轻”“装什么岁月静好”……',
+    successNarration: '工作照引发大量转发，粉丝纷纷表示“好敬业”“营业好勤快”，路人好感度上升。',
     trendTitle: '#{name}工作照好绝#',
   },
   {
@@ -21,8 +21,8 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { fanLoyalty: 2 },
     backfireConditions: { maxFanLoyalty: 25 },
     backfireEffects: { prRisk: 3, fanLoyalty: -1 },
-    backfireNarration: '深夜感悟发出后，评论区一片冷清。仅有的几条评论都是："谁care？""自我感动罢了"……',
-    successNarration: '"看哭了""好真实""心疼你"——粉丝深夜集体破防，超话活跃度暴涨。',
+    backfireNarration: '深夜感悟发出后，评论区一片冷清。仅有的几条评论都是：“谁care？”“自我感动罢了”……',
+    successNarration: '“看哭了”“好真实”“心疼你”，粉丝深夜集体破防，超话活跃度暴涨。',
     trendTitle: '#{name}深夜感悟太真实了#',
   },
   {
@@ -33,8 +33,8 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { prRisk: -6, fanLoyalty: 1 },
     backfireConditions: { minPrRisk: 0 }, // 引擎里特判：风险<30时翻车
     backfireEffects: { prRisk: 5, commercialValue: -1 },
-    backfireNarration: '本来风平浪静，你突然回应一个没人关注的"争议"，反而引起了大家注意："此地无银三百两？"',
-    successNarration: '回应措辞得体，态度诚恳。舆论风向逐渐扭转，"大气""有担当"的评价多了起来。',
+    backfireNarration: '本来风平浪静，你突然回应一个没人关注的“争议”，反而引起了大家注意：“此地无银三百两？”',
+    successNarration: '回应措辞得体，态度诚恳。舆论风向逐渐扭转，“大气”“有担当”的评价多了起来。',
     trendTitle: '#{name}正面回应争议#',
   },
   {
@@ -45,7 +45,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { commercialValue: 2, money: 15000 },
     backfireConditions: { minPrRisk: 55 },
     backfireEffects: { prRisk: 4, commercialValue: -1 },
-    backfireNarration: '"争议都没解决就开始恰钱了？""吃相太难看"——宣传帖底下全是质疑声。',
+    backfireNarration: '“争议都没解决就开始恰钱了？”“吃相太难看”，宣传帖底下全是质疑声。',
     successNarration: '新作品宣传贴转发破万，品牌方看了直呼满意，追加了推广预算。',
     trendTitle: '#{name}新作品官宣#',
   },
@@ -57,8 +57,8 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { fanLoyalty: 3, prRisk: 1 },
     backfireConditions: { maxFanLoyalty: 30 },
     backfireEffects: { fanLoyalty: -2, prRisk: 2 },
-    backfireNarration: '"现在才想起来感谢粉丝？""晚了""虚伪"——大批粉丝表示不买账。路人也在说"逼粉丝花钱"。',
-    successNarration: '"呜呜呜被cue到了！""宝宝喜欢就好！"——粉丝群沸腾了，纷纷晒出和偶像的回忆。',
+    backfireNarration: '“现在才想起来感谢粉丝？”“晚了”“虚伪”，大批粉丝表示不买账。路人也在说“逼粉丝花钱”。',
+    successNarration: '“呜呜呜被cue到了！”“宝宝喜欢就好！”，粉丝群沸腾了，纷纷晒出和偶像的回忆。',
     trendTitle: '#{name}宠粉时刻#',
   },
   {
@@ -69,8 +69,8 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { prRisk: -3, fanLoyalty: 1 },
     backfireConditions: { minPrRisk: 75 },
     backfireEffects: { prRisk: 4 },
-    backfireNarration: '"自己一屁股问题还做公益？""洗白实锤""这波营销我给0分"——公益帖变成了翻车现场。',
-    successNarration: '公益转发获得大量好评："有社会责任感""正能量偶像"。路人好感度明显提升。',
+    backfireNarration: '“自己一屁股问题还做公益？”“洗白实锤”“这波营销我给0分”，公益帖变成了翻车现场。',
+    successNarration: '公益转发获得大量好评：“有社会责任感”“正能量偶像”。路人好感度明显提升。',
     trendTitle: '#{name}助力公益好暖#',
   },
   {
@@ -81,8 +81,8 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { fanLoyalty: 3, prRisk: 2 },
     backfireConditions: { minPrRisk: 50 },
     backfireEffects: { prRisk: 8, fanLoyalty: -1 },
-    backfireNarration: '本来想霸气回怼，结果被断章取义上了热搜。"明星怼网友""素质堪忧"——火上浇油了。',
-    successNarration: '"太飒了！""这才是真性情！""怼得好！"——粉丝疯狂转发，黑子们反而被群嘲了。',
+    backfireNarration: '本来想霸气回怼，结果被断章取义上了热搜。“明星怼网友”“素质堪忧”，火上浇油了。',
+    successNarration: '“太飒了！”“这才是真性情！”“怼得好！”，粉丝疯狂转发，黑子们反而被群嘲了。',
     trendTitle: '#{name}在线怼黑子#',
   },
   {
@@ -92,7 +92,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     description: '发一张日常自拍，简单安全但收益低',
     baseEffects: { fanLoyalty: 1 },
     backfireConditions: undefined,
-    successNarration: '自拍获得大量点赞和"好好看"评论，简单但有效的营业方式。',
+    successNarration: '自拍获得大量点赞和“好好看”评论，简单但有效的营业方式。',
     trendTitle: '#{name}自拍好好看#',
   },
   {
@@ -103,7 +103,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { commercialValue: 3, fanLoyalty: -2 },
     backfireConditions: { forArtist: 'idol' },
     backfireEffects: { fanLoyalty: -6, prRisk: 4 },
-    backfireNarration: '偶像暗示恋情？粉丝直接炸了："塌房预警！""说好的只有粉丝呢？"——脱粉潮已经开始。',
+    backfireNarration: '偶像暗示恋情？粉丝直接炸了：“塌房预警！”“说好的只有粉丝呢？”，脱粉潮已经开始。',
     successNarration: '暧昧动态引发全网猜测，话题热度暴涨。但评论区吵成一团，有人嗑有人骂。',
     trendTitle: '#{name}疑似官宣恋情#',
   },
@@ -115,8 +115,8 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     baseEffects: { prRisk: -8, commercialValue: -1 },
     backfireConditions: { minPrRisk: 0 }, // 引擎里特判：风险<30时翻车
     backfireEffects: { prRisk: 4, commercialValue: -1 },
-    backfireNarration: '"道什么歉？发生什么了？""无事道歉太怪了吧"——反而引发了大家的好奇和猜测。',
-    successNarration: '道歉声明措辞真挚，获得了大部分人的谅解。"知错能改""态度值得肯定"。',
+    backfireNarration: '“道什么歉？发生什么了？”“无事道歉太怪了吧”，反而引发了大家的好奇和猜测。',
+    successNarration: '道歉声明措辞真挚，获得了大部分人的谅解。“知错能改”“态度值得肯定”。',
     trendTitle: '#{name}发布道歉声明#',
   },
 ];
