@@ -18,6 +18,7 @@ import { artistTroubleEvents } from '@/data/events/artist-trouble';
 import { cosmeticEvents } from '@/data/events/cosmetic';
 import { phoneCallEvents } from '@/data/events/phone-calls';
 import { absurdEvents } from '@/data/events/absurd';
+import { platformEvents } from '@/data/events/platform';
 import { metaEvents } from '@/data/events/meta-events';
 import { mentalStateEvents } from '@/data/events/mental-state';
 import { mentalTriggerEvents, mentalTriggerIds, getActiveMentalTriggers } from '@/data/events/mental-triggers';
@@ -47,6 +48,7 @@ const allEvents: GameEvent[] = [
   ...cosmeticEvents,
   ...phoneCallEvents,
   ...absurdEvents,
+  ...platformEvents,
   ...metaEvents,
   ...mentalStateEvents,
   ...mentalTriggerEvents,

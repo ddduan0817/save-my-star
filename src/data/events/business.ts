@@ -162,7 +162,7 @@ export const businessEvents: GameEvent[] = [
         text: '接受配角',
         subtext: '先进组学习',
         outcome: {
-          narration: '进组第一天你的艺人就被骂哭了——导演不留情面。但三个月后杀青时，导演拍了拍TA的肩："下部戏，给你主角。"这句话没有被任何媒体拍到，但你知道这比任何热搜都重要。',
+          narration: '进组第一天你的艺人就被骂哭了——导演不留情面。但三个月后杀青时，导演拍了拍TA的肩："下部戏，给你主角。"这句话没被任何媒体拍到，但你知道这比任何热搜都重要。杀青片场路透流出后，热评置顶：从被骂哭到被留下，这才叫演员。',
           statChanges: { commercialValue: 4, fanLoyalty: 2, money: 40000 },
           unlockTag: 'transform',
         },
@@ -172,7 +172,7 @@ export const businessEvents: GameEvent[] = [
         text: '要求演主角',
         subtext: '不是主角不去',
         outcome: {
-          narration: '导演沉默了三秒："你确定？"然后挂了电话。你听说这个角色后来给了一个科班出身的新人——对方演得真的很好。每次刷到那部电影的预告，你心里都有点不是滋味。',
+          narration: '导演沉默了三秒："你确定？"然后挂了电话。这个角色后来给了一个科班出身的新人——对方凭它拿了新人奖。颁奖礼那天弹幕飘过一句：这个角色本来差点是XX的，还好没糟蹋。你刷到时，心里有点不是滋味。',
           statChanges: { commercialValue: -5, fanLoyalty: -2 },
         },
       },
