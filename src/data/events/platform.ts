@@ -187,4 +187,134 @@ export const platformEvents: GameEvent[] = [
       },
     ],
   },
+
+  // 5. AI 翻唱 / 数字人翻车
+  {
+    id: 'platform_ai_cover',
+    category: 'crisis',
+    severity: 'medium',
+    title: 'AI 用你艺人的声音翻唱了整张专辑',
+    description:
+      '有人把你艺人的声线喂给了 AI，一夜之间"AI 版"翻唱了别家的热歌，播放量还比正主原唱高。粉丝分两派吵翻：一派"这是侵权必须告"，一派"不得不承认 AI 唱得确实好听"。#AI 偷了XX的声音# 挂热搜，评论区最扎心一条：正主练了十年，AI 学了十秒。',
+    emoji: '🎙️',
+    minDay: 5,
+    choices: [
+      {
+        id: 'aicover_sue',
+        text: '发律师函+平台下架',
+        subtext: '维权，声音也是财产',
+        outcome: {
+          narration:
+            '律师函发了，平台连夜下架。但 AI 翻唱早被存成本地传遍全网，"越禁越想听"。你第一次意识到，能被告的是账号，告不了的是那串已经扩散的音频。热评：这届版权，追不上复制粘贴的速度。',
+          statChanges: { prRisk: 3, money: -20000 },
+        },
+      },
+      {
+        id: 'aicover_official',
+        text: '干脆官方出一版正主真唱',
+        subtext: '"AI能唱，本人唱得更好"正面刚',
+        outcome: {
+          narration:
+            '你安排艺人 48 小时内录了一版真人翻唱直接空降。粉丝疯狂对比"AI vs 真人"，正主那句现场换气和尾音颤音成了"人类含金量"名场面。#XX 真人版吊打AI# 反超热搜。最高赞：这才叫杀鸡用牛刀。',
+          statChanges: { commercialValue: 4, fanLoyalty: 5, prRisk: -3 },
+          specialEffect: 'viral',
+        },
+      },
+      {
+        id: 'aicover_collab',
+        text: '反向操作：官方"授权"AI联名',
+        subtext: '把侵权变成商业合作',
+        outcome: {
+          narration:
+            '你联系了做 AI 的团队，谈了个"官方授权 AI 声库"的合作，抽成分账。粉丝炸锅："格局打开了"和"晚节不保"各半。钱是进账了，但有老粉发小作文"我们爱的是人，不是一个可以被授权的声音"。',
+          statChanges: { money: 120000, commercialValue: 5, fanLoyalty: -4, prRisk: 2 },
+          twist: {
+            chance: 0.25,
+            narration:
+              '但是！这个"艺人主动拥抱 AI"的操作被科技媒体当成了正面案例报道，路人缘意外回升——"至少人家没假装 AI 不存在"。',
+            statChanges: { fanLoyalty: 4, commercialValue: 3 },
+          },
+        },
+      },
+    ],
+  },
+
+  // 6. CP battle 战报
+  {
+    id: 'platform_cp_war',
+    category: 'drama',
+    severity: 'medium',
+    title: '两家 CP 粉在超话打成了"战报体"',
+    description:
+      '你艺人被粉丝和两个不同的人磕 CP，两家 CP 粉为了"谁才是正主 CP"battle 到发战报——"今日数据：我方超话签到 +2万，对方控评被举报 37 条"。战火烧到正主头上，#XX 到底和谁锁死# 挂了热搜。而你的艺人本人在群里问你："他们说的这些人我都不太熟…"',
+    emoji: '💞',
+    minDay: 6,
+    choices: [
+      {
+        id: 'cp_neutral',
+        text: '发"我很好，别吵了"营业',
+        subtext: '正主下场降温',
+        outcome: {
+          narration:
+            '艺人发了句"谢谢大家关心，但我单身且社恐，求放过"。CP 粉集体破防又好笑，"正主亲自拆CP"成了年度名场面。最高赞：磕到最后正主说他社恐，我们像个小丑。',
+          statChanges: { fanLoyalty: 3, prRisk: -3 },
+        },
+      },
+      {
+        id: 'cp_feed',
+        text: '暗中给热度更高的那家喂糖',
+        subtext: '哪家数据好就顺哪家',
+        outcome: {
+          narration:
+            '你悄悄让艺人多和数据更猛的那位同框互动。糖是甜了，但另一家 CP 粉觉得被背叛，脱粉小作文+撤代言应援，"塑料 CP 割粉丝韭菜"上了热搜。数据是把双刃剑，你割了一半粉丝的心。',
+          statChanges: { commercialValue: 3, fanLoyalty: -5, prRisk: 4 },
+        },
+      },
+      {
+        id: 'cp_ignore',
+        text: '不管，让子弹飞',
+        subtext: '沉默是金',
+        outcome: {
+          narration:
+            '你选择不回应。两家 battle 越演越烈，最后双双被平台限流"饭圈互撕"。吃瓜路人只记住了一句："也不知道正主招谁惹谁了。"你的艺人无辜躺枪，但热度确实涨了。',
+          statChanges: { commercialValue: 2, prRisk: 3, fanLoyalty: -2 },
+        },
+      },
+    ],
+  },
+
+  // 7. 数字人直播带货翻车
+  {
+    id: 'platform_digital_human',
+    category: 'business',
+    severity: 'medium',
+    title: '花钱做的"数字人"直播带货翻车了',
+    description:
+      '为了让艺人"躺着也能赚钱"，你砸钱做了个 AI 数字人替身 24 小时直播带货。结果数字人半夜卡 bug，对着镜头机械重复"家人们买它、家人们买它"整整两小时，眼神空洞、嘴型对不上。#XX 数字人诈尸了# 冲上热搜，鬼畜区已经开始二创。',
+    emoji: '🤖',
+    minDay: 7,
+    choices: [
+      {
+        id: 'dh_meme',
+        text: '把 bug 做成官方梗',
+        subtext: '"家人们买它"表情包安排上',
+        outcome: {
+          narration:
+            '你让团队连夜出了"家人们买它"的官方表情包和周边。玩梗玩到飞起，那句机械重复成了年度流行语，带货数据不降反升。最高赞：这是我见过唯一一个把服务器崩溃变成 KPI 的团队。',
+          statChanges: { commercialValue: 5, money: 80000, fanLoyalty: 3 },
+          specialEffect: 'viral',
+        },
+      },
+      {
+        id: 'dh_shutdown',
+        text: '紧急下线，回归真人直播',
+        subtext: '认怂，AI 还是不靠谱',
+        outcome: {
+          narration:
+            '数字人连夜下线，艺人本人回归直播道歉"以后都是真人陪大家"。粉丝反而松了口气——"终于不用对着假人喊哥哥了"。但那笔做数字人的钱是打水漂了。',
+          statChanges: { money: -50000, fanLoyalty: 4, prRisk: -2 },
+        },
+      },
+    ],
+  },
 ];

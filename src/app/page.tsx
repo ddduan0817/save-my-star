@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/stores/gameStore';
@@ -21,6 +22,24 @@ const heatItems = [
 export default function HomePage() {
   const router = useRouter();
   const startGame = useGameStore(s => s.startGame);
+
+  // 检测「进行中存档」，有则在首页显示"继续上一局"入口。
+  // persist 用了 skipHydration，需手动回灌后再读 gamePhase。
+  const [saved, setSaved] = useState<{ artistName: string; day: number } | null>(null);
+  useEffect(() => {
+    const read = () => {
+      const s = useGameStore.getState();
+      if (s.gamePhase === 'playing' && s.artist) {
+        setSaved({ artistName: s.artist.name, day: s.currentDay });
+      } else {
+        setSaved(null);
+      }
+    };
+    const unsub = useGameStore.persist.onFinishHydration(read);
+    useGameStore.persist.rehydrate();
+    if (useGameStore.persist.hasHydrated()) read();
+    return unsub;
+  }, []);
 
   const handleSelect = (id: string) => {
     startGame(id as ArtistArchetype);
@@ -217,6 +236,25 @@ export default function HomePage() {
 
       {/* ========= Artist selection ========= */}
       <div className="px-5 pb-6">
+        {/* 继续上一局 —— 检测到进行中存档时显示 */}
+        {saved && (
+          <motion.button
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => router.push('/game')}
+            className="w-full mb-4 flex items-center justify-between rounded-2xl bg-gradient-to-r from-orange-400 to-red-400 text-white px-4 py-3.5 shadow-md active:shadow"
+          >
+            <div className="flex flex-col items-start">
+              <span className="text-[15px] font-black">▶ 继续上一局</span>
+              <span className="text-[11px] text-white/85 mt-0.5">
+                {saved.artistName} · 第 {saved.day} 天
+              </span>
+            </div>
+            <span className="text-[11px] text-white/85">进度已保存 →</span>
+          </motion.button>
+        )}
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
