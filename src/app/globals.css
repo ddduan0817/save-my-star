@@ -192,6 +192,12 @@ body::before {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
+/* 顶部安全区：让 sticky 顶栏的背景延伸到刘海/状态栏，避免滚动内容
+   从状态栏那道透明缝"穿屏"上来（iOS Safari）。 */
+.safe-area-top {
+  padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

@@ -1,9 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "经纪人模拟器：塌房危机",
   description: "你能撑几天不让你的艺人塌房？AI经纪人模拟器，每一个决策都可能改变命运。",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  // viewportFit: cover —— 让页面延伸到刘海/安全区，配合 env(safe-area-inset-*) 使用
+  viewportFit: "cover",
 };
 
 export default function RootLayout({

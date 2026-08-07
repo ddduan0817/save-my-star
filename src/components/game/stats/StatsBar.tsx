@@ -32,7 +32,7 @@ export default function StatsBar() {
   }, [stats.prRisk]);
 
   return (
-    <div ref={barRef} className="sticky top-0 z-50 glass-card border-b border-gray-100/60 px-4 py-3 shadow-sm">
+    <div ref={barRef} className="sticky top-0 z-50 glass-card border-b border-gray-100/60 px-4 pb-3 safe-area-top shadow-sm">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <span className="text-xs font-bold text-gray-400 bg-gradient-to-r from-gray-100 to-gray-50 px-3 py-1 rounded-full shadow-sm shadow-gray-100/50">
