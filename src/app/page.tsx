@@ -146,7 +146,7 @@ export default function HomePage() {
           <p className="mt-2.5 text-[12.5px] leading-relaxed text-gray-600">
             你是娱乐圈经纪人。用 <span className="font-semibold text-gray-800">20 天</span>，在
             <span className="font-semibold text-gray-800">钱、商业价值、粉丝、舆论风险</span>之间做取舍，
-            帮 TA 别塌房，<span className="marker-yellow font-medium">没有正确答案，只有更糟和更不糟。</span>
+            帮 TA 别塌房，<span className="marker-yellow font-medium">没有正确答案，只有糟和更糟。</span>
           </p>
         </motion.div>
 
