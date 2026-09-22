@@ -35,9 +35,10 @@ describe('eventSelector', () => {
       expect(result).toBe(baseEvent);
     });
 
-    it('returns the event unchanged when no variant matches the artist', () => {
+    it('keeps content unchanged when no variant matches the artist', () => {
+      // 现在会走 {name} 深替换（返回新对象），但无占位符时内容应与原事件等价
       const result = resolveEventForArtist(baseEvent, 'actor');
-      expect(result).toBe(baseEvent);
+      expect(result).toEqual(baseEvent);
     });
 
     it('overrides title/description from variant while preserving other fields', () => {
@@ -46,13 +47,35 @@ describe('eventSelector', () => {
       expect(result.description).toBe('Idol desc');
       // emoji not overridden -> preserved
       expect(result.emoji).toBe('🎬');
-      expect(result.choices).toBe(baseEvent.choices);
+      expect(result.choices).toEqual(baseEvent.choices);
       expect(result.id).toBe(baseEvent.id);
     });
 
-    it('returns event unchanged when there are no artistVariants at all', () => {
+    it('keeps content unchanged when there are no artistVariants at all', () => {
       const ev: GameEvent = { ...baseEvent, artistVariants: undefined };
-      expect(resolveEventForArtist(ev, 'idol')).toBe(ev);
+      expect(resolveEventForArtist(ev, 'idol')).toEqual(ev);
+    });
+
+    it('replaces {name} placeholders with the artist name', () => {
+      const ev: GameEvent = {
+        ...baseEvent,
+        artistVariants: undefined,
+        title: '{name} 的新剧本',
+        description: '{name} 今天很忙',
+        choices: [
+          {
+            id: 'a',
+            text: '安慰 {name}',
+            outcome: { narration: '{name} 松了口气', statChanges: {} },
+          },
+        ],
+      };
+      const result = resolveEventForArtist(ev, 'idol');
+      // idol 对应的艺人名在结果里应替换占位符，且不再残留 {name}
+      expect(result.title).not.toContain('{name}');
+      expect(result.description).not.toContain('{name}');
+      expect(result.choices[0].text).not.toContain('{name}');
+      expect(result.choices[0].outcome.narration).not.toContain('{name}');
     });
   });
 

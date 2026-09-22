@@ -22,7 +22,7 @@ let currentView: View = 'landing';
 const listeners = new Set<() => void>();
 
 function emit() {
-  for (const l of listeners) l();
+  listeners.forEach(l => l());
 }
 
 function setView(next: View) {
