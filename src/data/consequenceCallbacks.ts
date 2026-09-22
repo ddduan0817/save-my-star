@@ -72,7 +72,7 @@ const CALLBACKS: CallbackDef[] = [
           text: '发律师函警告',
           subtext: '用法律手段吓退',
           outcome: {
-            narration: '律师函发过去，他安分了几天。但“XX团队滥用律师函”的话题悄悄起来了。',
+            narration: '律师函发过去，他安分了几天。但“{name}团队滥用律师函”的话题悄悄起来了。',
             statChanges: { prRisk: 3, money: -15000 },
           },
         },
@@ -243,7 +243,7 @@ const CALLBACKS: CallbackDef[] = [
           text: '正式起诉违约',
           subtext: '按合同索赔',
           outcome: {
-            narration: '法院受理了。她很快认怂撤帖并公开道歉，但“XX 团队压制粉丝言论”的印象留下了。',
+            narration: '法院受理了。她很快认怂撤帖并公开道歉，但“{name} 团队压制粉丝言论”的印象留下了。',
             statChanges: { money: -30000, prRisk: 8, fanLoyalty: -5 },
             unlockTag: 'studio_lawsuit',
           },
@@ -322,7 +322,7 @@ const CALLBACKS: CallbackDef[] = [
       category: 'pr',
       severity: 'medium',
       title: '医美承认后的二轮发酵',
-      description: '你艺人之前大方承认了做过一些微调。这两天一个医疗美容类自媒体发了“大家支持 XX 是因为 TA 愿意讲真话”的长文，路人风向开始转向：“整了怕什么，敢承认就是好样的。”',
+      description: '你艺人之前大方承认了做过一些微调。这两天一个医疗美容类自媒体发了“大家支持 {name} 是因为 TA 愿意讲真话”的长文，路人风向开始转向：“整了怕什么，敢承认就是好样的。”',
       emoji: '💉',
       choices: [
         {

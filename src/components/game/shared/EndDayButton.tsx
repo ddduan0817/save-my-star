@@ -16,8 +16,8 @@ export default function EndDayButton() {
   if (isProcessing) return null;
 
   return (
-    <div className="fixed bottom-[76px] left-0 right-0 z-40 flex justify-center pointer-events-none">
-      <div className="w-full max-w-lg flex justify-center px-4 pb-3">
+    <div className="fixed bottom-[96px] left-0 right-0 z-40 flex justify-center pointer-events-none">
+      <div className="w-full max-w-lg flex justify-center px-4 pb-3 safe-area-bottom">
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

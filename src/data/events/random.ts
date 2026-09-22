@@ -57,7 +57,7 @@ export const randomEvents: GameEvent[] = [
         text: '低调处理',
         subtext: '让视频自然传播',
         outcome: {
-          narration: '你做了一件最难的事，什么都不做。没有转发，没有声明，没有“团队知情”。视频靠自来水传到了三千万播放。最打动人的不是捡橘子，而是自始至终没人知道TA就是那个“XX”。热评第一只有四个字：“这种人，粉了。”',
+          narration: '你做了一件最难的事，什么都不做。没有转发，没有声明，没有“团队知情”。视频靠自来水传到了三千万播放。最打动人的不是捡橘子，而是自始至终没人知道TA就是那个“{name}”。热评第一只有四个字：“这种人，粉了。”',
           statChanges: { fanLoyalty: 4, prRisk: -3, commercialValue: 3 },
         },
       },
@@ -66,7 +66,7 @@ export const randomEvents: GameEvent[] = [
         text: '安排媒体跟进',
         subtext: '趁机扩大影响',
         outcome: {
-          narration: '你让三家媒体做了跟进报道，标题都是“XX暖心一幕感动全网”。但有个博主放大了视频的第四秒，角落里站着一个拿手机录像的工作人员。“原来有人跟拍啊”“意思是这是安排好的？”质疑声开始冒出来了。你看着那个角落里的人影，那其实是路人，但谁在乎真相呢。',
+          narration: '你让三家媒体做了跟进报道，标题都是“{name}暖心一幕感动全网”。但有个博主放大了视频的第四秒，角落里站着一个拿手机录像的工作人员。“原来有人跟拍啊”“意思是这是安排好的？”质疑声开始冒出来了。你看着那个角落里的人影，那其实是路人，但谁在乎真相呢。',
           statChanges: { commercialValue: 3, prRisk: 3 },
         },
       },
@@ -94,7 +94,7 @@ export const randomEvents: GameEvent[] = [
         text: '正面交锋',
         subtext: '派保安去交涉',
         outcome: {
-          narration: '保安和狗仔发生了口角，被对方偷偷录了下来。“XX团队嚣张保安推搡记者”的标题已经在路上了。',
+          narration: '保安和狗仔发生了口角，被对方偷偷录了下来。“{name}团队嚣张保安推搡记者”的标题已经在路上了。',
           statChanges: { prRisk: 4 },
         },
       },
@@ -103,7 +103,7 @@ export const randomEvents: GameEvent[] = [
         text: '给他们一个无聊的独家',
         subtext: '主动给一张买菜照',
         outcome: {
-          narration: '你安排艺人穿着朴素去超市买菜，让狗仔拍了个够。“XX接地气买菜”的热搜虽然无聊，但至少挤走了他们准备曝的料。',
+          narration: '你安排艺人穿着朴素去超市买菜，让狗仔拍了个够。“{name}接地气买菜”的热搜虽然无聊，但至少挤走了他们准备曝的料。',
           statChanges: { prRisk: -3, fanLoyalty: 3 },
         },
       },
@@ -114,7 +114,7 @@ export const randomEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: '撞脸事件！网友疯传',
-    description: '一个外卖小哥因为长得酷似你的艺人而走红，“平行世界的XX”话题阅读量已经过亿。有人觉得好玩，有人觉得被冒犯。',
+    description: '一个外卖小哥因为长得酷似你的艺人而走红，“平行世界的{name}”话题阅读量已经过亿。有人觉得好玩，有人觉得被冒犯。',
     emoji: '👯',
     choices: [
       {
@@ -191,7 +191,7 @@ export const randomEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: 'AI换脸视频传疯了',
-    description: '你打开抖音想放松一下，结果第一条推荐就是你的艺人，在菜市场跟大妈砍价，还拍了拍西瓜说“这瓜保熟吗”。你差点信了，直到你看到AI生成的第六根手指。但评论区没人在乎手指，播放量已经过亿了，“XX菜市场砍价”成了本周最火的梗。',
+    description: '你打开抖音想放松一下，结果第一条推荐就是你的艺人，在菜市场跟大妈砍价，还拍了拍西瓜说“这瓜保熟吗”。你差点信了，直到你看到AI生成的第六根手指。但评论区没人在乎手指，播放量已经过亿了，“{name}菜市场砍价”成了本周最火的梗。',
     emoji: '🤖',
     choices: [
       {
@@ -247,7 +247,7 @@ export const randomEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: '一只长得像你艺人的猫火了',
-    description: '一只橘猫因为神态酷似你的艺人而爆火，“XX本喵”的话题已经有三亿阅读量。猫的主人也跟着涨了百万粉。',
+    description: '一只橘猫因为神态酷似你的艺人而爆火，“{name}本喵”的话题已经有三亿阅读量。猫的主人也跟着涨了百万粉。',
     emoji: '🐱',
     choices: [
       {

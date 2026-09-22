@@ -104,7 +104,7 @@ export const cosmeticEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'medium',
     title: '整容前后对比照疯传',
-    description: '某营销号发了一组你艺人的“整容前后对比照”，出道时期和现在的脸差距明显。话题 #XX整容实锤# 阅读量已经破亿。',
+    description: '某营销号发了一组你艺人的“整容前后对比照”，出道时期和现在的脸差距明显。话题 #{name}整容实锤# 阅读量已经破亿。',
     emoji: '📸',
     minDay: 6,
     requiredTags: ['cosmetic_discovered'],

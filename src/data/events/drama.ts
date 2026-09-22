@@ -117,7 +117,7 @@ export const dramaEvents: GameEvent[] = [
         text: '不管，让他们吵',
         subtext: '有热度就行',
         outcome: {
-          narration: '粉圈内战越演越烈，终于闹上了热搜。不是正面热搜，是“XX粉丝又撕起来了”。这下品牌方也看到了...',
+          narration: '粉圈内战越演越烈，终于闹上了热搜。不是正面热搜，是“{name}粉丝又撕起来了”。这下品牌方也看到了...',
           statChanges: { prRisk: 4, commercialValue: -3 },
         },
       },

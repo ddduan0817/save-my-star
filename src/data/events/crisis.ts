@@ -207,7 +207,7 @@ export const crisisEvents: GameEvent[] = [
         text: '主动自查 + 工作室小作文',
         subtext: '凌晨发“已配合补缴”长文 (-14万)',
         outcome: {
-          narration: '工作室连夜发“已主动配合相关部门完成自查与补缴，恳请大众监督”小作文，配截图的纳税完税证明。官媒一条短评点赞“知错能改”，#XX 主动补税# 反向冲了热搜正面位。粉丝超话连夜发“理智追星”教程。这一关算是过了，钱包很疼。',
+          narration: '工作室连夜发“已主动配合相关部门完成自查与补缴，恳请大众监督”小作文，配截图的纳税完税证明。官媒一条短评点赞“知错能改”，#{name} 主动补税# 反向冲了热搜正面位。粉丝超话连夜发“理智追星”教程。这一关算是过了，钱包很疼。',
           statChanges: { money: -140000, prRisk: 3, commercialValue: -3 },
         },
       },
@@ -226,7 +226,7 @@ export const crisisEvents: GameEvent[] = [
         text: '律师函 + 报警立案',
         subtext: '对造谣源头硬刚',
         outcome: {
-          narration: '律师函下午就挂了官博，配文“已向公安机关报案”。营销号删稿了一半，但留下来的那半把法务函截图二创成“急了急了”的表情包。# XX 律师函警告# 反而给瓜带了一波热度。',
+          narration: '律师函下午就挂了官博，配文“已向公安机关报案”。营销号删稿了一半，但留下来的那半把法务函截图二创成“急了急了”的表情包。# {name} 律师函警告# 反而给瓜带了一波热度。',
           statChanges: { money: -70000, prRisk: 4 },
         },
       },
@@ -251,7 +251,7 @@ export const crisisEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'medium',
     title: '粉丝线下冲突上新闻了',
-    description: '机场接机场面失控，你家站姐和对家的“反黑组”在行李转盘旁动了手。现场视频 30 秒内就冲上热搜第 3：# XX 粉丝机场打架#。官媒账号的抖音已经转了。工作室群里后援会会长连发 5 条“会长求稳”，但你知道她手里还捏着一份对家拉踩的录音没放出来。',
+    description: '机场接机场面失控，你家站姐和对家的“反黑组”在行李转盘旁动了手。现场视频 30 秒内就冲上热搜第 3：# {name} 粉丝机场打架#。官媒账号的抖音已经转了。工作室群里后援会会长连发 5 条“会长求稳”，但你知道她手里还捏着一份对家拉踩的录音没放出来。',
     emoji: '👊',
     choices: [
       {
@@ -264,7 +264,7 @@ export const crisisEvents: GameEvent[] = [
           conditionalOutcomes: [
             {
               condition: { minFanLoyalty: 80 },
-              narration: '艺人发长文。因为超话向心力极高，连核心大粉都连夜出教程“如何不给哥哥/姐姐添麻烦”置顶超话。# XX 粉丝自律# 反而被官媒夸成“饭圈新风气”。',
+              narration: '艺人发长文。因为超话向心力极高，连核心大粉都连夜出教程“如何不给哥哥/姐姐添麻烦”置顶超话。# {name} 粉丝自律# 反而被官媒夸成“饭圈新风气”。',
               statChanges: { prRisk: -5, fanLoyalty: 3, commercialValue: 4 },
             },
           ],
@@ -432,7 +432,7 @@ export const crisisEvents: GameEvent[] = [
         text: '报警处理',
         subtext: '走法律途径',
         outcome: {
-          narration: '报警后艺人发了长文呼吁理性追星。大部分粉丝支持，但私生饭的朋友们开始在网上造谣“XX耍大牌报警抓粉丝”。',
+          narration: '报警后艺人发了长文呼吁理性追星。大部分粉丝支持，但私生饭的朋友们开始在网上造谣“{name}耍大牌报警抓粉丝”。',
           statChanges: { prRisk: 3, fanLoyalty: -3, money: -10000 },
         },
       },

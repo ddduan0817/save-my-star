@@ -45,10 +45,21 @@ export function calculateMentalStateEffects(
   const effects: Partial<{ commercialValue: number; fanLoyalty: number; prRisk: number }> = {};
   const descriptions: string[] = [];
 
-  // 能量影响配合度（间接影响商业价值）
-  if (mentalState.energy < 20) {
+  // 能量低迷影响工作质量（商业价值）。阈值放宽到 30：让"精力偏低"就开始有温和
+  // 后果，而不是要跌到濒临虚脱（<20）才有感，玩家因此有动机安排「休息」行程。
+  if (mentalState.energy < 30) {
     effects.commercialValue = (effects.commercialValue || 0) - 2;
-    descriptions.push('艺人过度疲劳，工作质量下降');
+    descriptions.push('艺人精力不足，工作质量下降');
+  }
+
+  // 配合度：此前纯 UI 装饰，这里给它真正的持续后果。
+  // 低配合度 → 拖工/迟到/罢拍，慢慢掉商业价值；高配合度 → 通告效率高，小幅回血。
+  if (mentalState.cooperation < 30) {
+    effects.commercialValue = (effects.commercialValue || 0) - 2;
+    descriptions.push('艺人配合度低，通告推进困难');
+  } else if (mentalState.cooperation >= 85) {
+    effects.commercialValue = (effects.commercialValue || 0) + 1;
+    descriptions.push('艺人配合度高，工作效率拉满');
   }
 
   // 压力影响舆论风险
@@ -542,9 +553,24 @@ export function applyDailyMentalEffects(
     newState.mood = Math.max(0, newState.mood - 5);
   }
 
-  // 压力累积
-  if (newState.stress > 60) {
-    newState.burnout = Math.min(100, newState.burnout + 3);
+  // 倦怠累积 —— 让"过劳"成为一条能真正走到底的线（退圈宣言的前置）。
+  // 原来只有 stress>60 → +3/天，20 天周期内数学上摸不到 90 的门槛。这里改成
+  // 压力分档 + 精疲力竭 + 长期情绪低落三条叠加，长期高压高强度才会逼近临界，
+  // 而好好安排休息/安抚（压力回落）依然能把倦怠压住。
+  if (newState.stress > 80) {
+    newState.burnout = Math.min(100, newState.burnout + 6); // 濒临崩溃：快速累积
+  } else if (newState.stress > 60) {
+    newState.burnout = Math.min(100, newState.burnout + 4);
+  } else if (newState.stress < 40) {
+    newState.burnout = Math.max(0, newState.burnout - 2); // 压力回落时倦怠自然修复
+  }
+  // 长期精疲力竭：能量见底会额外加重倦怠
+  if (newState.energy < 20) {
+    newState.burnout = Math.min(100, newState.burnout + 2);
+  }
+  // 长期情绪低落也会拖垮：心情极低时倦怠继续爬
+  if (newState.mood < 20) {
+    newState.burnout = Math.min(100, newState.burnout + 2);
   }
 
   // 信任度自然衰减

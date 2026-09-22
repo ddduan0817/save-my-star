@@ -36,7 +36,7 @@ export const businessEvents: GameEvent[] = [
           statChanges: { commercialValue: 5, money: 140000, fanLoyalty: 3 },
           twist: {
             chance: 0.2,
-            narration: '品牌方对首批广告大片的效果非常满意！紧急追加了全球代言合约，代言费翻倍。微博热搜 #XX 官宣全球大使# 挂了整夜。',
+            narration: '品牌方对首批广告大片的效果非常满意！紧急追加了全球代言合约，代言费翻倍。微博热搜 #{name} 官宣全球大使# 挂了整夜。',
             statChanges: { commercialValue: 4, money: 140000 },
           },
         },
@@ -55,7 +55,7 @@ export const businessEvents: GameEvent[] = [
         text: '让艺人穿新季出街被拍',
         subtext: '既定事实倒逼品牌官宣',
         outcome: {
-          narration: '你让艺人“恰好”穿着品牌新季下飞机，代拍机位提前打点好。第二天“XX 疑似官宣顶奢”冲上热搜第 7，#XX 机场# tag 阅读破 3 亿。品牌方被逼着连夜把亚太大使的海报盖了章，合同里你多要了一个电影项目的贴片位。',
+          narration: '你让艺人“恰好”穿着品牌新季下飞机，代拍机位提前打点好。第二天“{name} 疑似官宣顶奢”冲上热搜第 7，#{name} 机场# tag 阅读破 3 亿。品牌方被逼着连夜把亚太大使的海报盖了章，合同里你多要了一个电影项目的贴片位。',
           statChanges: { commercialValue: 6, money: 120000, fanLoyalty: 3, prRisk: 2 },
         },
       },
@@ -172,7 +172,7 @@ export const businessEvents: GameEvent[] = [
         text: '要求演主角',
         subtext: '不是主角不去',
         outcome: {
-          narration: '导演沉默了三秒：“你确定？”然后挂了电话。这个角色后来给了一个科班出身的新人，对方凭它拿了新人奖。颁奖礼那天弹幕飘过一句：这个角色本来差点是XX的，还好没糟蹋。你刷到时，心里有点不是滋味。',
+          narration: '导演沉默了三秒：“你确定？”然后挂了电话。这个角色后来给了一个科班出身的新人，对方凭它拿了新人奖。颁奖礼那天弹幕飘过一句：这个角色本来差点是{name}的，还好没糟蹋。你刷到时，心里有点不是滋味。',
           statChanges: { commercialValue: -5, fanLoyalty: -2 },
         },
       },
@@ -353,7 +353,7 @@ export const businessEvents: GameEvent[] = [
     category: 'business',
     severity: 'low',
     title: '大厂手游代言邀约',
-    description: '某头部游戏公司的商务总监约你喝咖啡，桌上摆着一台iPad，上面是他们新手游的Demo。画面确实好看。“我们想让XX做代言人，广告片预算两千万。”你还没说话，他补了一句：“但是游戏圈你知道的...玩家很挑。上一个流量代言人被骂到关评论了。”',
+    description: '某头部游戏公司的商务总监约你喝咖啡，桌上摆着一台iPad，上面是他们新手游的Demo。画面确实好看。“我们想让{name}做代言人，广告片预算两千万。”你还没说话，他补了一句：“但是游戏圈你知道的...玩家很挑。上一个流量代言人被骂到关评论了。”',
     emoji: '🎮',
     artistVariants: {
       idol: {

@@ -16,6 +16,10 @@
 # production
 /build
 
+# minitool build artifacts (regenerable from source)
+/dist/
+*.zip
+
 # misc
 .DS_Store
 *.pem

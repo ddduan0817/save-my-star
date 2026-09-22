@@ -1,4 +1,4 @@
-import type { GameEvent, GameStats, EventCategory, ArtistArchetype } from '@/types/game';
+import type { GameEvent, GameStats, EventCategory, ArtistArchetype, EventChoice, EventOutcome } from '@/types/game';
 import { GAME_CONFIG } from '@/data/constants';
 import { crisisEvents } from '@/data/events/crisis';
 import { businessEvents } from '@/data/events/business';
@@ -28,6 +28,15 @@ import { managerMilestoneEvents } from '@/data/events/manager-milestone';
 import type { ArtistMentalState } from '@/types/new_systems';
 import type { SeasonalModifier } from '@/data/seasonalModifiers';
 import { aggregateCategoryWeight } from '@/data/seasonalModifiers';
+import { artists } from '@/data/artists';
+import { fillName } from './textTemplate';
+
+// 事件文案 {name} 占位替换用：按 archetype 取艺人名（一次性建表，避免每次 find）
+const ARTIST_NAME_BY_ID: Partial<Record<ArtistArchetype, string>> =
+  Object.fromEntries(artists.map(a => [a.id, a.name]));
+function artistNameOf(artistId: ArtistArchetype): string | undefined {
+  return ARTIST_NAME_BY_ID[artistId];
+}
 
 const allEvents: GameEvent[] = [
   ...crisisEvents,
@@ -62,17 +71,70 @@ const EVENT_COOLDOWN = 999; // 单局内事件不重复
 /**
  * 按艺人解析事件变体：如果事件定义了 artistVariants 且当前艺人有对应变体，
  * 则用变体字段覆盖 title/description/emoji/choices，其它字段保留共享。
+ * 最后再统一把文案里的 {name} 占位符替换成当前艺人名（事件正文/选项/结果/
+ * 反转/条件分支/来电挂断文案都会覆盖）。
  */
 export function resolveEventForArtist(event: GameEvent, artistId?: ArtistArchetype): GameEvent {
-  if (!event.artistVariants || !artistId) return event;
-  const variant = event.artistVariants[artistId];
-  if (!variant) return event;
+  // 先解析艺人变体（如果有）
+  let resolved = event;
+  if (event.artistVariants && artistId) {
+    const variant = event.artistVariants[artistId];
+    if (variant) {
+      resolved = {
+        ...event,
+        title: variant.title ?? event.title,
+        description: variant.description ?? event.description,
+        emoji: variant.emoji ?? event.emoji,
+        choices: variant.choices ?? event.choices,
+      };
+    }
+  }
+
+  // 没有艺人上下文就不做占位替换（保持 {name} 原样，理论上不会渲染给玩家）
+  if (!artistId) return resolved;
+  const name = artistNameOf(artistId);
+  if (!name) return resolved;
+
+  return fillEventNames(resolved, name);
+}
+
+// 深替换事件里所有面向玩家的文案字段中的 {name} 占位符。
+function fillEventNames(event: GameEvent, name: string): GameEvent {
   return {
     ...event,
-    title: variant.title ?? event.title,
-    description: variant.description ?? event.description,
-    emoji: variant.emoji ?? event.emoji,
-    choices: variant.choices ?? event.choices,
+    title: fillName(event.title, name)!,
+    description: fillName(event.description, name)!,
+    choices: event.choices.map(c => fillChoiceNames(c, name)),
+    phoneCallMeta: event.phoneCallMeta
+      ? {
+          ...event.phoneCallMeta,
+          ringDescription: fillName(event.phoneCallMeta.ringDescription, name)!,
+          hangUpOutcome: fillOutcomeNames(event.phoneCallMeta.hangUpOutcome, name),
+        }
+      : event.phoneCallMeta,
+  };
+}
+
+function fillChoiceNames(choice: EventChoice, name: string): EventChoice {
+  return {
+    ...choice,
+    text: fillName(choice.text, name)!,
+    subtext: fillName(choice.subtext, name),
+    outcome: fillOutcomeNames(choice.outcome, name),
+  };
+}
+
+function fillOutcomeNames(outcome: EventOutcome, name: string): EventOutcome {
+  return {
+    ...outcome,
+    narration: fillName(outcome.narration, name)!,
+    conditionalOutcomes: outcome.conditionalOutcomes?.map(co => ({
+      ...co,
+      narration: fillName(co.narration, name)!,
+    })),
+    twist: outcome.twist
+      ? { ...outcome.twist, narration: fillName(outcome.twist.narration, name)! }
+      : outcome.twist,
   };
 }
 

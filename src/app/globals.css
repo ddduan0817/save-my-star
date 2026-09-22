@@ -193,9 +193,13 @@ body::before {
 }
 
 /* 顶部安全区：让 sticky 顶栏的背景延伸到刘海/状态栏，避免滚动内容
-   从状态栏那道透明缝"穿屏"上来（iOS Safari）。 */
+   从状态栏那道透明缝"穿屏"上来（iOS Safari）。
+   注意：小工具容器会在页面顶部浮层叠加自己的原生按钮（左上返回、右上胶囊），
+   env(safe-area-inset-top) 在容器里通常为 0，仅留 0.75rem 会被这些原生按钮压住/遮挡，
+   所以额外预留 ~3rem 让 StatsBar 内容整体下移，避开容器胶囊。 */
 .safe-area-top {
-  padding-top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  padding-top: 3.25rem; /* 不支持 env() 的引擎（如老 WebView）的兜底值 */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 3.25rem);
 }
 
 /* Reduced motion support */

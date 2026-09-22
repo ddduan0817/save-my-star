@@ -8,6 +8,8 @@ import { cn, formatMoney } from '@/lib/utils';
 import { toPng } from 'html-to-image';
 import { sfxEnding, sfxDisaster, sfxClick } from '@/lib/sounds';
 import { findEventById } from '@/engine/eventSelector';
+import { fillName } from '@/engine/textTemplate';
+import { saveImageToAlbum } from '@/minitool/share';
 import type { StatChange } from '@/types/game';
 
 // 统计关键字段的加权绝对值——作为"决策影响力"的粗排序指标
@@ -59,6 +61,11 @@ export default function EndingPage() {
   const shareRef = useRef<HTMLDivElement>(null);
   const [showContent, setShowContent] = useState(false);
   const [showFullTimeline, setShowFullTimeline] = useState(false);
+  // 分享图保存中/降级预览状态。容器内直接存相册；不可用时展示图片引导长按保存。
+  const [sharing, setSharing] = useState(false);
+  const [shareImage, setShareImage] = useState<string | null>(null);
+  // 页面内 toast 反馈：部分小工具容器不支持原生 alert()，用它替代分享结果提示。
+  const [toast, setToast] = useState<{ text: string; kind: 'success' | 'error' } | null>(null);
 
   // persist 用了 skipHydration，需先在 client 端从 localStorage 回灌存档。
   // 回灌完成前不做"无结局 → 跳首页"判断，否则静态导出的首帧(ending=null)
@@ -93,21 +100,39 @@ export default function EndingPage() {
     return () => clearTimeout(timer);
   }, [hydrated, ending, router]);
 
+  // toast 自动消失（2.4s）
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2400);
+    return () => clearTimeout(t);
+  }, [toast]);
+
   if (!hydrated || !ending || !artist) return null;
 
   const handleShare = async () => {
-    if (!shareRef.current) return;
+    if (!shareRef.current || sharing) return;
+    setSharing(true);
     try {
       const dataUrl = await toPng(shareRef.current, {
         pixelRatio: 2,
         backgroundColor: '#faf8f5',
+        // 离线容器禁止联网：跳过 web font 内联（会触发 fetch），分享卡用系统字体渲染。
+        skipFonts: true,
       });
-      const link = document.createElement('a');
-      link.download = `经纪人模拟器-${ending.title}.png`;
-      link.href = dataUrl;
-      link.click();
+      // 优先通过容器 JSBridge 保存到相册；容器不可用则弹出图片让用户长按保存。
+      const result = await saveImageToAlbum(dataUrl);
+      if (result === 'saved') {
+        setToast({ text: '分享卡已保存到相册', kind: 'success' });
+      } else if (result === 'fallback') {
+        setShareImage(dataUrl);
+      } else {
+        setToast({ text: '保存失败，请重试', kind: 'error' });
+      }
     } catch (err) {
       console.error('Share card generation failed:', err);
+      setToast({ text: '生成分享卡失败，请重试', kind: 'error' });
+    } finally {
+      setSharing(false);
     }
   };
 
@@ -244,7 +269,7 @@ export default function EndingPage() {
 
           {/* Story */}
           <p className="text-sm text-gray-500 leading-relaxed mb-4">
-            {ending.description}
+            {fillName(ending.description, artist.name)}
           </p>
 
           {/* Final stats */}
@@ -368,9 +393,10 @@ export default function EndingPage() {
           whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => { sfxClick(); handleShare(); }}
-          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 text-white font-bold text-sm transition-all duration-300 shadow-lg shadow-orange-200/40 hover:shadow-xl hover:shadow-orange-200/60"
+          disabled={sharing}
+          className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-orange-400 via-red-400 to-orange-400 text-white font-bold text-sm transition-all duration-300 shadow-lg shadow-orange-200/40 hover:shadow-xl hover:shadow-orange-200/60 disabled:opacity-70"
         >
-          保存分享卡
+          {sharing ? '生成中…' : '保存分享卡'}
         </motion.button>
 
         <motion.button
@@ -397,6 +423,58 @@ export default function EndingPage() {
           查看结局图鉴
         </motion.button>
       </motion.div>
+
+      {/* 页面内 toast：替代原生 alert，兼容不支持 alert 的小工具容器 */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            className="fixed top-16 left-0 right-0 z-[90] flex justify-center px-4 pointer-events-none"
+            initial={{ opacity: 0, y: -40, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.9 }}
+            transition={{ type: 'spring', stiffness: 200, damping: 18 }}
+          >
+            <div
+              className={cn(
+                'px-5 py-3 rounded-2xl text-sm font-semibold text-white shadow-xl',
+                toast.kind === 'success'
+                  ? 'bg-gradient-to-r from-emerald-500 to-green-500 shadow-emerald-300/40'
+                  : 'bg-gradient-to-r from-red-500 to-rose-500 shadow-red-300/40',
+              )}
+            >
+              {toast.text}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 降级预览：容器 JSBridge 不可用时，展示生成好的分享图，引导用户长按保存 */}
+      <AnimatePresence>
+        {shareImage && (
+          <motion.div
+            className="fixed inset-0 z-[80] flex flex-col items-center justify-center bg-black/70 px-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShareImage(null)}
+          >
+            <div className="text-white/90 text-sm mb-3 text-center">长按下方图片即可保存</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={shareImage}
+              alt="分享卡"
+              className="max-h-[70vh] w-auto rounded-2xl shadow-2xl"
+              onClick={e => e.stopPropagation()}
+            />
+            <button
+              onClick={() => setShareImage(null)}
+              className="mt-4 px-5 py-2 rounded-full bg-white/90 text-gray-700 text-sm font-semibold"
+            >
+              关闭
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -110,7 +110,7 @@ export const phoneCallEvents: GameEvent[] = [
           statChanges: { fanLoyalty: 5, prRisk: 3 },
           twist: {
             chance: 0.3,
-            narration: '但是！稿子出来后你傻了，标题是《独家：XX首次回应争议，采访中数度哽咽》。你说的那些推心置腹的话全成了“崩溃”“失控”的注脚。断章取义的艺术，你算是领教了。',
+            narration: '但是！稿子出来后你傻了，标题是《独家：{name}首次回应争议，采访中数度哽咽》。你说的那些推心置腹的话全成了“崩溃”“失控”的注脚。断章取义的艺术，你算是领教了。',
             statChanges: { prRisk: 10, fanLoyalty: -3 },
           },
         },
@@ -143,7 +143,7 @@ export const phoneCallEvents: GameEvent[] = [
         text: '接受合作提议',
         subtext: '化敌为友，但要小心被算计',
         outcome: {
-          narration: '你决定赌一把。合作方案出乎意料地顺利，联合直播、话题互动、双方粉丝竟然从“对线”变成了“组CP”。热搜词条从#XX撕XX#变成了#世纪大和解#。',
+          narration: '你决定赌一把。合作方案出乎意料地顺利，联合直播、话题互动、双方粉丝竟然从“对线”变成了“组CP”。热搜词条从#{name}撕XX#变成了#世纪大和解#。',
           statChanges: { fanLoyalty: 5, commercialValue: 5, prRisk: -3 },
           twist: {
             chance: 0.2,
@@ -194,7 +194,7 @@ export const phoneCallEvents: GameEvent[] = [
       callerAvatar: '📣',
       ringDescription: '粉丝后援会来电',
       hangUpOutcome: {
-        narration: '会长的电话你没接。第二天超话里已经是两个阵营了，“XX全球数据站”和“XX应援后勤组”互相开麦对骂，路人看了一场免费大戏，#XX粉丝内讧#挂了一天热搜。',
+        narration: '会长的电话你没接。第二天超话里已经是两个阵营了，“{name}全球数据站”和“{name}应援后勤组”互相开麦对骂，路人看了一场免费大戏，#{name}粉丝内讧#挂了一天热搜。',
         statChanges: { fanLoyalty: -10, prRisk: 5 },
       },
     },
@@ -304,7 +304,7 @@ export const phoneCallEvents: GameEvent[] = [
       callerAvatar: '😭',
       ringDescription: '艺人深夜来电',
       hangUpOutcome: {
-        narration: '你翻了个身，看了眼时间，两点多了，算了，明天再说吧。你按了拒接翻身继续睡。第二天TA的微博动态是一张全黑的图片，什么文字都没有。粉丝群里瞬间炸了：#XX怎么了#冲上了半夜热搜。',
+        narration: '你翻了个身，看了眼时间，两点多了，算了，明天再说吧。你按了拒接翻身继续睡。第二天TA的微博动态是一张全黑的图片，什么文字都没有。粉丝群里瞬间炸了：#{name}怎么了#冲上了半夜热搜。',
         statChanges: { fanLoyalty: -5, prRisk: 8 },
       },
     },
@@ -354,7 +354,7 @@ export const phoneCallEvents: GameEvent[] = [
     category: 'business',
     severity: 'medium',
     title: '热门综艺邀约',
-    description: '“喂？是XX的经纪人吗？我是热门综艺的导演。”你差点没拿稳手机。这节目你们做梦都想上。“有个嘉宾临时退了，明天开录。你们来不来？，现在就要答复我。”',
+    description: '“喂？是{name}的经纪人吗？我是热门综艺的导演。”你差点没拿稳手机。这节目你们做梦都想上。“有个嘉宾临时退了，明天开录。你们来不来？，现在就要答复我。”',
     emoji: '🎬',
     artistVariants: {
       idol: {
@@ -395,7 +395,7 @@ export const phoneCallEvents: GameEvent[] = [
           statChanges: { commercialValue: 8, fanLoyalty: 5, money: 20000 },
           twist: {
             chance: 0.2,
-            narration: '但是！准备太仓促，艺人在一个互动环节里说了句话，本来是想开玩笑的，但在座有位前辈脸色沉了一下。当晚那个片段被单独截出来传了十万转发，标题是：“XX当众得罪前辈？”',
+            narration: '但是！准备太仓促，艺人在一个互动环节里说了句话，本来是想开玩笑的，但在座有位前辈脸色沉了一下。当晚那个片段被单独截出来传了十万转发，标题是：“{name}当众得罪前辈？”',
             statChanges: { prRisk: 8, fanLoyalty: -3 },
           },
         },

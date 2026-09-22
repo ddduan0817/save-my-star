@@ -102,7 +102,7 @@ const MODIFIER_FLAVOR: Record<string, string[]> = {
     '🏆 各大奖项的评委名单刚刚流出，都在算关系。',
   ],
   cp_economy: [
-    '💑 #XX 上 CP# 的话题已经爆了三个小时。',
+    '💑 #{name} 上 CP# 的话题已经爆了三个小时。',
     '💑 嗑学家们眼睛比侦探还亮，每个互动都被拉片。',
   ],
   short_video_boom: [
@@ -156,5 +156,5 @@ export function generateDailyBriefing(ctx: BriefingContext): string {
     lines.push(pick(HIGH_BURNOUT_LINES));
   }
 
-  return lines.join('\n');
+  return lines.join('\n').replace(/\{name\}/g, ctx.artist.name);
 }

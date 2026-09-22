@@ -7,7 +7,7 @@ export const idolSpecificEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '粉丝集资账目出问题了',
-    description: '后援会被爆出集资款项去向不明，上百万粉丝的钱不知道花到哪里去了。虽然是后援会的锅，但“XX粉丝被割韭菜”的热搜已经上了，品牌方在观望你的态度。',
+    description: '后援会被爆出集资款项去向不明，上百万粉丝的钱不知道花到哪里去了。虽然是后援会的锅，但“{name}粉丝被割韭菜”的热搜已经上了，品牌方在观望你的态度。',
     emoji: '💸',
     forArtist: 'idol',
     minDay: 6,

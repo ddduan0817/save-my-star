@@ -11,13 +11,13 @@ export const endings: Ending[] = [
     rarity: 'legendary',
     color: 'from-slate-700 to-slate-500',
     priority: 120, // 高于所有普通结局：倦怠到顶就直接触发，覆盖商业/粉丝层面的结局
-    conditions: (_stats, _tags, _day, _peakRisk, mental) => (mental?.burnout ?? 0) >= 90,
+    conditions: (_stats, _tags, _day, _peakRisk, mental) => (mental?.burnout ?? 0) >= 85,
   },
   {
     id: 'cancelled',
     title: '全网封杀',
     subtitle: '从此消失在公众视野',
-    description: '舆论风险到达临界点的那一刻，你的手机同时收到了十七条消息，全是解约通知。平台限流、品牌跑路、综艺撤邀。你坐在空荡荡的办公室里，刷着热搜第一的词条：“再见了，XX。”三个月后，这个名字只出现在营销课的反面案例里。',
+    description: '舆论风险到达临界点的那一刻，你的手机同时收到了十七条消息，全是解约通知。平台限流、品牌跑路、综艺撤邀。你坐在空荡荡的办公室里，刷着热搜第一的词条：“再见了，{name}。”三个月后，这个名字只出现在营销课的反面案例里。',
     emoji: '🚫',
     rarity: 'common',
     color: 'from-red-900 to-red-600',
@@ -62,7 +62,7 @@ export const endings: Ending[] = [
     id: 'true_friends',
     title: '我们是朋友',
     subtitle: '超越合约的关系',
-    description: 'MAX_DAYS 那天，TA拉着你去吃烧烤。啤酒喝到第三瓶，TA突然说：“其实我最怕退圈那天没人送我。”你翻白眼：“滚，我肯定在。”\n\nTA笑了：“所以你不是我的经纪人。你是我朋友。”\n\n你没接话，但把酒喝完了。这个行业里多的是合作，少的是朋友。你们算是走狗屎运了。',
+    description: '第20天那天，TA拉着你去吃烧烤。啤酒喝到第三瓶，TA突然说：“其实我最怕退圈那天没人送我。”你翻白眼：“滚，我肯定在。”\n\nTA笑了：“所以你不是我的经纪人。你是我朋友。”\n\n你没接话，但把酒喝完了。这个行业里多的是合作，少的是朋友。你们算是走狗屎运了。',
     emoji: '🫂',
     rarity: 'legendary',
     color: 'from-teal-400 to-cyan-500',
@@ -78,7 +78,7 @@ export const endings: Ending[] = [
     id: 'top_star',
     title: '顶流巅峰',
     subtitle: '站在行业金字塔尖',
-    description: '《时代》杂志的封面拍了三个小时。摄影师最后选了一张TA不经意回头的照片，光打在侧脸上，眼神里有一种经历过所有事之后才有的平静。你站在棚外看着监视器里的画面，突然想起TA刚出道时在练习室摔倒又爬起来的样子。那个人和这个人，是同一个人。你鼻子一酸。',
+    description: '《时代》杂志的封面拍了三个小时。摄影师最后选了一张TA不经意回头的照片，光打在侧脸上，眼神里有一种经历过所有事之后才有的平静。你站在棚外看着监视器里的画面，突然想起TA刚出道时{rookieScene}的样子。那个人和这个人，是同一个人。你鼻子一酸。',
     emoji: '👑',
     rarity: 'legendary',
     color: 'from-amber-400 to-yellow-600',
@@ -189,8 +189,8 @@ export function checkImmediateEnding(
   if (tags.includes('retired')) {
     return endings.find(e => e.id === 'retired')!;
   }
-  // 心理状态突破性结局：倦怠满 90 立刻触发退圈宣言
-  if (mental && mental.burnout >= 90) {
+  // 心理状态突破性结局：倦怠满 85 立刻触发退圈宣言
+  if (mental && mental.burnout >= 85) {
     return endings.find(e => e.id === 'retirement_declaration')!;
   }
   return null;

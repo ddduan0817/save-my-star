@@ -80,7 +80,7 @@ const ARCS: ArcDef[] = [
         category: 'crisis',
         severity: 'medium',
         title: `${'偷心贼_帅版'}：误伤路人上了热搜`,
-        description: '战斗粉的反黑变成了人身攻击，一个路人发了句“不觉得 TA 有那么帅”就被挂了三天，最终那人发文控诉“网暴”。现在营销号抓住了，写的都是“XX 粉丝战斗力爆棚”。',
+        description: '战斗粉的反黑变成了人身攻击，一个路人发了句“不觉得 TA 有那么帅”就被挂了三天，最终那人发文控诉“网暴”。现在营销号抓住了，写的都是“{name} 粉丝战斗力爆棚”。',
         emoji: '💥',
         choices: [
           {
@@ -239,7 +239,7 @@ const ARCS: ArcDef[] = [
         category: 'business',
         severity: 'high',
         title: `${'美丽·光影手记'}：国际影展邀请函`,
-        description: '美丽突然给你艺人发了一份英文邀请函，某国际电影摄影展想收她拍的一组“XX 在片场”的人像，并邀请你艺人出席开幕式。',
+        description: '美丽突然给你艺人发了一份英文邀请函，某国际电影摄影展想收她拍的一组“{name} 在片场”的人像，并邀请你艺人出席开幕式。',
         emoji: '🌏',
         choices: [
           {

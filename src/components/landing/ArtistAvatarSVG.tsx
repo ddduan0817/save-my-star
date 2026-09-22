@@ -57,7 +57,7 @@ export default function ArtistAvatarSVG({
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={`/artists/${artistId}.png`}
+        src={`./artists/${artistId}.png`}
         alt={`${artistId} avatar`}
         width={size}
         height={size}

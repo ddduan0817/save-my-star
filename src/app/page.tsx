@@ -166,7 +166,7 @@ export default function HomePage() {
           <div className="relative h-[140px] rounded-sm overflow-hidden bg-[#1a1a2e]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/scoop/paparazzi.png"
+              src="./scoop/paparazzi.png"
               alt="狗仔偷拍现场"
               className="absolute inset-0 w-full h-full object-cover"
               style={{ objectPosition: 'center 42%' }}

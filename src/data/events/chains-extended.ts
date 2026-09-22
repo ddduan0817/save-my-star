@@ -189,7 +189,7 @@ const chainRealityEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '综艺剪辑争议',
-    description: '节目组的剪辑让你的艺人看起来“甩锅队友”，#XX综艺剪辑争议# 上了热搜。',
+    description: '节目组的剪辑让你的艺人看起来“甩锅队友”，#{name}综艺剪辑争议# 上了热搜。',
     emoji: '✂️',
     requiredTags: ['reality_blamed'],
     choices: [

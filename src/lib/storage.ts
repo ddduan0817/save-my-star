@@ -16,7 +16,11 @@ export function saveUnlockedEnding(endingId: EndingId): EndingId[] {
   const current = loadUnlockedEndings();
   if (!current.includes(endingId)) {
     current.push(endingId);
-    localStorage.setItem(ENDINGS_KEY, JSON.stringify(current));
+    try {
+      localStorage.setItem(ENDINGS_KEY, JSON.stringify(current));
+    } catch {
+      // 容器限制/存储写满时静默降级：本局仍返回最新列表，只是不落盘
+    }
   }
   return current;
 }

@@ -199,7 +199,7 @@ export const chainEvents: GameEvent[] = [
     category: 'drama',
     severity: 'high',
     title: '狗仔又来了：恋情实锤？',
-    description: '这次不是模糊的牵手照了，狗仔拍到你的艺人和圈外某富二代在海边度假的亲密照。照片清晰度堪比8K，连表情包都有人做好了。话题#XX的神秘恋人#已经爆了。',
+    description: '这次不是模糊的牵手照了，狗仔拍到你的艺人和圈外某富二代在海边度假的亲密照。照片清晰度堪比8K，连表情包都有人做好了。话题#{name}的神秘恋人#已经爆了。',
     emoji: '💕',
     minDay: 10,
     excludeTags: ['public_relationship'],
@@ -431,7 +431,7 @@ export const chainEvents: GameEvent[] = [
     category: 'business',
     severity: 'medium',
     title: '综艺名场面出圈了！',
-    description: '你艺人在综艺里的表情包火遍全网，B站二创播放量破千万。热搜词条#XX综艺名场面#已经挂了三天了。各路商家疯狂蹭热度，甚至有品牌直接拿表情包做了广告。',
+    description: '你艺人在综艺里的表情包火遍全网，B站二创播放量破千万。热搜词条#{name}综艺名场面#已经挂了三天了。各路商家疯狂蹭热度，甚至有品牌直接拿表情包做了广告。',
     emoji: '🔥',
     requiredTags: ['variety_appeared'],
     choices: [
@@ -525,7 +525,7 @@ export const chainEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '茶饮品牌暴雷了！',
-    description: '突然间铺天盖地的新闻，你投资的那个茶饮品牌被曝使用过期原料！多家门店被市监局查封，“XX代言的奶茶喝了会怎样”冲上热搜。你的艺人微博评论区已经沦陷了...',
+    description: '突然间铺天盖地的新闻，你投资的那个茶饮品牌被曝使用过期原料！多家门店被市监局查封，“{name}代言的奶茶喝了会怎样”冲上热搜。你的艺人微博评论区已经沦陷了...',
     emoji: '💣',
     requiredTags: ['invested_big'],
     choices: [

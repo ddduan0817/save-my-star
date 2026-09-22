@@ -13,7 +13,7 @@ export const mentalTriggerEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'medium',
     title: '艺人凌晨发了一条诡异的微博',
-    description: '凌晨3:47，TA发了一句歌词：“如果我消失了，会有人记得我吗？”配图是窗外漆黑的天。3分钟内没删。粉丝群已经炸了，#XX怎么了# 正在以肉眼可见的速度往热搜爬。',
+    description: '凌晨3:47，TA发了一句歌词：“如果我消失了，会有人记得我吗？”配图是窗外漆黑的天。3分钟内没删。粉丝群已经炸了，#{name}怎么了# 正在以肉眼可见的速度往热搜爬。',
     emoji: '🌑',
     minDay: 5,
     choices: [
@@ -119,7 +119,7 @@ export const mentalTriggerEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'critical',
     title: '“我真的不想干了”截图流出',
-    description: 'TA和好友的聊天记录被流出，“经纪人天天逼我营业”“每天都在演别人想看的我”“攒够这一笔我就跑路”。截图正在饭圈四散传播，#XX想退圈# 已经冲到热搜第8。',
+    description: 'TA和好友的聊天记录被流出，“经纪人天天逼我营业”“每天都在演别人想看的我”“攒够这一笔我就跑路”。截图正在饭圈四散传播，#{name}想退圈# 已经冲到热搜第8。',
     emoji: '📲',
     minDay: 10,
     choices: [
@@ -172,7 +172,7 @@ export const mentalTriggerEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'critical',
     title: '综艺现场情绪崩溃',
-    description: '录制到一半，主持人开了个老梗玩笑，TA突然安静下来，然后开始无声流泪。导播切了画面但已经晚了，花絮组的工作人员把片段录了下来，半小时后流出。#XX综艺崩溃# 直接冲到热搜第3。',
+    description: '录制到一半，主持人开了个老梗玩笑，TA突然安静下来，然后开始无声流泪。导播切了画面但已经晚了，花絮组的工作人员把片段录了下来，半小时后流出。#{name}综艺崩溃# 直接冲到热搜第3。',
     emoji: '😭',
     minDay: 12,
     choices: [

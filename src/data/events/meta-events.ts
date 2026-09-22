@@ -151,7 +151,7 @@ export const metaEvents: GameEvent[] = [
           conditionalOutcomes: [
             {
               condition: { maxPrRisk: 25 },
-              narration: '你的艺人平时口碑很好，“被狗仔盯上”反而成了话题。粉丝心疼：“我们XX太红了，狗仔都盯着”。路人好感度上升。',
+              narration: '你的艺人平时口碑很好，“被狗仔盯上”反而成了话题。粉丝心疼：“我们{name}太红了，狗仔都盯着”。路人好感度上升。',
               statChanges: { fanLoyalty: 3, commercialValue: 2 },
             },
             {
@@ -173,7 +173,7 @@ export const metaEvents: GameEvent[] = [
         text: '放烟雾弹，混淆视听',
         subtext: '让营销号带节奏说是别人',
         outcome: {
-          narration: '你让几个营销号发“据知情人透露，明天的瓜是YY不是XX”。',
+          narration: '你让几个营销号发“据知情人透露，明天的瓜是YY不是{name}”。',
           statChanges: { money: -20000 },
           // 条件分支：取决于商业价值（资源多少决定营销号听不听你的）
           conditionalOutcomes: [
@@ -258,7 +258,7 @@ export const metaEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: '综艺恶剪上热搜',
-    description: '昨晚播出的综艺里，你的艺人被剪成了一个“没礼貌、爱抢镜、对前辈翻白眼”的作精。实际上录制时完全不是那样，翻白眼是因为眼睛进东西了，抢镜是导演安排的。但观众只信正片。#XX没素质# 正在热搜上爬。',
+    description: '昨晚播出的综艺里，你的艺人被剪成了一个“没礼貌、爱抢镜、对前辈翻白眼”的作精。实际上录制时完全不是那样，翻白眼是因为眼睛进东西了，抢镜是导演安排的。但观众只信正片。#{name}没素质# 正在热搜上爬。',
     emoji: '🎬',
     minDay: 7,
     choices: [
@@ -315,7 +315,7 @@ export const metaEvents: GameEvent[] = [
           // 随机反转：真变成万人嫌
           twist: {
             chance: 0.25,
-            narration: '但是！“作精人设”接过头了。其他艺人开始公开避嫌，“不想和XX同台”的传言四起。你创造了一只怪物，现在控制不住它了。',
+            narration: '但是！“作精人设”接过头了。其他艺人开始公开避嫌，“不想和{name}同台”的传言四起。你创造了一只怪物，现在控制不住它了。',
             statChanges: { commercialValue: -4, fanLoyalty: -5 },
           },
         },
@@ -360,7 +360,7 @@ export const metaEvents: GameEvent[] = [
           conditionalOutcomes: [
             {
               condition: { minCommercialValue: 55 },
-              narration: '你的咖位够大，前辈愿意卖你面子，发了一条“XX很礼貌，现场很照顾我们”的微博。舆论开始反转。',
+              narration: '你的咖位够大，前辈愿意卖你面子，发了一条“{name}很礼貌，现场很照顾我们”的微博。舆论开始反转。',
               statChanges: { prRisk: -4, fanLoyalty: 3 },
             },
             {
@@ -570,7 +570,7 @@ export const metaEvents: GameEvent[] = [
           // 随机反转：对家出来认领
           twist: {
             chance: 0.2,
-            narration: '但是！你否认之后，对家艺人YY突然发了一条微博：“谢谢XX喜欢我新歌，我也觉得你不错😉”。你的艺人小号夸YY的事被坐实，两边粉丝开始组CP，局面更复杂了。',
+            narration: '但是！你否认之后，对家艺人YY突然发了一条微博：“谢谢{name}喜欢我新歌，我也觉得你不错😉”。你的艺人小号夸YY的事被坐实，两边粉丝开始组CP，局面更复杂了。',
             statChanges: { fanLoyalty: -4, commercialValue: 3, prRisk: 3 },
           },
         },

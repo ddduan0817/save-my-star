@@ -45,11 +45,11 @@ export const prEvents: GameEvent[] = [
         text: '做自己',
         subtext: '真实互动，展现个性',
         outcome: {
-          narration: '你跟艺人说“别管稿子了，想说什么说什么”。结果TA回答第二个问题的时候突然冒了句方言，全场笑喷。接下来四十分钟成了脱口秀现场，“XX发布会名场面”的tag当晚就爆了。你在后台笑得比谁都开心，直到你看到第二天的稿件。',
+          narration: '你跟艺人说“别管稿子了，想说什么说什么”。结果TA回答第二个问题的时候突然冒了句方言，全场笑喷。接下来四十分钟成了脱口秀现场，“{name}发布会名场面”的tag当晚就爆了。你在后台笑得比谁都开心，直到你看到第二天的稿件。',
           statChanges: { fanLoyalty: 4, commercialValue: 3, prRisk: 3 },
           twist: {
             chance: 0.25,
-            narration: '但是！TA那句「这次这个比上次好多了」被截出来单独发，标题变成了「XX承认上次的作品是烂作？」。你盯着这条热搜看了十秒钟，然后默默把提词器的电源插回了插座。',
+            narration: '但是！TA那句「这次这个比上次好多了」被截出来单独发，标题变成了「{name}承认上次的作品是烂作？」。你盯着这条热搜看了十秒钟，然后默默把提词器的电源插回了插座。',
             statChanges: { prRisk: 4, fanLoyalty: -3 },
           },
         },
@@ -149,7 +149,7 @@ export const prEvents: GameEvent[] = [
         text: '买一个试试',
         subtext: '花钱上正面热搜 (-5.6万)',
         outcome: {
-          narration: '#XX全新造型绝了# 在下午两点准时出现在热搜第十六位。你盯着它一点一点往上爬，十四、十一、八。评论区前五十条全是整齐划一的彩虹屁，整齐得像军训方阵。有个路人评论在夹缝中幸存了下来：“这控评也太明显了吧。”你假装没看见。',
+          narration: '#{name}全新造型绝了# 在下午两点准时出现在热搜第十六位。你盯着它一点一点往上爬，十四、十一、八。评论区前五十条全是整齐划一的彩虹屁，整齐得像军训方阵。有个路人评论在夹缝中幸存了下来：“这控评也太明显了吧。”你假装没看见。',
           statChanges: { money: -56000, commercialValue: 3 },
         },
       },
@@ -159,7 +159,7 @@ export const prEvents: GameEvent[] = [
         subtext: '全方位营销 (-8.4万)',
         requireMinMoney: 84000,
         outcome: {
-          narration: '热搜、控评、超话签到、数据打投，全套流水线启动。数字漂亮得不像话：一小时内#XX造型# tag阅读量破亿。但你打开任意一条评论，像是同一个人用三百个号发的。品牌方的市场总监看了一眼数据说“不错”，然后转头问他的实习生：“这个真实互动率多少？”',
+          narration: '热搜、控评、超话签到、数据打投，全套流水线启动。数字漂亮得不像话：一小时内#{name}造型# tag阅读量破亿。但你打开任意一条评论，像是同一个人用三百个号发的。品牌方的市场总监看了一眼数据说“不错”，然后转头问他的实习生：“这个真实互动率多少？”',
           statChanges: { money: -84000, commercialValue: 3, prRisk: 3 },
         },
       },
@@ -241,7 +241,7 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'low',
     title: '粉丝生日应援太壮观了',
-    description: '你的艺人生日，粉丝们在全国各大城市投放了LED大屏广告，还包下了一架飞机拉横幅。微博上#XX生日快乐#的tag阅读量破了10亿。你得表示表示。',
+    description: '你的艺人生日，粉丝们在全国各大城市投放了LED大屏广告，还包下了一架飞机拉横幅。微博上#{name}生日快乐#的tag阅读量破了10亿。你得表示表示。',
     emoji: '🎂',
     artistVariants: {
       idol: {
@@ -339,7 +339,7 @@ export const prEvents: GameEvent[] = [
         text: '直接不去',
         subtext: '用“档期冲突”推掉',
         outcome: {
-          narration: '缺席微博之夜的消息传出，“XX是不是被封杀了”的猜测满天飞。虽然不是真的，但造成了一些不必要的恐慌。',
+          narration: '缺席微博之夜的消息传出，“{name}是不是被封杀了”的猜测满天飞。虽然不是真的，但造成了一些不必要的恐慌。',
           statChanges: { prRisk: 4, fanLoyalty: -3 },
         },
       },
@@ -395,7 +395,7 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'low',
     title: '官微小编翻车了',
-    description: '工作室微博实习生为了“接地气”，转发艺人新剧路透时发了一句“姐妹们冲鸭🐶”，配图自带土味滤镜。半小时内 #XX工作室小编# 上热搜，截图被做成表情包。粉丝群里炸锅:“这是哪个奇行种在运营我家官微？”',
+    description: '工作室微博实习生为了“接地气”，转发艺人新剧路透时发了一句“姐妹们冲鸭🐶”，配图自带土味滤镜。半小时内 #{name}工作室小编# 上热搜，截图被做成表情包。粉丝群里炸锅:“这是哪个奇行种在运营我家官微？”',
     emoji: '🤖',
     artistVariants: {
       idol: { description: '甄帅的工作室微博发了句“姐妹们冲鸭🐶”配土味滤镜路透。粉丝当场破防，“我们顶流官微说话像 60 万粉的探店号”。半小时#甄帅工作室小编#热搜爆了，超话置顶帖标题:《我们花钱请的运营在干什么》。' },
@@ -419,7 +419,7 @@ export const prEvents: GameEvent[] = [
         text: '将错就错玩梗',
         subtext: '把翻车当人设',
         outcome: {
-          narration: '你让小编保留那条博，又发了一条“是的我就是这么野”。粉丝从破防变成大笑，#XX工作室小编是哪位# 反向冲到热搜第 8。三天后某互联网大厂蓝V私信“求关注互动”，黑红也是红。',
+          narration: '你让小编保留那条博，又发了一条“是的我就是这么野”。粉丝从破防变成大笑，#{name}工作室小编是哪位# 反向冲到热搜第 8。三天后某互联网大厂蓝V私信“求关注互动”，黑红也是红。',
           statChanges: { fanLoyalty: 4, commercialValue: 2 },
           twist: {
             chance: 0.25,
@@ -461,7 +461,7 @@ export const prEvents: GameEvent[] = [
         text: '强硬要求改主封',
         subtext: '威胁退出+索赔',
         outcome: {
-          narration: '你给杂志方发了律师函并暗示退出。三天后杂志改成“双主封轮换上架”，A 城卖你的封面，B 城卖对家。两边粉丝都不满意，但你的咖位定盘了。圈内传“XX工作室真敢闹”。',
+          narration: '你给杂志方发了律师函并暗示退出。三天后杂志改成“双主封轮换上架”，A 城卖你的封面，B 城卖对家。两边粉丝都不满意，但你的咖位定盘了。圈内传“{name}工作室真敢闹”。',
           statChanges: { commercialValue: 3, prRisk: 4, fanLoyalty: 3 },
         },
       },
@@ -470,7 +470,7 @@ export const prEvents: GameEvent[] = [
         text: '动员粉丝买爆',
         subtext: '用销量数据反杀',
         outcome: {
-          narration: '后援会发动“主封不重要、销量见真章”运动，三天卖空两版。杂志方不得不在第四版加印声明感谢“XX粉丝战斗力”。对家粉丝沉默了，数据这种东西骗不了人。',
+          narration: '后援会发动“主封不重要、销量见真章”运动，三天卖空两版。杂志方不得不在第四版加印声明感谢“{name}粉丝战斗力”。对家粉丝沉默了，数据这种东西骗不了人。',
           statChanges: { fanLoyalty: 5, commercialValue: 4, money: -20000 },
         },
       },
@@ -479,7 +479,7 @@ export const prEvents: GameEvent[] = [
         text: '艺人本人发文表示祝福',
         subtext: '高情商化解',
         outcome: {
-          narration: '艺人微博发了张和对家的合照，配文“很开心一起拍这本”。路人盘瞬间涨了一截，#XX 格局# 上热搜第 5。但粉丝群里有部分人觉得“哥哥/姐姐太软了”，核心粉的团结度被消耗了一点。',
+          narration: '艺人微博发了张和对家的合照，配文“很开心一起拍这本”。路人盘瞬间涨了一截，#{name} 格局# 上热搜第 5。但粉丝群里有部分人觉得“哥哥/姐姐太软了”，核心粉的团结度被消耗了一点。',
           statChanges: { commercialValue: 4, prRisk: -3, fanLoyalty: -2 },
           conditionalOutcomes: [
             {
@@ -497,7 +497,7 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'low',
     title: '微博精选评论翻车',
-    description: '艺人发了条新片宣传微博，运营按惯例去精选评论。结果其中一条精选写的是“姐姐/哥哥太美/帅了，吊打 XXX”，XXX 是某位前辈艺人。半小时内对方粉丝带着话题“#XX踩前辈营销#”杀进评论区。',
+    description: '艺人发了条新片宣传微博，运营按惯例去精选评论。结果其中一条精选写的是“姐姐/哥哥太美/帅了，吊打 XXX”，XXX 是某位前辈艺人。半小时内对方粉丝带着话题“#{name}踩前辈营销#”杀进评论区。',
     emoji: '💬',
     choices: [
       {
@@ -505,7 +505,7 @@ export const prEvents: GameEvent[] = [
         text: '撤精选+小编道歉',
         subtext: '快速止损',
         outcome: {
-          narration: '十分钟撤精选，二十分钟发道歉博，承认“小编审核疏忽”。对方粉丝勉强收兵，但你也知道圈内自此“XX 粉丝就是爱踩前辈”会被记一笔。',
+          narration: '十分钟撤精选，二十分钟发道歉博，承认“小编审核疏忽”。对方粉丝勉强收兵，但你也知道圈内自此“{name} 粉丝就是爱踩前辈”会被记一笔。',
           statChanges: { prRisk: -2, fanLoyalty: -2 },
         },
       },
@@ -514,7 +514,7 @@ export const prEvents: GameEvent[] = [
         text: '默默撤掉装没事',
         subtext: '不解释，不回应',
         outcome: {
-          narration: '撤了，没声明。营销号立刻截图存档:“看，撤了就是默认了。” #XX工作室无回应# 上热搜，被解读为“心虚”。',
+          narration: '撤了，没声明。营销号立刻截图存档:“看，撤了就是默认了。” #{name}工作室无回应# 上热搜，被解读为“心虚”。',
           statChanges: { prRisk: 5, fanLoyalty: -3 },
         },
       },
@@ -714,7 +714,7 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'medium',
     title: '捐款金额被质疑',
-    description: '某地洪灾，明星捐款榜单出来，你艺人捐了 50 万。本该是正面。但有人对比了“某顶流捐 500 万、某老演员捐 200 万、某网红捐 100 万”，做了个图叫“明星捐款诚意排行榜”，你艺人排在中下。半小时#XX 捐款 50 万被嘲#爆。',
+    description: '某地洪灾，明星捐款榜单出来，你艺人捐了 50 万。本该是正面。但有人对比了“某顶流捐 500 万、某老演员捐 200 万、某网红捐 100 万”，做了个图叫“明星捐款诚意排行榜”，你艺人排在中下。半小时#{name} 捐款 50 万被嘲#爆。',
     emoji: '💰',
     choices: [
       {
@@ -750,7 +750,7 @@ export const prEvents: GameEvent[] = [
         text: '艺人飞灾区做志愿者',
         subtext: '行动比金额更重要 (-5万)',
         outcome: {
-          narration: '艺人偷偷飞灾区做志愿者，三天没发微博。第四天有当地受灾群众发自拍带到艺人，“原来 XX 在这”，舆论瞬间从“捐少了”变成“亲自下场”。这一手让你赚回来的远比那 150 万多。',
+          narration: '艺人偷偷飞灾区做志愿者，三天没发微博。第四天有当地受灾群众发自拍带到艺人，“原来 {name} 在这”，舆论瞬间从“捐少了”变成“亲自下场”。这一手让你赚回来的远比那 150 万多。',
           statChanges: { money: -50000, fanLoyalty: 8, commercialValue: 4, prRisk: -8 },
         },
       },
@@ -785,7 +785,7 @@ export const prEvents: GameEvent[] = [
         text: '价高者得，全程独家',
         subtext: '一家通吃 (+大额代言费)',
         outcome: {
-          narration: '最后一家以 600 万拿下“四趟独家穿着”。你赚翻了，但其他三家在内部 PR 群里立马联手“以后不再考虑 XX 工作室”，你赢了一仗，输了战略。',
+          narration: '最后一家以 600 万拿下“四趟独家穿着”。你赚翻了，但其他三家在内部 PR 群里立马联手“以后不再考虑 {name} 工作室”，你赢了一仗，输了战略。',
           statChanges: { money: 600000, commercialValue: 3, prRisk: 3 },
           unlockTag: 'pr_offended_brands',
         },
@@ -795,7 +795,7 @@ export const prEvents: GameEvent[] = [
         text: '机场穿独立设计师品牌',
         subtext: '不站队',
         outcome: {
-          narration: '艺人四趟全穿独立设计师作品。四家高奢都松了口气，反过来夸“XX 有品位、不站队”。某独立品牌因此爆了，下个月找你艺人合作的设计师排了一长串。但短期没拿到代言费。',
+          narration: '艺人四趟全穿独立设计师作品。四家高奢都松了口气，反过来夸“{name} 有品位、不站队”。某独立品牌因此爆了，下个月找你艺人合作的设计师排了一长串。但短期没拿到代言费。',
           statChanges: { commercialValue: 4, fanLoyalty: 4, money: -20000 },
         },
       },
@@ -862,7 +862,7 @@ export const prEvents: GameEvent[] = [
     category: 'pr',
     severity: 'medium',
     title: '工作室小编回怼黑粉翻车',
-    description: '工作室微博下面常年有几个固定黑号挂着骂。今天小编实在憋不住，回了一句“建议黑子先去看看自己长什么样再喷别人”。然后发现回复用的是工作室主号。截图三分钟后传到豆瓣鹅组，#XX工作室骂粉# 上热搜。',
+    description: '工作室微博下面常年有几个固定黑号挂着骂。今天小编实在憋不住，回了一句“建议黑子先去看看自己长什么样再喷别人”。然后发现回复用的是工作室主号。截图三分钟后传到豆瓣鹅组，#{name}工作室骂粉# 上热搜。',
     emoji: '🤬',
     choices: [
       {
@@ -870,7 +870,7 @@ export const prEvents: GameEvent[] = [
         text: '官宣开除小编+艺人本人致歉',
         subtext: '舍卒保车',
         outcome: {
-          narration: '声明+开除+艺人微博三连，态度做足了。当晚热搜降到 30 名外，但被开除的小编在朋友圈发了:“老板叫我那么回的。” 截图传出去，#XX老板甩锅#成了第二轮焦点。',
+          narration: '声明+开除+艺人微博三连，态度做足了。当晚热搜降到 30 名外，但被开除的小编在朋友圈发了:“老板叫我那么回的。” 截图传出去，#{name}老板甩锅#成了第二轮焦点。',
           statChanges: { prRisk: 4, fanLoyalty: -3 },
         },
       },
@@ -879,7 +879,7 @@ export const prEvents: GameEvent[] = [
         text: '把那几个黑号告了',
         subtext: '法律手段反制 (-5万)',
         outcome: {
-          narration: '律师函发到底，三个黑号公开身份道歉、删号。“工作室硬气”的话头起来了，#XX 维权胜诉# 取代了原本的话题。但你也得罪了那帮黑号背后可能存在的某些圈内势力。',
+          narration: '律师函发到底，三个黑号公开身份道歉、删号。“工作室硬气”的话头起来了，#{name} 维权胜诉# 取代了原本的话题。但你也得罪了那帮黑号背后可能存在的某些圈内势力。',
           statChanges: { money: -50000, prRisk: -5, fanLoyalty: 4, commercialValue: 2 },
           unlockTag: 'studio_lawsuit',
         },
@@ -889,7 +889,7 @@ export const prEvents: GameEvent[] = [
         text: '老板/经纪人本人出来认错',
         subtext: '“是我让小编这么做的”',
         outcome: {
-          narration: '你亲自发微博承认“管理失职”，公开道歉。粉丝感动到不行，路人也夸你“有担当”。但圈内有人记下来:“XX 工作室经纪人能下场背锅。” 是把双刃剑，以后任何风波都可能被叫去背。',
+          narration: '你亲自发微博承认“管理失职”，公开道歉。粉丝感动到不行，路人也夸你“有担当”。但圈内有人记下来:“{name} 工作室经纪人能下场背锅。” 是把双刃剑，以后任何风波都可能被叫去背。',
           statChanges: { fanLoyalty: 5, prRisk: -5, commercialValue: 2 },
         },
       },
@@ -898,7 +898,7 @@ export const prEvents: GameEvent[] = [
         text: '声明账号被盗',
         subtext: '甩锅给“黑客”',
         outcome: {
-          narration: '工作室发声明:“账号疑似被盗，相关回复非本工作室发布。” 但 IP 反查工具立刻被网友拿出来，同 IP 之前发过工作室正常通告。“装黑客被识破”成了 emoji 包，#XX 演技# 阅读破亿（讽刺意义上的）。',
+          narration: '工作室发声明:“账号疑似被盗，相关回复非本工作室发布。” 但 IP 反查工具立刻被网友拿出来，同 IP 之前发过工作室正常通告。“装黑客被识破”成了 emoji 包，#{name} 演技# 阅读破亿（讽刺意义上的）。',
           statChanges: { prRisk: 12, fanLoyalty: -7, commercialValue: -3 },
         },
       },

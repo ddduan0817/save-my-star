@@ -20,6 +20,7 @@ import {
   calculateCollapseWarning,
   applyFansiteNeglectDecay,
   applyDailyMentalEffects,
+  calculateMentalStateEffects,
 } from '@/engine/systems';
 import { appendLedger, generateEventsForDay, MAX_CARRYOVER_MESSAGES } from '../helpers';
 import { findEventById, resolveEventForArtist } from '@/engine/eventSelector';
@@ -77,6 +78,19 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     // 2. Apply daily passive effects (with upgrade bonuses + seasonal modifier)
     const passive = applyDailyPassiveEffects(newStats, companyUpgrades.pr_team, seasonalModifiers);
     newStats = passive.stats;
+
+    // 2.05 心理状态每日被动结算：把艺人当天的心理状况（精力/配合度/压力/心情/
+    // 倦怠）温和地折算到四项主数值上。这样长期低精力/低配合会慢慢掉商业价值，
+    // 高压会推高舆论风险——让心理栏不再是纯装饰，也给「休息/安抚」行程真实动机。
+    // 用结算前的 mentalState（代表当天艺人的状态），结果并入 newStats 后再判定结局。
+    const mentalStatMods = calculateMentalStateEffects(mentalState).statModifiers;
+    if (mentalStatMods.commercialValue || mentalStatMods.fanLoyalty || mentalStatMods.prRisk) {
+      newStats = applyStatChanges(newStats, {
+        commercialValue: mentalStatMods.commercialValue,
+        fanLoyalty: mentalStatMods.fanLoyalty,
+        prRisk: mentalStatMods.prRisk,
+      }, artist?.id);
+    }
 
     // 2.1 Tick cosmetic state (recovery & stiff face countdown)
     const newCosmeticState = tickCosmeticState(cosmeticState);

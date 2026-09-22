@@ -90,7 +90,7 @@ export const milestoneEvents: GameEvent[] = [
         text: '装没看见',
         subtext: '粉丝多总比粉丝少好',
         outcome: {
-          narration: '你选择无视，但事情越闹越大。一个被粉丝网暴的博主把事情闹上了新闻，“XX纵容粉丝暴力”的报道出来了。',
+          narration: '你选择无视，但事情越闹越大。一个被粉丝网暴的博主把事情闹上了新闻，“{name}纵容粉丝暴力”的报道出来了。',
           statChanges: { prRisk: 6, commercialValue: -3 },
         },
       },
@@ -143,7 +143,7 @@ export const milestoneEvents: GameEvent[] = [
         text: '接一个烂活救急',
         subtext: '商场开业剪彩 +钱',
         outcome: {
-          narration: '你让艺人去了一个三线城市商场剪彩。钱到手了，但“XX沦落到剪彩了”的帖子也出来了。活着最重要吧。',
+          narration: '你让艺人去了一个三线城市商场剪彩。钱到手了，但“{name}沦落到剪彩了”的帖子也出来了。活着最重要吧。',
           statChanges: { money: 80000, commercialValue: -3, prRisk: 3 },
         },
       },

@@ -361,7 +361,11 @@ export function saveAchievement(id: string): string[] {
   const current = loadUnlockedAchievements();
   if (!current.includes(id)) {
     current.push(id);
-    localStorage.setItem(ACHIEVEMENT_KEY, JSON.stringify(current));
+    try {
+      localStorage.setItem(ACHIEVEMENT_KEY, JSON.stringify(current));
+    } catch {
+      // 容器限制/存储写满时静默降级：不阻断成就解锁流程
+    }
   }
   return current;
 }
@@ -383,7 +387,11 @@ export function saveArtistUsed(id: string): string[] {
   const current = loadArtistsUsed();
   if (!current.includes(id)) {
     current.push(id);
-    localStorage.setItem(ARTISTS_USED_KEY, JSON.stringify(current));
+    try {
+      localStorage.setItem(ARTISTS_USED_KEY, JSON.stringify(current));
+    } catch {
+      // 容器限制/存储写满时静默降级：不阻断开局流程
+    }
   }
   return current;
 }

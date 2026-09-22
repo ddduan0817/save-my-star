@@ -25,7 +25,7 @@ export const absurdEvents: GameEvent[] = [
         text: '紧急切断直播',
         subtext: '止损第一',
         outcome: {
-          narration: '你打电话让技术切断了直播信号。画面一黑，弹幕从“哈哈哈”变成了“心虚了吧”。录屏早就传遍了全网，“XX吐槽经纪人全程回放”当晚播放破千万。',
+          narration: '你打电话让技术切断了直播信号。画面一黑，弹幕从“哈哈哈”变成了“心虚了吧”。录屏早就传遍了全网，“{name}吐槽经纪人全程回放”当晚播放破千万。',
           statChanges: { prRisk: 5, fanLoyalty: -3 },
         },
       },
@@ -47,7 +47,7 @@ export const absurdEvents: GameEvent[] = [
     category: 'crisis',
     severity: 'high',
     title: 'AI换脸“恋爱实锤”疯传',
-    description: '一条“XX与神秘人深夜牵手”的视频在全网炸开，画面逼真得连你都看了三遍才敢确认是假的。AI换脸技术现在太强了，评论区已经有人在哭了。你的手机每秒震动一次。',
+    description: '一条“{name}与神秘人深夜牵手”的视频在全网炸开，画面逼真得连你都看了三遍才敢确认是假的。AI换脸技术现在太强了，评论区已经有人在哭了。你的手机每秒震动一次。',
     emoji: '💔',
     minDay: 7,
     choices: [
@@ -79,7 +79,7 @@ export const absurdEvents: GameEvent[] = [
         text: '艺人亲自下场玩梗',
         subtext: '“我也想知道对象是谁”',
         outcome: {
-          narration: '艺人发了一条微博：配图是AI视频截图，文字写“所以这个人是谁啊，怎么没通知我本人😅挺帅/美的能介绍一下吗”。评论区从恐慌变成了狂笑，“XX式辟谣”成了年度最佳公关案例。',
+          narration: '艺人发了一条微博：配图是AI视频截图，文字写“所以这个人是谁啊，怎么没通知我本人😅挺帅/美的能介绍一下吗”。评论区从恐慌变成了狂笑，“{name}式辟谣”成了年度最佳公关案例。',
           statChanges: { fanLoyalty: 5, prRisk: -5, commercialValue: 4 },
         },
       },
@@ -92,7 +92,7 @@ export const absurdEvents: GameEvent[] = [
     category: 'random',
     severity: 'low',
     title: '粉丝买了一颗星星！',
-    description: '你收到一封来自国际天文联合会的邮件，不，这不是诈骗。粉丝们真的众筹花了18万给一颗小行星命名为你的艺人的名字。微博话题 #XX星# 已经3亿阅读了。天文台官网能查到。你反复确认了三遍，是真的。',
+    description: '你收到一封来自国际天文联合会的邮件，不，这不是诈骗。粉丝们真的众筹花了18万给一颗小行星命名为你的艺人的名字。微博话题 #{name}星# 已经3亿阅读了。天文台官网能查到。你反复确认了三遍，是真的。',
     emoji: '⭐',
     minDay: 8,
     statConditions: { minFanLoyalty: 50 },
@@ -102,7 +102,7 @@ export const absurdEvents: GameEvent[] = [
         text: '办一场星空主题粉丝活动',
         subtext: '在天文馆包场开见面会',
         outcome: {
-          narration: '天文馆包场，大屏幕上实时显示“XX星”的轨道。你的艺人站在星空穹顶下说了句：“以后不管我在哪，你们抬头就能看到我。”全场哭成一片。这个瞬间被拍成短视频，播放量破了纪录。',
+          narration: '天文馆包场，大屏幕上实时显示“{name}星”的轨道。你的艺人站在星空穹顶下说了句：“以后不管我在哪，你们抬头就能看到我。”全场哭成一片。这个瞬间被拍成短视频，播放量破了纪录。',
           statChanges: { fanLoyalty: 8, commercialValue: 5, money: -30000 },
         },
       },
@@ -133,19 +133,19 @@ export const absurdEvents: GameEvent[] = [
     category: 'business',
     severity: 'medium',
     title: '顶流喊话要合作！',
-    description: '今天最大的瓜不是别人出事了，而是全网顶流在直播里说了句“最想合作的人是XX”，XX就是你的艺人。话题直接爆了，两家粉丝已经开始组CP了。你的手机响个不停，全是问“什么时候官宣”的。',
+    description: '今天最大的瓜不是别人出事了，而是全网顶流在直播里说了句“最想合作的人是{name}”，{name}就是你的艺人。话题直接爆了，两家粉丝已经开始组CP了。你的手机响个不停，全是问“什么时候官宣”的。',
     emoji: '🌟',
     minDay: 10,
     statConditions: { minCommercialValue: 40 },
     artistVariants: {
       actor: {
-        description: '今天最大的瓜不是别人出事了，而是某位同咖位顶流演员在采访里说“最想合作的演员是XX”，XX就是你的艺人。话题直接爆了，两家粉丝已经开始脑补“双男/女主电影”了。你的手机响个不停，全是问“是不是要一起拍戏”的。',
+        description: '今天最大的瓜不是别人出事了，而是某位同咖位顶流演员在采访里说“最想合作的演员是{name}”，{name}就是你的艺人。话题直接爆了，两家粉丝已经开始脑补“双男/女主电影”了。你的手机响个不停，全是问“是不是要一起拍戏”的。',
       },
       influencer: {
-        description: '今天最大的瓜不是别人出事了，而是全网顶流主播在自己的直播间说了句“最想合作的姐妹是XX”，XX就是你的艺人。话题直接爆了，两家粉丝已经开始催“双播联名”了。你的手机响个不停，全是问“什么时候官宣合体直播”的。',
+        description: '今天最大的瓜不是别人出事了，而是全网顶流主播在自己的直播间说了句“最想合作的姐妹是{name}”，{name}就是你的艺人。话题直接爆了，两家粉丝已经开始催“双播联名”了。你的手机响个不停，全是问“什么时候官宣合体直播”的。',
       },
       socialite: {
-        description: '今天最大的瓜不是别人出事了，而是某位同咖位“贵公子/花瓶小生”在采访里说了句“最想合作的对象是XX”，XX就是你的艺人。话题直接爆了，粉丝已经开始催“合拍古偶”和“双封时尚大片”。你的手机响个不停，全是问“是不是要一起接戏”的。',
+        description: '今天最大的瓜不是别人出事了，而是某位同咖位“贵公子/花瓶小生”在采访里说了句“最想合作的对象是{name}”，{name}就是你的艺人。话题直接爆了，粉丝已经开始催“合拍古偶”和“双封时尚大片”。你的手机响个不停，全是问“是不是要一起接戏”的。',
       },
     },
     choices: [
@@ -168,7 +168,7 @@ export const absurdEvents: GameEvent[] = [
         text: '假装不知道',
         subtext: '保持矜持',
         outcome: {
-          narration: '你按兵不动，让子弹飞了两天。效果出奇，“XX为什么不回应”“是太高冷还是有苦衷”的话题反而让热度翻倍了。有时候沉默比任何回应都有力。三天后你才让艺人发了个😏，全网解读了一整天。',
+          narration: '你按兵不动，让子弹飞了两天。效果出奇，“{name}为什么不回应”“是太高冷还是有苦衷”的话题反而让热度翻倍了。有时候沉默比任何回应都有力。三天后你才让艺人发了个😏，全网解读了一整天。',
           statChanges: { commercialValue: 5, fanLoyalty: 3 },
         },
       },
@@ -208,7 +208,7 @@ export const absurdEvents: GameEvent[] = [
         text: '秒删照片',
         subtext: '越快越好',
         outcome: {
-          narration: '照片删了，但截图永存。“秒删=心虚”的逻辑在互联网上从不失效。“XX深夜秒删自拍疑似同居”的话题已经在八卦区置顶了。你现在解释什么都像掩饰。',
+          narration: '照片删了，但截图永存。“秒删=心虚”的逻辑在互联网上从不失效。“{name}深夜秒删自拍疑似同居”的话题已经在八卦区置顶了。你现在解释什么都像掩饰。',
           statChanges: { prRisk: 8, fanLoyalty: -3 },
         },
       },
@@ -289,7 +289,7 @@ export const absurdEvents: GameEvent[] = [
         text: '让安保带走他',
         subtext: '维持秩序',
         outcome: {
-          narration: '安保迅速把那人请了出去。但现场有至少两百个手机在拍，“XX演唱会暴力清场粉丝”的视频当晚就传开了。那个男粉还发了条长文，说“我只是想表达喜欢”。你开始怀疑人生。',
+          narration: '安保迅速把那人请了出去。但现场有至少两百个手机在拍，“{name}演唱会暴力清场粉丝”的视频当晚就传开了。那个男粉还发了条长文，说“我只是想表达喜欢”。你开始怀疑人生。',
           statChanges: { prRisk: 5, fanLoyalty: -4 },
         },
       },
@@ -298,7 +298,7 @@ export const absurdEvents: GameEvent[] = [
         text: '用歌声化解',
         subtext: '唱一首情歌送给全场',
         outcome: {
-          narration: '艺人笑了笑，说“这首歌送给在场每一个勇敢去爱的人”，然后唱了一首经典情歌。全场举起手机灯光，那个场面美得不像话。求婚的粉丝也不尴尬了，他成了“最幸福的观众”。第二天的新闻标题是：“XX用一首歌让三万人落泪。”',
+          narration: '艺人笑了笑，说“这首歌送给在场每一个勇敢去爱的人”，然后唱了一首经典情歌。全场举起手机灯光，那个场面美得不像话。求婚的粉丝也不尴尬了，他成了“最幸福的观众”。第二天的新闻标题是：“{name}用一首歌让三万人落泪。”',
           statChanges: { fanLoyalty: 6, commercialValue: 3 },
         },
       },
