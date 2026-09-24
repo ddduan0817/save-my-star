@@ -187,7 +187,7 @@ export default function EndingPage() {
             <motion.div
               className={cn(
                 "text-2xl font-black mt-4 relative z-10",
-                isBadEnding ? "text-red-400" : "text-amber-900"
+                isBadEnding ? "text-red-400" : "text-gray-900"
               )}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -198,7 +198,7 @@ export default function EndingPage() {
             <motion.div
               className={cn(
                 "text-sm mt-2 relative z-10",
-                isBadEnding ? "text-white/60" : "text-amber-700/70"
+                isBadEnding ? "text-white/60" : "text-gray-700"
               )}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
