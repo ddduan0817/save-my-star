@@ -160,31 +160,31 @@ export function IconFacialContour({ size = 22, ...props }: IconProps) {
   );
 }
 
-/** 微博编辑 — 微博官方风格眼睛 logo（橙红渐变） */
+/** 微博编辑 — 微博官方风格眼睛 logo（橙红渐变圆形背景 + 白色眼睛） */
 export function IconWeiboCompose({ size = 22, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <defs>
-        <radialGradient id="wb-body" cx="0.35" cy="0.35" r="0.75">
-          <stop offset="0" stopColor="#FDBA74" />
-          <stop offset="0.55" stopColor="#F97316" />
-          <stop offset="1" stopColor="#EA580C" />
-        </radialGradient>
-        <radialGradient id="wb-pupil" cx="0.4" cy="0.4" r="0.65">
-          <stop offset="0" stopColor="#7F1D1D" />
-          <stop offset="1" stopColor="#450A0A" />
+        <linearGradient id="wb-bg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#FFA84A" />
+          <stop offset="1" stopColor="#E6162D" />
+        </linearGradient>
+        <radialGradient id="wb-hi" cx="0.3" cy="0.25" r="0.6">
+          <stop offset="0" stopColor="#FFFFFF" stopOpacity="0.35" />
+          <stop offset="1" stopColor="#FFFFFF" stopOpacity="0" />
         </radialGradient>
       </defs>
-      {/* 外形：微博眼睛 —— 椭圆 */}
-      <ellipse cx="24" cy="24" rx="20" ry="14" fill="url(#wb-body)" />
-      {/* 眼白 */}
-      <ellipse cx="24" cy="24" rx="11" ry="8.5" fill="#FFF7ED" />
-      {/* 瞳孔 */}
-      <ellipse cx="24" cy="24" rx="5.5" ry="6" fill="url(#wb-pupil)" />
+      {/* 圆角方形背景 */}
+      <rect x="2" y="2" width="44" height="44" rx="11" fill="url(#wb-bg)" />
+      <rect x="2" y="2" width="44" height="44" rx="11" fill="url(#wb-hi)" />
+      {/* 白色眼睛外壳 */}
+      <ellipse cx="24" cy="25" rx="15" ry="11" fill="#FFFFFF" />
+      {/* 黑色瞳孔 */}
+      <ellipse cx="24" cy="25" rx="6.2" ry="6.8" fill="#1F1F1F" />
+      {/* 内瞳橙色 */}
+      <ellipse cx="24" cy="25" rx="3.2" ry="3.6" fill="#F97316" />
       {/* 高光 */}
-      <ellipse cx="22" cy="22" rx="1.6" ry="1.8" fill="#FFFFFF" fillOpacity="0.9" />
-      {/* 顶部微光让整体更立体 */}
-      <ellipse cx="20" cy="16" rx="10" ry="3" fill="#FFFFFF" fillOpacity="0.18" />
+      <ellipse cx="21.5" cy="22" rx="1.5" ry="1.7" fill="#FFFFFF" />
     </svg>
   );
 }
