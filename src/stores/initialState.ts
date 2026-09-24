@@ -107,5 +107,6 @@ export function makeFreshGameState(): GameState {
     dailyVoyeurUsed: false,
     burnerFeed: [],
     dailyBurnerActionUsed: false,
+    burnerIdentity: 'self',
   };
 }

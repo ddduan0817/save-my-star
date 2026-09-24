@@ -617,6 +617,9 @@ export const useGameStore = create<GameStore>()(
     if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
     const rival = state.rival;
     const rivalName = rival?.name ?? '对家';
+    const artistName = state.artist?.name ?? 'TA';
+    // 误操作：如果当前是艺人大号身份，10% 概率把黑话发到大号上，直接翻车
+    const misfire = state.burnerIdentity === 'artist' && Math.random() < 0.1;
     const templates = [
       `笑死，${rivalName} 那新剧的评分是靠水军刷的吧，我朋友在业内的都在传😅`,
       `有一说一 ${rivalName} 这营销做得跟屎一样，还敢出来蹦跶`,
@@ -624,27 +627,34 @@ export const useGameStore = create<GameStore>()(
     ];
     const content = templates[Math.floor(Math.random() * templates.length)];
     const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
-    const newRival: typeof rival = rival
+    const newRival: typeof rival = rival && !misfire
       ? { ...rival, stats: { ...rival.stats, prRisk: Math.min(100, rival.stats.prRisk + 10) } }
-      : null;
+      : rival;
     const post = {
       id: `burner_${Date.now()}`,
       action: 'smear_rival' as const,
       time: `第 ${state.currentDay} 天`,
-      content,
+      content: misfire ? `${content}  [账号 ${artistName} 已发送]` : content,
       likes: Math.floor(Math.random() * 400) + 60,
       comments: Math.floor(Math.random() * 200) + 20,
       reposts: Math.floor(Math.random() * 80) + 5,
+      backfired: misfire,
     };
     set({
       mentalState: newMental,
       rival: newRival,
-      stats: { ...state.stats, prRisk: Math.max(0, state.stats.prRisk - 3) },
-      managerStress: Math.min(100, state.managerStress + 5),
+      stats: misfire
+        ? {
+            ...state.stats,
+            prRisk: Math.min(100, state.stats.prRisk + 30),
+            fanLoyalty: Math.max(0, state.stats.fanLoyalty - 25),
+          }
+        : { ...state.stats, prRisk: Math.max(0, state.stats.prRisk - 3) },
+      managerStress: Math.min(100, state.managerStress + (misfire ? 20 : 5)),
       burnerFeed: [post, ...state.burnerFeed],
       dailyBurnerActionUsed: true,
     });
-    return { ok: true };
+    return { ok: true, backfire: misfire };
   },
 
   reverseAttack: () => {
@@ -652,7 +662,9 @@ export const useGameStore = create<GameStore>()(
     if (state.dailyBurnerActionUsed) return { ok: false, reason: '今日已操作过小号' };
     if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
     const artistName = state.artist?.name ?? 'TA';
-    const backfire = Math.random() < 0.15;
+    // 大号身份下 10% 概率误发（额外翻车基础上更狠）
+    const misfire = state.burnerIdentity === 'artist' && Math.random() < 0.1;
+    const backfire = misfire || Math.random() < 0.15;
     const templates = backfire
       ? [
           `被扒了……我小号被抓包挂在热搜了，社死`,
@@ -667,7 +679,14 @@ export const useGameStore = create<GameStore>()(
     const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
     let newStats = { ...state.stats };
     let stress = state.managerStress + 8;
-    if (backfire) {
+    if (misfire) {
+      newStats = {
+        ...newStats,
+        prRisk: Math.min(100, newStats.prRisk + 30),
+        fanLoyalty: Math.max(0, newStats.fanLoyalty - 25),
+      };
+      stress += 20;
+    } else if (backfire) {
       newStats = {
         ...newStats,
         prRisk: Math.min(100, newStats.prRisk + 20),
@@ -684,7 +703,7 @@ export const useGameStore = create<GameStore>()(
       id: `burner_${Date.now()}`,
       action: 'reverse_attack' as const,
       time: `第 ${state.currentDay} 天`,
-      content,
+      content: misfire ? `${content}  [账号 ${artistName} 已发送]` : content,
       likes: Math.floor(Math.random() * 500) + 80,
       comments: Math.floor(Math.random() * 300) + 30,
       reposts: Math.floor(Math.random() * 120) + 10,
@@ -698,6 +717,10 @@ export const useGameStore = create<GameStore>()(
       dailyBurnerActionUsed: true,
     });
     return { ok: true, backfire };
+  },
+
+  switchBurnerIdentity: (id) => {
+    set({ burnerIdentity: id });
   },
 
   loadCollection: () => {

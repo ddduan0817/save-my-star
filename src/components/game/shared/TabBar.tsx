@@ -4,22 +4,20 @@ import { useGameStore } from '@/stores/gameStore';
 import type { TabId } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { sfxClick } from '@/lib/sounds';
-import { IconMessages, IconArtist, IconWorkspace, IconMe, IconBurner } from '@/components/icons/TabIcons';
+import { IconMessages, IconArtist, IconWorkspace, IconMe } from '@/components/icons/TabIcons';
 
 const tabs: { id: TabId; label: string }[] = [
   { id: 'messages', label: '消息' },
   { id: 'artist', label: '艺人' },
   { id: 'workspace', label: '工作台' },
-  { id: 'me', label: '工位' },
-  { id: 'burner', label: '小号' },
+  { id: 'burner', label: '微博' },
 ];
 
 const iconMap: Record<TabId, typeof IconMessages> = {
   messages: IconMessages,
   artist: IconArtist,
   workspace: IconWorkspace,
-  me: IconMe,
-  burner: IconBurner,
+  burner: IconMe,
 };
 
 export default function TabBar() {

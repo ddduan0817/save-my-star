@@ -31,7 +31,7 @@ export const artists: Artist[] = [
       prRisk: 15,
       money: 150000,
     },
-    initialAppearance: 55,
+    initialAppearance: 75,
     specialTrait: '路人缘好：舆论风险增长减半，但商业收益也减半',
     backstory: '中戏科班出身，凭一部文艺片拿下金鸡新人奖，但那届评委里有她本科班导师。业内都知道她“戏挑、脾气挑、对编剧最挑”，片场有过拍桌子怼编剧的未播花絮。一个小心眼的前辈导演一直记着她当年公开顶撞过他的场面。',
   },

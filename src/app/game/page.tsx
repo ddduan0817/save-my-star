@@ -18,7 +18,6 @@ import LevelUpToast from '@/components/game/overlays/LevelUpToast';
 import MessagesTab from '@/components/game/tabs/MessagesTab';
 import ArtistTab from '@/components/game/tabs/ArtistTab';
 import WorkspaceTab from '@/components/game/tabs/WorkspaceTab';
-import MeTab from '@/components/game/tabs/MeTab';
 import BurnerTab from '@/components/game/tabs/BurnerTab';
 import { sfxAchievement } from '@/lib/sounds';
 
@@ -33,6 +32,7 @@ export default function GamePage() {
   const gamePhase = useGameStore(s => s.gamePhase);
   const ending = useGameStore(s => s.ending);
   const activeTab = useGameStore(s => s.activeTab);
+  const setActiveTab = useGameStore(s => s.setActiveTab);
   const pendingAchievement = useGameStore(s => s.pendingAchievement);
   const dismissAchievement = useGameStore(s => s.dismissAchievement);
   const managerStress = useGameStore(s => s.managerStress);
@@ -70,6 +70,12 @@ export default function GamePage() {
       return () => clearTimeout(timer);
     }
   }, [pendingAchievement, dismissAchievement]);
+
+  useEffect(() => {
+    if (hydrated && (activeTab as string) === 'me') {
+      setActiveTab('workspace');
+    }
+  }, [hydrated, activeTab, setActiveTab]);
 
   if (!hydrated || gamePhase === 'not_started') return null;
 
@@ -119,7 +125,6 @@ export default function GamePage() {
           {activeTab === 'messages' && <MessagesTab />}
           {activeTab === 'artist' && <ArtistTab />}
           {activeTab === 'workspace' && <WorkspaceTab />}
-          {activeTab === 'me' && <MeTab />}
           {activeTab === 'burner' && <BurnerTab />}
         </motion.div>
       </AnimatePresence>

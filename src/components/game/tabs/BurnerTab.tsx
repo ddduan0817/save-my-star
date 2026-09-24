@@ -18,6 +18,9 @@ export default function BurnerTab() {
   const consumeVoyeur = useGameStore(s => s.consumeVoyeur);
   const smearRival = useGameStore(s => s.smearRival);
   const reverseAttack = useGameStore(s => s.reverseAttack);
+  const weiboTrends = useGameStore(s => s.weiboTrends);
+  const burnerIdentity = useGameStore(s => s.burnerIdentity);
+  const switchBurnerIdentity = useGameStore(s => s.switchBurnerIdentity);
 
   const [voyeurFeed, setVoyeurFeed] = useState<VoyeurPost[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -110,11 +113,40 @@ export default function BurnerTab() {
       <div className="border-b-8 border-gray-50">
         <div className="px-4 py-3 flex items-center gap-2">
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-lg">
-            🕶️
+            {burnerIdentity === 'self' ? '🕶️' : '✨'}
           </div>
           <div className="flex-1 bg-gray-50 rounded-full px-4 py-2 text-[12px] text-gray-400">
-            点我发条微博…
+            {burnerIdentity === 'self' ? '点我发条微博…' : `以 ${artist?.name ?? '大号'} 身份发博…`}
           </div>
+        </div>
+        {/* 身份切换 */}
+        <div className="px-4 pb-2 flex items-center gap-2">
+          <span className="text-[10px] text-gray-400">当前账号:</span>
+          <button
+            onClick={() => switchBurnerIdentity('self')}
+            className={cn(
+              'text-[11px] px-2.5 py-1 rounded-full transition',
+              burnerIdentity === 'self'
+                ? 'bg-orange-100 text-orange-600 font-medium'
+                : 'bg-gray-100 text-gray-500',
+            )}
+          >
+            🕶 我的小号
+          </button>
+          <button
+            onClick={() => switchBurnerIdentity('artist')}
+            className={cn(
+              'text-[11px] px-2.5 py-1 rounded-full transition',
+              burnerIdentity === 'artist'
+                ? 'bg-red-100 text-red-600 font-medium'
+                : 'bg-gray-100 text-gray-500',
+            )}
+          >
+            ✨ {artist?.name ?? '大号'}
+          </button>
+          {burnerIdentity === 'artist' && (
+            <span className="text-[10px] text-red-500">⚠ 有几率误发</span>
+          )}
         </div>
         <div className="px-4 pb-3 flex items-center gap-2">
           <ActionButton
@@ -158,6 +190,41 @@ export default function BurnerTab() {
         >
           {toast}
         </motion.div>
+      )}
+
+      {/* 微博热搜 */}
+      {weiboTrends.length > 0 && (
+        <div className="bg-white border-b-8 border-gray-50">
+          <div className="px-4 py-2.5 border-b border-gray-100 flex items-center justify-between">
+            <span className="text-[13px] font-medium text-gray-700">微博热搜</span>
+            <span className="text-[10px] text-orange-400">🔥 实时</span>
+          </div>
+          <div>
+            {weiboTrends.map((trend) => (
+              <div
+                key={trend.rank}
+                className="flex items-center gap-3 px-4 py-2 border-b border-gray-50 last:border-0"
+              >
+                <span className={cn(
+                  "text-xs font-bold w-5 text-center tabular-nums",
+                  trend.rank <= 3 ? "text-red-500" : "text-gray-400"
+                )}>
+                  {trend.rank}
+                </span>
+                <span className="flex-1 text-xs text-gray-700 truncate">{trend.title}</span>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10px] text-gray-400">{trend.heat}</span>
+                  {trend.isHot && (
+                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-1 rounded">热</span>
+                  )}
+                  {trend.sentiment === 'negative' && (
+                    <span className="text-[10px] font-bold text-orange-500 bg-orange-50 px-1 rounded">沸</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
 
       {/* 信息流 */}

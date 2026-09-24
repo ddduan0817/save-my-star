@@ -188,6 +188,8 @@ export interface GameState {
   burnerFeed: BurnerPost[];
   /** 今日是否已使用小号操作（黑对家 / 反串黑，共享一个每日额度） */
   dailyBurnerActionUsed: boolean;
+  /** 当前发博身份：小号 or 艺人大号（大号发黑话会误操作翻车） */
+  burnerIdentity: 'self' | 'artist';
 }
 
 export interface BurnerPost {
@@ -246,6 +248,8 @@ export interface GameActions {
   smearRival: () => { ok: boolean; reason?: string };
   /** 反串黑自家：消耗 15 精力，15% 概率翻车 */
   reverseAttack: () => { ok: boolean; backfire?: boolean; reason?: string };
+  /** 切换发博身份（小号 / 艺人大号） */
+  switchBurnerIdentity: (id: 'self' | 'artist') => void;
 }
 
 export type GameStore = GameState & GameActions;

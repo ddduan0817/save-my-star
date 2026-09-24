@@ -47,7 +47,7 @@ export const rivalDefinitions: RivalDefinition[] = [
       commercialValue: 35,
       fanLoyalty: 50,
       prRisk: 25,
-      appearance: 60,
+      appearance: 80,
     },
   },
   {

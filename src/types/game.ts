@@ -197,7 +197,7 @@ export interface DecisionRecord {
 export type GamePhase = 'not_started' | 'playing' | 'processing_message' | 'showing_outcome' | 'showing_twist' | 'ended';
 
 // ===== Tab System =====
-export type TabId = 'messages' | 'artist' | 'workspace' | 'me' | 'burner';
+export type TabId = 'messages' | 'artist' | 'workspace' | 'burner';
 
 // ===== Message System =====
 export type MessageStatus = 'unread' | 'read' | 'resolved';
