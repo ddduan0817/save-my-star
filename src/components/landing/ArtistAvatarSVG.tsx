@@ -43,7 +43,7 @@ export default function ArtistAvatarSVG({
 
   return (
     <motion.div
-      className={`inline-flex items-center justify-center overflow-hidden ${className}`}
+      className={`relative inline-block overflow-hidden ${className}`}
       style={{
         width: size,
         height: size,
@@ -59,15 +59,15 @@ export default function ArtistAvatarSVG({
       <img
         src={`./artists/${artistId}.png`}
         alt={`${artistId} avatar`}
-        width={size}
-        height={size}
         loading="lazy"
         draggable={false}
         style={{
+          position: 'absolute',
+          top: '-8%',
+          left: '50%',
           width: '160%',
           height: '160%',
-          marginLeft: '-30%',
-          marginTop: '-8%',
+          transform: 'translateX(-50%)',
           objectFit: 'cover',
           objectPosition: 'top center',
         }}
