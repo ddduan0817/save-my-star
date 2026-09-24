@@ -9,7 +9,6 @@ import { sfxClick, sfxMoney } from '@/lib/sounds';
 import { upgradeIconMap, IconOverview, IconFansite, IconInsurance } from '@/components/icons';
 import FansiteManager from '@/components/game/features/FansiteManager';
 import InsuranceShop from '@/components/game/features/InsuranceShop';
-import WeiboCompose from '@/components/game/features/WeiboCompose';
 import CollapseWarningPanel from '@/components/game/stats/CollapseWarning';
 
 const FAME_LABELS: Record<string, { text: string; color: string }> = {
@@ -135,9 +134,6 @@ export default function WorkspaceTab() {
             exit={{ opacity: 0, y: -10 }}
             className="space-y-4"
           >
-            {/* Weibo Compose */}
-            <WeiboCompose />
-
             {/* Financial Summary */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}

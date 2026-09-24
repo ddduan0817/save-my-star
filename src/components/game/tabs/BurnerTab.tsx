@@ -6,6 +6,7 @@ import { Search, Eye, Zap, Frown, Repeat2, MessageCircle, Heart, Bell } from 'lu
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
 import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
+import WeiboCompose from '@/components/game/features/WeiboCompose';
 
 const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
 
@@ -191,6 +192,11 @@ export default function BurnerTab() {
           {toast}
         </motion.div>
       )}
+
+      {/* 替艺人发微博 */}
+      <div className="px-4 pt-3 pb-2 bg-white border-b-8 border-gray-50">
+        <WeiboCompose />
+      </div>
 
       {/* 微博热搜 */}
       {weiboTrends.length > 0 && (
