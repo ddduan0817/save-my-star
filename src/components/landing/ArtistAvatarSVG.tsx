@@ -42,7 +42,7 @@ export default function ArtistAvatarSVG({
   const radius = Math.round(size * 0.28); // 圆角方形，和原贴纸风一致
   // 每个原型的立绘裁切参数（放大倍数 + 上边留白），美丽的图人物偏小需要放更大
   const crop: Record<string, { scale: number; top: string }> = {
-    actor: { scale: 2.2, top: '-4%' },
+    actor: { scale: 1.9, top: '-6%' },
     idol: { scale: 1.6, top: '-8%' },
     singer: { scale: 1.6, top: '-8%' },
     influencer: { scale: 1.6, top: '-8%' },
