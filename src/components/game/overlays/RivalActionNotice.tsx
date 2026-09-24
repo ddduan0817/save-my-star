@@ -35,7 +35,12 @@ export default function RivalActionNotice() {
             className="w-full text-left bg-white/95 backdrop-blur-md rounded-2xl p-4 shadow-lg ring-1 ring-gray-200/60"
           >
             <div className="flex items-center gap-2 mb-1">
-              <span className="text-lg">{rival.avatar}</span>
+              {rival.avatar.endsWith('.png') ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={rival.avatar} alt={rival.name} className="w-6 h-6 rounded-full object-cover ring-1 ring-gray-200" />
+              ) : (
+                <span className="text-lg">{rival.avatar}</span>
+              )}
               <span className="text-xs font-bold text-gray-700">{rival.name}的经纪人动态</span>
               <span className="ml-auto text-[10px] text-gray-400 shrink-0">点击关闭</span>
             </div>

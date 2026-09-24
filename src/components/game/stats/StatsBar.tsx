@@ -51,8 +51,7 @@ export default function StatsBar() {
                 "bg-green-100 text-green-600"
               )}
             >
-              <span aria-hidden>🔥</span>
-              <span className="opacity-80">我的压力</span>
+              <span className="opacity-80">压力</span>
               <span className="tabular-nums">{managerStress}</span>
             </span>
           )}

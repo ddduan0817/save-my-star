@@ -196,8 +196,13 @@ export default function WorkspaceTab() {
                   </motion.span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center text-2xl">
-                    {rival.avatar}
+                  <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-50 to-orange-50 flex items-center justify-center text-2xl overflow-hidden">
+                    {rival.avatar.endsWith('.png') ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={rival.avatar} alt={rival.name} className="w-full h-full object-cover" />
+                    ) : (
+                      rival.avatar
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">

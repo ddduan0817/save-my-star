@@ -2,9 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
+import { Search, Eye, Zap, Frown, Repeat2, MessageCircle, Heart, Bell } from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
 import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
+
+const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
 
 export default function BurnerTab() {
   const artist = useGameStore(s => s.artist);
@@ -18,8 +21,8 @@ export default function BurnerTab() {
 
   const [voyeurFeed, setVoyeurFeed] = useState<VoyeurPost[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  const [subTab, setSubTab] = useState<typeof SUB_TABS[number]>('推荐');
 
-  // 首次挂载时如果还没视奸过，默认给一批预览
   useEffect(() => {
     if (!dailyVoyeurUsed && voyeurFeed.length === 0 && artist) {
       setVoyeurFeed(rollVoyeurFeed(artist.name, 6));
@@ -67,74 +70,86 @@ export default function BurnerTab() {
   const notEnoughEnergy = mentalEnergy < 15;
 
   return (
-    <div className="flex-1 bg-[#f5f5f7] pb-24">
-      {/* 顶部搜索栏 */}
-      <div className="sticky top-0 z-10 bg-[#f5f5f7]/95 backdrop-blur px-4 py-3 border-b border-gray-100">
-        <div className="flex items-center gap-2 bg-white rounded-full px-4 py-2 ring-1 ring-gray-100">
-          <span className="text-gray-400">🔍</span>
-          <input
-            readOnly
-            placeholder="搜索微博"
-            className="flex-1 bg-transparent text-xs text-gray-500 outline-none placeholder:text-gray-300"
-          />
-          <span className="text-[10px] text-orange-500 font-medium">小号</span>
+    <div className="flex-1 bg-white pb-24">
+      {/* 顶部微博 header */}
+      <div className="sticky top-0 z-20 bg-white border-b border-gray-100">
+        <div className="flex items-center gap-3 px-4 h-11">
+          <span className="text-[17px] font-bold text-[#ff8200] tracking-tight">微博</span>
+          <div className="flex-1 flex items-center gap-1.5 bg-gray-100 rounded-full px-3 h-7">
+            <Search size={13} className="text-gray-400" strokeWidth={2.5} />
+            <span className="text-[11px] text-gray-400">搜索微博</span>
+          </div>
+          <button className="text-gray-500 active:opacity-60">
+            <Bell size={18} strokeWidth={2} />
+          </button>
+        </div>
+        {/* 二级 tab */}
+        <div className="flex items-center px-2 h-9">
+          {SUB_TABS.map(t => (
+            <button
+              key={t}
+              onClick={() => setSubTab(t)}
+              className={cn(
+                'relative px-3 py-1.5 text-[13px] transition-colors',
+                subTab === t ? 'text-gray-900 font-medium' : 'text-gray-500',
+              )}
+            >
+              {t}
+              {subTab === t && (
+                <motion.span
+                  layoutId="burner-subtab-indicator"
+                  className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[3px] w-4 rounded-full bg-[#ff8200]"
+                />
+              )}
+            </button>
+          ))}
         </div>
       </div>
 
-      {/* 发帖操作栏 */}
-      <div className="px-4 pt-3 grid grid-cols-3 gap-2">
-        <button
-          onClick={handleLurk}
-          disabled={dailyVoyeurUsed}
-          className={cn(
-            'flex flex-col items-center justify-center py-3 rounded-2xl bg-white ring-1 ring-gray-100 shadow-sm transition',
-            dailyVoyeurUsed ? 'opacity-50' : 'active:scale-95 hover:ring-orange-200',
-          )}
-        >
-          <span className="text-xl">🔍</span>
-          <span className="text-[11px] font-medium text-gray-700 mt-1">视奸粉圈</span>
-          <span className="text-[9px] text-gray-400 mt-0.5">
-            {dailyVoyeurUsed ? '今日已用' : '免费 · 每日 1 次'}
-          </span>
-        </button>
-        <button
-          onClick={handleSmear}
-          disabled={dailyBurnerActionUsed || notEnoughEnergy}
-          className={cn(
-            'flex flex-col items-center justify-center py-3 rounded-2xl bg-white ring-1 ring-gray-100 shadow-sm transition',
-            dailyBurnerActionUsed || notEnoughEnergy ? 'opacity-50' : 'active:scale-95 hover:ring-orange-200',
-          )}
-        >
-          <span className="text-xl">💥</span>
-          <span className="text-[11px] font-medium text-gray-700 mt-1">黑对家</span>
-          <span className="text-[9px] text-gray-400 mt-0.5">
-            {dailyBurnerActionUsed ? '今日已用' : '-15 精力'}
-          </span>
-        </button>
-        <button
-          onClick={handleReverse}
-          disabled={dailyBurnerActionUsed || notEnoughEnergy}
-          className={cn(
-            'flex flex-col items-center justify-center py-3 rounded-2xl bg-white ring-1 ring-gray-100 shadow-sm transition',
-            dailyBurnerActionUsed || notEnoughEnergy ? 'opacity-50' : 'active:scale-95 hover:ring-orange-200',
-          )}
-        >
-          <span className="text-xl">😢</span>
-          <span className="text-[11px] font-medium text-gray-700 mt-1">反串黑自家</span>
-          <span className="text-[9px] text-gray-400 mt-0.5">
-            {dailyBurnerActionUsed ? '今日已用' : '-15 · 15% 翻车'}
-          </span>
-        </button>
+      {/* 发博操作区 */}
+      <div className="border-b-8 border-gray-50">
+        <div className="px-4 py-3 flex items-center gap-2">
+          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-lg">
+            🕶️
+          </div>
+          <div className="flex-1 bg-gray-50 rounded-full px-4 py-2 text-[12px] text-gray-400">
+            点我发条微博…
+          </div>
+        </div>
+        <div className="px-4 pb-3 flex items-center gap-2">
+          <ActionButton
+            icon={<Eye size={14} strokeWidth={2.2} />}
+            label="视奸粉圈"
+            hint={dailyVoyeurUsed ? '已用' : '免费'}
+            onClick={handleLurk}
+            disabled={dailyVoyeurUsed}
+            tone="blue"
+          />
+          <ActionButton
+            icon={<Zap size={14} strokeWidth={2.2} />}
+            label="黑对家"
+            hint={dailyBurnerActionUsed ? '已用' : '-15'}
+            onClick={handleSmear}
+            disabled={dailyBurnerActionUsed || notEnoughEnergy}
+            tone="orange"
+          />
+          <ActionButton
+            icon={<Frown size={14} strokeWidth={2.2} />}
+            label="反串黑"
+            hint={dailyBurnerActionUsed ? '已用' : '-15'}
+            onClick={handleReverse}
+            disabled={dailyBurnerActionUsed || notEnoughEnergy}
+            tone="pink"
+          />
+        </div>
       </div>
 
-      {/* 状态提示 */}
       {notEnoughEnergy && (
-        <div className="mx-4 mt-2 text-[10px] text-orange-500 bg-orange-50 rounded-lg px-3 py-1.5">
+        <div className="mx-4 mt-2 text-[11px] text-orange-500 bg-orange-50 rounded-lg px-3 py-1.5">
           艺人精力不足（当前 {mentalEnergy} / 需要 15），先安排休息
         </div>
       )}
 
-      {/* Toast */}
       {toast && (
         <motion.div
           initial={{ opacity: 0, y: -6 }}
@@ -146,8 +161,7 @@ export default function BurnerTab() {
       )}
 
       {/* 信息流 */}
-      <div className="px-4 mt-3 space-y-2">
-        {/* 玩家自己发的帖子 */}
+      <div>
         {burnerFeed.map(post => (
           <WeiboCard
             key={post.id}
@@ -162,7 +176,6 @@ export default function BurnerTab() {
             backfired={post.backfired}
           />
         ))}
-        {/* 视奸 feed */}
         {voyeurFeed.map(post => (
           <WeiboCard
             key={post.id}
@@ -182,6 +195,38 @@ export default function BurnerTab() {
         )}
       </div>
     </div>
+  );
+}
+
+interface ActionButtonProps {
+  icon: React.ReactNode;
+  label: string;
+  hint: string;
+  onClick: () => void;
+  disabled?: boolean;
+  tone: 'blue' | 'orange' | 'pink';
+}
+
+function ActionButton({ icon, label, hint, onClick, disabled, tone }: ActionButtonProps) {
+  const toneClass = {
+    blue: 'text-sky-500 bg-sky-50',
+    orange: 'text-orange-500 bg-orange-50',
+    pink: 'text-pink-500 bg-pink-50',
+  }[tone];
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-full transition',
+        toneClass,
+        disabled ? 'opacity-40' : 'active:scale-95',
+      )}
+    >
+      {icon}
+      <span className="text-[12px] font-medium">{label}</span>
+      <span className="text-[10px] opacity-70">· {hint}</span>
+    </button>
   );
 }
 
@@ -210,50 +255,51 @@ function WeiboCard({
 }: WeiboCardProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 6 }}
+      initial={{ opacity: 0, y: 4 }}
       animate={{ opacity: 1, y: 0 }}
       className={cn(
-        'bg-white rounded-2xl px-4 py-3 ring-1 shadow-sm',
-        backfired ? 'ring-red-200 bg-red-50/40' : 'ring-gray-100',
+        'px-4 py-3 border-b border-gray-100 bg-white',
+        backfired && 'bg-red-50/40',
       )}
     >
       <div className="flex items-start gap-3">
-        <div className="shrink-0 w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-lg">
+        <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-lg">
           {avatar}
         </div>
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-gray-800 truncate">{nickname}</span>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[14px] font-medium text-gray-900 truncate">{nickname}</span>
             {isSelf && (
-              <span className="text-[9px] font-medium text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded-full">
+              <span className="text-[9px] font-medium text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">
                 本人
               </span>
             )}
             {backfired && (
-              <span className="text-[9px] font-medium text-red-500 bg-red-50 px-1.5 py-0.5 rounded-full">
+              <span className="text-[9px] font-medium text-red-500 bg-red-50 px-1.5 py-0.5 rounded">
                 翻车
               </span>
             )}
           </div>
-          <div className="text-[10px] text-gray-400 mt-0.5">{time} · 来自 微博 weibo.com</div>
-          <p className="text-xs text-gray-700 mt-2 leading-relaxed whitespace-pre-wrap">{content}</p>
-          {/* 交互底栏 */}
-          <div className="flex items-center justify-between mt-3 pt-2 border-t border-gray-50">
-            <button className="flex-1 flex items-center justify-center gap-1 text-[11px] text-gray-400 hover:text-orange-500 transition-colors">
-              <span>🔁</span>
-              <span className="tabular-nums">{reposts}</span>
-            </button>
-            <button className="flex-1 flex items-center justify-center gap-1 text-[11px] text-gray-400 hover:text-orange-500 transition-colors">
-              <span>💬</span>
-              <span className="tabular-nums">{comments}</span>
-            </button>
-            <button className="flex-1 flex items-center justify-center gap-1 text-[11px] text-gray-400 hover:text-orange-500 transition-colors">
-              <span>❤</span>
-              <span className="tabular-nums">{likes}</span>
-            </button>
+          <div className="text-[11px] text-gray-400 mt-0.5">{time} · 来自 微博 weibo.com</div>
+          <p className="text-[14px] text-gray-800 mt-1.5 leading-relaxed whitespace-pre-wrap break-words">
+            {content}
+          </p>
+          <div className="flex items-center mt-2.5 -mx-2">
+            <FooterAction icon={<Repeat2 size={15} strokeWidth={2} />} value={reposts} />
+            <FooterAction icon={<MessageCircle size={15} strokeWidth={2} />} value={comments} />
+            <FooterAction icon={<Heart size={15} strokeWidth={2} />} value={likes} />
           </div>
         </div>
       </div>
     </motion.div>
+  );
+}
+
+function FooterAction({ icon, value }: { icon: React.ReactNode; value: number }) {
+  return (
+    <button className="flex-1 flex items-center justify-center gap-1 py-1 text-gray-500 hover:text-[#ff8200] transition-colors">
+      {icon}
+      <span className="text-[12px] tabular-nums">{value > 0 ? value : ''}</span>
+    </button>
   );
 }

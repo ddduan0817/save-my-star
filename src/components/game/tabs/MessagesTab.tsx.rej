@@ -1,0 +1,8 @@
+@@ -7,6 +7,7 @@
+ import MessageRow from '@/components/game/events/MessageRow';
+ import EventOutcome from '@/components/game/overlays/EventOutcome';
+ import { sfxClick } from '@/lib/sounds';
++import DynamicIcon from '@/components/ui/DynamicIcon';
+ 
+ export default function MessagesTab() {
+   const messages = useGameStore(s => s.messages);
