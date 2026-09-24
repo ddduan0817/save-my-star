@@ -19,6 +19,7 @@ import MessagesTab from '@/components/game/tabs/MessagesTab';
 import ArtistTab from '@/components/game/tabs/ArtistTab';
 import WorkspaceTab from '@/components/game/tabs/WorkspaceTab';
 import MeTab from '@/components/game/tabs/MeTab';
+import BurnerTab from '@/components/game/tabs/BurnerTab';
 import { sfxAchievement } from '@/lib/sounds';
 
 const tabVariants = {
@@ -119,6 +120,7 @@ export default function GamePage() {
           {activeTab === 'artist' && <ArtistTab />}
           {activeTab === 'workspace' && <WorkspaceTab />}
           {activeTab === 'me' && <MeTab />}
+          {activeTab === 'burner' && <BurnerTab />}
         </motion.div>
       </AnimatePresence>
 

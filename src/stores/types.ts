@@ -184,6 +184,21 @@ export interface GameState {
   // ===== 黑粉小号系统（MVP：仅视奸粉圈信息流）=====
   /** 今日是否已使用视奸（每日 endDay 重置） */
   dailyVoyeurUsed: boolean;
+  /** 玩家用小号发出去的帖子（黑对家 / 反串黑），倒序渲染 */
+  burnerFeed: BurnerPost[];
+  /** 今日是否已使用小号操作（黑对家 / 反串黑，共享一个每日额度） */
+  dailyBurnerActionUsed: boolean;
+}
+
+export interface BurnerPost {
+  id: string;
+  action: 'smear_rival' | 'reverse_attack';
+  time: string;
+  content: string;
+  likes: number;
+  comments: number;
+  reposts: number;
+  backfired?: boolean;
 }
 
 export interface GameActions {
@@ -227,6 +242,10 @@ export interface GameActions {
   dismissTutorial: () => void;
   /** 消耗当日视奸次数（返回 false 表示今日已用过） */
   consumeVoyeur: () => boolean;
+  /** 黑对家：消耗 15 精力，降低对家舆论 */
+  smearRival: () => { ok: boolean; reason?: string };
+  /** 反串黑自家：消耗 15 精力，15% 概率翻车 */
+  reverseAttack: () => { ok: boolean; backfire?: boolean; reason?: string };
 }
 
 export type GameStore = GameState & GameActions;

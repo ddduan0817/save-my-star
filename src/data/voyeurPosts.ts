@@ -2,6 +2,8 @@
 // 每次调用 rollVoyeurFeed(name, rivalName) 返回 3-5 条随机粉圈发言
 // 文案参考豆瓣鹅组 / 微博超话 / 兔区常见语气：黑话密集、断句碎、阴阳怪气
 
+import { pickNickname, pickAvatar } from './nicknames';
+
 export interface VoyeurPost {
   id: string;
   /** 发帖人标签：唯粉 / 团粉 / CP粉 / 路人 / 对家 / 毒唯 / 私生 */
@@ -17,6 +19,8 @@ export interface VoyeurPost {
   comments: number;
   /** 是否可视奸情报（🔍 高亮） —— MVP 阶段先都是 false，纯展示 */
   isIntel: boolean;
+  /** 真实网名（UI 层用来替代 匿名{authorTag}） */
+  nickname?: string;
 }
 
 const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
@@ -408,6 +412,8 @@ export function rollVoyeurFeed(artistName: string, count = 4): VoyeurPost[] {
   return picked.map((post, idx) => ({
     ...post,
     id: `voyeur_${Date.now()}_${idx}`,
+    nickname: pickNickname(),
+    avatar: pickAvatar(),
     content: post.content.replace(/\{name\}/g, artistName),
   }));
 }

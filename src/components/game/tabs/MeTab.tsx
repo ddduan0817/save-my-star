@@ -3,7 +3,6 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
-import AntiFanAltPanel from '@/components/game/features/AntiFanAltPanel';
 import {
   MANAGER_LEVELS,
   getLevelFromXp,
@@ -16,7 +15,6 @@ export default function MeTab() {
   const stats = useGameStore(s => s.stats);
   const currentDay = useGameStore(s => s.currentDay);
   const weiboTrends = useGameStore(s => s.weiboTrends);
-  const fanComments = useGameStore(s => s.fanComments);
   const artist = useGameStore(s => s.artist);
   const dailyLedger = useGameStore(s => s.dailyLedger);
   const managerXp = useGameStore(s => s.managerXp);
@@ -221,51 +219,7 @@ export default function MeTab() {
         </div>
       </motion.div>
 
-      {/* 黑粉小号入口 */}
-      <AntiFanAltPanel />
-
-      {/* Fan Comments */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="bg-white rounded-2xl overflow-hidden ring-1 ring-gray-100/60 shadow-sm"
-      >
-        <div className="px-4 py-3 border-b border-gray-100/60">
-          <span className="text-xs font-medium text-gray-400 tracking-wider">粉丝评论区</span>
-        </div>
-        <div className="max-h-64 overflow-y-auto">
-          {fanComments.map((comment) => (
-            <div key={comment.id} className="flex items-start gap-2.5 px-4 py-2.5 border-b border-gray-50 last:border-0">
-              <span className="shrink-0 mt-0.5">
-                <svg width="28" height="28" viewBox="0 0 40 40" fill="none">
-                  <circle cx="20" cy="20" r="20" fill={comment.avatar} />
-                  <circle cx="20" cy="16" r="7" fill="white" />
-                  <path d="M6 44C6 30.27 13.37 24 20 24C26.63 24 34 30.27 34 44H6Z" fill="white" />
-                </svg>
-              </span>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-medium text-gray-500">{comment.nickname}</span>
-                </div>
-                <p className={cn(
-                  "text-xs mt-0.5",
-                  comment.sentiment === 'supportive' ? "text-gray-600"
-                    : comment.sentiment === 'angry' ? "text-orange-600"
-                    : comment.sentiment === 'hate' ? "text-red-500"
-                    : "text-gray-500"
-                )}>
-                  {comment.content}
-                </p>
-              </div>
-              <div className="flex items-center gap-0.5 shrink-0">
-                <span className="text-[10px] text-gray-300">♥</span>
-                <span className="text-[10px] text-gray-300 tabular-nums">{comment.likes}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </motion.div>
+      {/* 黑粉小号入口已迁移到独立「小号」Tab */}
     </div>
   );
 }

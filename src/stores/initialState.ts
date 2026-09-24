@@ -105,5 +105,7 @@ export function makeFreshGameState(): GameState {
 
     // 黑粉小号
     dailyVoyeurUsed: false,
+    burnerFeed: [],
+    dailyBurnerActionUsed: false,
   };
 }

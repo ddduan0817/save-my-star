@@ -393,6 +393,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       dailyPostUsed: false,
       showPostResult: false,
       dailyVoyeurUsed: false,
+      dailyBurnerActionUsed: false,
       rival: newRival,
       rivalActionNarration: rivalNarration,
       showRivalAction: !!rivalNarration,

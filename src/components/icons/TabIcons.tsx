@@ -145,3 +145,46 @@ export function IconMe({ active, size = 26, ...props }: TabIconProps) {
     </svg>
   );
 }
+
+/**
+ * 小号 Tab — 戴口罩的匿名头像，active 时橙色渐变
+ */
+export function IconBurner({ active, size = 26, ...props }: TabIconProps) {
+  const id = 'ic-burner';
+  return (
+    <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
+      <defs>
+        <linearGradient id={`${id}-g`} x1="8" y1="4" x2="40" y2="44" gradientUnits="userSpaceOnUse">
+          <stop stopColor={active ? '#FB923C' : '#B0B0B0'} />
+          <stop offset="1" stopColor={active ? '#EA580C' : '#9CA3AF'} />
+        </linearGradient>
+        <linearGradient id={`${id}-mask`} x1="10" y1="24" x2="38" y2="36" gradientUnits="userSpaceOnUse">
+          <stop stopColor={active ? '#FDE68A' : '#E5E7EB'} />
+          <stop offset="1" stopColor={active ? '#F59E0B' : '#D1D5DB'} />
+        </linearGradient>
+      </defs>
+      {/* 头 */}
+      <circle cx="24" cy="20" r="12" fill={`url(#${id}-g)`} />
+      {/* 头顶高光 */}
+      <ellipse cx="24" cy="15" rx="7" ry="3" fill="white" fillOpacity="0.25" />
+      {/* 墨镜 */}
+      <rect x="12" y="18" width="10" height="6" rx="2" fill="#111827" />
+      <rect x="26" y="18" width="10" height="6" rx="2" fill="#111827" />
+      <rect x="22" y="20" width="4" height="2" rx="1" fill="#111827" />
+      {/* 墨镜反光 */}
+      <rect x="13.5" y="19" width="3" height="1.5" rx="0.5" fill="white" fillOpacity="0.6" />
+      <rect x="27.5" y="19" width="3" height="1.5" rx="0.5" fill="white" fillOpacity="0.6" />
+      {/* 口罩 */}
+      <path
+        d="M12 28C12 26 14 24 16 24H32C34 24 36 26 36 28V32C36 36 30 40 24 40C18 40 12 36 12 32V28Z"
+        fill={`url(#${id}-mask)`}
+      />
+      {/* 口罩绳 */}
+      <path d="M12 28L8 26" stroke={active ? '#F59E0B' : '#9CA3AF'} strokeWidth="1.5" strokeLinecap="round" />
+      <path d="M36 28L40 26" stroke={active ? '#F59E0B' : '#9CA3AF'} strokeWidth="1.5" strokeLinecap="round" />
+      {/* 口罩纹理 */}
+      <path d="M16 30H32" stroke="white" strokeWidth="0.8" strokeOpacity="0.6" />
+      <path d="M17 33H31" stroke="white" strokeWidth="0.8" strokeOpacity="0.4" />
+    </svg>
+  );
+}

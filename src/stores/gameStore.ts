@@ -611,6 +611,95 @@ export const useGameStore = create<GameStore>()(
     return true;
   },
 
+  smearRival: () => {
+    const state = get();
+    if (state.dailyBurnerActionUsed) return { ok: false, reason: '今日已操作过小号' };
+    if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
+    const rival = state.rival;
+    const rivalName = rival?.name ?? '对家';
+    const templates = [
+      `笑死，${rivalName} 那新剧的评分是靠水军刷的吧，我朋友在业内的都在传😅`,
+      `有一说一 ${rivalName} 这营销做得跟屎一样，还敢出来蹦跶`,
+      `路透 ${rivalName} 现场态度也太差了，工作人员都在吐槽`,
+    ];
+    const content = templates[Math.floor(Math.random() * templates.length)];
+    const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
+    const newRival: typeof rival = rival
+      ? { ...rival, stats: { ...rival.stats, prRisk: Math.min(100, rival.stats.prRisk + 10) } }
+      : null;
+    const post = {
+      id: `burner_${Date.now()}`,
+      action: 'smear_rival' as const,
+      time: `第 ${state.currentDay} 天`,
+      content,
+      likes: Math.floor(Math.random() * 400) + 60,
+      comments: Math.floor(Math.random() * 200) + 20,
+      reposts: Math.floor(Math.random() * 80) + 5,
+    };
+    set({
+      mentalState: newMental,
+      rival: newRival,
+      stats: { ...state.stats, prRisk: Math.max(0, state.stats.prRisk - 3) },
+      managerStress: Math.min(100, state.managerStress + 5),
+      burnerFeed: [post, ...state.burnerFeed],
+      dailyBurnerActionUsed: true,
+    });
+    return { ok: true };
+  },
+
+  reverseAttack: () => {
+    const state = get();
+    if (state.dailyBurnerActionUsed) return { ok: false, reason: '今日已操作过小号' };
+    if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
+    const artistName = state.artist?.name ?? 'TA';
+    const backfire = Math.random() < 0.15;
+    const templates = backfire
+      ? [
+          `被扒了……我小号被抓包挂在热搜了，社死`,
+          `完蛋，反串黑翻车被姐妹们发现了，人设崩了`,
+        ]
+      : [
+          `看到黑热搜好难过，${artistName} 明明这么努力……姐妹们撑住`,
+          `又开始骂 ${artistName} 了，能不能给点空间啊，追星好累`,
+          `${artistName} 到底做错什么了要被这样对待，心疼`,
+        ];
+    const content = templates[Math.floor(Math.random() * templates.length)];
+    const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
+    let newStats = { ...state.stats };
+    let stress = state.managerStress + 8;
+    if (backfire) {
+      newStats = {
+        ...newStats,
+        prRisk: Math.min(100, newStats.prRisk + 20),
+        fanLoyalty: Math.max(0, newStats.fanLoyalty - 15),
+      };
+      stress += 15;
+    } else {
+      newStats = {
+        ...newStats,
+        fanLoyalty: Math.min(100, newStats.fanLoyalty + 5),
+      };
+    }
+    const post = {
+      id: `burner_${Date.now()}`,
+      action: 'reverse_attack' as const,
+      time: `第 ${state.currentDay} 天`,
+      content,
+      likes: Math.floor(Math.random() * 500) + 80,
+      comments: Math.floor(Math.random() * 300) + 30,
+      reposts: Math.floor(Math.random() * 120) + 10,
+      backfired: backfire,
+    };
+    set({
+      mentalState: newMental,
+      stats: newStats,
+      managerStress: Math.min(100, stress),
+      burnerFeed: [post, ...state.burnerFeed],
+      dailyBurnerActionUsed: true,
+    });
+    return { ok: true, backfire };
+  },
+
   loadCollection: () => {
     set({
       unlockedEndings: loadUnlockedEndings(),
