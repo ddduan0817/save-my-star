@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import { useGameStore } from '@/stores/gameStore';
 import StatsBar from '@/components/game/stats/StatsBar';
@@ -33,6 +34,7 @@ export default function GamePage() {
   const activeTab = useGameStore(s => s.activeTab);
   const pendingAchievement = useGameStore(s => s.pendingAchievement);
   const dismissAchievement = useGameStore(s => s.dismissAchievement);
+  const managerSanity = useGameStore(s => s.managerSanity);
 
   // persist 用了 skipHydration，需在 client 端手动从 localStorage 回灌存档。
   // 回灌完成前不做「无存档 → 跳首页」判断，否则静态导出的首屏(not_started)
@@ -71,7 +73,13 @@ export default function GamePage() {
   if (!hydrated || gamePhase === 'not_started') return null;
 
   return (
-    <div className="min-h-screen flex flex-col pb-[56px]">
+    <div className="min-h-screen flex flex-col pb-[56px] relative">
+      {managerSanity !== undefined && managerSanity < 40 && (
+        <div className={cn(
+          "pointer-events-none fixed inset-0 z-[100] mix-blend-multiply transition-all duration-1000",
+          managerSanity < 20 ? "sanity-glitch" : "sanity-vignette"
+        )} />
+      )}
       <ParticleBackground />
       <StatsBar />
 

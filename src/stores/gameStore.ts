@@ -203,6 +203,12 @@ export const useGameStore = create<GameStore>()(
 
     const newPeakRisk = Math.max(peakRisk, result.newStats.prRisk);
 
+    const prRiskIncrease = result.newStats.prRisk - stats.prRisk;
+    let newManagerSanity = get().managerSanity;
+    if (prRiskIncrease > 0) {
+      newManagerSanity = Math.max(0, newManagerSanity - Math.floor(prRiskIncrease / 2));
+    }
+
     // Mark message as resolved
     const updatedMessages = messages.map(m =>
       m.id === activeMessageId ? { ...m, status: 'resolved' as const } : m
@@ -228,7 +234,7 @@ export const useGameStore = create<GameStore>()(
       newTags.push('manager_lv4');
     }
 
-    if (result.ending) {
+      if (result.ending) {
       const unlocked = saveUnlockedEnding(result.ending.id);
       set({
         stats: result.newStats,
@@ -246,6 +252,7 @@ export const useGameStore = create<GameStore>()(
         mentalState: newMentalState,
         managerXp: newManagerXp,
         managerLevel: newManagerLevel,
+        managerSanity: newManagerSanity,
       });
       if (result.statChanges.money) {
         addLedger(get, set, { label: `${event.title} → ${choice.text}`, amount: result.statChanges.money, category: 'event' });
@@ -270,6 +277,7 @@ export const useGameStore = create<GameStore>()(
       mentalState: newMentalState,
       managerXp: newManagerXp,
       managerLevel: newManagerLevel,
+      managerSanity: newManagerSanity,
       pendingLevelUp: levelUp.leveledUp && levelUp.newLevel
         ? {
             lv: levelUp.newLevel.lv,
@@ -303,6 +311,12 @@ export const useGameStore = create<GameStore>()(
         ? applyMentalEffect(mentalState, pendingTwist.mentalEffect)
         : mentalState;
 
+      const prRiskIncrease = twistStats.prRisk - stats.prRisk;
+      let newManagerSanity = get().managerSanity;
+      if (prRiskIncrease > 0) {
+        newManagerSanity = Math.max(0, newManagerSanity - Math.floor(prRiskIncrease / 2));
+      }
+
       set({
         gamePhase: 'showing_twist',
         stats: twistStats,
@@ -313,6 +327,7 @@ export const useGameStore = create<GameStore>()(
         activeTags: newTags,
         peakRisk: Math.max(get().peakRisk, twistStats.prRisk),
         mentalState: newMentalState,
+        managerSanity: newManagerSanity,
       });
       if (pendingTwist.statChanges.money) {
         addLedger(get, set, { label: '反转！', amount: pendingTwist.statChanges.money, category: 'event' });

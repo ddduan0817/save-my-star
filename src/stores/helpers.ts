@@ -111,6 +111,7 @@ export function generateEventsForDay(
   mentalContext?: {
     mental: ArtistMentalState;
     lowMoodStreak: number;
+    sanity: number;
   },
   modifiers?: SeasonalModifier[],
 ): { events: GameEvent[]; newUsageMap: Record<string, number> } {

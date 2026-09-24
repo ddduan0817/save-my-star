@@ -40,7 +40,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       artistSchedule, companyUpgrades, rival, cosmeticState,
       mentalState, insurancePolicies, fansites, lowMoodStreak,
       seasonalModifiers, firedCallbackIds, fansiteArcStep,
-      managerXp, highLoyaltyStreak, recentXpDeltas,
+      managerXp, highLoyaltyStreak, recentXpDeltas, decisionHistory, managerSanity,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -150,10 +150,27 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     // 低落连击计数：mood<20 连续天数（用于触发失眠微博）
     const newLowMoodStreak = newMentalState.mood < 20 ? lowMoodStreak + 1 : 0;
 
+    let newManagerSanity = managerSanity;
+    
+    // Drain sanity if artist is uncooperative
+    if (newMentalState.cooperation < 20) {
+      newManagerSanity = Math.max(0, newManagerSanity - 5);
+    }
+    
+    // Recover sanity if no crisis event was handled today
+    const todayDecisions = decisionHistory.filter(d => d.day === currentDay);
+    const hadCrisis = todayDecisions.some(d => {
+      const e = findEventById(d.eventId);
+      return e && e.category === 'crisis';
+    });
+    if (!hadCrisis) {
+      newManagerSanity = Math.min(100, newManagerSanity + 5);
+    }
+
     // 5. Generate new events for next day
     const { events, newUsageMap } = generateEventsForDay(
       nextDay, newStats, eventUsageMap, newActiveTags, artist?.id, pendingFollowUpEventIds,
-      { mental: newMentalState, lowMoodStreak: newLowMoodStreak },
+      { mental: newMentalState, lowMoodStreak: newLowMoodStreak, sanity: newManagerSanity },
       seasonalModifiers,
     );
 
@@ -397,6 +414,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       managerLevel: newManagerLevel,
       highLoyaltyStreak: newHighLoyaltyStreak,
       recentXpDeltas: newRecentXpDeltas,
+      managerSanity: newManagerSanity,
       pendingLevelUp: levelUp.leveledUp && levelUp.newLevel
         ? {
             lv: levelUp.newLevel.lv,

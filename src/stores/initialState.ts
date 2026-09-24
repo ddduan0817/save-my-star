@@ -24,6 +24,7 @@ export function makeFreshGameState(): GameState {
     currentDay: 0,
     artist: null,
     stats: { commercialValue: 0, fanLoyalty: 0, prRisk: 0, money: 0 },
+    managerSanity: 100,
 
     activeTab: 'messages',
     messages: [],

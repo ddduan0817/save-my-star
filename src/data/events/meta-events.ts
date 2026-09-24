@@ -636,6 +636,28 @@ export const metaEvents: GameEvent[] = [
       },
     ],
   },
+  // ===== 事件6：警方通报（造神计划后续） =====
+  {
+    id: 'police_investigation',
+    category: 'crisis',
+    severity: 'critical',
+    isBreaking: true,
+    requiredTags: ['fake_stalker_bomb'],
+    title: '警方通报',
+    description: '警方查明之前的“私生饭跟踪”系工作室自导自演。舆论哗然，官媒点名批评。',
+    emoji: '🚨',
+    choices: [
+      {
+        id: 'take_blame',
+        text: '自己揽下所有罪责',
+        outcome: {
+          narration: '你被带走了。',
+          statChanges: {},
+          unlockTag: 'trigger_jail'
+        }
+      }
+    ]
+  }
 ];
 
 export default metaEvents;

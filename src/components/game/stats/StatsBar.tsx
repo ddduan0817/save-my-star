@@ -18,6 +18,7 @@ export default function StatsBar() {
   const currentDay = useGameStore(s => s.currentDay);
   const lastStatChanges = useGameStore(s => s.lastStatChanges);
   const collapseWarning = useGameStore(s => s.collapseWarning);
+  const managerSanity = useGameStore(s => s.managerSanity);
   const barRef = useRef<HTMLDivElement>(null);
   const prevRiskRef = useRef(stats.prRisk);
 
@@ -39,6 +40,17 @@ export default function StatsBar() {
             Day {currentDay}
           </span>
           <CollapseWarningBadge level={collapseWarning.level} />
+          {managerSanity !== undefined && (
+            <span className={cn(
+              "text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors",
+              managerSanity < 20 ? "bg-red-100 text-red-600 animate-pulse" :
+              managerSanity < 40 ? "bg-orange-100 text-orange-600" :
+              managerSanity < 70 ? "bg-yellow-100 text-yellow-600" :
+              "bg-green-100 text-green-600"
+            )}>
+              🧠 {managerSanity}
+            </span>
+          )}
         </div>
         <div className="flex items-center gap-1.5 relative">
           <span className={cn(

@@ -43,6 +43,7 @@ export interface GameState {
   currentDay: number;
   artist: Artist | null;
   stats: GameStats;
+  managerSanity: number;
 
   // Tab system
   activeTab: TabId;

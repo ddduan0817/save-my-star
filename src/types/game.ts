@@ -160,7 +160,11 @@ export type EndingId =
   | 'fan_favorite'
   | 'retirement_declaration'
   | 'manager_breakup'
-  | 'true_friends';
+  | 'true_friends'
+  | 'jail'
+  | 'quit'
+  | 'betrayed'
+  | 'flipped_board';
 
 export interface Ending {
   id: EndingId;
