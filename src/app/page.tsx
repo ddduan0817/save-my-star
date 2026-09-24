@@ -290,9 +290,6 @@ export default function HomePage() {
             <span className="mr-1">📓</span>
             查看结局图鉴
           </motion.button>
-          <div className="text-[10px] text-gray-300 tracking-wider">
-            made with caffeine &amp; regret
-          </div>
         </motion.div>
       </div>
       </div>
