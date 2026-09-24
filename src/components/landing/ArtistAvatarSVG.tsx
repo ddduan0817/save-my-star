@@ -64,8 +64,10 @@ export default function ArtistAvatarSVG({
         loading="lazy"
         draggable={false}
         style={{
-          width: '100%',
-          height: '100%',
+          width: '160%',
+          height: '160%',
+          marginLeft: '-30%',
+          marginTop: '-8%',
           objectFit: 'cover',
           objectPosition: 'top center',
         }}
