@@ -40,6 +40,16 @@ export default function ArtistAvatarSVG({
 }: ArtistAvatarSVGProps) {
   const theme = themeColor[artistId] || themeColor.idol;
   const radius = Math.round(size * 0.28); // 圆角方形，和原贴纸风一致
+  // 每个原型的立绘裁切参数（放大倍数 + 上边留白），美丽的图人物偏小需要放更大
+  const crop: Record<string, { scale: number; top: string }> = {
+    actor: { scale: 2.2, top: '-4%' },
+    idol: { scale: 1.6, top: '-8%' },
+    singer: { scale: 1.6, top: '-8%' },
+    influencer: { scale: 1.6, top: '-8%' },
+    socialite: { scale: 1.6, top: '-8%' },
+  };
+  const { scale, top } = crop[artistId] || crop.idol;
+  const pct = `${scale * 100}%`;
 
   return (
     <motion.div
@@ -63,10 +73,10 @@ export default function ArtistAvatarSVG({
         draggable={false}
         style={{
           position: 'absolute',
-          top: '-8%',
+          top,
           left: '50%',
-          width: '160%',
-          height: '160%',
+          width: pct,
+          height: pct,
           transform: 'translateX(-50%)',
           objectFit: 'cover',
           objectPosition: 'top center',
