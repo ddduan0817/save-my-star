@@ -19,7 +19,7 @@ export default function BurnerTab() {
   const smearRival = useGameStore(s => s.smearRival);
   const reverseAttack = useGameStore(s => s.reverseAttack);
   const weiboTrends = useGameStore(s => s.weiboTrends);
-  const burnerIdentity = useGameStore(s => s.burnerIdentity);
+  const burnerIdentity = useGameStore(s => s.burnerIdentity) ?? 'self';
   const switchBurnerIdentity = useGameStore(s => s.switchBurnerIdentity);
 
   const [voyeurFeed, setVoyeurFeed] = useState<VoyeurPost[]>([]);
