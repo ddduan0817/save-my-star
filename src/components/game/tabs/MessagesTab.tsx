@@ -22,7 +22,6 @@ export default function MessagesTab() {
     dismissDayBanner,
     currentEvent,
     dailyBriefing,
-    seasonalModifiers,
     tutorialSeen,
     dismissTutorial,
   } = useGameStore(
@@ -35,7 +34,6 @@ export default function MessagesTab() {
       dismissDayBanner: s.dismissDayBanner,
       currentEvent: s.currentEvents[0],
       dailyBriefing: s.dailyBriefing,
-      seasonalModifiers: s.seasonalModifiers,
       tutorialSeen: s.tutorialSeen,
       dismissTutorial: s.dismissTutorial,
     })),
@@ -186,19 +184,6 @@ export default function MessagesTab() {
                   <span className="text-[10px] text-orange-400/60">·</span>
                   <span className="text-[10px] text-orange-500/70">DAY {currentDay}</span>
                 </div>
-                {seasonalModifiers.length > 0 && (
-                  <div className="flex items-center gap-1">
-                    {seasonalModifiers.map((m) => (
-                      <span
-                        key={m.id}
-                        title={m.name}
-                        className="text-[11px] leading-none"
-                      >
-                        <DynamicIcon emoji={m.emoji} size={14} className="rounded-md" />
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
               <div className="text-[12.5px] leading-relaxed text-gray-700 whitespace-pre-line">
                 {dailyBriefing}
