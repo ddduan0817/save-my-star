@@ -40,7 +40,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       artistSchedule, companyUpgrades, rival, cosmeticState,
       mentalState, insurancePolicies, fansites, lowMoodStreak,
       seasonalModifiers, firedCallbackIds, fansiteArcStep,
-      managerXp, highLoyaltyStreak, recentXpDeltas, decisionHistory, managerSanity,
+      managerXp, highLoyaltyStreak, recentXpDeltas, decisionHistory, managerStress,
     } = get();
 
     // Block if urgent messages unresolved (except on final day — force ending)
@@ -150,27 +150,27 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
     // 低落连击计数：mood<20 连续天数（用于触发失眠微博）
     const newLowMoodStreak = newMentalState.mood < 20 ? lowMoodStreak + 1 : 0;
 
-    let newManagerSanity = managerSanity;
+    let newManagerStress = managerStress;
     
-    // Drain sanity if artist is uncooperative
+    // Artist uncooperative → manager stress rises
     if (newMentalState.cooperation < 20) {
-      newManagerSanity = Math.max(0, newManagerSanity - 5);
+      newManagerStress = Math.min(100, newManagerStress + 5);
     }
     
-    // Recover sanity if no crisis event was handled today
+    // No crisis today → manager stress relaxes
     const todayDecisions = decisionHistory.filter(d => d.day === currentDay);
     const hadCrisis = todayDecisions.some(d => {
       const e = findEventById(d.eventId);
       return e && e.category === 'crisis';
     });
     if (!hadCrisis) {
-      newManagerSanity = Math.min(100, newManagerSanity + 5);
+      newManagerStress = Math.max(0, newManagerStress - 5);
     }
 
     // 5. Generate new events for next day
     const { events, newUsageMap } = generateEventsForDay(
       nextDay, newStats, eventUsageMap, newActiveTags, artist?.id, pendingFollowUpEventIds,
-      { mental: newMentalState, lowMoodStreak: newLowMoodStreak, sanity: newManagerSanity },
+      { mental: newMentalState, lowMoodStreak: newLowMoodStreak, stress: newManagerStress },
       seasonalModifiers,
     );
 
@@ -392,6 +392,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       showDayBanner: !phoneCall, // don't show day banner if phone call is pending (will show after call ends)
       dailyPostUsed: false,
       showPostResult: false,
+      dailyVoyeurUsed: false,
       rival: newRival,
       rivalActionNarration: rivalNarration,
       showRivalAction: !!rivalNarration,
@@ -414,7 +415,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       managerLevel: newManagerLevel,
       highLoyaltyStreak: newHighLoyaltyStreak,
       recentXpDeltas: newRecentXpDeltas,
-      managerSanity: newManagerSanity,
+      managerStress: newManagerStress,
       pendingLevelUp: levelUp.leveledUp && levelUp.newLevel
         ? {
             lv: levelUp.newLevel.lv,

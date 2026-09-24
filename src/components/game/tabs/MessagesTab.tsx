@@ -6,6 +6,7 @@ import { useGameStore } from '@/stores/gameStore';
 import EventCard from '@/components/game/events/EventCard';
 import EventOutcome from '@/components/game/overlays/EventOutcome';
 import MessageRow from '@/components/game/events/MessageRow';
+import DynamicIcon from '@/components/ui/DynamicIcon';
 import { sfxDayTransition } from '@/lib/sounds';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
@@ -193,7 +194,7 @@ export default function MessagesTab() {
                         title={m.name}
                         className="text-[11px] leading-none"
                       >
-                        {m.emoji}
+                        <DynamicIcon emoji={m.emoji} size={14} className="rounded-md" />
                       </span>
                     ))}
                   </div>
@@ -247,7 +248,7 @@ export default function MessagesTab() {
                 className="mx-3 mt-3 rounded-2xl bg-gradient-to-br from-rose-50/90 to-amber-50/80 ring-1 ring-rose-200/50 px-4 py-3.5 shadow-sm"
               >
                 <div className="flex items-center gap-1.5 mb-2">
-                  <span className="text-[13px]">👋</span>
+                  <DynamicIcon emoji="👋" size={16} className="rounded-lg shadow-none border-0 bg-transparent" />
                   <span className="text-[12.5px] font-black text-gray-800">第一次当经纪人？三步就懂</span>
                 </div>
                 <ol className="space-y-1.5 text-[12px] leading-relaxed text-gray-600">
@@ -266,7 +267,9 @@ export default function MessagesTab() {
 
             {visibleMessages.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-gray-300">
-                <span className="text-3xl mb-3">📭</span>
+                <div className="mb-4">
+                  <DynamicIcon emoji="📭" size={32} className="rounded-2xl opacity-60" />
+                </div>
                 <span className="text-sm">暂无新消息</span>
               </div>
             ) : (

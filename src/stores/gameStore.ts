@@ -204,9 +204,9 @@ export const useGameStore = create<GameStore>()(
     const newPeakRisk = Math.max(peakRisk, result.newStats.prRisk);
 
     const prRiskIncrease = result.newStats.prRisk - stats.prRisk;
-    let newManagerSanity = get().managerSanity;
+    let newManagerStress = get().managerStress;
     if (prRiskIncrease > 0) {
-      newManagerSanity = Math.max(0, newManagerSanity - Math.floor(prRiskIncrease / 2));
+      newManagerStress = Math.min(100, newManagerStress + Math.floor(prRiskIncrease / 2));
     }
 
     // Mark message as resolved
@@ -252,7 +252,7 @@ export const useGameStore = create<GameStore>()(
         mentalState: newMentalState,
         managerXp: newManagerXp,
         managerLevel: newManagerLevel,
-        managerSanity: newManagerSanity,
+        managerStress: newManagerStress,
       });
       if (result.statChanges.money) {
         addLedger(get, set, { label: `${event.title} → ${choice.text}`, amount: result.statChanges.money, category: 'event' });
@@ -277,7 +277,7 @@ export const useGameStore = create<GameStore>()(
       mentalState: newMentalState,
       managerXp: newManagerXp,
       managerLevel: newManagerLevel,
-      managerSanity: newManagerSanity,
+      managerStress: newManagerStress,
       pendingLevelUp: levelUp.leveledUp && levelUp.newLevel
         ? {
             lv: levelUp.newLevel.lv,
@@ -312,9 +312,9 @@ export const useGameStore = create<GameStore>()(
         : mentalState;
 
       const prRiskIncrease = twistStats.prRisk - stats.prRisk;
-      let newManagerSanity = get().managerSanity;
+      let newManagerStress = get().managerStress;
       if (prRiskIncrease > 0) {
-        newManagerSanity = Math.max(0, newManagerSanity - Math.floor(prRiskIncrease / 2));
+        newManagerStress = Math.min(100, newManagerStress + Math.floor(prRiskIncrease / 2));
       }
 
       set({
@@ -327,7 +327,7 @@ export const useGameStore = create<GameStore>()(
         activeTags: newTags,
         peakRisk: Math.max(get().peakRisk, twistStats.prRisk),
         mentalState: newMentalState,
-        managerSanity: newManagerSanity,
+        managerStress: newManagerStress,
       });
       if (pendingTwist.statChanges.money) {
         addLedger(get, set, { label: '反转！', amount: pendingTwist.statChanges.money, category: 'event' });
@@ -603,6 +603,12 @@ export const useGameStore = create<GameStore>()(
 
   dismissTutorial: () => {
     set({ tutorialSeen: true });
+  },
+
+  useVoyeur: () => {
+    if (get().dailyVoyeurUsed) return false;
+    set({ dailyVoyeurUsed: true });
+    return true;
   },
 
   loadCollection: () => {

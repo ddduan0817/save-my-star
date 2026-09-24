@@ -24,7 +24,7 @@ export function makeFreshGameState(): GameState {
     currentDay: 0,
     artist: null,
     stats: { commercialValue: 0, fanLoyalty: 0, prRisk: 0, money: 0 },
-    managerSanity: 100,
+    managerStress: 0,
 
     activeTab: 'messages',
     messages: [],
@@ -102,5 +102,8 @@ export function makeFreshGameState(): GameState {
 
     // 新手引导：默认未看过
     tutorialSeen: false,
+
+    // 黑粉小号
+    dailyVoyeurUsed: false,
   };
 }

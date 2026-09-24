@@ -18,7 +18,7 @@ export default function StatsBar() {
   const currentDay = useGameStore(s => s.currentDay);
   const lastStatChanges = useGameStore(s => s.lastStatChanges);
   const collapseWarning = useGameStore(s => s.collapseWarning);
-  const managerSanity = useGameStore(s => s.managerSanity);
+  const managerStress = useGameStore(s => s.managerStress);
   const barRef = useRef<HTMLDivElement>(null);
   const prevRiskRef = useRef(stats.prRisk);
 
@@ -40,15 +40,20 @@ export default function StatsBar() {
             Day {currentDay}
           </span>
           <CollapseWarningBadge level={collapseWarning.level} />
-          {managerSanity !== undefined && (
-            <span className={cn(
-              "text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors",
-              managerSanity < 20 ? "bg-red-100 text-red-600 animate-pulse" :
-              managerSanity < 40 ? "bg-orange-100 text-orange-600" :
-              managerSanity < 70 ? "bg-yellow-100 text-yellow-600" :
-              "bg-green-100 text-green-600"
-            )}>
-              🧠 {managerSanity}
+          {managerStress !== undefined && (
+            <span
+              title="经纪人压力值：过高时选项会扭曲、可能触发发疯事件"
+              className={cn(
+                "text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 transition-colors",
+                managerStress > 80 ? "bg-red-100 text-red-600 animate-pulse" :
+                managerStress > 60 ? "bg-orange-100 text-orange-600" :
+                managerStress > 30 ? "bg-yellow-100 text-yellow-600" :
+                "bg-green-100 text-green-600"
+              )}
+            >
+              <span aria-hidden>🔥</span>
+              <span className="opacity-80">我的压力</span>
+              <span className="tabular-nums">{managerStress}</span>
             </span>
           )}
         </div>

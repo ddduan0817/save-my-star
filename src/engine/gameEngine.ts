@@ -94,7 +94,7 @@ export function startNewDay(
   mentalContext?: {
     mental: ArtistMentalState;
     lowMoodStreak: number;
-    sanity: number;
+    stress: number;
   },
   modifiers?: SeasonalModifier[],
 ): DayResult {

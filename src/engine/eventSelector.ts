@@ -225,21 +225,19 @@ const milestoneIds = new Set(milestoneEvents.map(e => e.id));
 // 艺人作妖事件ID集合，每2-3天强制注入一个
 const troubleIds = new Set(artistTroubleEvents.map(e => e.id));
 
-function applySanityDistortion(event: GameEvent, sanity: number): GameEvent {
-  if (sanity >= 30) return event;
+function applyStressDistortion(event: GameEvent, stress: number): GameEvent {
+  if (stress <= 70) return event;
   
   return {
     ...event,
     choices: event.choices.map(c => {
-      // Disable safe/calm choices (e.g., options that decrease PR risk without costing money, or simply 'wait it out')
-      // As a heuristic, if a choice requires no money and lowers PR risk, or has '道歉' / '冷静' in text
       const isCalm = c.text.includes('道歉') || c.text.includes('冷静') || c.text.includes('耐心') || c.text.includes('沉默');
       if (isCalm) {
         return {
           ...c,
           text: `[理智断线] ${c.text}`,
           subtext: '你现在气得发抖，根本做不到。',
-          requireMinMoney: 999999999, // effectively locked
+          requireMinMoney: 999999999,
         };
       }
       return {
@@ -259,11 +257,11 @@ export function selectEventsForDay(
   mentalContext?: {
     mental: ArtistMentalState;
     lowMoodStreak: number;
-    sanity: number;
+    stress: number;
   },
   modifiers?: SeasonalModifier[],
 ): GameEvent[] {
-  if (mentalContext && mentalContext.sanity < 15) {
+  if (mentalContext && mentalContext.stress > 85) {
     const unusedInsane = insaneEvents.filter(e => !eventUsageMap[e.id]);
     if (unusedInsane.length > 0) {
       // Pick one insane event randomly and return it immediately as a breaking event
@@ -387,6 +385,6 @@ export function selectEventsForDay(
 
   return selected.map(e => {
     const resolved = resolveEventForArtist(e, artistId);
-    return applySanityDistortion(resolved, mentalContext?.sanity ?? 100);
+    return applyStressDistortion(resolved, mentalContext?.stress ?? 0);
   });
 }

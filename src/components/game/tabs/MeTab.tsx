@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
+import AntiFanAltPanel from '@/components/game/features/AntiFanAltPanel';
 import {
   MANAGER_LEVELS,
   getLevelFromXp,
@@ -219,6 +220,9 @@ export default function MeTab() {
           ))}
         </div>
       </motion.div>
+
+      {/* 黑粉小号入口 */}
+      <AntiFanAltPanel />
 
       {/* Fan Comments */}
       <motion.div

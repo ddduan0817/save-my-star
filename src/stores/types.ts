@@ -43,7 +43,7 @@ export interface GameState {
   currentDay: number;
   artist: Artist | null;
   stats: GameStats;
-  managerSanity: number;
+  managerStress: number;
 
   // Tab system
   activeTab: TabId;
@@ -180,6 +180,10 @@ export interface GameState {
   // ===== 新手引导 =====
   /** 是否已看过首次玩法引导（跟随 persist 存储，看过后不再弹） */
   tutorialSeen: boolean;
+
+  // ===== 黑粉小号系统（MVP：仅视奸粉圈信息流）=====
+  /** 今日是否已使用视奸（每日 endDay 重置） */
+  dailyVoyeurUsed: boolean;
 }
 
 export interface GameActions {
@@ -221,6 +225,8 @@ export interface GameActions {
   dismissLevelUp: () => void;
   /** 标记首次玩法引导已看过 */
   dismissTutorial: () => void;
+  /** 消耗当日视奸次数（返回 false 表示今日已用过） */
+  useVoyeur: () => boolean;
 }
 
 export type GameStore = GameState & GameActions;

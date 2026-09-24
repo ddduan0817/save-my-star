@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import type { GameMessage } from '@/types/game';
 import { cn } from '@/lib/utils';
 import { CATEGORY_LABEL } from '@/data/constants';
+import DynamicIcon from '@/components/ui/DynamicIcon';
 
 interface MessageRowProps {
   message: GameMessage;
@@ -31,7 +32,7 @@ export default function MessageRow({ message, index, onOpen }: MessageRowProps) 
     >
       {/* Urgency / category indicator */}
       <div className="shrink-0 relative">
-        <span className="text-xl">{event.emoji}</span>
+        <DynamicIcon emoji={event.emoji} size={22} className={cn(isResolved && "grayscale opacity-50")} />
         {isUrgent && !isResolved && (
           <motion.span
             animate={{ scale: [1, 1.3, 1] }}
