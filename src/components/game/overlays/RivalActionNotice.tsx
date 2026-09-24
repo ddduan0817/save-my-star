@@ -37,7 +37,13 @@ export default function RivalActionNotice() {
             <div className="flex items-center gap-2 mb-1">
               {rival.avatar.endsWith('.png') ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={rival.avatar} alt={rival.name} className="w-6 h-6 rounded-full object-cover ring-1 ring-gray-200" />
+                <span className="relative inline-block w-6 h-6 rounded-full overflow-hidden ring-1 ring-gray-200">
+                  <img
+                    src={rival.avatar}
+                    alt={rival.name}
+                    className="absolute left-1/2 -translate-x-1/2 top-[-10%] w-[180%] h-[180%] object-cover object-top"
+                  />
+                </span>
               ) : (
                 <span className="text-lg">{rival.avatar}</span>
               )}
