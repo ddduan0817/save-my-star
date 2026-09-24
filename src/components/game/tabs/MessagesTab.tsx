@@ -201,7 +201,18 @@ export default function MessagesTab() {
                 )}
               </div>
               <div className="text-[12.5px] leading-relaxed text-gray-700 whitespace-pre-line">
-                {dailyBriefing}
+                {dailyBriefing.split('\n').map((line, idx) => {
+                  const match = line.match(/^(\p{Extended_Pictographic}(?:\uFE0F)?(?:\u200D\p{Extended_Pictographic})*)\s*(.*)$/u);
+                  if (match) {
+                    return (
+                      <div key={idx} className="flex items-start gap-1.5 mb-0.5">
+                        <DynamicIcon emoji={match[1]} size={16} className="rounded-md shrink-0 mt-0.5" />
+                        <span className="flex-1">{match[2]}</span>
+                      </div>
+                    );
+                  }
+                  return <div key={idx}>{line}</div>;
+                })}
               </div>
             </div>
           </motion.div>

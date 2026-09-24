@@ -160,23 +160,31 @@ export function IconFacialContour({ size = 22, ...props }: IconProps) {
   );
 }
 
-/** 微博编辑 — 蓝色铅笔 */
+/** 微博编辑 — 微博官方风格眼睛 logo（橙红渐变） */
 export function IconWeiboCompose({ size = 22, ...props }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
       <defs>
-        <linearGradient id="wb-g" x1="8" y1="4" x2="40" y2="44" gradientUnits="userSpaceOnUse">
-          <stop stopColor="#60A5FA" />
-          <stop offset="1" stopColor="#2563EB" />
-        </linearGradient>
+        <radialGradient id="wb-body" cx="0.35" cy="0.35" r="0.75">
+          <stop offset="0" stopColor="#FDBA74" />
+          <stop offset="0.55" stopColor="#F97316" />
+          <stop offset="1" stopColor="#EA580C" />
+        </radialGradient>
+        <radialGradient id="wb-pupil" cx="0.4" cy="0.4" r="0.65">
+          <stop offset="0" stopColor="#7F1D1D" />
+          <stop offset="1" stopColor="#450A0A" />
+        </radialGradient>
       </defs>
-      {/* 笔杆 */}
-      <rect x="16" y="4" width="12" height="32" rx="2" fill="url(#wb-g)" transform="rotate(-5 22 20)" />
-      <rect x="16" y="4" width="12" height="5" rx="2" fill="white" fillOpacity="0.2" transform="rotate(-5 22 20)" />
-      {/* 笔尖 */}
-      <path d="M16 36L24 46L28 36" fill="#FBBF24" transform="rotate(-5 22 40)" />
-      {/* 笔杆条纹 */}
-      <rect x="18" y="28" width="8" height="2" rx="1" fill="white" fillOpacity="0.2" transform="rotate(-5 22 29)" />
+      {/* 外形：微博眼睛 —— 椭圆 */}
+      <ellipse cx="24" cy="24" rx="20" ry="14" fill="url(#wb-body)" />
+      {/* 眼白 */}
+      <ellipse cx="24" cy="24" rx="11" ry="8.5" fill="#FFF7ED" />
+      {/* 瞳孔 */}
+      <ellipse cx="24" cy="24" rx="5.5" ry="6" fill="url(#wb-pupil)" />
+      {/* 高光 */}
+      <ellipse cx="22" cy="22" rx="1.6" ry="1.8" fill="#FFFFFF" fillOpacity="0.9" />
+      {/* 顶部微光让整体更立体 */}
+      <ellipse cx="20" cy="16" rx="10" ry="3" fill="#FFFFFF" fillOpacity="0.18" />
     </svg>
   );
 }
