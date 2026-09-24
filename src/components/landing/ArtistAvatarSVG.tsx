@@ -52,7 +52,7 @@ export default function ArtistAvatarSVG({
         boxShadow: `inset 0 0 0 1.5px ${theme.ring}33`,
       }}
       initial={false}
-      animate={animate ? { rotate: [-1, 1, -1] } : undefined}
+      animate={animate ? { y: [0, -2, 0] } : undefined}
       transition={animate ? { repeat: Infinity, duration: 4, ease: 'easeInOut' } : undefined}
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
