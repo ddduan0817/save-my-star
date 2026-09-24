@@ -249,12 +249,13 @@ export default function MessagesTab() {
               >
                 <div className="flex items-center gap-1.5 mb-2">
                   <DynamicIcon emoji="👋" size={16} className="rounded-lg shadow-none border-0 bg-transparent" />
-                  <span className="text-[12.5px] font-black text-gray-800">第一次当经纪人？三步就懂</span>
+                  <span className="text-[12.5px] font-black text-gray-800">第一次当经纪人？四步就懂</span>
                 </div>
                 <ol className="space-y-1.5 text-[12px] leading-relaxed text-gray-600">
                   <li><span className="font-bold text-rose-500">1.</span> 点开下面的<span className="font-semibold text-gray-800">消息</span>，读事件、做选择</li>
-                  <li><span className="font-bold text-rose-500">2.</span> 每个选择都会影响顶部的<span className="font-semibold text-gray-800">四个数值</span>，没有标准答案</li>
-                  <li><span className="font-bold text-rose-500">3.</span> 处理完点右下角<span className="font-semibold text-gray-800">「下班」</span>推进到第二天，撑满 20 天</li>
+                  <li><span className="font-bold text-rose-500">2.</span> 每个选择都会影响顶部的<span className="font-semibold text-gray-800">四个数值</span>（商业/粉丝/风险/资金），没有标准答案</li>
+                  <li><span className="font-bold text-rose-500">3.</span> 顶部还有<span className="font-semibold text-rose-600">🔥 我的压力</span> —— 那是<span className="font-semibold text-gray-800">你</span>（经纪人）的心态值：救火、翻车会飙升，超过 80 会看到 UI 扭曲，爆表可能触发隐藏结局</li>
+                  <li><span className="font-bold text-rose-500">4.</span> 处理完点右下角<span className="font-semibold text-gray-800">「下班」</span>推进到第二天，撑满 20 天</li>
                 </ol>
                 <button
                   onClick={dismissTutorial}
