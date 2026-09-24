@@ -605,7 +605,7 @@ export const useGameStore = create<GameStore>()(
     set({ tutorialSeen: true });
   },
 
-  useVoyeur: () => {
+  consumeVoyeur: () => {
     if (get().dailyVoyeurUsed) return false;
     set({ dailyVoyeurUsed: true });
     return true;

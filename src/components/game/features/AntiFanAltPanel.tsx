@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
 export default function AntiFanAltPanel() {
   const artist = useGameStore(s => s.artist);
   const dailyVoyeurUsed = useGameStore(s => s.dailyVoyeurUsed);
-  const useVoyeur = useGameStore(s => s.useVoyeur);
+  const consumeVoyeur = useGameStore(s => s.consumeVoyeur);
 
   const [open, setOpen] = useState(false);
   const [feed, setFeed] = useState<VoyeurPost[]>([]);
@@ -22,7 +22,7 @@ export default function AntiFanAltPanel() {
       // 已经用过：只展示上次缓存也没意义，直接不允许再刷
       return;
     }
-    const ok = useVoyeur();
+    const ok = consumeVoyeur();
     if (!ok) return;
     setFeed(rollVoyeurFeed(artist.name, 5 + Math.floor(Math.random() * 3)));
     setOpen(true);

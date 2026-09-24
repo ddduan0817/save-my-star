@@ -226,7 +226,7 @@ export interface GameActions {
   /** 标记首次玩法引导已看过 */
   dismissTutorial: () => void;
   /** 消耗当日视奸次数（返回 false 表示今日已用过） */
-  useVoyeur: () => boolean;
+  consumeVoyeur: () => boolean;
 }
 
 export type GameStore = GameState & GameActions;
