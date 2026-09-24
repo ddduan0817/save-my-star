@@ -202,12 +202,23 @@ export default function MessagesTab() {
               </div>
               <div className="text-[12.5px] leading-relaxed text-gray-700 whitespace-pre-line">
                 {dailyBriefing.split('\n').map((line, idx) => {
-                  const match = line.match(/^(\p{Extended_Pictographic}(?:\uFE0F)?(?:\u200D\p{Extended_Pictographic})*)\s*(.*)$/u);
-                  if (match) {
+                  // emoji 一般是 UTF-16 代理对（首字节 0xD800-0xDBFF）；只在开头是代理对时抽出来
+                  const hi = line.charCodeAt(0);
+                  if (hi >= 0xD800 && hi <= 0xDBFF) {
+                    let end = 2;
+                    // 可能带 variation selector 或 ZWJ 序列，简单吞下若干后续代理对
+                    while (end < line.length) {
+                      const c = line.charCodeAt(end);
+                      if (c === 0xFE0F || c === 0x200D) { end += 1; continue; }
+                      if (c >= 0xD800 && c <= 0xDBFF) { end += 2; continue; }
+                      break;
+                    }
+                    const emoji = line.slice(0, end);
+                    const rest = line.slice(end).trimStart();
                     return (
                       <div key={idx} className="flex items-start gap-1.5 mb-0.5">
-                        <DynamicIcon emoji={match[1]} size={16} className="rounded-md shrink-0 mt-0.5" />
-                        <span className="flex-1">{match[2]}</span>
+                        <DynamicIcon emoji={emoji} size={16} className="rounded-md shrink-0 mt-0.5" />
+                        <span className="flex-1">{rest}</span>
                       </div>
                     );
                   }
