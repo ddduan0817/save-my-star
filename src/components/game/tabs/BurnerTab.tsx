@@ -145,9 +145,6 @@ export default function BurnerTab() {
           >
             ✨ {artist?.name ?? '大号'}
           </button>
-          {burnerIdentity === 'artist' && (
-            <span className="text-[10px] text-red-500">⚠ 有几率误发</span>
-          )}
         </div>
         <div className="px-4 pb-3 flex items-center gap-2">
           <ActionButton

@@ -398,25 +398,42 @@ export const useGameStore = create<GameStore>()(
   },
 
   postWeibo: (templateId: string) => {
-    const { dailyPostUsed, stats, artist, activeTags, weiboTrends, weiboPostHistory, currentDay } = get();
+    const { dailyPostUsed, stats, artist, activeTags, weiboTrends, weiboPostHistory, currentDay, burnerIdentity } = get();
     if (dailyPostUsed || !artist) return;
 
     const template = weiboPostTemplates.find(t => t.id === templateId);
     if (!template) return;
 
+    // 微博在"我的小号"账号下点了"替艺人发博" → 10% 概率忘记切号，直接以小号身份发出
+    const misfire = burnerIdentity === 'self' && Math.random() < 0.1;
+
     const result = resolveWeiboPost(template, stats, artist.id, artist.name);
 
+    // 误发：文案变糊，惩罚翻倍并覆盖
+    const finalStatChanges = misfire
+      ? {
+          ...result.statChanges,
+          fanLoyalty: (result.statChanges.fanLoyalty ?? 0) - 25,
+          prRisk: (result.statChanges.prRisk ?? 0) + 30,
+        }
+      : result.statChanges;
+    const finalNarration = misfire
+      ? `${artist.name}的账号发出一条明显是小号口吻的微博，评论区已经在扒："这是本人吗？"`
+      : result.narration;
+
     // Apply stat changes through engine (artist modifiers apply)
-    const newStats = applyStatChanges(stats, result.statChanges, artist.id);
+    const newStats = applyStatChanges(stats, finalStatChanges, artist.id);
 
     // Inject trend at #1, re-rank others
     const updatedTrends = [
-      result.trendEntry,
+      misfire
+        ? { ...result.trendEntry, title: `${artist.name} 小号漏出 疑似账号串号`, sentiment: 'negative' as const, isHot: true }
+        : result.trendEntry,
       ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })),
     ];
 
     const newTags = [...activeTags];
-    if (!result.isBackfire && template.unlockTag) {
+    if (!misfire && !result.isBackfire && template.unlockTag) {
       newTags.push(template.unlockTag);
     }
 
@@ -426,18 +443,19 @@ export const useGameStore = create<GameStore>()(
       weiboPostHistory: [...weiboPostHistory, {
         templateId,
         day: currentDay,
-        wasBackfire: result.isBackfire,
+        wasBackfire: misfire || result.isBackfire,
       }],
       weiboTrends: updatedTrends,
-      lastPostNarration: result.narration,
-      lastPostStatChanges: result.statChanges,
+      lastPostNarration: finalNarration,
+      lastPostStatChanges: finalStatChanges,
       showPostResult: true,
       activeTags: newTags,
       peakRisk: Math.max(get().peakRisk, newStats.prRisk),
+      managerStress: Math.min(100, get().managerStress + (misfire ? 15 : 0)),
     });
 
-    if (result.statChanges.money) {
-      addLedger(get, set, { label: `发微博：${template.title}`, amount: result.statChanges.money, category: 'weibo' });
+    if (finalStatChanges.money) {
+      addLedger(get, set, { label: `发微博：${template.title}`, amount: finalStatChanges.money, category: 'weibo' });
     }
 
     runAchievementCheck(get, set);
