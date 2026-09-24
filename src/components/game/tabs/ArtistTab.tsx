@@ -101,7 +101,7 @@ export default function ArtistTab() {
         <div className="mt-4 space-y-2.5">
           {statBars.map(bar => (
             <div key={bar.label} className="flex items-center gap-3">
-              <span className="text-[11px] text-gray-400 w-12 shrink-0">{bar.label}</span>
+              <span className="text-[11px] text-gray-400 w-14 shrink-0 whitespace-nowrap">{bar.label}</span>
               <div className={cn("flex-1 h-2 rounded-full overflow-hidden", bar.track)}>
                 <motion.div
                   className={cn("h-full rounded-full", bar.color)}

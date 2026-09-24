@@ -255,7 +255,7 @@ export default function WorkspaceTab() {
                           { label: '外貌颜值', value: rival.stats.appearance, color: 'bg-purple-400', track: 'bg-purple-100' },
                         ].map(bar => (
                           <div key={bar.label} className="flex items-center gap-2">
-                            <span className="text-[11px] text-gray-400 w-10 shrink-0">{bar.label}</span>
+                            <span className="text-[11px] text-gray-400 w-14 shrink-0 whitespace-nowrap">{bar.label}</span>
                             <div className={cn("flex-1 h-1.5 rounded-full overflow-hidden", bar.track)}>
                               <motion.div
                                 className={cn("h-full rounded-full", bar.color)}
