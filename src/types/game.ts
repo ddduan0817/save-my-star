@@ -259,6 +259,89 @@ export interface FanComment {
 }
 
 // ===== Weibo Posting System =====
+export type WeiboSceneId =
+  | 'artist_work_photo'
+  | 'artist_late_night'
+  | 'artist_controversy_response'
+  | 'artist_work_promotion'
+  | 'artist_fan_gift'
+  | 'artist_charity'
+  | 'artist_fight_haters'
+  | 'artist_selfie'
+  | 'artist_romance_hint'
+  | 'artist_apology'
+  | 'fan_brand_sales'
+  | 'fan_fansite_copyright'
+  | 'fan_airport_sighting'
+  | 'fan_support_campaign'
+  | 'fan_work_complaint'
+  | 'fan_media_smear'
+  | 'fan_cp_discussion'
+  | 'fan_fandom_conflict'
+  | 'fan_career_discussion'
+  | 'fan_crisis_watch'
+  | 'fan_persona_discussion'
+  | 'fan_private_sighting'
+  | 'burner_rival_smear'
+  | 'burner_reverse_attack'
+  | 'burner_artist_impersonation';
+
+export type WeiboOutcome = 'success' | 'backfire' | 'leaked';
+
+export type WeiboCommentRole =
+  | 'fan'
+  | 'casual'
+  | 'data_fan'
+  | 'fansite'
+  | 'cp_fan'
+  | 'anti'
+  | 'former_fan'
+  | 'rival_fan'
+  | 'sasaeng';
+
+export type WeiboRivalId =
+  | 'lin_c'
+  | 'chao_cute'
+  | 'ge_wang'
+  | 'wang_sc'
+  | 'gu_junting';
+
+export interface WeiboRivalIdentity {
+  id?: string;
+  name: string;
+}
+
+export type WeiboCommentStance =
+  | 'supportive'
+  | 'skeptical'
+  | 'hostile'
+  | 'neutral'
+  | 'procedural';
+
+export interface WeiboEngagement {
+  likes: number;
+  comments: number;
+  reposts: number;
+}
+
+export interface WeiboCommentEntry {
+  text: string;
+  role: WeiboCommentRole;
+  stance: WeiboCommentStance;
+  allowedOutcomes: readonly WeiboOutcome[];
+  artistIds?: readonly ArtistArchetype[];
+  priority: 'direct' | 'secondary';
+}
+
+export interface GeneratedWeiboComment {
+  nickname: string;
+  text: string;
+  role: WeiboCommentRole;
+  stance: WeiboCommentStance;
+}
+
+export type WeiboImageRequirement = 'required' | 'optional' | 'none';
+
 export interface WeiboPostTemplate {
   id: string;
   title: string;
@@ -275,15 +358,44 @@ export interface WeiboPostTemplate {
   backfireNarration?: string;
   successNarration: string;
   trendTitle: string; // 用 {name} 占位
+  backfireTrendTitle?: string;
   unlockTag?: string;
   /** 艺人在微博以第一人称发布的正文 */
   postContent?: string;
+  /** Optional only while reading legacy templates. New templates must provide it. */
+  sceneId?: WeiboSceneId;
+  postVariants?: readonly string[];
+  artistPostVariants?: Partial<Record<ArtistArchetype, readonly string[]>>;
+  imageRequirement?: WeiboImageRequirement;
+  imageSlot?: string;
+}
+
+export interface SceneWeiboPostTemplate extends WeiboPostTemplate {
+  sceneId: WeiboSceneId;
+  postVariants: readonly string[];
+  artistPostVariants: Partial<Record<ArtistArchetype, readonly string[]>>;
+  imageRequirement: WeiboImageRequirement;
 }
 
 export interface WeiboPostRecord {
+  id?: string;
   templateId: string;
+  sceneId?: WeiboSceneId;
   day: number;
+  content?: string;
+  outcome?: WeiboOutcome;
+  engagement?: WeiboEngagement;
+  imageKey?: string;
+  /** Legacy field retained for persisted saves. */
   wasBackfire: boolean;
+}
+
+export interface HydratedWeiboPostRecord extends WeiboPostRecord {
+  id: string;
+  sceneId: WeiboSceneId;
+  content: string;
+  outcome: WeiboOutcome;
+  engagement: WeiboEngagement;
 }
 
 // ===== Story Chain Tracker =====

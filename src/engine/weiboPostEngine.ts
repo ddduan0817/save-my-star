@@ -75,9 +75,12 @@ export function resolveWeiboPost(
     : template.successNarration;
 
   // 生成热搜条目
+  const trendTitle = isBackfire
+    ? template.backfireTrendTitle ?? template.trendTitle
+    : template.trendTitle;
   const trendEntry: WeiboTrend = {
     rank: 1,
-    title: template.trendTitle.replace('{name}', artistName),
+    title: trendTitle.replace('{name}', artistName),
     heat: `${Math.floor(Math.random() * 3000 + 2000)}万`,
     isHot: !isBackfire,
     sentiment: isBackfire ? 'negative' : 'positive',

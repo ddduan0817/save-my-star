@@ -2,11 +2,19 @@
 // 每次调用 rollVoyeurFeed(name, rivalName) 返回 3-5 条随机粉圈发言
 // 文案参考豆瓣鹅组 / 微博超话 / 兔区常见语气：黑话密集、断句碎、阴阳怪气
 
-import type { ArtistArchetype } from '@/types/game';
+import type {
+  ArtistArchetype,
+  WeiboCommentRole,
+  WeiboCommentStance,
+  WeiboSceneId,
+} from '@/types/game';
 import { pickNickname, pickAvatar } from './nicknames';
 
 export interface VoyeurPost {
   id: string;
+  sceneId: WeiboSceneId;
+  authorRole: WeiboCommentRole;
+  stance: WeiboCommentStance;
   /** 发帖人标签：唯粉 / 团粉 / CP粉 / 路人 / 对家 / 毒唯 / 私生 */
   authorTag: '唯粉' | '团粉' | 'CP粉' | '路人' | '毒唯' | '对家毒唯' | '私生' | '塌房粉' | '同担';
   /** 头像 emoji */
@@ -29,6 +37,9 @@ export interface VoyeurPost {
 const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
   // ===== 唯粉 · 花痴/护崽/焦虑 =====
   {
+    sceneId: 'fan_airport_sighting',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🌸',
     time: '3 分钟前',
@@ -38,6 +49,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_brand_sales',
+    authorRole: 'data_fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🌷',
     time: '17 分钟前',
@@ -47,6 +61,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_work_complaint',
+    authorRole: 'fan',
+    stance: 'skeptical',
     authorTag: '唯粉',
     avatar: '🍑',
     time: '32 分钟前',
@@ -57,6 +74,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     archetypes: ['actor', 'idol', 'socialite'],
   },
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🍓',
     time: '48 分钟前',
@@ -66,6 +86,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_support_campaign',
+    authorRole: 'data_fan',
+    stance: 'procedural',
     authorTag: '唯粉',
     avatar: '💐',
     time: '1 小时前',
@@ -75,6 +98,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_work_complaint',
+    authorRole: 'fan',
+    stance: 'skeptical',
     authorTag: '唯粉',
     avatar: '🌺',
     time: '2 小时前',
@@ -84,6 +110,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_media_smear',
+    authorRole: 'fan',
+    stance: 'procedural',
     authorTag: '唯粉',
     avatar: '🪷',
     time: '3 小时前',
@@ -95,6 +124,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 毒唯 · 战斗力拉满 =====
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '毒唯',
     avatar: '💢',
     time: '12 分钟前',
@@ -104,15 +136,21 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '毒唯',
     avatar: '🔪',
     time: '26 分钟前',
-    content: '开撕开撕。{name} 番位一番爱豆凭什么被压咖。营销号列表已经拉好了，姐妹们轮着来。',
+    content: '开撕开撕。{name}的成绩摆在这，凭什么还要被压咖。营销号列表已经拉好了，姐妹们轮着来。',
     likes: 456,
     comments: 789,
     isIntel: false,
   },
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '毒唯',
     avatar: '⚔️',
     time: '55 分钟前',
@@ -122,10 +160,13 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '毒唯',
     avatar: '🩸',
     time: '2 小时前',
-    content: '公告：从今天开始 {name} 后援会禁止提任何 CP 名，磕的姐妹自觉退群。爱豆是我们的信仰不是过家家道具。',
+    content: '公告：从今天开始{name}后援会禁止提任何 CP 名，磕的姐妹自觉退群。正主不是你们过家家的道具。',
     likes: 3120,
     comments: 1502,
     isIntel: false,
@@ -133,6 +174,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 团粉 · 顾大局 =====
   {
+    sceneId: 'fan_career_discussion',
+    authorRole: 'data_fan',
+    stance: 'procedural',
     authorTag: '团粉',
     avatar: '🫂',
     time: '2 小时前',
@@ -142,6 +186,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_career_discussion',
+    authorRole: 'fan',
+    stance: 'neutral',
     authorTag: '团粉',
     avatar: '🌟',
     time: '4 小时前',
@@ -153,6 +200,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== CP粉 · 磕晕系列 =====
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'cp_fan',
+    stance: 'supportive',
     authorTag: 'CP粉',
     avatar: '💕',
     time: '31 分钟前',
@@ -162,15 +212,21 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'cp_fan',
+    stance: 'procedural',
     authorTag: 'CP粉',
     avatar: '🌈',
     time: '1 小时前',
-    content: '整理了 {name} 和搭档从初见到杀青的所有互动，DOC 文档 47 页。私戳自取，转发请打码抠字。',
+    content: '整理了{name}和搭档从第一次同框到最近一次互动的所有物料，文档47页。私戳自取，转发请打码抠字。',
     likes: 4520,
     comments: 890,
     isIntel: false,
   },
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'cp_fan',
+    stance: 'skeptical',
     authorTag: 'CP粉',
     avatar: '💞',
     time: '3 小时前',
@@ -182,6 +238,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 路人 · 冷眼旁观 =====
   {
+    sceneId: 'fan_support_campaign',
+    authorRole: 'casual',
+    stance: 'skeptical',
     authorTag: '路人',
     avatar: '👤',
     time: '18 分钟前',
@@ -191,6 +250,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'casual',
+    stance: 'skeptical',
     authorTag: '路人',
     avatar: '🐟',
     time: '3 小时前',
@@ -200,6 +262,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_work_complaint',
+    authorRole: 'casual',
+    stance: 'skeptical',
     authorTag: '路人',
     avatar: '🥱',
     time: '5 小时前',
@@ -210,6 +275,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     archetypes: ['actor', 'idol', 'socialite'],
   },
   {
+    sceneId: 'fan_crisis_watch',
+    authorRole: 'casual',
+    stance: 'skeptical',
     authorTag: '路人',
     avatar: '🍿',
     time: '6 小时前',
@@ -221,6 +289,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 塌房粉 · 心累爬墙 =====
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'former_fan',
+    stance: 'skeptical',
     authorTag: '塌房粉',
     avatar: '💔',
     time: '25 分钟前',
@@ -230,15 +301,21 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_crisis_watch',
+    authorRole: 'former_fan',
+    stance: 'skeptical',
     authorTag: '塌房粉',
     avatar: '🥀',
     time: '2 小时前',
-    content: '追了 {name} 三年，今天决定退圈了。祝他/她一切都好，但我真的累了。删除超话，转粉那个新出道的小朋友。',
+    content: '追了{name}三年，今天决定退圈了。祝一切都好，但我真的累了。删除超话，转粉那个新出道的小朋友。',
     likes: 1890,
     comments: 452,
     isIntel: false,
   },
   {
+    sceneId: 'fan_media_smear',
+    authorRole: 'former_fan',
+    stance: 'skeptical',
     authorTag: '塌房粉',
     avatar: '🕯️',
     time: '4 小时前',
@@ -250,6 +327,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 私生 · 越界系列 =====
   {
+    sceneId: 'fan_airport_sighting',
+    authorRole: 'sasaeng',
+    stance: 'neutral',
     authorTag: '私生',
     avatar: '🕶️',
     time: '1 小时前',
@@ -259,6 +339,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_private_sighting',
+    authorRole: 'sasaeng',
+    stance: 'hostile',
     authorTag: '私生',
     avatar: '📸',
     time: '3 小时前',
@@ -270,6 +353,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 对家毒唯 · 阴阳怪气 =====
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'rival_fan',
+    stance: 'hostile',
     authorTag: '对家毒唯',
     avatar: '☠️',
     time: '2 小时前',
@@ -279,15 +365,21 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'rival_fan',
+    stance: 'hostile',
     authorTag: '对家毒唯',
     avatar: '🖤',
     time: '4 小时前',
-    content: '哦，{name} 又要冲我家哥哥的资源了？就这商业价值也配？姐妹们保持体面，别理疯狗，把数据做上去打脸。',
+    content: '哦，{name}又要冲我家资源了？就这商业价值也配？姐妹们保持体面，别理疯狗，把数据做上去打脸。',
     likes: 890,
     comments: 1123,
     isIntel: false,
   },
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'rival_fan',
+    stance: 'hostile',
     authorTag: '对家毒唯',
     avatar: '🐍',
     time: '6 小时前',
@@ -299,6 +391,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 同担 · 求同存异 =====
   {
+    sceneId: 'fan_media_smear',
+    authorRole: 'fan',
+    stance: 'skeptical',
     authorTag: '同担',
     avatar: '🤝',
     time: '42 分钟前',
@@ -308,6 +403,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'fan',
+    stance: 'skeptical',
     authorTag: '同担',
     avatar: '🕊️',
     time: '3 小时前',
@@ -319,6 +417,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
 
   // ===== 加料：营销号 / 站姐 / 数据组 味道 =====
   {
+    sceneId: 'fan_support_campaign',
+    authorRole: 'data_fan',
+    stance: 'procedural',
     authorTag: '唯粉',
     avatar: '📊',
     time: '20 分钟前',
@@ -328,6 +429,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_fansite_copyright',
+    authorRole: 'fansite',
+    stance: 'procedural',
     authorTag: '唯粉',
     avatar: '📷',
     time: '45 分钟前',
@@ -337,6 +441,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_crisis_watch',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '毒唯',
     avatar: '🔥',
     time: '1 小时前',
@@ -346,6 +453,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'cp_fan',
+    stance: 'supportive',
     authorTag: 'CP粉',
     avatar: '🍬',
     time: '2 小时前',
@@ -355,6 +465,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_work_complaint',
+    authorRole: 'casual',
+    stance: 'skeptical',
     authorTag: '路人',
     avatar: '🧊',
     time: '3 小时前',
@@ -365,6 +478,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     archetypes: ['actor'],
   },
   {
+    sceneId: 'fan_crisis_watch',
+    authorRole: 'former_fan',
+    stance: 'skeptical',
     authorTag: '塌房粉',
     avatar: '🌫️',
     time: '5 小时前',
@@ -374,16 +490,22 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_career_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '同担',
     avatar: '🌱',
     time: '6 小时前',
-    content: '{name} 加油！新剧路透看着质感很不错，导演阵容也稳。我们粉丝要做的就是不给他/她添乱，好好等成片。',
+    content: '{name}加油！新剧路透看着质感很不错，导演阵容也稳。我们粉丝要做的就是不给{name}添乱，好好等成片。',
     likes: 456,
     comments: 34,
     isIntel: false,
     archetypes: ['actor', 'idol', 'socialite'],
   },
   {
+    sceneId: 'fan_media_smear',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '毒唯',
     avatar: '⚡',
     time: '深夜',
@@ -393,6 +515,9 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'rival_fan',
+    stance: 'hostile',
     authorTag: '对家毒唯',
     avatar: '🦂',
     time: '深夜',
@@ -402,12 +527,211 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     isIntel: false,
   },
   {
+    sceneId: 'fan_private_sighting',
+    authorRole: 'sasaeng',
+    stance: 'hostile',
     authorTag: '私生',
     avatar: '🚗',
     time: '深夜',
     content: '刚跟车跟到小区门口，保安拦下来了。{name} 今晚回家挺早的，看气色好像不错。（不发图，别问）',
     likes: 89,
     comments: 567,
+    isIntel: false,
+  },
+];
+
+// 补齐低频场景，避免连续刷新只看到同一条版权、机场或私生内容。
+const POOL_SCENE_FILLERS: Omit<VoyeurPost, 'id'>[] = [
+  {
+    sceneId: 'fan_airport_sighting',
+    authorRole: 'fansite',
+    stance: 'procedural',
+    authorTag: '唯粉',
+    avatar: '📷',
+    time: '12 分钟前',
+    content: '{name}已经从普通通道离开，现场不要追车。今天的公开图稍后统一发。',
+    likes: 936,
+    comments: 84,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_airport_sighting',
+    authorRole: 'casual',
+    stance: 'neutral',
+    authorTag: '路人',
+    avatar: '🧳',
+    time: '36 分钟前',
+    content: '机场偶遇{name}，本人比镜头里瘦，工作人员一直在提醒大家别堵路。',
+    likes: 528,
+    comments: 63,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_airport_sighting',
+    authorRole: 'fan',
+    stance: 'supportive',
+    authorTag: '同担',
+    avatar: '✈️',
+    time: '1 小时前',
+    content: '平安落地就好，接机的姐妹不要围堵，也别把航班信息继续往外传。',
+    likes: 1104,
+    comments: 117,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_brand_sales',
+    authorRole: 'data_fan',
+    stance: 'procedural',
+    authorTag: '唯粉',
+    avatar: '🧾',
+    time: '22 分钟前',
+    content: '{name}代言官宣后的有效订单还在统计，晒单记得遮住姓名和地址，别泄露隐私。',
+    likes: 774,
+    comments: 92,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_brand_sales',
+    authorRole: 'casual',
+    stance: 'skeptical',
+    authorTag: '路人',
+    avatar: '🛍️',
+    time: '50 分钟前',
+    content: '代言销量好是好事，但把购买金额做成粉籍考核就没必要了，按需求消费吧。',
+    likes: 642,
+    comments: 188,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_fansite_copyright',
+    authorRole: 'fansite',
+    stance: 'procedural',
+    authorTag: '唯粉',
+    avatar: '📸',
+    time: '8 分钟前',
+    content: '昨晚活动图仅授权非商业转载，裁水印发广告的账号请在今晚前删除。',
+    likes: 1350,
+    comments: 146,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_fansite_copyright',
+    authorRole: 'fan',
+    stance: 'supportive',
+    authorTag: '同担',
+    avatar: '🖼️',
+    time: '29 分钟前',
+    content: '拍摄和修图都要花时间，大家存图时保留水印，别给盗图营销号贡献转发。',
+    likes: 892,
+    comments: 75,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_fansite_copyright',
+    authorRole: 'casual',
+    stance: 'neutral',
+    authorTag: '路人',
+    avatar: '🧷',
+    time: '2 小时前',
+    content: '围观了一下，原始发布时间和授权范围都能对上，等平台处理结果。',
+    likes: 463,
+    comments: 58,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_fansite_copyright',
+    authorRole: 'former_fan',
+    stance: 'skeptical',
+    authorTag: '塌房粉',
+    avatar: '🗂️',
+    time: '4 小时前',
+    content: '支持保护版权，但挂人截图里带着普通用户信息，最好先打码再维权。',
+    likes: 711,
+    comments: 129,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_media_smear',
+    authorRole: 'casual',
+    stance: 'skeptical',
+    authorTag: '路人',
+    avatar: '📰',
+    time: '18 分钟前',
+    content: '同一段{name}的视频被五个营销号同时截成一样的角度，确实像统一下发的稿子。',
+    likes: 1240,
+    comments: 307,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_private_sighting',
+    authorRole: 'sasaeng',
+    stance: 'hostile',
+    authorTag: '私生',
+    avatar: '📍',
+    time: '刚刚',
+    content: '有人拿到{name}今晚聚餐的包间号了，想蹲出口的私聊，别在广场问。',
+    likes: 67,
+    comments: 344,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_private_sighting',
+    authorRole: 'fan',
+    stance: 'hostile',
+    authorTag: '唯粉',
+    avatar: '🚫',
+    time: '14 分钟前',
+    content: '别再传播{name}的酒店和车牌信息了，这不是追星，是侵犯隐私。',
+    likes: 2460,
+    comments: 231,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_private_sighting',
+    authorRole: 'casual',
+    stance: 'skeptical',
+    authorTag: '路人',
+    avatar: '🔒',
+    time: '1 小时前',
+    content: '偷拍视频连私人住址都带出来了，平台应该直接处理，不该继续当瓜转。',
+    likes: 1830,
+    comments: 286,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_support_campaign',
+    authorRole: 'data_fan',
+    stance: 'procedural',
+    authorTag: '唯粉',
+    avatar: '📋',
+    time: '16 分钟前',
+    content: '{name}生日应援物料已经全部核销，明细和剩余款项会在今晚公开。',
+    likes: 984,
+    comments: 76,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_support_campaign',
+    authorRole: 'casual',
+    stance: 'neutral',
+    authorTag: '路人',
+    avatar: '💡',
+    time: '3 小时前',
+    content: '商场大屏做得挺好看，不过应援还是量力而行，别为了排面透支。',
+    likes: 531,
+    comments: 68,
+    isIntel: false,
+  },
+  {
+    sceneId: 'fan_work_complaint',
+    authorRole: 'fan',
+    stance: 'skeptical',
+    authorTag: '唯粉',
+    avatar: '📅',
+    time: '27 分钟前',
+    content: '{name}这个月公开行程又只剩品牌活动，团队能不能认真规划作品和长期曝光？',
+    likes: 1730,
+    comments: 640,
     isIntel: false,
   },
 ];
@@ -421,6 +745,9 @@ type ReactivePost = Omit<VoyeurPost, 'id'> & {
 const POOL_REACTIVE: ReactivePost[] = [
   // ===== 高忠诚度 (>=70) 一片彩虹屁 =====
   {
+    sceneId: 'fan_career_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '💖',
     time: '刚刚',
@@ -432,6 +759,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 低忠诚度 (<=35) 集体脱粉 =====
   {
+    sceneId: 'fan_crisis_watch',
+    authorRole: 'former_fan',
+    stance: 'hostile',
     authorTag: '塌房粉',
     avatar: '🥀',
     time: '10 分钟前',
@@ -443,6 +773,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 高舆论风险 (>=65) 吃瓜蹲声明 =====
   {
+    sceneId: 'fan_crisis_watch',
+    authorRole: 'casual',
+    stance: 'skeptical',
     authorTag: '路人',
     avatar: '🍿',
     time: '20 分钟前',
@@ -454,6 +787,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 极高舆论风险 (>=85) 塌房实锤 =====
   {
+    sceneId: 'fan_crisis_watch',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '毒唯',
     avatar: '⚡',
     time: '刚刚',
@@ -465,10 +801,13 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 商业价值高 (>=70) 商务粉 =====
   {
+    sceneId: 'fan_brand_sales',
+    authorRole: 'data_fan',
+    stance: 'supportive',
     authorTag: '团粉',
     avatar: '💼',
     time: '1 小时前',
-    content: '{name} 商务榜又冲上去了，感谢经纪团队。这一波品牌资源真的看得见。',
+    content: '{name}这次代言销量榜又冲上去了，数据组辛苦了。成绩摆在这，别再拿对家来回比较。',
     likes: 1580,
     comments: 234,
     isIntel: false,
@@ -476,10 +815,13 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 商业价值低 (<=25) 商务寒冬 =====
   {
+    sceneId: 'fan_brand_sales',
+    authorRole: 'fan',
+    stance: 'skeptical',
     authorTag: '唯粉',
     avatar: '💸',
     time: '30 分钟前',
-    content: '{name} 半年没接过像样的代言了，粉丝焦虑到不行。团队在干嘛？',
+    content: '{name}这次代言销量没起色，着急也不能靠摊派下单补数据，更别拿对家成绩刺激消费。',
     likes: 890,
     comments: 456,
     isIntel: false,
@@ -487,6 +829,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 动物人设：小狗 =====
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🐶',
     time: '15 分钟前',
@@ -498,6 +843,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 动物人设：猫 =====
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🐱',
     time: '20 分钟前',
@@ -509,6 +857,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 动物人设：仓鼠 =====
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🐹',
     time: '25 分钟前',
@@ -520,6 +871,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 动物人设：狐狸 =====
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'casual',
+    stance: 'neutral',
     authorTag: '路人',
     avatar: '🦊',
     time: '半小时前',
@@ -531,6 +885,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 动物人设：狼 =====
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🐺',
     time: '10 分钟前',
@@ -542,6 +899,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 拒绝动物塑：神秘感 =====
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'casual',
+    stance: 'supportive',
     authorTag: '路人',
     avatar: '🕶️',
     time: '半小时前',
@@ -553,6 +913,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 崩人设 =====
   {
+    sceneId: 'fan_persona_discussion',
+    authorRole: 'former_fan',
+    stance: 'hostile',
     authorTag: '塌房粉',
     avatar: '💔',
     time: '5 分钟前',
@@ -564,6 +927,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== CP 卖腐营业中 =====
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'cp_fan',
+    stance: 'supportive',
     authorTag: 'CP粉',
     avatar: '💞',
     time: '20 分钟前',
@@ -574,6 +940,9 @@ const POOL_REACTIVE: ReactivePost[] = [
     matches: ({ tags }) => tags.includes('cp_active'),
   },
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'fan',
+    stance: 'hostile',
     authorTag: '唯粉',
     avatar: '😡',
     time: '25 分钟前',
@@ -585,6 +954,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 主动解绑 =====
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '唯粉',
     avatar: '🌸',
     time: '半小时前',
@@ -596,6 +968,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 被动解绑 =====
   {
+    sceneId: 'fan_cp_discussion',
+    authorRole: 'cp_fan',
+    stance: 'hostile',
     authorTag: 'CP粉',
     avatar: '😤',
     time: '15 分钟前',
@@ -607,10 +982,13 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 转型演员 =====
   {
+    sceneId: 'fan_career_discussion',
+    authorRole: 'casual',
+    stance: 'skeptical',
     authorTag: '路人',
     avatar: '🎬',
     time: '1 小时前',
-    content: '{name} 下海演戏了？看片花有点尴尬，但也别太苛刻，第一部嘛。',
+    content: '这次接的大制作正剧和{name}以前路线差很大，看片花还有点生，但先等正片再说。',
     likes: 1240,
     comments: 780,
     isIntel: false,
@@ -618,6 +996,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 转型综艺 =====
   {
+    sceneId: 'fan_career_discussion',
+    authorRole: 'fan',
+    stance: 'supportive',
     authorTag: '团粉',
     avatar: '🎪',
     time: '40 分钟前',
@@ -629,6 +1010,9 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
   // ===== 黑称被玩梗 =====
   {
+    sceneId: 'fan_fandom_conflict',
+    authorRole: 'casual',
+    stance: 'supportive',
     authorTag: '路人',
     avatar: '🎯',
     time: '刚刚',
@@ -654,7 +1038,8 @@ export function rollVoyeurFeed(
     : [];
   const reactivePicked = reactiveHits.sort(() => Math.random() - 0.5).slice(0, Math.min(5, count));
   const remain = count - reactivePicked.length;
-  const universalPool = POOL_UNIVERSAL.filter(p => archetypeOk(p.archetypes));
+  const universalPool = [...POOL_UNIVERSAL, ...POOL_SCENE_FILLERS]
+    .filter(p => archetypeOk(p.archetypes));
   const universalShuffled = [...universalPool].sort(() => Math.random() - 0.5).slice(0, remain);
   const combined = [...reactivePicked, ...universalShuffled].sort(() => Math.random() - 0.5);
 
