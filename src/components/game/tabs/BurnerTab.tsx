@@ -333,7 +333,7 @@ export default function BurnerTab() {
               <div className="mx-auto w-10 h-1 rounded-full bg-gray-200 mb-3" />
 
               <div className="px-4 overflow-y-auto flex-1">
-                <div className="grid grid-cols-2 gap-2 pb-2">
+                <div className="grid grid-cols-2 gap-x-1.5 gap-y-1 pb-2">
                   <DrawerCard
                     icon={<Eye size={18} strokeWidth={2.2} />}
                     tone="blue"
@@ -442,12 +442,12 @@ interface DrawerCardProps {
   tone: 'blue' | 'orange' | 'pink';
   title: string;
   desc: string;
-  hint: string;
+  hint?: string;
   onClick: () => void;
   disabled?: boolean;
 }
 
-function DrawerCard({ icon, tone, title, desc, hint, onClick, disabled }: DrawerCardProps) {
+function DrawerCard({ icon, tone, title, desc, onClick, disabled }: DrawerCardProps) {
   const toneClass = {
     blue: 'bg-sky-50 text-sky-500',
     orange: 'bg-orange-50 text-orange-500',
@@ -466,8 +466,8 @@ function DrawerCard({ icon, tone, title, desc, hint, onClick, disabled }: Drawer
         {icon}
       </span>
       <div className="flex-1 min-w-0">
-        <div className="text-[12.5px] font-medium text-gray-800 truncate leading-tight">{title}</div>
-        <div className="text-[10px] text-gray-400 truncate leading-tight mt-0.5">{disabled ? hint : desc}</div>
+        <div className="text-[13px] font-medium text-gray-800 leading-tight truncate">{title}</div>
+        <div className="text-[10.5px] text-gray-400 leading-snug mt-0.5 line-clamp-2">{desc}</div>
       </div>
     </button>
   );
