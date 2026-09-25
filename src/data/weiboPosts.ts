@@ -12,6 +12,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '全网都在骂你，你还有心情晒工作照？评论区炸了：“避重就轻”“装什么岁月静好”……',
     successNarration: '工作照引发大量转发，粉丝纷纷表示“好敬业”“营业好勤快”，路人好感度上升。',
     trendTitle: '#{name}工作照好绝#',
+    postContent: '今日份的工位打卡📷 敬业营业，感谢每一个陪我到收工的你们。',
   },
   {
     id: 'post_late_night',
@@ -24,6 +25,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '深夜感悟发出后，评论区一片冷清。仅有的几条评论都是：“谁care？”“自我感动罢了”……',
     successNarration: '“看哭了”“好真实”“心疼你”，粉丝深夜集体破防，超话活跃度暴涨。',
     trendTitle: '#{name}深夜感悟太真实了#',
+    postContent: '凌晨两点，睡不着。今年好像走得很快，又好像原地站了很久。谢谢你们，陪我走过一年又一年。晚安。',
   },
   {
     id: 'post_respond_controversy',
@@ -36,6 +38,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '本来风平浪静，你突然回应一个没人关注的“争议”，反而引起了大家注意：“此地无银三百两？”',
     successNarration: '回应措辞得体，态度诚恳。舆论风向逐渐扭转，“大气”“有担当”的评价多了起来。',
     trendTitle: '#{name}正面回应争议#',
+    postContent: '关于近期的一些声音，本人在此正面回应：所有事实我都会承担，请大家给我一点时间。',
   },
   {
     id: 'post_promote_work',
@@ -48,6 +51,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '“争议都没解决就开始恰钱了？”“吃相太难看”，宣传帖底下全是质疑声。',
     successNarration: '新作品宣传贴转发破万，品牌方看了直呼满意，追加了推广预算。',
     trendTitle: '#{name}新作品官宣#',
+    postContent: '新作品定档啦！这次真的很用心，希望大家喜欢~ 蹲一波锁定，评论区抽转发好礼🎁',
   },
   {
     id: 'post_fan_gift',
@@ -60,6 +64,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '“现在才想起来感谢粉丝？”“晚了”“虚伪”，大批粉丝表示不买账。路人也在说“逼粉丝花钱”。',
     successNarration: '“呜呜呜被cue到了！”“宝宝喜欢就好！”，粉丝群沸腾了，纷纷晒出和偶像的回忆。',
     trendTitle: '#{name}宠粉时刻#',
+    postContent: '收到你们准备的生日应援，眼泪差点没绷住。谢谢每一个不知名的你，这份爱我一定加倍还回来❤️',
   },
   {
     id: 'post_charity',
@@ -72,6 +77,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '“自己一屁股问题还做公益？”“洗白实锤”“这波营销我给0分”，公益帖变成了翻车现场。',
     successNarration: '公益转发获得大量好评：“有社会责任感”“正能量偶像”。路人好感度明显提升。',
     trendTitle: '#{name}助力公益好暖#',
+    postContent: '转发这个项目，希望更多人能被看见。做点力所能及的事，心里踏实。',
   },
   {
     id: 'post_fight_haters',
@@ -84,6 +90,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '本来想霸气回怼，结果被断章取义上了热搜。“明星怼网友”“素质堪忧”，火上浇油了。',
     successNarration: '“太飒了！”“这才是真性情！”“怼得好！”，粉丝疯狂转发，黑子们反而被群嘲了。',
     trendTitle: '#{name}在线怼黑子#',
+    postContent: '有些话我今天就摊开来讲：造谣一张嘴，辟谣跑断腿。已经全部截图交律师了，法庭见。',
   },
   {
     id: 'post_selfie',
@@ -94,6 +101,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireConditions: undefined,
     successNarration: '自拍获得大量点赞和“好好看”评论，简单但有效的营业方式。',
     trendTitle: '#{name}自拍好好看#',
+    postContent: '今天的天气刚刚好，随手一张📱 你们最近怎么样呀？',
   },
   {
     id: 'post_hint_romance',
@@ -106,6 +114,7 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '偶像暗示恋情？粉丝直接炸了：“塌房预警！”“说好的只有粉丝呢？”，脱粉潮已经开始。',
     successNarration: '暧昧动态引发全网猜测，话题热度暴涨。但评论区吵成一团，有人嗑有人骂。',
     trendTitle: '#{name}疑似官宣恋情#',
+    postContent: '被爱着的每一天都值得记录。🌙 有些事，时候到了自然会告诉你们。',
   },
   {
     id: 'post_apology',
@@ -118,5 +127,6 @@ export const weiboPostTemplates: WeiboPostTemplate[] = [
     backfireNarration: '“道什么歉？发生什么了？”“无事道歉太怪了吧”，反而引发了大家的好奇和猜测。',
     successNarration: '道歉声明措辞真挚，获得了大部分人的谅解。“知错能改”“态度值得肯定”。',
     trendTitle: '#{name}发布道歉声明#',
+    postContent: '关于近期事件，我在此郑重道歉。是我做得不够好，让大家失望了。今后一定加倍努力，请给我一次改正的机会。',
   },
 ];

@@ -249,7 +249,9 @@ export default function BurnerTab() {
           .map((rec, idx) => {
             const template = weiboPostTemplates.find(t => t.id === rec.templateId);
             if (!template || !artist) return null;
-            const raw = rec.wasBackfire && template.backfireNarration ? template.backfireNarration : template.successNarration;
+            const raw = rec.wasBackfire && template.backfireNarration
+              ? template.backfireNarration
+              : (template.postContent ?? template.successNarration);
             const content = renderWithName(raw, artist.name);
             const daysAgo = currentDay - rec.day;
             const timeLabel = daysAgo === 0 ? '刚刚' : `${daysAgo}天前`;

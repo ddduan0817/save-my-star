@@ -276,6 +276,8 @@ export interface WeiboPostTemplate {
   successNarration: string;
   trendTitle: string; // 用 {name} 占位
   unlockTag?: string;
+  /** 艺人在微博以第一人称发布的正文 */
+  postContent?: string;
 }
 
 export interface WeiboPostRecord {
