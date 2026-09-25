@@ -2,7 +2,11 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Eye, Zap, Repeat2, MessageCircle, Heart, Bell, X, Flame } from 'lucide-react';
+import {
+  Search, Eye, Zap, Bell, X, Flame,
+  Repeat2, MessageCircle, Heart,
+  Camera, Moon, ShieldAlert, Megaphone, Gift, HeartHandshake, Swords, Smile, HeartCrack, BookText,
+} from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
 import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
@@ -12,6 +16,19 @@ import { sfxClick } from '@/lib/sounds';
 
 const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
 const ACTIVE_SUB_TAB = '推荐';
+
+const TEMPLATE_META: Record<string, { icon: React.ReactNode; desc: string }> = {
+  post_work_photo:         { icon: <Camera size={18} strokeWidth={2.2} />,        desc: '营业向，稳中带涨' },
+  post_late_night:         { icon: <Moon size={18} strokeWidth={2.2} />,          desc: '文青人设，易翻车' },
+  post_respond_controversy:{ icon: <ShieldAlert size={18} strokeWidth={2.2} />,   desc: '危机公关型回应' },
+  post_promote_work:       { icon: <Megaphone size={18} strokeWidth={2.2} />,     desc: '商业向直球宣发' },
+  post_fan_gift:           { icon: <Gift size={18} strokeWidth={2.2} />,          desc: '拉粉丝忠诚' },
+  post_charity:            { icon: <HeartHandshake size={18} strokeWidth={2.2} />,desc: '刷路人好感' },
+  post_fight_haters:       { icon: <Swords size={18} strokeWidth={2.2} />,        desc: '硬钢黑粉，会拉仇恨' },
+  post_selfie:             { icon: <Smile size={18} strokeWidth={2.2} />,         desc: '晒颜值日常' },
+  post_hint_romance:       { icon: <HeartCrack size={18} strokeWidth={2.2} />,    desc: '爱豆定时炸弹' },
+  post_apology:            { icon: <BookText size={18} strokeWidth={2.2} />,      desc: '道歉小作文' },
+};
 
 export default function BurnerTab() {
   const artist = useGameStore(s => s.artist);
@@ -261,7 +278,7 @@ export default function BurnerTab() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-black/40"
+            className="fixed inset-0 z-40 bg-transparent"
             onClick={() => setDrawerOpen(false)}
           >
             <motion.div
@@ -269,7 +286,7 @@ export default function BurnerTab() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl pb-6"
+              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl ring-1 ring-gray-200/70 pb-6"
               onClick={e => e.stopPropagation()}
             >
               <div className="flex items-center justify-between px-5 pt-4 pb-2">
@@ -284,34 +301,40 @@ export default function BurnerTab() {
               <div className="mx-auto w-10 h-1 rounded-full bg-gray-200 mb-3" />
 
               <div className="px-4">
-                <div className="grid grid-cols-4 gap-2">
-                  <ActionTile
+                <div className="grid grid-cols-2 gap-2">
+                  <DrawerCard
                     icon={<Eye size={18} strokeWidth={2.2} />}
                     tone="blue"
                     title="视奸粉圈"
+                    desc="围观粉丝群动态"
                     hint={voyeurExhausted ? '今日已用完' : `${dailyVoyeurCount}/${voyeurLimit}`}
                     onClick={handleLurk}
                     disabled={voyeurExhausted}
                   />
-                  <ActionTile
+                  <DrawerCard
                     icon={<Zap size={18} strokeWidth={2.2} />}
                     tone="orange"
                     title="黑对家"
+                    desc="匿名放料，有翻车风险"
                     hint={dailyBurnerActionUsed ? '今日已用' : '15 精力'}
                     onClick={handleSmear}
                     disabled={dailyBurnerActionUsed || notEnoughEnergy}
                   />
-                  {weiboPostTemplates.map(template => (
-                    <ActionTile
-                      key={template.id}
-                      emoji={template.emoji}
-                      tone="pink"
-                      title={template.title}
-                      hint={dailyPostUsed ? '今日已发' : '每日1次'}
-                      onClick={() => handlePostTemplate(template.id)}
-                      disabled={dailyPostUsed}
-                    />
-                  ))}
+                  {weiboPostTemplates.map(template => {
+                    const meta = TEMPLATE_META[template.id];
+                    return (
+                      <DrawerCard
+                        key={template.id}
+                        icon={meta?.icon ?? <Camera size={18} strokeWidth={2.2} />}
+                        tone="pink"
+                        title={template.title}
+                        desc={meta?.desc ?? template.description}
+                        hint={dailyPostUsed ? '今日已发' : '每日1次'}
+                        onClick={() => handlePostTemplate(template.id)}
+                        disabled={dailyPostUsed}
+                      />
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
@@ -381,38 +404,41 @@ export default function BurnerTab() {
   );
 }
 
-interface ActionTileProps {
-  icon?: React.ReactNode;
-  emoji?: string;
+interface DrawerCardProps {
+  icon: React.ReactNode;
   tone: 'blue' | 'orange' | 'pink';
   title: string;
+  desc: string;
   hint: string;
   onClick: () => void;
   disabled?: boolean;
 }
 
-function ActionTile({ icon, emoji, tone, title, hint, onClick, disabled }: ActionTileProps) {
+function DrawerCard({ icon, tone, title, desc, hint, onClick, disabled }: DrawerCardProps) {
   const toneClass = {
-    blue: 'bg-gradient-to-br from-sky-50 to-sky-100 text-sky-500',
-    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 text-orange-500',
-    pink: 'bg-gradient-to-br from-pink-50 to-pink-100 text-pink-500',
+    blue: 'bg-gradient-to-br from-sky-50 to-sky-100 text-sky-500 ring-sky-200/40',
+    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 text-orange-500 ring-orange-200/40',
+    pink: 'bg-gradient-to-br from-pink-50 to-pink-100 text-pink-500 ring-pink-200/40',
   }[tone];
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex flex-col items-center gap-1.5 py-2.5 rounded-2xl bg-white active:bg-gray-50 transition',
+        'flex items-start gap-2.5 rounded-2xl px-3 py-2.5 ring-1 ring-gray-100/70 bg-white active:bg-gray-50 transition text-left',
         disabled && 'opacity-40',
       )}
     >
-      <span className={cn('w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm', toneClass)}>
-        {emoji ? <span className="text-xl">{emoji}</span> : icon}
+      <span className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ring-1', toneClass)}>
+        {icon}
       </span>
-      <span className="text-[11px] font-medium text-gray-700 text-center leading-tight px-0.5 line-clamp-2">
-        {title}
-      </span>
-      <span className="text-[9px] text-gray-400">{hint}</span>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center justify-between gap-1">
+          <span className="text-[12.5px] font-medium text-gray-800 truncate">{title}</span>
+        </div>
+        <div className="text-[10.5px] text-gray-400 truncate">{desc}</div>
+        <div className="text-[9.5px] text-gray-300 mt-0.5">{hint}</div>
+      </div>
     </button>
   );
 }
