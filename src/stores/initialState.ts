@@ -106,6 +106,7 @@ export function makeFreshGameState(): GameState {
     // 黑粉小号
     dailyVoyeurCount: 0,
     burnerFeed: [],
+    voyeurFeed: [],
     dailyBurnerActionUsed: false,
     burnerIdentity: 'self',
   };

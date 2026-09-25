@@ -24,6 +24,8 @@ import type {
   CosmeticState,
   CosmeticProcedureId,
   LedgerEntry,
+  WeiboOutcome,
+  WeiboSceneId,
 } from '@/types/game';
 import type { Achievement } from '@/data/achievements';
 import type {
@@ -36,6 +38,7 @@ import type {
   InsuranceType,
 } from '@/types/new_systems';
 import type { SeasonalModifier } from '@/data/seasonalModifiers';
+import type { VoyeurPost } from '@/data/voyeurPosts';
 
 export interface GameState {
   // Core state
@@ -186,6 +189,8 @@ export interface GameState {
   dailyVoyeurCount: number;
   /** 玩家用小号发出去的帖子（黑对家 / 反串黑），倒序渲染 */
   burnerFeed: BurnerPost[];
+  /** 最近一次视奸刷出的粉圈动态，持久化避免刷新后丢失 */
+  voyeurFeed: VoyeurPost[];
   /** 今日是否已使用小号操作（黑对家 / 反串黑，共享一个每日额度） */
   dailyBurnerActionUsed: boolean;
   /** 当前发博身份：小号 or 艺人大号（大号发黑话会误操作翻车） */
@@ -195,6 +200,8 @@ export interface GameState {
 export interface BurnerPost {
   id: string;
   action: 'smear_rival' | 'reverse_attack' | 'weibo_template';
+  sceneId?: WeiboSceneId;
+  outcome?: WeiboOutcome;
   /** 发博日，用于计算"刚刚 / N 天前"；老数据 fallback 用 time 字符串 */
   day?: number;
   time: string;
@@ -246,8 +253,9 @@ export interface GameActions {
   dismissTutorial: () => void;
   /** 消耗当日视奸次数（返回 false 表示今日已用过） */
   consumeVoyeur: () => boolean;
+  setVoyeurFeed: (posts: VoyeurPost[]) => void;
   /** 黑对家：消耗 15 精力，降低对家舆论 */
-  smearRival: () => { ok: boolean; reason?: string };
+  smearRival: () => { ok: boolean; backfire?: boolean; reason?: string };
   /** 反串黑自家：消耗 15 精力，15% 概率翻车 */
   reverseAttack: () => { ok: boolean; backfire?: boolean; reason?: string };
   /** 切换发博身份（小号 / 艺人大号） */

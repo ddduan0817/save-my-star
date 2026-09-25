@@ -9,11 +9,22 @@ import {
 } from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
-import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
+import { rollVoyeurFeed } from '@/data/voyeurPosts';
 import { GAME_CONFIG } from '@/data/constants';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { sfxClick } from '@/lib/sounds';
 import { artistNicknames } from '@/engine/socialGenerator';
+import {
+  generateSceneComments,
+  hydrateWeiboPostRecord,
+  inferLegacySceneId,
+  selectNicknameForRole,
+} from '@/engine/weiboContent';
+import type {
+  ArtistArchetype,
+  WeiboOutcome,
+  WeiboSceneId,
+} from '@/types/game';
 
 const BURNER_NICKNAME_BY_ARTIST: Record<string, string> = {
   idol: '我就说他甄帅吧',
@@ -47,9 +58,10 @@ export default function BurnerTab() {
   const dailyVoyeurCount = useGameStore(s => s.dailyVoyeurCount);
   const dailyBurnerActionUsed = useGameStore(s => s.dailyBurnerActionUsed);
   const burnerFeed = useGameStore(s => s.burnerFeed);
+  const voyeurFeed = useGameStore(s => s.voyeurFeed);
   const consumeVoyeur = useGameStore(s => s.consumeVoyeur);
+  const setVoyeurFeed = useGameStore(s => s.setVoyeurFeed);
   const smearRival = useGameStore(s => s.smearRival);
-  const reverseAttack = useGameStore(s => s.reverseAttack);
   const postWeibo = useGameStore(s => s.postWeibo);
   const dailyPostUsed = useGameStore(s => s.dailyPostUsed);
   const showPostResult = useGameStore(s => s.showPostResult);
@@ -61,13 +73,17 @@ export default function BurnerTab() {
   const switchBurnerIdentity = useGameStore(s => s.switchBurnerIdentity);
   const weiboPostHistory = useGameStore(s => s.weiboPostHistory);
   const currentDay = useGameStore(s => s.currentDay);
+  const rival = useGameStore(s => s.rival);
 
-  const [voyeurFeed, setVoyeurFeed] = useState<VoyeurPost[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const voyeurLimit = GAME_CONFIG.VOYEUR_DAILY_LIMIT;
   const voyeurExhausted = dailyVoyeurCount >= voyeurLimit;
+  const artistAccountUsed = burnerIdentity === 'artist' && dailyPostUsed;
+  const legacyLeakedBurnerPost = activeTags.includes('burner_exposed')
+    ? weiboPostHistory.slice().reverse().find(rec => !rec.id && rec.wasBackfire)
+    : undefined;
 
   const buildVoyeurCtx = () => ({
     fanLoyalty: stats.fanLoyalty,
@@ -78,8 +94,8 @@ export default function BurnerTab() {
   });
 
   useEffect(() => {
-    if (dailyVoyeurCount === 0 && voyeurFeed.length === 0 && artist) {
-      setVoyeurFeed(rollVoyeurFeed(artist.name, 6, buildVoyeurCtx()));
+    if (voyeurFeed.length === 0 && artist) {
+      setVoyeurFeed(rollVoyeurFeed(artist.name, 10, buildVoyeurCtx()));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [artist?.name]);
@@ -98,7 +114,7 @@ export default function BurnerTab() {
     }
     const ok = consumeVoyeur();
     if (ok) {
-      setVoyeurFeed(rollVoyeurFeed(artist.name, 6, buildVoyeurCtx()));
+      setVoyeurFeed(rollVoyeurFeed(artist.name, 10, buildVoyeurCtx()));
       showToast('刷新了一批粉圈动态');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -111,17 +127,13 @@ export default function BurnerTab() {
       showToast(res.reason ?? '操作失败');
       return;
     }
-    showToast('已发送匿名黑贴');
-  };
-
-  const handleReverse = () => {
-    setDrawerOpen(false);
-    const res = reverseAttack();
-    if (!res.ok) {
-      showToast(res.reason ?? '操作失败');
-      return;
-    }
-    showToast(res.backfire ? '翻车了！小号被扒' : '反串黑已发送');
+    showToast(
+      res.backfire
+        ? '操作翻车，舆论风险上升'
+        : burnerIdentity === 'artist'
+          ? '已用艺人账号发出'
+          : '已发送匿名黑贴',
+    );
   };
 
   const handlePostTemplate = (templateId: string) => {
@@ -260,28 +272,34 @@ export default function BurnerTab() {
           .slice()
           .reverse()
           .map((rec, idx) => {
-            const template = weiboPostTemplates.find(t => t.id === rec.templateId);
-            if (!template || !artist) return null;
-            const raw = rec.wasBackfire && template.backfireNarration
-              ? template.backfireNarration
-              : (template.postContent ?? template.successNarration);
-            const content = renderWithName(raw, artist.name);
-            const daysAgo = currentDay - rec.day;
+            if (!artist) return null;
+            const hydrated = hydrateWeiboPostRecord(rec, artist.id);
+            const isLegacyLeakedBurner = rec === legacyLeakedBurnerPost;
+            const content = renderWithName(hydrated.content, artist.name);
+            const daysAgo = currentDay - hydrated.day;
             const timeLabel = daysAgo === 0 ? '刚刚' : `${daysAgo}天前`;
             return (
               <WeiboCard
-                key={`artistpost_${rec.day}_${idx}`}
-                avatar={<img src={`./artists/${artist.id}.png`} alt="" className="w-full h-full object-cover rounded-full" />}
-                nickname={artist.name}
+                key={hydrated.id || `artistpost_${rec.day}_${idx}`}
+                avatar={isLegacyLeakedBurner
+                  ? '🕶️'
+                  : <img src={`./artists/${artist.id}.png`} alt="" className="w-full h-full object-cover rounded-full" />}
+                nickname={isLegacyLeakedBurner
+                  ? (BURNER_NICKNAME_BY_ARTIST[artist.id] ?? `${artist.name}的小号`)
+                  : artist.name}
                 time={timeLabel}
                 content={content}
-                likes={Math.floor(Math.random() * 8000) + 2000}
-                comments={Math.floor(Math.random() * 1500) + 300}
-                reposts={Math.floor(Math.random() * 2000) + 400}
-                selfLabel="艺人"
-                backfired={rec.wasBackfire}
+                likes={hydrated.engagement.likes}
+                comments={hydrated.engagement.comments}
+                reposts={hydrated.engagement.reposts}
+                selfLabel={isLegacyLeakedBurner ? '小号' : '艺人'}
+                sceneId={isLegacyLeakedBurner ? 'burner_artist_impersonation' : hydrated.sceneId}
+                outcome={isLegacyLeakedBurner ? 'leaked' : hydrated.outcome}
+                postId={hydrated.id}
+                artistId={artist.id}
+                artistName={artist.name}
                 nickPool={artistNicknames[artist.id]}
-                contentText={raw}
+                rivalName={rival?.name}
               />
             );
           })}
@@ -291,6 +309,11 @@ export default function BurnerTab() {
           const bpTimeLabel = bpDaysAgo == null
             ? post.time
             : bpDaysAgo <= 0 ? '刚刚' : `${bpDaysAgo}天前`;
+          const sceneId = post.sceneId ?? inferLegacySceneId({
+            templateId: post.action,
+            content: post.content,
+          });
+          const outcome = post.outcome ?? (post.backfired ? 'backfire' : 'success');
           return (
             <WeiboCard
               key={post.id}
@@ -302,32 +325,47 @@ export default function BurnerTab() {
               comments={post.comments}
               reposts={post.reposts}
               selfLabel="小号"
-              backfired={post.backfired}
+              sceneId={sceneId}
+              outcome={outcome}
+              postId={post.id}
+              artistId={artist?.id}
+              artistName={artist?.name}
               nickPool={artist ? artistNicknames[artist.id] : undefined}
-              contentText={post.content}
+              rivalName={rival?.name}
             />
           );
         })}
         {voyeurFeed.map(post => {
-          const authorTagSentiment: 'positive' | 'negative' | 'neutral' =
-            post.authorTag === '塌房粉' || post.authorTag === '对家毒唯' || post.authorTag === '私生'
-              ? 'negative'
-              : post.authorTag === '路人'
-                ? 'neutral'
-                : 'positive';
+          const outcome: WeiboOutcome =
+            post.stance === 'hostile' || post.stance === 'skeptical'
+              ? 'backfire'
+              : 'success';
+          const artistNickPool = artist ? artistNicknames[artist.id] : [];
+          const authorNickname = selectNicknameForRole(post.authorRole, {
+            seed: `${post.id}:author`,
+            sceneId: post.sceneId,
+            artistNickPool,
+            artistName: artist?.name,
+            rivalName: rival?.name,
+          });
           return (
             <WeiboCard
               key={post.id}
               avatar={<DefaultAvatar seed={post.id} />}
-              nickname={post.nickname ?? '匿名用户'}
+              nickname={authorNickname}
               time={post.time}
               content={artist ? renderWithName(post.content, artist.name) : post.content}
               likes={post.likes}
               comments={post.comments}
               reposts={Math.floor(post.likes / 8)}
-              nickPool={artist ? artistNicknames[artist.id] : undefined}
-              sentiment={authorTagSentiment}
-              contentText={post.content}
+              sceneId={post.sceneId}
+              outcome={outcome}
+              postId={post.id}
+              artistId={artist?.id}
+              artistName={artist?.name}
+              nickPool={artistNickPool}
+              rivalName={rival?.name}
+              showOutcomeBadge={false}
             />
           );
         })}
@@ -383,10 +421,10 @@ export default function BurnerTab() {
                     icon={<Zap size={18} strokeWidth={2.2} />}
                     tone="orange"
                     title="黑对家"
-                    desc="匿名爆料放黑稿，有翻车风险"
-                    hint={dailyBurnerActionUsed ? '今日已用' : '15 精力'}
+                    desc={burnerIdentity === 'artist' ? '用艺人账号公开下场，有翻车风险' : '匿名爆料放黑稿，有翻车风险'}
+                    hint={dailyBurnerActionUsed || artistAccountUsed ? '今日已用' : '15 精力'}
                     onClick={handleSmear}
-                    disabled={dailyBurnerActionUsed || notEnoughEnergy}
+                    disabled={dailyBurnerActionUsed || artistAccountUsed || notEnoughEnergy}
                   />
                   {weiboPostTemplates.map(template => {
                     const meta = TEMPLATE_META[template.id];
@@ -561,10 +599,14 @@ interface WeiboCardProps {
   comments: number;
   reposts: number;
   selfLabel?: string;
-  backfired?: boolean;
+  sceneId: WeiboSceneId;
+  outcome: WeiboOutcome;
+  postId: string;
+  artistId?: ArtistArchetype;
+  artistName?: string;
   nickPool?: string[];
-  sentiment?: 'positive' | 'negative' | 'neutral';
-  contentText?: string;
+  rivalName?: string;
+  showOutcomeBadge?: boolean;
 }
 
 function WeiboCard({
@@ -576,18 +618,30 @@ function WeiboCard({
   comments,
   reposts,
   selfLabel,
-  backfired,
+  sceneId,
+  outcome,
+  postId,
+  artistId,
+  artistName,
   nickPool,
-  sentiment,
-  contentText,
+  rivalName,
+  showOutcomeBadge = true,
 }: WeiboCardProps) {
   const [liked, setLiked] = useState(false);
   const [reposted, setReposted] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const effectiveSentiment = sentiment ?? (backfired ? 'negative' : 'positive');
+  const backfired = showOutcomeBadge && outcome !== 'success';
   const commentList = useMemo(
-    () => sampleCommentsForArtist(nickPool ?? GENERIC_NICKS, effectiveSentiment, contentText),
-    [nickPool, effectiveSentiment, contentText],
+    () => generateSceneComments({
+      sceneId,
+      outcome,
+      seed: postId,
+      artistNickPool: nickPool ?? [],
+      artistId,
+      artistName,
+      rivalName,
+    }),
+    [artistId, artistName, nickPool, outcome, postId, rivalName, sceneId],
   );
 
   return (
@@ -648,7 +702,7 @@ function WeiboCard({
             <div className="mt-2 rounded-xl bg-gray-50 px-3 py-2 space-y-1.5">
               {commentList.map((c, i) => (
                 <div key={i} className="text-[12px] text-gray-700 leading-snug">
-                  <span className="text-gray-500 mr-1">{c.nick}：</span>{c.text}
+                  <span className="text-gray-500 mr-1">{c.nickname}：</span>{c.text}
                 </div>
               ))}
             </div>
@@ -657,84 +711,6 @@ function WeiboCard({
       </div>
     </motion.div>
   );
-}
-
-const GENERIC_NICKS = ['甜栗子壳', '路人甲', 'emo酱', '摸鱼中', '蹲个瓜', '看她剪影', '云吸猫'];
-
-const COMMENT_TEXTS_BY_SENTIMENT: Record<'positive' | 'negative' | 'neutral', string[]> = {
-  positive: [
-    '刚刷到就冲了！！！', '好绝', '姐妹一起磕', '好会营业啊，拿捏了',
-    '细节狂魔', '锁死锁死锁死', '好想去现场', '这镜头感…封神',
-    '这张脸太能打了', '偷偷收藏了', '嗑到了', '好上头',
-  ],
-  negative: [
-    '脱粉了，真的累', '爬墙+1', '这波真的让我心寒', '塌房实锤了？',
-    '感觉团队真的不行', '别再营业了求求了', 'BYE，追不动了', '直接举报',
-    '这也能洗？', '道歉都没有诚意', '再也不追了',
-  ],
-  neutral: [
-    '蹲一下正片', '路过看看', '瓜什么瓜', '前排等更新', '这啥情况',
-    '路人观望中', '蹲后续', '有一说一…', '让子弹飞会儿',
-  ],
-};
-
-// 主题关键词 → 专属评论池（比 sentiment 更贴帖）
-const TOPIC_COMMENT_POOLS: { keywords: RegExp; texts: string[] }[] = [
-  { keywords: /恋爱|女友|男友|绑定|结婚|同居|CP|磕/, texts: [
-    '女友粉今日破防', '磕死我了这段', '就说他们绝对有一腿', '姐妹稳住我们能赢',
-    '直接锁死好嘛', '要糖不要塌', 'CP粉狂喜', '唯粉：我不看',
-  ]},
-  { keywords: /塌房|翻车|丑闻|夜店|出轨|嫖|吸/, texts: [
-    '塌了塌了塌了', '好家伙这也能瞒', '连夜脱粉', '我早说这人不对劲',
-    '爬墙都懒得爬了', 'BYE 谢谢再见', '直接举报吧', '路人震怒',
-  ]},
-  { keywords: /剧|电影|作品|片场|花絮|杀青|定档/, texts: [
-    '演技封神！', '定档速来', '好好演戏就完事了', '真的爱看这张脸演戏',
-    '这镜头感绝了', '预告都想磕', '业务能力我可', '剧粉狂喜',
-  ]},
-  { keywords: /唱|歌|舞台|演唱会|专辑|音乐节|新歌/, texts: [
-    '副歌炸裂', '现场杀我', '专辑循环中', '这词是写进我心里了',
-    '打歌数据组冲', '嗓子真的绝', '求 live 版', '耳朵怀孕',
-  ]},
-  { keywords: /对家|黑|撕|阴阳|营销号|水军/, texts: [
-    '对家有点急啊', '这营销号一看就知道谁买的', '别脏我家正主',
-    '让子弹飞', '走开走开碰瓷警告', '拉黑一片再说', '毒唯又出来了',
-  ]},
-  { keywords: /道歉|声明|回应|澄清|律师函/, texts: [
-    '这道歉一看就是通稿', '诚意呢？', '律师函警告能有用？',
-    '至少态度出来了', '继续观望', '洗不干净别洗', '公关下班了',
-  ]},
-  { keywords: /机场|路透|生图|直拍|状态/, texts: [
-    '状态也太好了吧', '生图不整容脸', '路透赢麻了', '穿搭我可',
-    '直拍来一份', '氛围感拉满', '这颜真的绝', '想去接机',
-  ]},
-  { keywords: /代言|品牌|广告|直播/, texts: [
-    '带货能力没得说', '这销量真离谱', '品牌方眼光可以',
-    '姐妹们冲一波', '不缺钱这波', '数据爆炸', '恰饭快乐',
-  ]},
-  { keywords: /粉丝|应援|集资|投票/, texts: [
-    '数据组辛苦了', '打投累但值', '姐妹们一起冲', '应援太用心了',
-    '有事我上', '妈粉今日出征', '这轮数据必须拿下',
-  ]},
-];
-
-function sampleCommentsForArtist(
-  nickPool: string[],
-  sentiment: 'positive' | 'negative' | 'neutral' = 'positive',
-  contentHint?: string,
-): { nick: string; text: string }[] {
-  const topicHit = contentHint
-    ? TOPIC_COMMENT_POOLS.find(p => p.keywords.test(contentHint))
-    : undefined;
-  const textPool = topicHit
-    ? [...topicHit.texts, ...COMMENT_TEXTS_BY_SENTIMENT[sentiment]]
-    : COMMENT_TEXTS_BY_SENTIMENT[sentiment];
-  const nicks = [...nickPool, ...GENERIC_NICKS].sort(() => Math.random() - 0.5).slice(0, 3);
-  const texts = [...textPool].sort(() => Math.random() - 0.5).slice(0, 3);
-  return nicks.map((n, i) => ({
-    nick: n.replace(/\{name\}/g, ''),
-    text: texts[i],
-  }));
 }
 
 function FooterAction({

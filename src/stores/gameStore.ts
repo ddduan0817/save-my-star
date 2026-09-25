@@ -30,6 +30,10 @@ import { companyUpgradesData } from '@/data/upgrades';
 import { generateWeiboTrends, generateFanComments } from '@/engine/socialGenerator';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { resolveWeiboPost } from '@/engine/weiboPostEngine';
+import {
+  createStableEngagement,
+  selectArtistPostContent,
+} from '@/engine/weiboContent';
 import { initializeRival } from '@/engine/rivalEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import { resolveProcedure, getAppearanceMultiplier } from '@/engine/cosmeticEngine';
@@ -405,6 +409,9 @@ export const useGameStore = create<GameStore>()(
     if (!template) return;
 
     const result = resolveWeiboPost(template, stats, artist.id, artist.name);
+    const postId = `weibo_${currentDay}_${Date.now()}`;
+    const content = selectArtistPostContent(template, artist.id, postId)
+      .replace(/\{name\}/g, artist.name);
 
     let finalStatChanges = result.statChanges;
     let finalNarration = result.narration;
@@ -422,15 +429,17 @@ export const useGameStore = create<GameStore>()(
         };
         finalNarration = `你手滑用了自己的小号发了这条本该艺人本人说的话。粉丝很快扒到你俩发博 IP 一致、常互动、连语气都对得上——"经纪人小号"实锤，「${artist.name}人设是团队操控」上热搜。`;
       } else {
-        // 没被扒 = 私域小号没人看得到，零代价，只留悬念叙述
-        finalStatChanges = { ...finalStatChanges };
+        // 没被扒 = 私域小号没人看得到，既没有收益也没有惩罚。
+        finalStatChanges = {};
         finalNarration = `这条从你的小号发出去了。粉丝数寥寥，评论区一片安静，这一次没人发现。但你知道，下一次不一定还有这种运气。`;
       }
     }
 
     const newStats = applyStatChanges(stats, finalStatChanges, artist.id);
-
-    const isPrivateBurnerPost = burnerIdentity === 'self' && !leaked;
+    const isBurnerAuthored = burnerIdentity === 'self';
+    const outcome = isBurnerAuthored
+      ? leaked ? 'leaked' as const : 'success' as const
+      : result.isBackfire ? 'backfire' as const : 'success' as const;
 
     const updatedTrends = leaked
       ? [
@@ -443,7 +452,7 @@ export const useGameStore = create<GameStore>()(
           },
           ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })).slice(0, 9),
         ]
-      : isPrivateBurnerPost
+      : isBurnerAuthored
         ? weiboTrends
         : [
             result.trendEntry,
@@ -451,38 +460,47 @@ export const useGameStore = create<GameStore>()(
           ];
 
     const newTags = [...activeTags];
-    if (!result.isBackfire && !leaked && !isPrivateBurnerPost && template.unlockTag) {
+    if (!result.isBackfire && !isBurnerAuthored && template.unlockTag) {
       newTags.push(template.unlockTag);
     }
     if (leaked && !newTags.includes('burner_exposed')) {
       newTags.push('burner_exposed');
     }
 
-    const rawContent = template.postContent ?? template.successNarration;
-    const contentFilled = rawContent.replace(/\{name\}/g, artist.name);
+    const publicEngagement = createStableEngagement(postId, template.sceneId);
+    const burnerEngagement = leaked
+      ? publicEngagement
+      : createStableEngagement(postId, 'burner_artist_impersonation', 'private');
 
     set({
       stats: newStats,
       dailyPostUsed: true,
-      weiboPostHistory: isPrivateBurnerPost
+      weiboPostHistory: isBurnerAuthored
         ? weiboPostHistory
         : [...weiboPostHistory, {
+            id: postId,
             templateId,
+            sceneId: template.sceneId,
             day: currentDay,
-            wasBackfire: result.isBackfire || leaked,
+            content,
+            outcome,
+            engagement: publicEngagement,
+            wasBackfire: result.isBackfire,
           }],
-      burnerFeed: isPrivateBurnerPost
+      burnerFeed: isBurnerAuthored
         ? [
             {
-              id: `bp_${Date.now()}`,
+              id: postId,
               action: 'weibo_template',
+              sceneId: 'burner_artist_impersonation',
+              outcome,
               day: currentDay,
               time: '刚刚',
-              content: contentFilled,
-              likes: Math.floor(Math.random() * 15) + 3,
-              comments: Math.floor(Math.random() * 5),
-              reposts: Math.floor(Math.random() * 3),
-              backfired: false,
+              content,
+              likes: burnerEngagement.likes,
+              comments: burnerEngagement.comments,
+              reposts: burnerEngagement.reposts,
+              backfired: leaked,
             },
             ...get().burnerFeed,
           ]
@@ -671,9 +689,16 @@ export const useGameStore = create<GameStore>()(
     return true;
   },
 
+  setVoyeurFeed: (posts) => {
+    set({ voyeurFeed: posts });
+  },
+
   smearRival: () => {
     const state = get();
     if (state.dailyBurnerActionUsed) return { ok: false, reason: '今日已操作过小号' };
+    if (state.burnerIdentity === 'artist' && state.dailyPostUsed) {
+      return { ok: false, reason: '艺人账号今日已发过微博' };
+    }
     if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
     const rival = state.rival;
     const rivalName = rival?.name ?? '对家';
@@ -702,17 +727,22 @@ export const useGameStore = create<GameStore>()(
     const newRival: typeof rival = rival && !backfire
       ? { ...rival, stats: { ...rival.stats, prRisk: Math.min(100, rival.stats.prRisk + 10) } }
       : rival;
+    const postId = `burner_${Date.now()}`;
+    const engagement = createStableEngagement(postId, 'burner_rival_smear');
     const post = {
-      id: `burner_${Date.now()}`,
+      id: postId,
       action: 'smear_rival' as const,
+      sceneId: 'burner_rival_smear' as const,
+      outcome: backfire ? 'backfire' as const : 'success' as const,
       day: state.currentDay,
       time: '刚刚',
       content,
-      likes: Math.floor(Math.random() * 400) + 60,
-      comments: Math.floor(Math.random() * 200) + 20,
-      reposts: Math.floor(Math.random() * 80) + 5,
+      likes: engagement.likes,
+      comments: engagement.comments,
+      reposts: engagement.reposts,
       backfired: backfire,
     };
+    const usedArtistAccount = state.burnerIdentity === 'artist';
     set({
       mentalState: newMental,
       rival: newRival,
@@ -724,7 +754,20 @@ export const useGameStore = create<GameStore>()(
           }
         : { ...state.stats, prRisk: Math.max(0, state.stats.prRisk - 3) },
       managerStress: Math.min(100, state.managerStress + (backfire ? 15 : 5)),
-      burnerFeed: [post, ...state.burnerFeed],
+      burnerFeed: usedArtistAccount ? state.burnerFeed : [post, ...state.burnerFeed],
+      weiboPostHistory: usedArtistAccount
+        ? [...state.weiboPostHistory, {
+            id: postId,
+            templateId: 'smear_rival',
+            sceneId: 'burner_rival_smear',
+            day: state.currentDay,
+            content,
+            outcome: backfire ? 'backfire' : 'success',
+            engagement,
+            wasBackfire: backfire,
+          }]
+        : state.weiboPostHistory,
+      dailyPostUsed: usedArtistAccount ? true : state.dailyPostUsed,
       dailyBurnerActionUsed: true,
     });
     return { ok: true, backfire };
@@ -733,6 +776,9 @@ export const useGameStore = create<GameStore>()(
   reverseAttack: () => {
     const state = get();
     if (state.dailyBurnerActionUsed) return { ok: false, reason: '今日已操作过小号' };
+    if (state.burnerIdentity === 'artist' && state.dailyPostUsed) {
+      return { ok: false, reason: '艺人账号今日已发过微博' };
+    }
     if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
     const artistName = state.artist?.name ?? 'TA';
     // 反串黑：小号和大号都能操作；15% 随机翻车
@@ -775,22 +821,40 @@ export const useGameStore = create<GameStore>()(
         fanLoyalty: Math.min(100, newStats.fanLoyalty + 5),
       };
     }
+    const postId = `burner_${Date.now()}`;
+    const engagement = createStableEngagement(postId, 'burner_reverse_attack');
     const post = {
-      id: `burner_${Date.now()}`,
+      id: postId,
       action: 'reverse_attack' as const,
+      sceneId: 'burner_reverse_attack' as const,
+      outcome: backfire ? 'backfire' as const : 'success' as const,
       day: state.currentDay,
       time: '刚刚',
       content,
-      likes: Math.floor(Math.random() * 500) + 80,
-      comments: Math.floor(Math.random() * 300) + 30,
-      reposts: Math.floor(Math.random() * 120) + 10,
+      likes: engagement.likes,
+      comments: engagement.comments,
+      reposts: engagement.reposts,
       backfired: backfire,
     };
+    const usedArtistAccount = state.burnerIdentity === 'artist';
     set({
       mentalState: newMental,
       stats: newStats,
       managerStress: Math.min(100, stress),
-      burnerFeed: [post, ...state.burnerFeed],
+      burnerFeed: usedArtistAccount ? state.burnerFeed : [post, ...state.burnerFeed],
+      weiboPostHistory: usedArtistAccount
+        ? [...state.weiboPostHistory, {
+            id: postId,
+            templateId: 'reverse_attack',
+            sceneId: 'burner_reverse_attack',
+            day: state.currentDay,
+            content,
+            outcome: backfire ? 'backfire' : 'success',
+            engagement,
+            wasBackfire: backfire,
+          }]
+        : state.weiboPostHistory,
+      dailyPostUsed: usedArtistAccount ? true : state.dailyPostUsed,
       dailyBurnerActionUsed: true,
     });
     return { ok: true, backfire };
