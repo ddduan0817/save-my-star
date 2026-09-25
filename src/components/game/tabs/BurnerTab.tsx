@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Eye, Zap, Frown, Repeat2, MessageCircle, Heart, Bell } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Eye, Zap, Frown, Repeat2, MessageCircle, Heart, Bell, X, Flame } from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
 import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
@@ -26,6 +26,7 @@ export default function BurnerTab() {
   const [voyeurFeed, setVoyeurFeed] = useState<VoyeurPost[]>([]);
   const [toast, setToast] = useState<string | null>(null);
   const [subTab, setSubTab] = useState<typeof SUB_TABS[number]>('推荐');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
     if (!dailyVoyeurUsed && voyeurFeed.length === 0 && artist) {
@@ -41,6 +42,7 @@ export default function BurnerTab() {
 
   const handleLurk = () => {
     if (!artist) return;
+    setDrawerOpen(false);
     if (dailyVoyeurUsed) {
       showToast('今日视奸额度已用完');
       return;
@@ -54,6 +56,7 @@ export default function BurnerTab() {
   };
 
   const handleSmear = () => {
+    setDrawerOpen(false);
     const res = smearRival();
     if (!res.ok) {
       showToast(res.reason ?? '操作失败');
@@ -63,12 +66,17 @@ export default function BurnerTab() {
   };
 
   const handleReverse = () => {
+    setDrawerOpen(false);
     const res = reverseAttack();
     if (!res.ok) {
       showToast(res.reason ?? '操作失败');
       return;
     }
     showToast(res.backfire ? '翻车了！小号被扒' : '反串黑已发送');
+  };
+
+  const toggleIdentity = () => {
+    switchBurnerIdentity(burnerIdentity === 'self' ? 'artist' : 'self');
   };
 
   const notEnoughEnergy = mentalEnergy < 15;
@@ -110,67 +118,26 @@ export default function BurnerTab() {
         </div>
       </div>
 
-      {/* 发博操作区 */}
-      <div className="border-b-8 border-gray-50">
-        <div className="px-4 py-3 flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-lg">
-            {burnerIdentity === 'self' ? '🕶️' : '✨'}
-          </div>
-          <div className="flex-1 bg-gray-50 rounded-full px-4 py-2 text-[12px] text-gray-400">
+      {/* 发博操作区（单行） */}
+      <div className="border-b-8 border-gray-50 px-4 py-3">
+        <div className="flex items-center gap-3">
+          <button onClick={toggleIdentity} className="relative shrink-0 active:scale-95 transition-transform">
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-xl shadow-sm">
+              {burnerIdentity === 'self' ? '🕶️' : '✨'}
+            </div>
+            <span className={cn(
+              'absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ring-2 ring-white',
+              burnerIdentity === 'self' ? 'bg-gray-800 text-white' : 'bg-red-500 text-white',
+            )}>
+              {burnerIdentity === 'self' ? '我' : '艺'}
+            </span>
+          </button>
+          <button
+            onClick={() => setDrawerOpen(true)}
+            className="flex-1 text-left bg-gray-50 rounded-full px-4 py-2.5 text-[13px] text-gray-400 active:bg-gray-100"
+          >
             {burnerIdentity === 'self' ? '点我发条微博…' : `以 ${artist?.name ?? '大号'} 身份发博…`}
-          </div>
-        </div>
-        {/* 身份切换 */}
-        <div className="px-4 pb-2 flex items-center gap-2">
-          <span className="text-[10px] text-gray-400">当前账号:</span>
-          <button
-            onClick={() => switchBurnerIdentity('self')}
-            className={cn(
-              'text-[11px] px-2.5 py-1 rounded-full transition',
-              burnerIdentity === 'self'
-                ? 'bg-orange-100 text-orange-600 font-medium'
-                : 'bg-gray-100 text-gray-500',
-            )}
-          >
-            🕶 我的小号
           </button>
-          <button
-            onClick={() => switchBurnerIdentity('artist')}
-            className={cn(
-              'text-[11px] px-2.5 py-1 rounded-full transition',
-              burnerIdentity === 'artist'
-                ? 'bg-red-100 text-red-600 font-medium'
-                : 'bg-gray-100 text-gray-500',
-            )}
-          >
-            ✨ {artist?.name ?? '大号'}
-          </button>
-        </div>
-        <div className="px-4 pb-3 flex items-center gap-2">
-          <ActionButton
-            icon={<Eye size={14} strokeWidth={2.2} />}
-            label="视奸粉圈"
-            hint={dailyVoyeurUsed ? '已用' : '免费'}
-            onClick={handleLurk}
-            disabled={dailyVoyeurUsed}
-            tone="blue"
-          />
-          <ActionButton
-            icon={<Zap size={14} strokeWidth={2.2} />}
-            label="黑对家"
-            hint={dailyBurnerActionUsed ? '已用' : '-15'}
-            onClick={handleSmear}
-            disabled={dailyBurnerActionUsed || notEnoughEnergy}
-            tone="orange"
-          />
-          <ActionButton
-            icon={<Frown size={14} strokeWidth={2.2} />}
-            label="反串黑"
-            hint={dailyBurnerActionUsed ? '已用' : '-15'}
-            onClick={handleReverse}
-            disabled={dailyBurnerActionUsed || notEnoughEnergy}
-            tone="pink"
-          />
         </div>
       </div>
 
@@ -190,48 +157,41 @@ export default function BurnerTab() {
         </motion.div>
       )}
 
-      {/* 替艺人发微博 */}
-      <div className="px-4 pt-3 pb-2 bg-white border-b-8 border-gray-50">
-        <WeiboCompose />
-      </div>
-
-      {/* 微博热搜 */}
-      {weiboTrends.length > 0 && (
-        <div className="bg-white border-b-8 border-gray-50">
-          <div className="px-4 py-2.5 border-b border-gray-100 flex items-center justify-between">
-            <span className="text-[13px] font-medium text-gray-700">微博热搜</span>
-            <span className="text-[10px] text-orange-400">🔥 实时</span>
-          </div>
-          <div>
-            {weiboTrends.map((trend) => (
-              <div
-                key={trend.rank}
-                className="flex items-center gap-3 px-4 py-2 border-b border-gray-50 last:border-0"
-              >
-                <span className={cn(
-                  "text-xs font-bold w-5 text-center tabular-nums",
-                  trend.rank <= 3 ? "text-red-500" : "text-gray-400"
-                )}>
-                  {trend.rank}
-                </span>
-                <span className="flex-1 text-xs text-gray-700 truncate">{trend.title}</span>
-                <div className="flex items-center gap-1.5 shrink-0">
-                  <span className="text-[10px] text-gray-400">{trend.heat}</span>
-                  {trend.isHot && (
-                    <span className="text-[10px] font-bold text-red-500 bg-red-50 px-1 rounded">热</span>
-                  )}
-                  {trend.sentiment === 'negative' && (
-                    <span className="text-[10px] font-bold text-orange-500 bg-orange-50 px-1 rounded">沸</span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* 信息流 */}
       <div>
+        {/* 微博热搜（作为置顶 feed 卡） */}
+        {weiboTrends.length > 0 && (
+          <div className="px-4 py-3 border-b border-gray-100 bg-white">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Flame size={14} className="text-orange-500" strokeWidth={2.4} />
+              <span className="text-[13px] font-medium text-gray-800">微博热搜榜</span>
+              <span className="text-[10px] text-gray-400 ml-auto">实时</span>
+            </div>
+            <div className="rounded-xl bg-gray-50/60 divide-y divide-gray-100">
+              {weiboTrends.map((trend) => (
+                <div key={trend.rank} className="flex items-center gap-3 px-3 py-2">
+                  <span className={cn(
+                    'text-xs font-bold w-5 text-center tabular-nums',
+                    trend.rank <= 3 ? 'text-red-500' : 'text-gray-400',
+                  )}>
+                    {trend.rank}
+                  </span>
+                  <span className="flex-1 text-xs text-gray-700 truncate">{trend.title}</span>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <span className="text-[10px] text-gray-400">{trend.heat}</span>
+                    {trend.isHot && (
+                      <span className="text-[10px] font-bold text-red-500 bg-red-50 px-1 rounded">热</span>
+                    )}
+                    {trend.sentiment === 'negative' && (
+                      <span className="text-[10px] font-bold text-orange-500 bg-orange-50 px-1 rounded">沸</span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {burnerFeed.map(post => (
           <WeiboCard
             key={post.id}
@@ -260,42 +220,115 @@ export default function BurnerTab() {
         ))}
         {burnerFeed.length === 0 && voyeurFeed.length === 0 && (
           <div className="text-center text-xs text-gray-400 py-12">
-            点上方「视奸粉圈」刷一波动态
+            点上方输入框，选「视奸粉圈」刷一波动态
           </div>
         )}
       </div>
+
+      {/* 底部抽屉 */}
+      <AnimatePresence>
+        {drawerOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-40 bg-black/40"
+            onClick={() => setDrawerOpen(false)}
+          >
+            <motion.div
+              initial={{ y: '100%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '100%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-2xl pb-6"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-5 pt-4 pb-2">
+                <div className="text-[15px] font-semibold text-gray-800">今天想做点什么？</div>
+                <button
+                  onClick={() => setDrawerOpen(false)}
+                  className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 active:scale-95"
+                >
+                  <X size={14} strokeWidth={2.4} />
+                </button>
+              </div>
+              <div className="mx-auto w-10 h-1 rounded-full bg-gray-200 mb-3" />
+
+              <div className="px-4 space-y-2">
+                <DrawerRow
+                  icon={<Eye size={18} strokeWidth={2.2} />}
+                  tone="blue"
+                  title="视奸粉圈"
+                  desc="免费围观粉丝群组动态，刷新信息流"
+                  hint={dailyVoyeurUsed ? '今日已用' : '免费 · 每日 1 次'}
+                  onClick={handleLurk}
+                  disabled={dailyVoyeurUsed}
+                />
+                <DrawerRow
+                  icon={<Zap size={18} strokeWidth={2.2} />}
+                  tone="orange"
+                  title="黑对家"
+                  desc="匿名放料攻击对家艺人（有翻车风险）"
+                  hint={dailyBurnerActionUsed ? '今日已用' : '消耗 15 精力'}
+                  onClick={handleSmear}
+                  disabled={dailyBurnerActionUsed || notEnoughEnergy}
+                />
+                <DrawerRow
+                  icon={<Frown size={18} strokeWidth={2.2} />}
+                  tone="pink"
+                  title="反串黑自家"
+                  desc="扮演黑粉刺激自家粉团抱团（易翻车）"
+                  hint={dailyBurnerActionUsed ? '今日已用' : '消耗 15 精力'}
+                  onClick={handleReverse}
+                  disabled={dailyBurnerActionUsed || notEnoughEnergy}
+                />
+
+                <div className="pt-2">
+                  <div className="text-[10px] text-gray-400 px-1 pb-1.5">大号操作</div>
+                  <WeiboCompose />
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-interface ActionButtonProps {
+interface DrawerRowProps {
   icon: React.ReactNode;
-  label: string;
+  tone: 'blue' | 'orange' | 'pink';
+  title: string;
+  desc: string;
   hint: string;
   onClick: () => void;
   disabled?: boolean;
-  tone: 'blue' | 'orange' | 'pink';
 }
 
-function ActionButton({ icon, label, hint, onClick, disabled, tone }: ActionButtonProps) {
+function DrawerRow({ icon, tone, title, desc, hint, onClick, disabled }: DrawerRowProps) {
   const toneClass = {
-    blue: 'text-sky-500 bg-sky-50',
-    orange: 'text-orange-500 bg-orange-50',
-    pink: 'text-pink-500 bg-pink-50',
+    blue: 'bg-sky-50 text-sky-500',
+    orange: 'bg-orange-50 text-orange-500',
+    pink: 'bg-pink-50 text-pink-500',
   }[tone];
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex-1 flex items-center justify-center gap-1.5 py-2 rounded-full transition',
-        toneClass,
-        disabled ? 'opacity-40' : 'active:scale-95',
+        'w-full flex items-center gap-3 rounded-2xl px-3 py-3 ring-1 ring-gray-100/60 bg-white active:bg-gray-50 transition',
+        disabled && 'opacity-40',
       )}
     >
-      {icon}
-      <span className="text-[12px] font-medium">{label}</span>
-      <span className="text-[10px] opacity-70">· {hint}</span>
+      <span className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', toneClass)}>
+        {icon}
+      </span>
+      <div className="flex-1 min-w-0 text-left">
+        <div className="text-[13px] font-medium text-gray-800">{title}</div>
+        <div className="text-[11px] text-gray-400 truncate">{desc}</div>
+      </div>
+      <span className="text-[10px] text-gray-400 shrink-0">{hint}</span>
     </button>
   );
 }

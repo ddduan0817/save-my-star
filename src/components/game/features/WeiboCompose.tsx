@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PenLine } from 'lucide-react';
+import { Feather } from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { cn, formatMoney } from '@/lib/utils';
@@ -73,7 +73,7 @@ export default function WeiboCompose() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="w-6 h-6 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
-              {dailyPostUsed ? '✅' : <PenLine size={14} strokeWidth={2.4} />}
+              {dailyPostUsed ? '✅' : <Feather size={14} strokeWidth={2.4} />}
             </span>
             <span className={cn(
               "text-xs font-medium",
