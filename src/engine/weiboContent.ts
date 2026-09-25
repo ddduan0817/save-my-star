@@ -1,4 +1,4 @@
-import { weiboPostTemplates } from '@/data/weiboPosts';
+import { getWeiboPostImage, weiboPostTemplates } from '@/data/weiboPosts';
 import {
   ALL_WEIBO_SCENES,
   COMMENT_NICK_POOLS,
@@ -596,5 +596,8 @@ export function hydrateWeiboPostRecord(
     content,
     outcome,
     engagement: record.engagement ?? createStableEngagement(id, sceneId),
+    imageKey: record.imageKey ?? (
+      template ? getWeiboPostImage(artistId, template.imageSlot) : undefined
+    ),
   };
 }

@@ -456,3 +456,21 @@ export const weiboPostTemplates: ArtistWeiboPostTemplate[] = [
     postContent: '关于这次的事情，我郑重道歉。问题出在我身上，我会承担责任，也会公开后续改正进度。',
   },
 ];
+
+const WEIBO_POST_IMAGES: Partial<Record<ArtistArchetype, Record<string, string>>> = {
+  idol: {
+    work_photo: './weibo/idol/work_photo.jpg',
+    selfie: './weibo/idol/selfie.jpg',
+    work_promotion: './weibo/idol/work_promotion.jpg',
+    fan_gift: './weibo/idol/fan_gift.jpg',
+    romance_hint: './weibo/idol/romance_hint.jpg',
+  },
+};
+
+export function getWeiboPostImage(
+  artistId: ArtistArchetype,
+  imageSlot?: string,
+): string | undefined {
+  if (!imageSlot) return undefined;
+  return WEIBO_POST_IMAGES[artistId]?.[imageSlot];
+}

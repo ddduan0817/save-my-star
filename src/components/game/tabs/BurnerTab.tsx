@@ -300,6 +300,7 @@ export default function BurnerTab() {
                 artistName={artist.name}
                 nickPool={artistNicknames[artist.id]}
                 rivalName={rival?.name}
+                imageSrc={hydrated.imageKey}
               />
             );
           })}
@@ -332,6 +333,7 @@ export default function BurnerTab() {
               artistName={artist?.name}
               nickPool={artist ? artistNicknames[artist.id] : undefined}
               rivalName={rival?.name}
+              imageSrc={post.imageKey}
             />
           );
         })}
@@ -607,6 +609,7 @@ interface WeiboCardProps {
   nickPool?: string[];
   rivalName?: string;
   showOutcomeBadge?: boolean;
+  imageSrc?: string;
 }
 
 function WeiboCard({
@@ -626,6 +629,7 @@ function WeiboCard({
   nickPool,
   rivalName,
   showOutcomeBadge = true,
+  imageSrc,
 }: WeiboCardProps) {
   const [liked, setLiked] = useState(false);
   const [reposted, setReposted] = useState(false);
@@ -675,6 +679,17 @@ function WeiboCard({
           <p className="text-[14px] text-gray-800 mt-1.5 leading-relaxed whitespace-pre-wrap break-words">
             {typeof content === 'string' ? normalizeCJKSpaces(content) : content}
           </p>
+          {imageSrc && (
+            <div className="mt-2.5 w-full aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={imageSrc}
+                alt={`${nickname}发布的微博配图`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+          )}
           <div className="flex items-center mt-2.5 -mx-2">
             <FooterAction
               icon={<Repeat2 size={15} strokeWidth={2} className={reposted ? 'text-green-500' : ''} />}

@@ -210,6 +210,7 @@ export interface BurnerPost {
   comments: number;
   reposts: number;
   backfired?: boolean;
+  imageKey?: string;
 }
 
 export interface GameActions {

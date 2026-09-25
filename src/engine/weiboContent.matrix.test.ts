@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { artists } from '@/data/artists';
 import { getRivalForArtist } from '@/data/rivals';
-import { weiboPostTemplates } from '@/data/weiboPosts';
+import { getWeiboPostImage, weiboPostTemplates } from '@/data/weiboPosts';
 import { WEIBO_COMMENT_POOLS } from '@/data/weiboScenes';
 import {
   generateSceneComments,
@@ -113,5 +113,14 @@ describe('Weibo content matrix', () => {
     expect(result.isBackfire).toBe(true);
     expect(result.trendEntry.title).toBe('#甄帅恋情暗示引发脱粉#');
     expect(result.trendEntry.sentiment).toBe('negative');
+  });
+
+  it('maps only delivered artist image assets', () => {
+    expect(getWeiboPostImage('idol', 'work_photo'))
+      .toBe('./weibo/idol/work_photo.jpg');
+    expect(getWeiboPostImage('idol', 'romance_hint'))
+      .toBe('./weibo/idol/romance_hint.jpg');
+    expect(getWeiboPostImage('actor', 'work_photo')).toBeUndefined();
+    expect(getWeiboPostImage('idol')).toBeUndefined();
   });
 });

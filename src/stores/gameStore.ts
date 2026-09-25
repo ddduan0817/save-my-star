@@ -28,7 +28,7 @@ import { scheduleActivities } from '@/data/schedules';
 import { GAME_CONFIG } from '@/data/constants';
 import { companyUpgradesData } from '@/data/upgrades';
 import { generateWeiboTrends, generateFanComments } from '@/engine/socialGenerator';
-import { weiboPostTemplates } from '@/data/weiboPosts';
+import { getWeiboPostImage, weiboPostTemplates } from '@/data/weiboPosts';
 import { resolveWeiboPost } from '@/engine/weiboPostEngine';
 import {
   createStableEngagement,
@@ -412,6 +412,7 @@ export const useGameStore = create<GameStore>()(
     const postId = `weibo_${currentDay}_${Date.now()}`;
     const content = selectArtistPostContent(template, artist.id, postId)
       .replace(/\{name\}/g, artist.name);
+    const imageKey = getWeiboPostImage(artist.id, template.imageSlot);
 
     let finalStatChanges = result.statChanges;
     let finalNarration = result.narration;
@@ -485,6 +486,7 @@ export const useGameStore = create<GameStore>()(
             content,
             outcome,
             engagement: publicEngagement,
+            imageKey,
             wasBackfire: result.isBackfire,
           }],
       burnerFeed: isBurnerAuthored
@@ -501,6 +503,7 @@ export const useGameStore = create<GameStore>()(
               comments: burnerEngagement.comments,
               reposts: burnerEngagement.reposts,
               backfired: leaked,
+              imageKey,
             },
             ...get().burnerFeed,
           ]

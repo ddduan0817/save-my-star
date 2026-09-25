@@ -106,6 +106,7 @@ describe('gameStore Weibo identity routing', () => {
       templateId: 'post_hint_romance',
       sceneId: 'artist_romance_hint',
       outcome: 'backfire',
+      imageKey: './weibo/idol/romance_hint.jpg',
       wasBackfire: true,
     });
     expect(state.weiboPostHistory[0].content).not.toContain('粉丝直接炸了');
