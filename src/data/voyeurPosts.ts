@@ -71,7 +71,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 1567,
     comments: 402,
     isIntel: false,
-    archetypes: ['actor', 'idol', 'socialite'],
+    archetypes: ['actor', 'idol', 'influencer', 'socialite'],
   },
   {
     sceneId: 'fan_persona_discussion',
@@ -272,7 +272,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 456,
     comments: 623,
     isIntel: false,
-    archetypes: ['actor', 'idol', 'socialite'],
+    archetypes: ['actor', 'idol', 'influencer', 'socialite'],
   },
   {
     sceneId: 'fan_crisis_watch',
@@ -475,7 +475,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 890,
     comments: 234,
     isIntel: false,
-    archetypes: ['actor'],
+    archetypes: ['actor', 'influencer'],
   },
   {
     sceneId: 'fan_crisis_watch',
@@ -500,7 +500,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 456,
     comments: 34,
     isIntel: false,
-    archetypes: ['actor', 'idol', 'socialite'],
+    archetypes: ['actor', 'idol', 'influencer', 'socialite'],
   },
   {
     sceneId: 'fan_media_smear',

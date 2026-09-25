@@ -123,4 +123,27 @@ describe('Weibo content matrix', () => {
     expect(getWeiboPostImage('actor', 'work_photo')).toBeUndefined();
     expect(getWeiboPostImage('idol')).toBeUndefined();
   });
+
+  it('treats Leng Bingning as an actor after her influencer career', () => {
+    const artist = artists.find(item => item.id === 'influencer');
+    expect(artist?.title).toBe('网红转型演员');
+
+    const actingTemplateIds = new Set([
+      'post_work_photo',
+      'post_late_night',
+      'post_promote_work',
+      'post_fan_gift',
+      'post_charity',
+      'post_selfie',
+      'post_hint_romance',
+    ]);
+
+    weiboPostTemplates
+      .filter(template => actingTemplateIds.has(template.id))
+      .forEach(template => {
+        const variants = template.artistPostVariants.influencer ?? [];
+        expect(variants, template.id).toHaveLength(2);
+        expect(variants.join(''), template.id).not.toMatch(/直播间|选品|商品陈列/);
+      });
+  });
 });
