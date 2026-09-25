@@ -302,25 +302,24 @@ export default function BurnerTab() {
         )}
       </div>
 
-      {/* 底部抽屉 —— 约束在手机框内 */}
+      {/* 底部抽屉 */}
       <AnimatePresence>
         {drawerOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-transparent flex justify-center pointer-events-none"
+            className="fixed inset-x-0 bottom-16 z-40 flex justify-center pointer-events-none"
             onClick={() => setDrawerOpen(false)}
           >
-            <div className="relative w-full max-w-[440px] pointer-events-auto" onClick={() => setDrawerOpen(false)}>
-              <motion.div
-                initial={{ y: '110%' }}
-                animate={{ y: 0 }}
-                exit={{ y: '110%' }}
-                transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-                className="absolute bottom-16 left-0 right-0 bg-white rounded-t-3xl ring-1 ring-gray-200/70 shadow-lg pb-4"
-                onClick={e => e.stopPropagation()}
-              >
+            <motion.div
+              initial={{ y: '110%' }}
+              animate={{ y: 0 }}
+              exit={{ y: '110%' }}
+              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+              className="w-full bg-white rounded-t-3xl ring-1 ring-gray-200/70 shadow-lg pb-4 pointer-events-auto"
+              onClick={e => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between px-5 pt-4 pb-2">
                 <div className="text-[15px] font-semibold text-gray-800">今天想做点什么？</div>
                 <button
@@ -369,8 +368,7 @@ export default function BurnerTab() {
                   })}
                 </div>
               </div>
-              </motion.div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
