@@ -643,7 +643,7 @@ const POOL_REACTIVE: ReactivePost[] = [
 // MVP：通用池 + 响应池；按艺人身份过滤剧集/演技等身份专属内容
 export function rollVoyeurFeed(
   artistName: string,
-  count = 4,
+  count = 10,
   ctx?: { fanLoyalty: number; prRisk: number; commercialValue: number; tags: string[]; artistId?: ArtistArchetype },
 ): VoyeurPost[] {
   const artistId = ctx?.artistId;
@@ -652,7 +652,7 @@ export function rollVoyeurFeed(
   const reactiveHits: Omit<VoyeurPost, 'id'>[] = ctx
     ? POOL_REACTIVE.filter(p => archetypeOk(p.archetypes) && p.matches(ctx)).map(({ matches, ...rest }) => rest)
     : [];
-  const reactivePicked = reactiveHits.sort(() => Math.random() - 0.5).slice(0, Math.min(3, count));
+  const reactivePicked = reactiveHits.sort(() => Math.random() - 0.5).slice(0, Math.min(5, count));
   const remain = count - reactivePicked.length;
   const universalPool = POOL_UNIVERSAL.filter(p => archetypeOk(p.archetypes));
   const universalShuffled = [...universalPool].sort(() => Math.random() - 0.5).slice(0, remain);
