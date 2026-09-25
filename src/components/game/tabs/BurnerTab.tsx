@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Search, Eye, Zap, Frown, Repeat2, MessageCircle, Heart, Bell, X, Flame } from 'lucide-react';
+import { Search, Eye, Zap, Repeat2, MessageCircle, Heart, Bell, X, Flame } from 'lucide-react';
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
 import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
 import { GAME_CONFIG } from '@/data/constants';
-import WeiboCompose from '@/components/game/features/WeiboCompose';
+import { weiboPostTemplates } from '@/data/weiboPosts';
+import { sfxClick } from '@/lib/sounds';
 
 const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
 const ACTIVE_SUB_TAB = '推荐';
@@ -23,6 +24,12 @@ export default function BurnerTab() {
   const consumeVoyeur = useGameStore(s => s.consumeVoyeur);
   const smearRival = useGameStore(s => s.smearRival);
   const reverseAttack = useGameStore(s => s.reverseAttack);
+  const postWeibo = useGameStore(s => s.postWeibo);
+  const dailyPostUsed = useGameStore(s => s.dailyPostUsed);
+  const showPostResult = useGameStore(s => s.showPostResult);
+  const lastPostNarration = useGameStore(s => s.lastPostNarration);
+  const lastPostStatChanges = useGameStore(s => s.lastPostStatChanges);
+  const dismissPostResult = useGameStore(s => s.dismissPostResult);
   const weiboTrends = useGameStore(s => s.weiboTrends);
   const burnerIdentity = useGameStore(s => s.burnerIdentity) ?? 'self';
   const switchBurnerIdentity = useGameStore(s => s.switchBurnerIdentity);
@@ -86,6 +93,16 @@ export default function BurnerTab() {
       return;
     }
     showToast(res.backfire ? '翻车了！小号被扒' : '反串黑已发送');
+  };
+
+  const handlePostTemplate = (templateId: string) => {
+    if (dailyPostUsed) {
+      showToast('今日已发过微博');
+      return;
+    }
+    sfxClick();
+    setDrawerOpen(false);
+    postWeibo(templateId);
   };
 
   const toggleIdentity = () => {
@@ -266,50 +283,96 @@ export default function BurnerTab() {
               </div>
               <div className="mx-auto w-10 h-1 rounded-full bg-gray-200 mb-3" />
 
-              <div className="px-4 space-y-2">
-                <div className="text-[11px] text-gray-500 px-1 pb-1 flex items-center gap-1.5">
-                  <span>当前身份：</span>
-                  <span className={cn(
-                    'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium',
-                    burnerIdentity === 'self' ? 'bg-gray-800 text-white' : 'bg-red-500 text-white',
-                  )}>
-                    {burnerIdentity === 'self' ? '🕶️ 小号' : `${artist?.avatar ?? '✨'} ${artist?.name ?? '大号'}`}
-                  </span>
-                  {burnerIdentity === 'self' && (
-                    <span className="text-[10px] text-red-500 ml-auto">替艺人发博用小号会泄露</span>
-                  )}
-                </div>
-                <DrawerRow
-                  icon={<Eye size={18} strokeWidth={2.2} />}
-                  tone="blue"
-                  title="视奸粉圈"
-                  desc="免费围观粉丝群组动态，刷新信息流"
-                  hint={voyeurExhausted ? '今日已用完' : `免费 · 今日 ${dailyVoyeurCount}/${voyeurLimit}`}
-                  onClick={handleLurk}
-                  disabled={voyeurExhausted}
-                />
-                <DrawerRow
-                  icon={<Zap size={18} strokeWidth={2.2} />}
-                  tone="orange"
-                  title="黑对家"
-                  desc="匿名放料攻击对家艺人（有翻车风险）"
-                  hint={dailyBurnerActionUsed ? '今日已用' : '消耗 15 精力'}
-                  onClick={handleSmear}
-                  disabled={dailyBurnerActionUsed || notEnoughEnergy}
-                />
-                <DrawerRow
-                  icon={<Frown size={18} strokeWidth={2.2} />}
-                  tone="pink"
-                  title="反串黑自家"
-                  desc="扮演黑粉刺激自家粉团抱团（易翻车）"
-                  hint={dailyBurnerActionUsed ? '今日已用' : '消耗 15 精力'}
-                  onClick={handleReverse}
-                  disabled={dailyBurnerActionUsed || notEnoughEnergy}
-                />
-                <div className="pt-1">
-                  <WeiboCompose />
+              <div className="px-4">
+                <div className="grid grid-cols-4 gap-2">
+                  <ActionTile
+                    icon={<Eye size={18} strokeWidth={2.2} />}
+                    tone="blue"
+                    title="视奸粉圈"
+                    hint={voyeurExhausted ? '今日已用完' : `${dailyVoyeurCount}/${voyeurLimit}`}
+                    onClick={handleLurk}
+                    disabled={voyeurExhausted}
+                  />
+                  <ActionTile
+                    icon={<Zap size={18} strokeWidth={2.2} />}
+                    tone="orange"
+                    title="黑对家"
+                    hint={dailyBurnerActionUsed ? '今日已用' : '15 精力'}
+                    onClick={handleSmear}
+                    disabled={dailyBurnerActionUsed || notEnoughEnergy}
+                  />
+                  {weiboPostTemplates.map(template => (
+                    <ActionTile
+                      key={template.id}
+                      emoji={template.emoji}
+                      tone="pink"
+                      title={template.title}
+                      hint={dailyPostUsed ? '今日已发' : '每日1次'}
+                      onClick={() => handlePostTemplate(template.id)}
+                      disabled={dailyPostUsed}
+                    />
+                  ))}
                 </div>
               </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 发博结果 overlay */}
+      <AnimatePresence>
+        {showPostResult && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-6"
+            onClick={dismissPostResult}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 25 }}
+              className="bg-white rounded-3xl p-5 shadow-xl w-full max-w-sm ring-1 ring-gray-200/60"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="text-xs text-gray-300 font-medium tracking-wider mb-2">微博已发出</div>
+              <p className="text-sm text-gray-600 leading-relaxed">{lastPostNarration}</p>
+              {lastPostStatChanges && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {Object.entries(lastPostStatChanges).filter(([, v]) => v && v !== 0).map(([key, value]) => {
+                    const v = value as number;
+                    const isRisk = key === 'prRisk';
+                    const isPositive = isRisk ? v < 0 : v > 0;
+                    const label: Record<string, string> = {
+                      commercialValue: '商业价值',
+                      fanLoyalty: '粉丝忠诚',
+                      prRisk: '舆论风险',
+                      money: '资金',
+                    };
+                    return (
+                      <span
+                        key={key}
+                        className={cn(
+                          'px-2.5 py-1 rounded-full text-[11px] font-semibold',
+                          isPositive
+                            ? 'bg-green-50 text-green-600 ring-1 ring-green-200/60'
+                            : 'bg-red-50 text-red-500 ring-1 ring-red-200/60',
+                        )}
+                      >
+                        {label[key] ?? key} {v > 0 ? '+' : ''}{v}
+                      </span>
+                    );
+                  })}
+                </div>
+              )}
+              <button
+                onClick={dismissPostResult}
+                className="w-full mt-4 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 text-sm font-medium text-gray-600 transition-colors"
+              >
+                好的
+              </button>
             </motion.div>
           </motion.div>
         )}
@@ -318,39 +381,38 @@ export default function BurnerTab() {
   );
 }
 
-interface DrawerRowProps {
-  icon: React.ReactNode;
+interface ActionTileProps {
+  icon?: React.ReactNode;
+  emoji?: string;
   tone: 'blue' | 'orange' | 'pink';
   title: string;
-  desc: string;
   hint: string;
   onClick: () => void;
   disabled?: boolean;
 }
 
-function DrawerRow({ icon, tone, title, desc, hint, onClick, disabled }: DrawerRowProps) {
+function ActionTile({ icon, emoji, tone, title, hint, onClick, disabled }: ActionTileProps) {
   const toneClass = {
-    blue: 'bg-sky-50 text-sky-500',
-    orange: 'bg-orange-50 text-orange-500',
-    pink: 'bg-pink-50 text-pink-500',
+    blue: 'bg-gradient-to-br from-sky-50 to-sky-100 text-sky-500',
+    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 text-orange-500',
+    pink: 'bg-gradient-to-br from-pink-50 to-pink-100 text-pink-500',
   }[tone];
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'w-full flex items-center gap-3 rounded-2xl px-3 py-3 ring-1 ring-gray-100/60 bg-white active:bg-gray-50 transition',
+        'flex flex-col items-center gap-1.5 py-2.5 rounded-2xl bg-white active:bg-gray-50 transition',
         disabled && 'opacity-40',
       )}
     >
-      <span className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0', toneClass)}>
-        {icon}
+      <span className={cn('w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm', toneClass)}>
+        {emoji ? <span className="text-xl">{emoji}</span> : icon}
       </span>
-      <div className="flex-1 min-w-0 text-left">
-        <div className="text-[13px] font-medium text-gray-800">{title}</div>
-        <div className="text-[11px] text-gray-400 truncate">{desc}</div>
-      </div>
-      <span className="text-[10px] text-gray-400 shrink-0">{hint}</span>
+      <span className="text-[11px] font-medium text-gray-700 text-center leading-tight px-0.5 line-clamp-2">
+        {title}
+      </span>
+      <span className="text-[9px] text-gray-400">{hint}</span>
     </button>
   );
 }
