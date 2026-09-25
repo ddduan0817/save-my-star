@@ -26,6 +26,7 @@ import { consequenceCallbackEvents } from '@/data/consequenceCallbacks';
 import { fansiteArcEvents } from '@/data/fansiteArcs';
 import { managerMilestoneEvents } from '@/data/events/manager-milestone';
 import { insaneEvents } from '@/data/events/insane';
+import { personaEvents } from '@/data/events/persona-events';
 import type { ArtistMentalState } from '@/types/new_systems';
 import type { SeasonalModifier } from '@/data/seasonalModifiers';
 import { aggregateCategoryWeight } from '@/data/seasonalModifiers';
@@ -65,6 +66,7 @@ const allEvents: GameEvent[] = [
   ...consequenceCallbackEvents,
   ...fansiteArcEvents,
   ...managerMilestoneEvents,
+  ...personaEvents,
 ];
 
 const EVENT_COOLDOWN = 999; // 单局内事件不重复
