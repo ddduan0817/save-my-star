@@ -9,7 +9,7 @@ import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
 import { GAME_CONFIG } from '@/data/constants';
 import WeiboCompose from '@/components/game/features/WeiboCompose';
 
-const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
+const SUB_TAB_LABEL = '推荐';
 
 export default function BurnerTab() {
   const artist = useGameStore(s => s.artist);
@@ -28,7 +28,6 @@ export default function BurnerTab() {
 
   const [voyeurFeed, setVoyeurFeed] = useState<VoyeurPost[]>([]);
   const [toast, setToast] = useState<string | null>(null);
-  const [subTab, setSubTab] = useState<typeof SUB_TABS[number]>('推荐');
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const voyeurLimit = GAME_CONFIG.VOYEUR_DAILY_LIMIT;
@@ -108,26 +107,12 @@ export default function BurnerTab() {
             <Bell size={18} strokeWidth={2} />
           </button>
         </div>
-        {/* 二级 tab */}
+        {/* 固定"推荐"标签（不可切换） */}
         <div className="flex items-center px-2 h-9">
-          {SUB_TABS.map(t => (
-            <button
-              key={t}
-              onClick={() => setSubTab(t)}
-              className={cn(
-                'relative px-3 py-1.5 text-[13px] transition-colors',
-                subTab === t ? 'text-gray-900 font-medium' : 'text-gray-500',
-              )}
-            >
-              {t}
-              {subTab === t && (
-                <motion.span
-                  layoutId="burner-subtab-indicator"
-                  className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[3px] w-4 rounded-full bg-[#ff8200]"
-                />
-              )}
-            </button>
-          ))}
+          <div className="relative px-3 py-1.5 text-[13px] text-gray-900 font-medium">
+            {SUB_TAB_LABEL}
+            <span className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[3px] w-4 rounded-full bg-[#ff8200]" />
+          </div>
         </div>
       </div>
 
