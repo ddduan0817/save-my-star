@@ -487,8 +487,13 @@ function DrawerCard({ icon, tone, title, desc, onClick, disabled }: DrawerCardPr
   );
 }
 
+function normalizeCJKSpaces(s: string): string {
+  return s.replace(/([\u4e00-\u9fa5，。！？、：；"'）】])\s+([\u4e00-\u9fa5，。！？、：；"'（【])/g, '$1$2');
+}
+
 function renderWithName(raw: string, name: string): React.ReactNode {
-  const parts = raw.split(/ ?\{name\} ?/g);
+  const cleaned = normalizeCJKSpaces(raw);
+  const parts = cleaned.split(/ ?\{name\} ?/g);
   return parts.reduce<React.ReactNode[]>((acc, part, i) => {
     if (i > 0) acc.push(<strong key={`n${i}`} className="font-semibold text-gray-900">{name}</strong>);
     if (part) acc.push(part);
@@ -553,7 +558,7 @@ function WeiboCard({
           </div>
           <div className="text-[11px] text-gray-400 mt-0.5">{time} · 来自 微博 weibo.com</div>
           <p className="text-[14px] text-gray-800 mt-1.5 leading-relaxed whitespace-pre-wrap break-words">
-            {content}
+            {typeof content === 'string' ? normalizeCJKSpaces(content) : content}
           </p>
           <div className="flex items-center mt-2.5 -mx-2">
             <FooterAction
