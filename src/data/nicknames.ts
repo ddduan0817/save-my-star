@@ -1,4 +1,6 @@
 // 粉圈昵称 & 头像池 —— 让视奸信息流拟真微博
+import type { ArtistArchetype } from '@/types/game';
+
 export const NICKNAME_POOL: string[] = [
   '糖水不加冰',
   '路遥知马力',
@@ -38,7 +40,6 @@ export const NICKNAME_POOL: string[] = [
   '搬砖女工小丽',
   '摸鱼冠军',
   '蹲一个瓜',
-  '爱豆保护协会',
   '快乐水博主',
   '月光不打烊',
   '发疯文学爱好者',
@@ -65,6 +66,80 @@ export const NICKNAME_POOL: string[] = [
   '我要吃安眠药了',
 ];
 
+// 各艺人身份专属昵称池：唯粉/站姐/后援会常见前缀
+const NICKNAME_BY_ARCHETYPE: Record<ArtistArchetype, string[]> = {
+  idol: [
+    '帅帅的糖罐子',
+    '帅帅全球后援会',
+    '甄帅本命女友粉',
+    '站姐-帅帅营业中',
+    '帅帅の小迷妹',
+    '为帅帅打投第九年',
+    '甄帅数据组打工人',
+    '帅帅超话签到八百天',
+    '帅帅唯一大女友',
+    '帅帅美貌鉴赏协会',
+    '甄帅打投失败选手',
+    '帅粉不撕逼保护协会',
+  ],
+  actor: [
+    '美丽剧抛脸粉',
+    '郝美丽演技吹哨人',
+    '美丽姐后援会会长',
+    '美丽演技研究所',
+    '郝美丽金鸡见证者',
+    '美丽姐夸夸组',
+    '为美丽姐拉票十二年',
+    '郝美丽剧粉团团长',
+    '美丽姐路人转粉',
+    '美丽的碎钻手环',
+    '演技吹爆美丽姐',
+    '美丽姐路演蹲守组',
+  ],
+  singer: [
+    '八哥的耳机女孩',
+    '八哥全球音悦台',
+    '八哥打歌数据组',
+    '高八度演唱会应援站',
+    '八哥的高音女友粉',
+    '八哥每日一循环',
+    '八哥超话钉子户',
+    '为八哥去 livehouse',
+    '高八度舞台见证人',
+    '八哥呆萌保护协会',
+    '八哥的第八根耳机线',
+    '八哥打投拆家现场',
+  ],
+  influencer: [
+    '冰冰的直播间钉子户',
+    '冰冰家的老粉丝',
+    '冰冰口红色号收集控',
+    '冷冰凝家运营小助手',
+    '冰冰同款拔草员',
+    '冰冰的顶级夸夸粉',
+    '追冰凝直播八百天',
+    '冰冰家美妆搬运工',
+    '冰凝家全球代购',
+    '冰冰家老粉不塌房',
+    '直播蹲冰冰打折',
+    '冰凝家清仓小分队',
+  ],
+  socialite: [
+    '格格的贵公子女友粉',
+    '南陌格红毯观察员',
+    '格格家高奢代言组',
+    '陌格全球时尚站',
+    '格格的私人品鉴师',
+    '南陌格颜值鉴赏部',
+    '格格古偶考古协会',
+    '陌格家高定研究所',
+    '格格的绝美侧颜粉',
+    '南陌格红毯每帧截图',
+    '格粉不塌房自救组',
+    '格格的红毯保安队',
+  ],
+};
+
 export const AVATAR_POOL: string[] = [
   '🌸','🌷','🍑','🍓','💐','🌺','🪷','🍿','🍬','🍭',
   '🌈','🌟','⭐','🌙','☕','🍜','🍡','🍰','🍦','🍔',
@@ -79,7 +154,11 @@ function pickFromPool<T>(pool: T[], seed?: number): T {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-export function pickNickname(seed?: number): string {
+// 50% 概率抽艺人专属昵称，50% 抽通用池，混搭出真实感
+export function pickNickname(archetype?: ArtistArchetype, seed?: number): string {
+  if (archetype && Math.random() < 0.6) {
+    return pickFromPool(NICKNAME_BY_ARCHETYPE[archetype], seed);
+  }
   return pickFromPool(NICKNAME_POOL, seed);
 }
 

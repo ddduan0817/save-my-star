@@ -661,7 +661,7 @@ export function rollVoyeurFeed(
   return combined.map((post, idx) => ({
     ...post,
     id: `voyeur_${Date.now()}_${idx}`,
-    nickname: pickNickname(),
+    nickname: pickNickname(artistId),
     avatar: pickAvatar(),
     content: post.content.replace(/ ?\{name\} ?/g, artistName),
   }));
