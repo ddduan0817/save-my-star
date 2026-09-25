@@ -15,11 +15,11 @@ import { weiboPostTemplates } from '@/data/weiboPosts';
 import { sfxClick } from '@/lib/sounds';
 
 const BURNER_NICKNAME_BY_ARTIST: Record<string, string> = {
-  idol: '甄糖的糖罐子',
-  actor: '美丽的候场椅',
+  idol: '我就说他甄帅吧',
+  actor: '好一朵美丽',
   singer: '糕糕的话筒',
-  influencer: '冰糕的直播灯',
-  socialite: '陌陌的红毯灯',
+  influencer: '爱语梦翠霜',
+  socialite: 'mogelove',
 };
 
 const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
