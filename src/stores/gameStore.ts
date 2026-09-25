@@ -476,6 +476,7 @@ export const useGameStore = create<GameStore>()(
             {
               id: `bp_${Date.now()}`,
               action: 'weibo_template',
+              day: currentDay,
               time: '刚刚',
               content: contentFilled,
               likes: Math.floor(Math.random() * 15) + 3,
@@ -682,8 +683,21 @@ export const useGameStore = create<GameStore>()(
       `笑死，${rivalName}那新剧的评分是靠水军刷的吧，我朋友在业内的都在传😅`,
       `有一说一${rivalName}这营销做得跟屎一样，还敢出来蹦跶`,
       `路透${rivalName}现场态度也太差了，工作人员都在吐槽`,
+      `${rivalName}又开始碰瓷了？真是缺资源缺疯了`,
+      `我说句实话哈，${rivalName}这演技就是幼儿园水平，别再吹了`,
+      `${rivalName}后援会又在偷偷做数据了，可以举报吗姐妹们`,
+      `别再洗了，${rivalName}那事儿业内都知道，只是没人敢说`,
+      `${rivalName}这次代言直接扑街，品牌方内部都在骂`,
+      `${rivalName}塌房实锤图我这有，姐妹们私戳，不敢公开发`,
+      `就问一句，${rivalName}凭什么和我家比？咖位差三个档次好吗`,
+      `${rivalName}又来蹭热度了，恶心到我了，屏蔽词条走人`,
+      `${rivalName}那个通稿的用词也太下头了，团队是真不行`,
     ];
-    const content = templates[Math.floor(Math.random() * templates.length)];
+    const lastSmear = state.burnerFeed.find(p => p.action === 'smear_rival');
+    const candidates = templates.filter(t => t !== lastSmear?.content);
+    const content = (candidates.length ? candidates : templates)[
+      Math.floor(Math.random() * (candidates.length ? candidates.length : templates.length))
+    ];
     const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
     const newRival: typeof rival = rival && !backfire
       ? { ...rival, stats: { ...rival.stats, prRisk: Math.min(100, rival.stats.prRisk + 10) } }
@@ -691,7 +705,8 @@ export const useGameStore = create<GameStore>()(
     const post = {
       id: `burner_${Date.now()}`,
       action: 'smear_rival' as const,
-      time: `第 ${state.currentDay} 天`,
+      day: state.currentDay,
+      time: '刚刚',
       content,
       likes: Math.floor(Math.random() * 400) + 60,
       comments: Math.floor(Math.random() * 200) + 20,
@@ -726,13 +741,24 @@ export const useGameStore = create<GameStore>()(
       ? [
           `被扒了……我小号被抓包挂在热搜了，社死`,
           `完蛋，反串黑翻车被姐妹们发现了，人设崩了`,
+          `破防了，反串IP暴露被挂超话，姐妹们别再上号了`,
+          `笑不出来了，站姐扒到我IP，说我是自导自演`,
         ]
       : [
           `看到黑热搜好难过，${artistName} 明明这么努力……姐妹们撑住`,
           `又开始骂 ${artistName} 了，能不能给点空间啊，追星好累`,
           `${artistName} 到底做错什么了要被这样对待，心疼`,
+          `真的服了那群黑子，${artistName} 每次营业都要被鸡蛋里挑骨头`,
+          `姐妹们控评顶一下，别让黑话上去了，${artistName} 需要我们`,
+          `${artistName} 今天工作那么辛苦，回来还要看这些恶心通稿，累了`,
+          `我一个路人都觉得离谱，${artistName} 招谁惹谁了每天被挂`,
+          `破防了姐妹们，${artistName} 这也能被黑，真的没道理讲`,
         ];
-    const content = templates[Math.floor(Math.random() * templates.length)];
+    const lastReverse = state.burnerFeed.find(p => p.action === 'reverse_attack');
+    const candidates = templates.filter(t => t !== lastReverse?.content);
+    const content = (candidates.length ? candidates : templates)[
+      Math.floor(Math.random() * (candidates.length ? candidates.length : templates.length))
+    ];
     const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
     let newStats = { ...state.stats };
     let stress = state.managerStress + 8;
@@ -752,7 +778,8 @@ export const useGameStore = create<GameStore>()(
     const post = {
       id: `burner_${Date.now()}`,
       action: 'reverse_attack' as const,
-      time: `第 ${state.currentDay} 天`,
+      day: state.currentDay,
+      time: '刚刚',
       content,
       likes: Math.floor(Math.random() * 500) + 80,
       comments: Math.floor(Math.random() * 300) + 30,

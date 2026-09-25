@@ -286,22 +286,28 @@ export default function BurnerTab() {
             );
           })}
 
-        {burnerFeed.map(post => (
-          <WeiboCard
-            key={post.id}
-            avatar="🕶️"
-            nickname={artist ? (BURNER_NICKNAME_BY_ARTIST[artist.id] ?? `${artist.name}的小号`) : '匿名小号'}
-            time={post.time}
-            content={artist ? renderWithName(post.content, artist.name) : post.content}
-            likes={post.likes}
-            comments={post.comments}
-            reposts={post.reposts}
-            selfLabel="小号"
-            backfired={post.backfired}
-            nickPool={artist ? artistNicknames[artist.id] : undefined}
-            contentText={post.content}
-          />
-        ))}
+        {burnerFeed.map(post => {
+          const bpDaysAgo = post.day != null ? currentDay - post.day : null;
+          const bpTimeLabel = bpDaysAgo == null
+            ? post.time
+            : bpDaysAgo <= 0 ? '刚刚' : `${bpDaysAgo}天前`;
+          return (
+            <WeiboCard
+              key={post.id}
+              avatar="🕶️"
+              nickname={artist ? (BURNER_NICKNAME_BY_ARTIST[artist.id] ?? `${artist.name}的小号`) : '匿名小号'}
+              time={bpTimeLabel}
+              content={artist ? renderWithName(post.content, artist.name) : post.content}
+              likes={post.likes}
+              comments={post.comments}
+              reposts={post.reposts}
+              selfLabel="小号"
+              backfired={post.backfired}
+              nickPool={artist ? artistNicknames[artist.id] : undefined}
+              contentText={post.content}
+            />
+          );
+        })}
         {voyeurFeed.map(post => {
           const authorTagSentiment: 'positive' | 'negative' | 'neutral' =
             post.authorTag === '塌房粉' || post.authorTag === '对家毒唯' || post.authorTag === '私生'
@@ -659,7 +665,7 @@ const COMMENT_TEXTS_BY_SENTIMENT: Record<'positive' | 'negative' | 'neutral', st
   positive: [
     '刚刷到就冲了！！！', '好绝', '姐妹一起磕', '好会营业啊，拿捏了',
     '细节狂魔', '锁死锁死锁死', '好想去现场', '这镜头感…封神',
-    '姐姐好美，赢麻了', '偷偷收藏了', '嗑到了', '好上头',
+    '这张脸太能打了', '偷偷收藏了', '嗑到了', '好上头',
   ],
   negative: [
     '脱粉了，真的累', '爬墙+1', '这波真的让我心寒', '塌房实锤了？',
@@ -683,7 +689,7 @@ const TOPIC_COMMENT_POOLS: { keywords: RegExp; texts: string[] }[] = [
     '爬墙都懒得爬了', 'BYE 谢谢再见', '直接举报吧', '路人震怒',
   ]},
   { keywords: /剧|电影|作品|片场|花絮|杀青|定档/, texts: [
-    '演技封神！', '定档速来', '好好演戏就完事了', '真的爱看他/她演戏',
+    '演技封神！', '定档速来', '好好演戏就完事了', '真的爱看这张脸演戏',
     '这镜头感绝了', '预告都想磕', '业务能力我可', '剧粉狂喜',
   ]},
   { keywords: /唱|歌|舞台|演唱会|专辑|音乐节|新歌/, texts: [
@@ -691,7 +697,7 @@ const TOPIC_COMMENT_POOLS: { keywords: RegExp; texts: string[] }[] = [
     '打歌数据组冲', '嗓子真的绝', '求 live 版', '耳朵怀孕',
   ]},
   { keywords: /对家|黑|撕|阴阳|营销号|水军/, texts: [
-    '对家有点急啊', '这营销号一看就知道谁买的', '别脏我家哥哥/姐姐',
+    '对家有点急啊', '这营销号一看就知道谁买的', '别脏我家正主',
     '让子弹飞', '走开走开碰瓷警告', '拉黑一片再说', '毒唯又出来了',
   ]},
   { keywords: /道歉|声明|回应|澄清|律师函/, texts: [
@@ -703,12 +709,12 @@ const TOPIC_COMMENT_POOLS: { keywords: RegExp; texts: string[] }[] = [
     '直拍来一份', '氛围感拉满', '这颜真的绝', '想去接机',
   ]},
   { keywords: /代言|品牌|广告|直播/, texts: [
-    '带货一姐/一哥没错了', '这销量真离谱', '品牌方眼光可以',
+    '带货能力没得说', '这销量真离谱', '品牌方眼光可以',
     '姐妹们冲一波', '不缺钱这波', '数据爆炸', '恰饭快乐',
   ]},
   { keywords: /粉丝|应援|集资|投票/, texts: [
     '数据组辛苦了', '打投累但值', '姐妹们一起冲', '应援太用心了',
-    '有事我上', '妈粉今日出征', '为哥哥/姐姐上分',
+    '有事我上', '妈粉今日出征', '这轮数据必须拿下',
   ]},
 ];
 

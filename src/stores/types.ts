@@ -195,6 +195,8 @@ export interface GameState {
 export interface BurnerPost {
   id: string;
   action: 'smear_rival' | 'reverse_attack' | 'weibo_template';
+  /** 发博日，用于计算"刚刚 / N 天前"；老数据 fallback 用 time 字符串 */
+  day?: number;
   time: string;
   content: string;
   likes: number;
