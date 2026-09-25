@@ -413,7 +413,7 @@ const genericNicknames = [
 ];
 
 // 艺人专属粉丝昵称（会替换 {name}）
-const artistNicknames: Record<ArtistArchetype, string[]> = {
+export const artistNicknames: Record<ArtistArchetype, string[]> = {
   idol: [
     '帅帅的小太阳', '{name}老婆', '甄帅全球后援会',
     '帅帅今天营业了吗', 'C位永远是帅帅', '甄爱帅帅',

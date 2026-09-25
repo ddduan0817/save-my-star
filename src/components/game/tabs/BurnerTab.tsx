@@ -13,6 +13,7 @@ import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
 import { GAME_CONFIG } from '@/data/constants';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { sfxClick } from '@/lib/sounds';
+import { artistNicknames } from '@/engine/socialGenerator';
 
 const BURNER_NICKNAME_BY_ARTIST: Record<string, string> = {
   idol: '我就说他甄帅吧',
@@ -279,6 +280,7 @@ export default function BurnerTab() {
                 reposts={Math.floor(Math.random() * 2000) + 400}
                 selfLabel="艺人"
                 backfired={rec.wasBackfire}
+                nickPool={artistNicknames[artist.id]}
               />
             );
           })}
@@ -295,6 +297,7 @@ export default function BurnerTab() {
             reposts={post.reposts}
             selfLabel="小号"
             backfired={post.backfired}
+            nickPool={artist ? artistNicknames[artist.id] : undefined}
           />
         ))}
         {voyeurFeed.map(post => (
@@ -307,6 +310,7 @@ export default function BurnerTab() {
             likes={post.likes}
             comments={post.comments}
             reposts={Math.floor(post.likes / 8)}
+            nickPool={artist ? artistNicknames[artist.id] : undefined}
           />
         ))}
         {burnerFeed.length === 0 && voyeurFeed.length === 0 && weiboPostHistory.length === 0 && (
@@ -511,6 +515,7 @@ interface WeiboCardProps {
   reposts: number;
   selfLabel?: string;
   backfired?: boolean;
+  nickPool?: string[];
 }
 
 function WeiboCard({
@@ -523,11 +528,12 @@ function WeiboCard({
   reposts,
   selfLabel,
   backfired,
+  nickPool,
 }: WeiboCardProps) {
   const [liked, setLiked] = useState(false);
   const [reposted, setReposted] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const commentList = useMemo(() => sampleComments(), []);
+  const commentList = useMemo(() => sampleCommentsForArtist(nickPool ?? GENERIC_NICKS), [nickPool]);
 
   return (
     <motion.div
@@ -598,21 +604,20 @@ function WeiboCard({
   );
 }
 
-const COMMENT_POOL: { nick: string; text: string }[] = [
-  { nick: '甜栗子壳', text: '刚刷到就冲了！！！' },
-  { nick: '路人甲', text: '有点意思，蹲一下正片' },
-  { nick: '晚风与鼓点', text: '这段真的哭死了' },
-  { nick: '一寸山河', text: '好会营业啊，拿捏了' },
-  { nick: '看她剪影', text: '细节狂魔' },
-  { nick: '一颗甄糖', text: '锁死锁死锁死' },
-  { nick: '副歌起风了', text: '好想去现场' },
-  { nick: '半张银幕', text: '这镜头感……封神' },
-  { nick: '暖光里的姐', text: '姐姐好美，赢麻了' },
-  { nick: 'emo酱', text: '偷偷收藏了' },
+const GENERIC_COMMENT_TEXTS = [
+  '刚刷到就冲了！！！', '蹲一下正片', '好绝', '姐妹一起磕', '这段真的哭死',
+  '好会营业啊，拿捏了', '细节狂魔', '锁死锁死锁死', '好想去现场',
+  '这镜头感…封神', '姐姐好美，赢麻了', '偷偷收藏了', '嗑到了', '好上头',
 ];
-function sampleComments() {
-  const shuffled = [...COMMENT_POOL].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 3);
+const GENERIC_NICKS = ['甜栗子壳', '路人甲', 'emo酱', '摸鱼中', '蹲个瓜', '看她剪影', '云吸猫'];
+
+function sampleCommentsForArtist(nickPool: string[]): { nick: string; text: string }[] {
+  const nicks = [...nickPool, ...GENERIC_NICKS].sort(() => Math.random() - 0.5).slice(0, 3);
+  const texts = [...GENERIC_COMMENT_TEXTS].sort(() => Math.random() - 0.5).slice(0, 3);
+  return nicks.map((n, i) => ({
+    nick: n.replace(/\{name\}/g, ''),
+    text: texts[i],
+  }));
 }
 
 function FooterAction({
