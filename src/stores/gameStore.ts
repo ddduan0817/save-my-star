@@ -410,9 +410,9 @@ export const useGameStore = create<GameStore>()(
     let finalNarration = result.narration;
     let leaked = false;
 
-    // 小号泄露：用经纪人小号发了"替艺人发博"的模板 → 有 45% 概率被扒是小号
+    // 小号泄露：用经纪人小号发了"替艺人发博"的模板 → 有 75% 概率被扒是小号
     if (burnerIdentity === 'self') {
-      leaked = Math.random() < 0.45;
+      leaked = Math.random() < 0.75;
       if (leaked) {
         finalStatChanges = {
           ...finalStatChanges,
@@ -421,6 +421,14 @@ export const useGameStore = create<GameStore>()(
           commercialValue: (finalStatChanges.commercialValue ?? 0) - 8,
         };
         finalNarration = `你手滑用了自己的小号发了这条本该艺人本人说的话。粉丝很快扒到你俩发博 IP 一致、常互动、连语气都对得上——"经纪人小号"实锤，「${artist.name}人设是团队操控」上热搜。`;
+      } else {
+        // 没被扒也有隐性代价：粉丝观察力越来越强
+        finalStatChanges = {
+          ...finalStatChanges,
+          prRisk: (finalStatChanges.prRisk ?? 0) + 8,
+          fanLoyalty: (finalStatChanges.fanLoyalty ?? 0) - 3,
+        };
+        finalNarration = `这条从你自己的小号发出去了，语气怪怪的，评论区有人开始 @粉丝头子："这号我怎么感觉在哪见过？"暂时没被实锤，但你后背发凉。\n\n${result.narration}`;
       }
     }
 
