@@ -15,6 +15,7 @@ import { weiboPostTemplates } from '@/data/weiboPosts';
 import { sfxClick } from '@/lib/sounds';
 import { artistNicknames } from '@/engine/socialGenerator';
 import {
+  formatEngagementCount,
   generateSceneComments,
   hydrateWeiboPostRecord,
   inferLegacySceneId,
@@ -750,7 +751,9 @@ function FooterAction({
       )}
     >
       {icon}
-      <span className="text-[12px] tabular-nums">{value > 0 ? value : ''}</span>
+      <span className="text-[12px] tabular-nums">
+        {value > 0 ? formatEngagementCount(value) : ''}
+      </span>
     </button>
   );
 }

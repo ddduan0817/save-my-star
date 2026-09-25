@@ -17,6 +17,7 @@ import type {
 } from '@/types/game';
 import {
   createStableEngagement,
+  formatEngagementCount,
   generateSceneComments,
   hydrateWeiboPostRecord,
   inferLegacySceneId,
@@ -150,7 +151,17 @@ describe('deterministic content helpers', () => {
 
     expect(first).toEqual(second);
     expect(Object.values(first).every(Number.isInteger)).toBe(true);
-    expect(Object.values(first).every(value => value >= 0)).toBe(true);
+    expect(first.likes).toBeGreaterThanOrEqual(120000);
+    expect(first.comments).toBeGreaterThanOrEqual(12000);
+    expect(first.reposts).toBeGreaterThanOrEqual(20000);
+  });
+
+  it('formats five-digit engagement counts in ten-thousands', () => {
+    expect(formatEngagementCount(9999)).toBe('9999');
+    expect(formatEngagementCount(10000)).toBe('10000');
+    expect(formatEngagementCount(10500)).toBe('1.1万');
+    expect(formatEngagementCount(85649)).toBe('8.6万');
+    expect(formatEngagementCount(120000)).toBe('12万');
   });
 
   it('keeps an unseen burner post at private-account scale', () => {
@@ -419,5 +430,22 @@ describe('legacy scene inference', () => {
     expect(hydrated.engagement).toEqual(
       createStableEngagement(hydrated.id, hydrated.sceneId),
     );
+  });
+
+  it('upgrades persisted artist posts that still use the old low engagement scale', () => {
+    const hydrated = hydrateWeiboPostRecord({
+      id: 'legacy-low-engagement',
+      templateId: 'post_work_photo',
+      day: 1,
+      sceneId: 'artist_work_photo',
+      content: '旧微博',
+      outcome: 'success',
+      engagement: { likes: 85649, comments: 515, reposts: 6851 },
+      wasBackfire: false,
+    }, 'idol');
+
+    expect(hydrated.engagement.likes).toBeGreaterThanOrEqual(120000);
+    expect(hydrated.engagement.comments).toBeGreaterThanOrEqual(12000);
+    expect(hydrated.engagement.reposts).toBeGreaterThanOrEqual(20000);
   });
 });

@@ -544,6 +544,12 @@ function stableRange(seed: string, minimum: number, maximum: number): number {
   return minimum + (stableHash(seed) % (maximum - minimum + 1));
 }
 
+const ARTIST_ENGAGEMENT_MINIMUMS = {
+  likes: 120000,
+  comments: 12000,
+  reposts: 20000,
+};
+
 export function createStableEngagement(
   seed: string,
   sceneId: WeiboSceneId,
@@ -552,7 +558,7 @@ export function createStableEngagement(
   const ranges = visibility === 'private'
     ? { likes: [0, 12], comments: [0, 3], reposts: [0, 2] }
     : sceneId.startsWith('artist_')
-    ? { likes: [8000, 88000], comments: [300, 9000], reposts: [800, 22000] }
+    ? { likes: [120000, 980000], comments: [12000, 98000], reposts: [20000, 180000] }
     : sceneId.startsWith('burner_')
       ? { likes: [20, 6000], comments: [5, 900], reposts: [2, 1200] }
       : { likes: [200, 18000], comments: [20, 2600], reposts: [30, 5000] };
@@ -572,6 +578,12 @@ export function createStableEngagement(
   };
 }
 
+export function formatEngagementCount(value: number): string {
+  if (value <= 10000) return String(value);
+  const wan = (value / 10000).toFixed(1).replace(/\.0$/, '');
+  return `${wan}万`;
+}
+
 export function hydrateWeiboPostRecord(
   record: WeiboPostRecord,
   artistId: ArtistArchetype,
@@ -588,6 +600,13 @@ export function hydrateWeiboPostRecord(
     ?? (template
       ? selectArtistPostContent(template, artistId, id)
       : '这条旧微博的正文暂时无法恢复。');
+  const legacyArtistEngagement = sceneId.startsWith('artist_')
+    && record.engagement
+    && (
+      record.engagement.likes < ARTIST_ENGAGEMENT_MINIMUMS.likes
+      || record.engagement.comments < ARTIST_ENGAGEMENT_MINIMUMS.comments
+      || record.engagement.reposts < ARTIST_ENGAGEMENT_MINIMUMS.reposts
+    );
 
   return {
     ...record,
@@ -595,7 +614,9 @@ export function hydrateWeiboPostRecord(
     sceneId,
     content,
     outcome,
-    engagement: record.engagement ?? createStableEngagement(id, sceneId),
+    engagement: !record.engagement || legacyArtistEngagement
+      ? createStableEngagement(id, sceneId)
+      : record.engagement,
     imageKey: record.imageKey ?? (
       template ? getWeiboPostImage(artistId, template.imageSlot) : undefined
     ),
