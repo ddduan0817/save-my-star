@@ -135,13 +135,13 @@ export default function BurnerTab() {
         <div className="flex items-center gap-3">
           <button onClick={toggleIdentity} className="relative shrink-0 active:scale-95 transition-transform">
             <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-xl shadow-sm">
-              {burnerIdentity === 'self' ? '🕶️' : '✨'}
+              {burnerIdentity === 'self' ? '🕶️' : (artist?.avatar ?? '✨')}
             </div>
             <span className={cn(
               'absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ring-2 ring-white',
               burnerIdentity === 'self' ? 'bg-gray-800 text-white' : 'bg-red-500 text-white',
             )}>
-              {burnerIdentity === 'self' ? '我' : '艺'}
+              {burnerIdentity === 'self' ? '小号' : '大号'}
             </span>
           </button>
           <button
@@ -267,6 +267,18 @@ export default function BurnerTab() {
               <div className="mx-auto w-10 h-1 rounded-full bg-gray-200 mb-3" />
 
               <div className="px-4 space-y-2">
+                <div className="text-[11px] text-gray-500 px-1 pb-1 flex items-center gap-1.5">
+                  <span>当前身份：</span>
+                  <span className={cn(
+                    'inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[10px] font-medium',
+                    burnerIdentity === 'self' ? 'bg-gray-800 text-white' : 'bg-red-500 text-white',
+                  )}>
+                    {burnerIdentity === 'self' ? '🕶️ 小号' : `${artist?.avatar ?? '✨'} ${artist?.name ?? '大号'}`}
+                  </span>
+                  {burnerIdentity === 'self' && (
+                    <span className="text-[10px] text-red-500 ml-auto">替艺人发博用小号会泄露</span>
+                  )}
+                </div>
                 <DrawerRow
                   icon={<Eye size={18} strokeWidth={2.2} />}
                   tone="blue"
@@ -294,9 +306,7 @@ export default function BurnerTab() {
                   onClick={handleReverse}
                   disabled={dailyBurnerActionUsed || notEnoughEnergy}
                 />
-
-                <div className="pt-2">
-                  <div className="text-[10px] text-gray-400 px-1 pb-1.5">大号操作</div>
+                <div className="pt-1">
                   <WeiboCompose />
                 </div>
               </div>

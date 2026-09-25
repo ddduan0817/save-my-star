@@ -398,7 +398,7 @@ export const useGameStore = create<GameStore>()(
   },
 
   postWeibo: (templateId: string) => {
-    const { dailyPostUsed, stats, artist, activeTags, weiboTrends, weiboPostHistory, currentDay } = get();
+    const { dailyPostUsed, stats, artist, activeTags, weiboTrends, weiboPostHistory, currentDay, burnerIdentity } = get();
     if (dailyPostUsed || !artist) return;
 
     const template = weiboPostTemplates.find(t => t.id === templateId);
@@ -406,21 +406,48 @@ export const useGameStore = create<GameStore>()(
 
     const result = resolveWeiboPost(template, stats, artist.id, artist.name);
 
-    const finalStatChanges = result.statChanges;
-    const finalNarration = result.narration;
+    let finalStatChanges = result.statChanges;
+    let finalNarration = result.narration;
+    let leaked = false;
 
-    // Apply stat changes through engine (artist modifiers apply)
+    // 小号泄露：用经纪人小号发了"替艺人发博"的模板 → 有 45% 概率被扒是小号
+    if (burnerIdentity === 'self') {
+      leaked = Math.random() < 0.45;
+      if (leaked) {
+        finalStatChanges = {
+          ...finalStatChanges,
+          prRisk: (finalStatChanges.prRisk ?? 0) + 30,
+          fanLoyalty: (finalStatChanges.fanLoyalty ?? 0) - 25,
+          commercialValue: (finalStatChanges.commercialValue ?? 0) - 8,
+        };
+        finalNarration = `你手滑用了自己的小号发了这条本该艺人本人说的话。粉丝很快扒到你俩发博 IP 一致、常互动、连语气都对得上——"经纪人小号"实锤，「${artist.name}人设是团队操控」上热搜。`;
+      }
+    }
+
     const newStats = applyStatChanges(stats, finalStatChanges, artist.id);
 
-    // Inject trend at #1, re-rank others
-    const updatedTrends = [
-      result.trendEntry,
-      ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })),
-    ];
+    const updatedTrends = leaked
+      ? [
+          {
+            rank: 1,
+            title: `${artist.name} 疑似经纪人操控人设`,
+            heat: `${Math.floor(Math.random() * 300) + 250}万`,
+            isHot: true,
+            sentiment: 'negative' as const,
+          },
+          ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })).slice(0, 9),
+        ]
+      : [
+          result.trendEntry,
+          ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })),
+        ];
 
     const newTags = [...activeTags];
-    if (!result.isBackfire && template.unlockTag) {
+    if (!result.isBackfire && !leaked && template.unlockTag) {
       newTags.push(template.unlockTag);
+    }
+    if (leaked && !newTags.includes('burner_exposed')) {
+      newTags.push('burner_exposed');
     }
 
     set({
@@ -429,7 +456,7 @@ export const useGameStore = create<GameStore>()(
       weiboPostHistory: [...weiboPostHistory, {
         templateId,
         day: currentDay,
-        wasBackfire: result.isBackfire,
+        wasBackfire: result.isBackfire || leaked,
       }],
       weiboTrends: updatedTrends,
       lastPostNarration: finalNarration,
@@ -621,9 +648,8 @@ export const useGameStore = create<GameStore>()(
     if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
     const rival = state.rival;
     const rivalName = rival?.name ?? '对家';
-    const artistName = state.artist?.name ?? 'TA';
-    // 大号身份下"黑对家" = 本人下场撕，必然翻车 + 上热搜
-    const misfire = state.burnerIdentity === 'artist';
+    // 黑对家：小号和大号都能操作；15% 随机翻车
+    const backfire = Math.random() < 0.15;
     const templates = [
       `笑死，${rivalName} 那新剧的评分是靠水军刷的吧，我朋友在业内的都在传😅`,
       `有一说一 ${rivalName} 这营销做得跟屎一样，还敢出来蹦跶`,
@@ -631,49 +657,34 @@ export const useGameStore = create<GameStore>()(
     ];
     const content = templates[Math.floor(Math.random() * templates.length)];
     const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
-    const newRival: typeof rival = rival && !misfire
+    const newRival: typeof rival = rival && !backfire
       ? { ...rival, stats: { ...rival.stats, prRisk: Math.min(100, rival.stats.prRisk + 10) } }
       : rival;
     const post = {
       id: `burner_${Date.now()}`,
       action: 'smear_rival' as const,
       time: `第 ${state.currentDay} 天`,
-      content: misfire ? `${content}  [账号 ${artistName} 已发送]` : content,
+      content,
       likes: Math.floor(Math.random() * 400) + 60,
       comments: Math.floor(Math.random() * 200) + 20,
       reposts: Math.floor(Math.random() * 80) + 5,
-      backfired: misfire,
+      backfired: backfire,
     };
-    // 大号翻车时注入热搜
-    const updatedTrends = misfire
-      ? [
-          {
-            rank: 1,
-            title: `${artistName} 亲自下场撕 ${rivalName}`,
-            heat: `${Math.floor(Math.random() * 300) + 200}万`,
-            isHot: true,
-            sentiment: 'negative' as const,
-          },
-          ...state.weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })).slice(0, 9),
-        ]
-      : state.weiboTrends;
     set({
       mentalState: newMental,
       rival: newRival,
-      stats: misfire
+      stats: backfire
         ? {
             ...state.stats,
-            prRisk: Math.min(100, state.stats.prRisk + 40),
-            fanLoyalty: Math.max(0, state.stats.fanLoyalty - 30),
-            commercialValue: Math.max(0, state.stats.commercialValue - 10),
+            prRisk: Math.min(100, state.stats.prRisk + 18),
+            fanLoyalty: Math.max(0, state.stats.fanLoyalty - 10),
           }
         : { ...state.stats, prRisk: Math.max(0, state.stats.prRisk - 3) },
-      managerStress: Math.min(100, state.managerStress + (misfire ? 30 : 5)),
+      managerStress: Math.min(100, state.managerStress + (backfire ? 15 : 5)),
       burnerFeed: [post, ...state.burnerFeed],
-      weiboTrends: updatedTrends,
       dailyBurnerActionUsed: true,
     });
-    return { ok: true, backfire: misfire };
+    return { ok: true, backfire };
   },
 
   reverseAttack: () => {
@@ -681,9 +692,8 @@ export const useGameStore = create<GameStore>()(
     if (state.dailyBurnerActionUsed) return { ok: false, reason: '今日已操作过小号' };
     if (state.mentalState.energy < 15) return { ok: false, reason: '艺人精力不足（需 15）' };
     const artistName = state.artist?.name ?? 'TA';
-    // 大号身份下"反串黑自家" = 亲自演戏卖惨，被扒穿几乎必然
-    const misfire = state.burnerIdentity === 'artist';
-    const backfire = misfire || Math.random() < 0.15;
+    // 反串黑：小号和大号都能操作；15% 随机翻车
+    const backfire = Math.random() < 0.15;
     const templates = backfire
       ? [
           `被扒了……我小号被抓包挂在热搜了，社死`,
@@ -698,14 +708,7 @@ export const useGameStore = create<GameStore>()(
     const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
     let newStats = { ...state.stats };
     let stress = state.managerStress + 8;
-    if (misfire) {
-      newStats = {
-        ...newStats,
-        prRisk: Math.min(100, newStats.prRisk + 30),
-        fanLoyalty: Math.max(0, newStats.fanLoyalty - 25),
-      };
-      stress += 20;
-    } else if (backfire) {
+    if (backfire) {
       newStats = {
         ...newStats,
         prRisk: Math.min(100, newStats.prRisk + 20),
@@ -722,7 +725,7 @@ export const useGameStore = create<GameStore>()(
       id: `burner_${Date.now()}`,
       action: 'reverse_attack' as const,
       time: `第 ${state.currentDay} 天`,
-      content: misfire ? `${content}  [账号 ${artistName} 已发送]` : content,
+      content,
       likes: Math.floor(Math.random() * 500) + 80,
       comments: Math.floor(Math.random() * 300) + 30,
       reposts: Math.floor(Math.random() * 120) + 10,
@@ -733,18 +736,6 @@ export const useGameStore = create<GameStore>()(
       stats: newStats,
       managerStress: Math.min(100, stress),
       burnerFeed: [post, ...state.burnerFeed],
-      weiboTrends: misfire
-        ? [
-            {
-              rank: 1,
-              title: `${artistName} 疑似小号反串黑自己`,
-              heat: `${Math.floor(Math.random() * 250) + 180}万`,
-              isHot: true,
-              sentiment: 'negative' as const,
-            },
-            ...state.weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })).slice(0, 9),
-          ]
-        : state.weiboTrends,
       dailyBurnerActionUsed: true,
     });
     return { ok: true, backfire };
