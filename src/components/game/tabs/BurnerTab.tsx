@@ -190,14 +190,14 @@ export default function BurnerTab() {
               'absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ring-2 ring-white',
               burnerIdentity === 'self' ? 'bg-gray-800 text-white' : 'bg-red-500 text-white',
             )}>
-              {burnerIdentity === 'self' ? '小号' : '大号'}
+              {burnerIdentity === 'self' ? '小号' : '艺人'}
             </span>
           </button>
           <button
             onClick={() => setDrawerOpen(true)}
             className="flex-1 text-left bg-gray-50 rounded-full px-4 py-2.5 text-[13px] text-gray-400 active:bg-gray-100"
           >
-            {burnerIdentity === 'self' ? '点我发条微博…' : `以 ${artist?.name ?? '大号'} 身份发博…`}
+            {burnerIdentity === 'self' ? '点我发条微博…' : `以${artist?.name ?? '艺人'}身份发博…`}
           </button>
         </div>
       </div>
