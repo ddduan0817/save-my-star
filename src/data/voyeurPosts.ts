@@ -383,7 +383,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     authorTag: '对家毒唯',
     avatar: '🐍',
     time: '6 小时前',
-    content: '所以 {name} 的团队什么时候能学会说人话？每次公关都像在挑衅粉丝智商，你家爱豆是不是很想被扒？',
+    content: '所以 {name} 的团队什么时候能学会说人话？每次公关都像在挑衅粉丝智商，你家艺人是不是很想被扒？',
     likes: 342,
     comments: 890,
     isIntel: false,
