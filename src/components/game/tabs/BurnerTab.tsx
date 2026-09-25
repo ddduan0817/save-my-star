@@ -50,6 +50,8 @@ export default function BurnerTab() {
   const weiboTrends = useGameStore(s => s.weiboTrends);
   const burnerIdentity = useGameStore(s => s.burnerIdentity) ?? 'self';
   const switchBurnerIdentity = useGameStore(s => s.switchBurnerIdentity);
+  const weiboPostHistory = useGameStore(s => s.weiboPostHistory);
+  const currentDay = useGameStore(s => s.currentDay);
 
   const [voyeurFeed, setVoyeurFeed] = useState<VoyeurPost[]>([]);
   const [toast, setToast] = useState<string | null>(null);
@@ -239,6 +241,34 @@ export default function BurnerTab() {
           </div>
         )}
 
+        {/* 艺人本人发的博（今日+近3日） */}
+        {weiboPostHistory
+          .filter(rec => currentDay - rec.day <= 3)
+          .slice()
+          .reverse()
+          .map((rec, idx) => {
+            const template = weiboPostTemplates.find(t => t.id === rec.templateId);
+            if (!template || !artist) return null;
+            const raw = rec.wasBackfire && template.backfireNarration ? template.backfireNarration : template.successNarration;
+            const content = raw.replace(/\{name\}/g, artist.name);
+            const daysAgo = currentDay - rec.day;
+            const timeLabel = daysAgo === 0 ? '刚刚' : `${daysAgo}天前`;
+            return (
+              <WeiboCard
+                key={`artistpost_${rec.day}_${idx}`}
+                avatar={artist.avatar}
+                nickname={artist.name}
+                time={timeLabel}
+                content={content}
+                likes={Math.floor(Math.random() * 8000) + 2000}
+                comments={Math.floor(Math.random() * 1500) + 300}
+                reposts={Math.floor(Math.random() * 2000) + 400}
+                isSelf
+                backfired={rec.wasBackfire}
+              />
+            );
+          })}
+
         {burnerFeed.map(post => (
           <WeiboCard
             key={post.id}
@@ -265,7 +295,7 @@ export default function BurnerTab() {
             reposts={Math.floor(post.likes / 8)}
           />
         ))}
-        {burnerFeed.length === 0 && voyeurFeed.length === 0 && (
+        {burnerFeed.length === 0 && voyeurFeed.length === 0 && weiboPostHistory.length === 0 && (
           <div className="text-center text-xs text-gray-400 py-12">
             点上方输入框，选「视奸粉圈」刷一波动态
           </div>
