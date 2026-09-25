@@ -9,6 +9,7 @@ import { sfxClick, sfxMoney } from '@/lib/sounds';
 import { upgradeIconMap, IconOverview, IconFansite, IconInsurance } from '@/components/icons';
 import FansiteManager from '@/components/game/features/FansiteManager';
 import InsuranceShop from '@/components/game/features/InsuranceShop';
+import ManagerLevelCard from '@/components/game/features/ManagerLevelCard';
 import CollapseWarningPanel from '@/components/game/stats/CollapseWarning';
 
 const FAME_LABELS: Record<string, { text: string; color: string }> = {
@@ -49,6 +50,8 @@ export default function WorkspaceTab() {
 
   return (
     <div className="flex-1 px-4 py-4 space-y-4 pb-24">
+      <ManagerLevelCard />
+
       {/* 塌房预警面板 */}
       <CollapseWarningPanel warning={collapseWarning} indicators={riskIndicators} />
 
