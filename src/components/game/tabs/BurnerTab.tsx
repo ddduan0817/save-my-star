@@ -250,7 +250,7 @@ export default function BurnerTab() {
             const template = weiboPostTemplates.find(t => t.id === rec.templateId);
             if (!template || !artist) return null;
             const raw = rec.wasBackfire && template.backfireNarration ? template.backfireNarration : template.successNarration;
-            const content = raw.replace(/\{name\}/g, artist.name);
+            const content = renderWithName(raw, artist.name);
             const daysAgo = currentDay - rec.day;
             const timeLabel = daysAgo === 0 ? '刚刚' : `${daysAgo}天前`;
             return (
@@ -272,10 +272,10 @@ export default function BurnerTab() {
         {burnerFeed.map(post => (
           <WeiboCard
             key={post.id}
-            avatar="🕶️"
-            nickname={artist ? `${artist.name.slice(0, 2)}的小号` : '匿名小号'}
+            avatar={artist?.avatar ?? '🕶️'}
+            nickname={artist ? `${artist.name}的小号` : '匿名小号'}
             time={post.time}
-            content={post.content}
+            content={artist ? renderWithName(post.content, artist.name) : post.content}
             likes={post.likes}
             comments={post.comments}
             reposts={post.reposts}
@@ -289,7 +289,7 @@ export default function BurnerTab() {
             avatar={post.avatar}
             nickname={post.nickname ?? '匿名用户'}
             time={post.time}
-            content={post.content}
+            content={artist ? renderWithName(post.content, artist.name) : post.content}
             likes={post.likes}
             comments={post.comments}
             reposts={Math.floor(post.likes / 8)}
@@ -473,11 +473,20 @@ function DrawerCard({ icon, tone, title, desc, onClick, disabled }: DrawerCardPr
   );
 }
 
+function renderWithName(raw: string, name: string): React.ReactNode {
+  const parts = raw.split(/ ?\{name\} ?/g);
+  return parts.reduce<React.ReactNode[]>((acc, part, i) => {
+    if (i > 0) acc.push(<strong key={`n${i}`} className="font-semibold text-gray-900">{name}</strong>);
+    if (part) acc.push(part);
+    return acc;
+  }, []);
+}
+
 interface WeiboCardProps {
   avatar: string;
   nickname: string;
   time: string;
-  content: string;
+  content: React.ReactNode;
   likes: number;
   comments: number;
   reposts: number;
