@@ -9,7 +9,8 @@ import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
 import { GAME_CONFIG } from '@/data/constants';
 import WeiboCompose from '@/components/game/features/WeiboCompose';
 
-const SUB_TAB_LABEL = '推荐';
+const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
+const ACTIVE_SUB_TAB = '推荐';
 
 export default function BurnerTab() {
   const artist = useGameStore(s => s.artist);
@@ -107,12 +108,25 @@ export default function BurnerTab() {
             <Bell size={18} strokeWidth={2} />
           </button>
         </div>
-        {/* 固定"推荐"标签（不可切换） */}
+        {/* 二级 tab：全部展示但只固定"推荐"高亮，其余为灰不可点 */}
         <div className="flex items-center px-2 h-9">
-          <div className="relative px-3 py-1.5 text-[13px] text-gray-900 font-medium">
-            {SUB_TAB_LABEL}
-            <span className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[3px] w-4 rounded-full bg-[#ff8200]" />
-          </div>
+          {SUB_TABS.map(t => {
+            const active = t === ACTIVE_SUB_TAB;
+            return (
+              <div
+                key={t}
+                className={cn(
+                  'relative px-3 py-1.5 text-[13px] select-none',
+                  active ? 'text-gray-900 font-medium' : 'text-gray-400',
+                )}
+              >
+                {t}
+                {active && (
+                  <span className="absolute left-1/2 -translate-x-1/2 bottom-0 h-[3px] w-4 rounded-full bg-[#ff8200]" />
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
