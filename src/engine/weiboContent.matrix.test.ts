@@ -132,7 +132,10 @@ describe('Weibo content matrix', () => {
       .toBe('./weibo/socialite/work_photo.jpg');
     expect(getWeiboPostImage('socialite', 'fan_gift'))
       .toBe('./weibo/socialite/fan_gift.jpg');
-    expect(getWeiboPostImage('influencer', 'work_photo')).toBeUndefined();
+    expect(getWeiboPostImage('influencer', 'work_photo'))
+      .toBe('./weibo/influencer/work_photo.jpg');
+    expect(getWeiboPostImage('influencer', 'romance_hint'))
+      .toBe('./weibo/influencer/romance_hint.jpg');
     expect(getWeiboPostImage('idol')).toBeUndefined();
   });
 

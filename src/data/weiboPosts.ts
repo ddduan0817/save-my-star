@@ -479,6 +479,13 @@ const WEIBO_POST_IMAGES: Partial<Record<ArtistArchetype, Record<string, string>>
     fan_gift: './weibo/singer/fan_gift.jpg',
     romance_hint: './weibo/singer/romance_hint.jpg',
   },
+  influencer: {
+    work_photo: './weibo/influencer/work_photo.jpg',
+    selfie: './weibo/influencer/selfie.jpg',
+    work_promotion: './weibo/influencer/work_promotion.jpg',
+    fan_gift: './weibo/influencer/fan_gift.jpg',
+    romance_hint: './weibo/influencer/romance_hint.jpg',
+  },
   socialite: {
     work_photo: './weibo/socialite/work_photo.jpg',
     selfie: './weibo/socialite/selfie.jpg',
