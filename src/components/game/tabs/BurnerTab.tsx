@@ -302,24 +302,25 @@ export default function BurnerTab() {
         )}
       </div>
 
-      {/* 底部抽屉 */}
+      {/* 底部抽屉 —— 约束在手机框内 */}
       <AnimatePresence>
         {drawerOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-x-0 bottom-16 z-40 flex justify-center pointer-events-none"
+            className="fixed inset-0 z-50 bg-transparent flex justify-center pointer-events-none"
             onClick={() => setDrawerOpen(false)}
           >
-            <motion.div
-              initial={{ y: '110%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '110%' }}
-              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-              className="w-full bg-white rounded-t-3xl ring-1 ring-gray-200/70 shadow-lg pb-4 pointer-events-auto"
-              onClick={e => e.stopPropagation()}
-            >
+            <div className="relative w-full max-w-[440px] pointer-events-auto" onClick={() => setDrawerOpen(false)}>
+              <motion.div
+                initial={{ y: '110%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '110%' }}
+                transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+                className="absolute bottom-16 left-0 right-0 bg-white rounded-t-3xl ring-1 ring-gray-200/70 shadow-lg pb-3 max-h-[70vh] flex flex-col"
+                onClick={e => e.stopPropagation()}
+              >
               <div className="flex items-center justify-between px-5 pt-4 pb-2">
                 <div className="text-[15px] font-semibold text-gray-800">今天想做点什么？</div>
                 <button
@@ -331,8 +332,8 @@ export default function BurnerTab() {
               </div>
               <div className="mx-auto w-10 h-1 rounded-full bg-gray-200 mb-3" />
 
-              <div className="px-4">
-                <div className="grid grid-cols-2 gap-2">
+              <div className="px-4 overflow-y-auto flex-1">
+                <div className="grid grid-cols-2 gap-2 pb-2">
                   <DrawerCard
                     icon={<Eye size={18} strokeWidth={2.2} />}
                     tone="blue"
@@ -368,7 +369,8 @@ export default function BurnerTab() {
                   })}
                 </div>
               </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -380,7 +382,7 @@ export default function BurnerTab() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center px-6 pointer-events-none"
+            className="fixed inset-0 z-[60] flex items-center justify-center px-6 pointer-events-none"
             onClick={dismissPostResult}
           >
             <motion.div
@@ -447,28 +449,25 @@ interface DrawerCardProps {
 
 function DrawerCard({ icon, tone, title, desc, hint, onClick, disabled }: DrawerCardProps) {
   const toneClass = {
-    blue: 'bg-gradient-to-br from-sky-50 to-sky-100 text-sky-500 ring-sky-200/40',
-    orange: 'bg-gradient-to-br from-orange-50 to-orange-100 text-orange-500 ring-orange-200/40',
-    pink: 'bg-gradient-to-br from-pink-50 to-pink-100 text-pink-500 ring-pink-200/40',
+    blue: 'bg-sky-50 text-sky-500',
+    orange: 'bg-orange-50 text-orange-500',
+    pink: 'bg-pink-50 text-pink-500',
   }[tone];
   return (
     <button
       onClick={onClick}
       disabled={disabled}
       className={cn(
-        'flex items-start gap-2.5 rounded-2xl px-3 py-2.5 ring-1 ring-gray-100/70 bg-white active:bg-gray-50 transition text-left',
-        disabled && 'opacity-40',
+        'flex items-center gap-2 rounded-2xl px-2.5 py-2 bg-white text-left transition',
+        disabled ? 'opacity-40' : 'hover:bg-gray-50 active:bg-gray-100',
       )}
     >
-      <span className={cn('w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ring-1', toneClass)}>
+      <span className={cn('w-8 h-8 rounded-lg flex items-center justify-center shrink-0', toneClass)}>
         {icon}
       </span>
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between gap-1">
-          <span className="text-[12.5px] font-medium text-gray-800 truncate">{title}</span>
-        </div>
-        <div className="text-[10.5px] text-gray-400 truncate">{desc}</div>
-        <div className="text-[9.5px] text-gray-300 mt-0.5">{hint}</div>
+        <div className="text-[12.5px] font-medium text-gray-800 truncate leading-tight">{title}</div>
+        <div className="text-[10px] text-gray-400 truncate leading-tight mt-0.5">{disabled ? hint : desc}</div>
       </div>
     </button>
   );
