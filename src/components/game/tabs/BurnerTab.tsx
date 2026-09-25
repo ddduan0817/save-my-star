@@ -312,7 +312,7 @@ export default function BurnerTab() {
             className="fixed inset-0 z-50 bg-transparent flex justify-center pointer-events-none"
             onClick={() => setDrawerOpen(false)}
           >
-            <div className="relative w-full max-w-[440px] pointer-events-auto" onClick={() => setDrawerOpen(false)}>
+            <div className="relative w-full max-w-lg pointer-events-auto" onClick={() => setDrawerOpen(false)}>
               <motion.div
                 initial={{ y: '110%' }}
                 animate={{ y: 0 }}
