@@ -29,15 +29,15 @@
 
 ### 郝美丽
 
-#### `public/weibo/actor/work_photo.webp`
+#### `public/weibo/actor/work_photo.jpg`（已提供并处理）
 
 年轻女演员郝美丽，深棕色长卷发，穿低饱和年代戏服装，在片场灯光下低头翻阅有折角的剧本，旁边有场记板和虚化摄影机；神情专注克制，不看镜头，像剧组工作人员抓拍；暖灰电影光，横版中景。
 
-#### `public/weibo/actor/selfie.webp`
+#### `public/weibo/actor/selfie.jpg`（已提供并处理）
 
 郝美丽在化妆间等待下一场戏的自然自拍，深棕长发做成简洁角色造型，妆容干净，穿浅色戏服或针织外套；背景只有镜前灯和模糊衣架，表情安静放松，不使用夸张滤镜，不比手势。
 
-#### `public/weibo/actor/work_promotion.webp`
+#### `public/weibo/actor/work_promotion.jpg`（已提供并处理）
 
 郝美丽主演文艺剧情片的无字概念海报，她站在雨后老城区街口，深色风衣，神情复杂克制，远处路灯与湿润路面形成电影质感；横版构图，左侧保留大片负空间，不生成片名、奖项或演员表。
 
@@ -101,11 +101,11 @@
 
 ### 郝美丽
 
-#### `public/weibo/actor/fan_gift.webp`
+#### `public/weibo/actor/fan_gift.jpg`（已提供并处理）
 
 片场化妆桌上摊开的角色分析手账、影迷来信、装订整齐的观剧笔记和一束淡色花，郝美丽的手压着其中一页；电影感暖光，不出现可识别文字，不要奢侈礼盒。
 
-#### `public/weibo/actor/romance_hint.webp`
+#### `public/weibo/actor/romance_hint.jpg`（已提供并处理）
 
 安静咖啡馆窗边，两本打开的电影剧本、两杯咖啡和一条搭在对面椅背上的中性围巾，雨水留在玻璃上；像女演员随手记录的生活片段，暧昧但没有人物正脸和明确情侣动作。
 

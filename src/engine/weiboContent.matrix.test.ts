@@ -120,7 +120,11 @@ describe('Weibo content matrix', () => {
       .toBe('./weibo/idol/work_photo.jpg');
     expect(getWeiboPostImage('idol', 'romance_hint'))
       .toBe('./weibo/idol/romance_hint.jpg');
-    expect(getWeiboPostImage('actor', 'work_photo')).toBeUndefined();
+    expect(getWeiboPostImage('actor', 'work_photo'))
+      .toBe('./weibo/actor/work_photo.jpg');
+    expect(getWeiboPostImage('actor', 'fan_gift'))
+      .toBe('./weibo/actor/fan_gift.jpg');
+    expect(getWeiboPostImage('singer', 'work_photo')).toBeUndefined();
     expect(getWeiboPostImage('idol')).toBeUndefined();
   });
 
