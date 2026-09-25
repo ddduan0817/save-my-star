@@ -194,7 +194,7 @@ export interface GameState {
 
 export interface BurnerPost {
   id: string;
-  action: 'smear_rival' | 'reverse_attack';
+  action: 'smear_rival' | 'reverse_attack' | 'weibo_template';
   time: string;
   content: string;
   likes: number;

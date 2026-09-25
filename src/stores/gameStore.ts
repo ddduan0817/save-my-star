@@ -430,6 +430,8 @@ export const useGameStore = create<GameStore>()(
 
     const newStats = applyStatChanges(stats, finalStatChanges, artist.id);
 
+    const isPrivateBurnerPost = burnerIdentity === 'self' && !leaked;
+
     const updatedTrends = leaked
       ? [
           {
@@ -441,27 +443,49 @@ export const useGameStore = create<GameStore>()(
           },
           ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })).slice(0, 9),
         ]
-      : [
-          result.trendEntry,
-          ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })),
-        ];
+      : isPrivateBurnerPost
+        ? weiboTrends
+        : [
+            result.trendEntry,
+            ...weiboTrends.map(t => ({ ...t, rank: t.rank + 1 })),
+          ];
 
     const newTags = [...activeTags];
-    if (!result.isBackfire && !leaked && template.unlockTag) {
+    if (!result.isBackfire && !leaked && !isPrivateBurnerPost && template.unlockTag) {
       newTags.push(template.unlockTag);
     }
     if (leaked && !newTags.includes('burner_exposed')) {
       newTags.push('burner_exposed');
     }
 
+    const rawContent = template.postContent ?? template.successNarration;
+    const contentFilled = rawContent.replace(/\{name\}/g, artist.name);
+
     set({
       stats: newStats,
       dailyPostUsed: true,
-      weiboPostHistory: [...weiboPostHistory, {
-        templateId,
-        day: currentDay,
-        wasBackfire: result.isBackfire || leaked,
-      }],
+      weiboPostHistory: isPrivateBurnerPost
+        ? weiboPostHistory
+        : [...weiboPostHistory, {
+            templateId,
+            day: currentDay,
+            wasBackfire: result.isBackfire || leaked,
+          }],
+      burnerFeed: isPrivateBurnerPost
+        ? [
+            {
+              id: `bp_${Date.now()}`,
+              action: 'weibo_template',
+              time: '刚刚',
+              content: contentFilled,
+              likes: Math.floor(Math.random() * 15) + 3,
+              comments: Math.floor(Math.random() * 5),
+              reposts: Math.floor(Math.random() * 3),
+              backfired: false,
+            },
+            ...get().burnerFeed,
+          ]
+        : get().burnerFeed,
       weiboTrends: updatedTrends,
       lastPostNarration: finalNarration,
       lastPostStatChanges: finalStatChanges,
