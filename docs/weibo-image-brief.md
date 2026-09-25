@@ -73,15 +73,15 @@
 
 ### 南陌格
 
-#### `public/weibo/socialite/work_photo.webp`
+#### `public/weibo/socialite/work_photo.jpg`（已提供并处理）
 
 年轻男性艺人南陌格，黑色后梳碎发、锐利五官，穿黑色西装配低调金色细节，在高端时装拍摄后台接受最后的衣领调整；他侧身看向棚内灯光，神情疏离克制，背景有虚化柔光箱与衣架；金黑色电影光，横版中景。
 
-#### `public/weibo/socialite/selfie.webp`
+#### `public/weibo/socialite/selfie.jpg`（已提供并处理）
 
 南陌格参加晚宴后在酒店镜前的低调自拍，黑发、黑色礼服、领结微松，暖金壁灯映在镜面，表情冷静，不做夸张姿势；构图像临时记录而非硬广，避免酒瓶和品牌标志。
 
-#### `public/weibo/socialite/work_promotion.webp`
+#### `public/weibo/socialite/work_promotion.jpg`（已提供并处理）
 
 南陌格古装贵公子角色的无字概念海报，黑发束起，穿深墨色与暗金纹样长袍，站在古建筑长廊尽头，薄雾和侧逆光营造克制高级感；不要仙侠法术，不要文字，左侧留出标题区域。
 
@@ -131,11 +131,11 @@
 
 ### 南陌格
 
-#### `public/weibo/socialite/fan_gift.webp`
+#### `public/weibo/socialite/fan_gift.jpg`（已提供并处理）
 
 深色木桌上陈列审美统一的花束、压纹信封、摄影册和手写卡片，南陌格戴戒指的手正在整理卡片；黑金与米白配色，高级但不展示奢侈品牌，不出现可读文字。
 
-#### `public/weibo/socialite/romance_hint.webp`
+#### `public/weibo/socialite/romance_hint.jpg`（已提供并处理）
 
 高级餐厅靠窗座位，两套餐具、两只酒杯与一束低调白花，城市夜景倒映在玻璃上，对面椅背搭着一件中性深色外套；画面精致克制，像刻意只拍环境的私人晚餐，不露脸、不出现品牌。
 

@@ -479,6 +479,13 @@ const WEIBO_POST_IMAGES: Partial<Record<ArtistArchetype, Record<string, string>>
     fan_gift: './weibo/singer/fan_gift.jpg',
     romance_hint: './weibo/singer/romance_hint.jpg',
   },
+  socialite: {
+    work_photo: './weibo/socialite/work_photo.jpg',
+    selfie: './weibo/socialite/selfie.jpg',
+    work_promotion: './weibo/socialite/work_promotion.jpg',
+    fan_gift: './weibo/socialite/fan_gift.jpg',
+    romance_hint: './weibo/socialite/romance_hint.jpg',
+  },
 };
 
 export function getWeiboPostImage(
