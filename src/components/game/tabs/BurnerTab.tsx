@@ -266,7 +266,7 @@ export default function BurnerTab() {
             return (
               <WeiboCard
                 key={`artistpost_${rec.day}_${idx}`}
-                avatar={artist.avatar}
+                avatar={<img src={`./artists/${artist.id}.png`} alt="" className="w-full h-full object-cover rounded-full" />}
                 nickname={artist.name}
                 time={timeLabel}
                 content={content}
@@ -282,7 +282,7 @@ export default function BurnerTab() {
         {burnerFeed.map(post => (
           <WeiboCard
             key={post.id}
-            avatar={artist?.avatar ?? '🕶️'}
+            avatar="🕶️"
             nickname={artist ? (BURNER_NICKNAME_BY_ARTIST[artist.id] ?? `${artist.name}的小号`) : '匿名小号'}
             time={post.time}
             content={artist ? renderWithName(post.content, artist.name) : post.content}
@@ -493,7 +493,7 @@ function renderWithName(raw: string, name: string): React.ReactNode {
 }
 
 interface WeiboCardProps {
-  avatar: string;
+  avatar: React.ReactNode;
   nickname: string;
   time: string;
   content: React.ReactNode;
