@@ -281,6 +281,7 @@ export default function BurnerTab() {
                 selfLabel="艺人"
                 backfired={rec.wasBackfire}
                 nickPool={artistNicknames[artist.id]}
+                contentText={raw}
               />
             );
           })}
@@ -298,6 +299,7 @@ export default function BurnerTab() {
             selfLabel="小号"
             backfired={post.backfired}
             nickPool={artist ? artistNicknames[artist.id] : undefined}
+            contentText={post.content}
           />
         ))}
         {voyeurFeed.map(post => {
@@ -319,6 +321,7 @@ export default function BurnerTab() {
               reposts={Math.floor(post.likes / 8)}
               nickPool={artist ? artistNicknames[artist.id] : undefined}
               sentiment={authorTagSentiment}
+              contentText={post.content}
             />
           );
         })}
@@ -555,6 +558,7 @@ interface WeiboCardProps {
   backfired?: boolean;
   nickPool?: string[];
   sentiment?: 'positive' | 'negative' | 'neutral';
+  contentText?: string;
 }
 
 function WeiboCard({
@@ -569,12 +573,16 @@ function WeiboCard({
   backfired,
   nickPool,
   sentiment,
+  contentText,
 }: WeiboCardProps) {
   const [liked, setLiked] = useState(false);
   const [reposted, setReposted] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
   const effectiveSentiment = sentiment ?? (backfired ? 'negative' : 'positive');
-  const commentList = useMemo(() => sampleCommentsForArtist(nickPool ?? GENERIC_NICKS, effectiveSentiment), [nickPool, effectiveSentiment]);
+  const commentList = useMemo(
+    () => sampleCommentsForArtist(nickPool ?? GENERIC_NICKS, effectiveSentiment, contentText),
+    [nickPool, effectiveSentiment, contentText],
+  );
 
   return (
     <motion.div
@@ -664,9 +672,59 @@ const COMMENT_TEXTS_BY_SENTIMENT: Record<'positive' | 'negative' | 'neutral', st
   ],
 };
 
-function sampleCommentsForArtist(nickPool: string[], sentiment: 'positive' | 'negative' | 'neutral' = 'positive'): { nick: string; text: string }[] {
+// 主题关键词 → 专属评论池（比 sentiment 更贴帖）
+const TOPIC_COMMENT_POOLS: { keywords: RegExp; texts: string[] }[] = [
+  { keywords: /恋爱|女友|男友|绑定|结婚|同居|CP|磕/, texts: [
+    '女友粉今日破防', '磕死我了这段', '就说他们绝对有一腿', '姐妹稳住我们能赢',
+    '直接锁死好嘛', '要糖不要塌', 'CP粉狂喜', '唯粉：我不看',
+  ]},
+  { keywords: /塌房|翻车|丑闻|夜店|出轨|嫖|吸/, texts: [
+    '塌了塌了塌了', '好家伙这也能瞒', '连夜脱粉', '我早说这人不对劲',
+    '爬墙都懒得爬了', 'BYE 谢谢再见', '直接举报吧', '路人震怒',
+  ]},
+  { keywords: /剧|电影|作品|片场|花絮|杀青|定档/, texts: [
+    '演技封神！', '定档速来', '好好演戏就完事了', '真的爱看他/她演戏',
+    '这镜头感绝了', '预告都想磕', '业务能力我可', '剧粉狂喜',
+  ]},
+  { keywords: /唱|歌|舞台|演唱会|专辑|音乐节|新歌/, texts: [
+    '副歌炸裂', '现场杀我', '专辑循环中', '这词是写进我心里了',
+    '打歌数据组冲', '嗓子真的绝', '求 live 版', '耳朵怀孕',
+  ]},
+  { keywords: /对家|黑|撕|阴阳|营销号|水军/, texts: [
+    '对家有点急啊', '这营销号一看就知道谁买的', '别脏我家哥哥/姐姐',
+    '让子弹飞', '走开走开碰瓷警告', '拉黑一片再说', '毒唯又出来了',
+  ]},
+  { keywords: /道歉|声明|回应|澄清|律师函/, texts: [
+    '这道歉一看就是通稿', '诚意呢？', '律师函警告能有用？',
+    '至少态度出来了', '继续观望', '洗不干净别洗', '公关下班了',
+  ]},
+  { keywords: /机场|路透|生图|直拍|状态/, texts: [
+    '状态也太好了吧', '生图不整容脸', '路透赢麻了', '穿搭我可',
+    '直拍来一份', '氛围感拉满', '这颜真的绝', '想去接机',
+  ]},
+  { keywords: /代言|品牌|广告|直播/, texts: [
+    '带货一姐/一哥没错了', '这销量真离谱', '品牌方眼光可以',
+    '姐妹们冲一波', '不缺钱这波', '数据爆炸', '恰饭快乐',
+  ]},
+  { keywords: /粉丝|应援|集资|投票/, texts: [
+    '数据组辛苦了', '打投累但值', '姐妹们一起冲', '应援太用心了',
+    '有事我上', '妈粉今日出征', '为哥哥/姐姐上分',
+  ]},
+];
+
+function sampleCommentsForArtist(
+  nickPool: string[],
+  sentiment: 'positive' | 'negative' | 'neutral' = 'positive',
+  contentHint?: string,
+): { nick: string; text: string }[] {
+  const topicHit = contentHint
+    ? TOPIC_COMMENT_POOLS.find(p => p.keywords.test(contentHint))
+    : undefined;
+  const textPool = topicHit
+    ? [...topicHit.texts, ...COMMENT_TEXTS_BY_SENTIMENT[sentiment]]
+    : COMMENT_TEXTS_BY_SENTIMENT[sentiment];
   const nicks = [...nickPool, ...GENERIC_NICKS].sort(() => Math.random() - 0.5).slice(0, 3);
-  const texts = [...COMMENT_TEXTS_BY_SENTIMENT[sentiment]].sort(() => Math.random() - 0.5).slice(0, 3);
+  const texts = [...textPool].sort(() => Math.random() - 0.5).slice(0, 3);
   return nicks.map((n, i) => ({
     nick: n.replace(/\{name\}/g, ''),
     text: texts[i],
