@@ -18,16 +18,16 @@ const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
 const ACTIVE_SUB_TAB = '推荐';
 
 const TEMPLATE_META: Record<string, { icon: React.ReactNode; desc: string }> = {
-  post_work_photo:         { icon: <Camera size={18} strokeWidth={2.2} />,        desc: '营业向，稳中带涨' },
-  post_late_night:         { icon: <Moon size={18} strokeWidth={2.2} />,          desc: '文青人设，易翻车' },
-  post_respond_controversy:{ icon: <ShieldAlert size={18} strokeWidth={2.2} />,   desc: '危机公关型回应' },
-  post_promote_work:       { icon: <Megaphone size={18} strokeWidth={2.2} />,     desc: '商业向直球宣发' },
-  post_fan_gift:           { icon: <Gift size={18} strokeWidth={2.2} />,          desc: '拉粉丝忠诚' },
-  post_charity:            { icon: <HeartHandshake size={18} strokeWidth={2.2} />,desc: '刷路人好感' },
-  post_fight_haters:       { icon: <Swords size={18} strokeWidth={2.2} />,        desc: '硬钢黑粉，会拉仇恨' },
-  post_selfie:             { icon: <Smile size={18} strokeWidth={2.2} />,         desc: '晒颜值日常' },
-  post_hint_romance:       { icon: <HeartCrack size={18} strokeWidth={2.2} />,    desc: '爱豆定时炸弹' },
-  post_apology:            { icon: <BookText size={18} strokeWidth={2.2} />,      desc: '道歉小作文' },
+  post_work_photo:         { icon: <Camera size={18} strokeWidth={2.2} />,        desc: '晒片场花絮，粉丝会心一笑' },
+  post_late_night:         { icon: <Moon size={18} strokeWidth={2.2} />,          desc: '深夜emo小作文，路人容易共情' },
+  post_respond_controversy:{ icon: <ShieldAlert size={18} strokeWidth={2.2} />,   desc: '亲自回应争议，赌一把舆论' },
+  post_promote_work:       { icon: <Megaphone size={18} strokeWidth={2.2} />,     desc: '硬广新剧新歌，商务先笑了' },
+  post_fan_gift:           { icon: <Gift size={18} strokeWidth={2.2} />,          desc: '送生日惊喜，唯粉一夜狂欢' },
+  post_charity:            { icon: <HeartHandshake size={18} strokeWidth={2.2} />,desc: '低调做公益，把路人拉进盘' },
+  post_fight_haters:       { icon: <Swords size={18} strokeWidth={2.2} />,        desc: '亲自下场撕黑粉，很爽也危险' },
+  post_selfie:             { icon: <Smile size={18} strokeWidth={2.2} />,         desc: '甩一张神图，全网喊救命' },
+  post_hint_romance:       { icon: <HeartCrack size={18} strokeWidth={2.2} />,    desc: '暗示恋情，唯粉集体破防' },
+  post_apology:            { icon: <BookText size={18} strokeWidth={2.2} />,      desc: '发道歉小作文，诚意值决定生死' },
 };
 
 export default function BurnerTab() {
@@ -330,7 +330,7 @@ export default function BurnerTab() {
                   <X size={14} strokeWidth={2.4} />
                 </button>
               </div>
-              <div className="mx-auto w-10 h-1 rounded-full bg-gray-200 mb-3" />
+              <div className="mb-2" />
 
               <div className="px-4 overflow-y-auto flex-1">
                 <div className="grid grid-cols-2 gap-x-1.5 gap-y-1 pb-2">
@@ -338,7 +338,7 @@ export default function BurnerTab() {
                     icon={<Eye size={18} strokeWidth={2.2} />}
                     tone="blue"
                     title="视奸粉圈"
-                    desc="围观粉丝群动态"
+                    desc="蹲一眼粉圈动态，摸清风向"
                     hint={voyeurExhausted ? '今日已用完' : `${dailyVoyeurCount}/${voyeurLimit}`}
                     onClick={handleLurk}
                     disabled={voyeurExhausted}
@@ -347,7 +347,7 @@ export default function BurnerTab() {
                     icon={<Zap size={18} strokeWidth={2.2} />}
                     tone="orange"
                     title="黑对家"
-                    desc="匿名放料，有翻车风险"
+                    desc="匿名爆料放黑稿，有翻车风险"
                     hint={dailyBurnerActionUsed ? '今日已用' : '15 精力'}
                     onClick={handleSmear}
                     disabled={dailyBurnerActionUsed || notEnoughEnergy}
