@@ -43,15 +43,15 @@
 
 ### 高八度
 
-#### `public/weibo/singer/work_photo.webp`
+#### `public/weibo/singer/work_photo.jpg`（已提供并处理）
 
 年轻男歌手高八度，黑色凌乱短发、轮廓冷峻，穿黑色夹克和深灰内搭，在录音室内戴单边监听耳机，对着专业麦克风试唱；桌面可见调音台和手写乐谱，蓝紫色低照度工作灯，专注而非摆拍，横版中景。
 
-#### `public/weibo/singer/selfie.webp`
+#### `public/weibo/singer/selfie.jpg`（已提供并处理）
 
 高八度在录音室窗边的手机自拍，黑色短发稍乱，深色宽松上衣，耳机挂在脖子上，一把木吉他靠在身旁；下午自然侧光，表情平静略疲惫，背景虚化，不出现舞台观众或演员片场元素。
 
-#### `public/weibo/singer/work_promotion.webp`
+#### `public/weibo/singer/work_promotion.jpg`（已提供并处理）
 
 高八度新专辑的无字概念封面，黑发男歌手站在空旷 livehouse 舞台中央，手持有线麦克风，木吉他与乐队设备在暗处，冷蓝主光配少量暖色轮廓光；突出独立音乐人与现场感，画面上方留出标题空间，不生成文字。
 
@@ -111,11 +111,11 @@
 
 ### 高八度
 
-#### `public/weibo/singer/fan_gift.webp`
+#### `public/weibo/singer/fan_gift.jpg`（已提供并处理）
 
 录音室木桌上摆着粉丝制作的歌词本、演唱会票根册、手写听后感和一副旧耳机，高八度的手正翻阅歌词本；蓝紫与暖台灯混合光，不出现可读歌词或品牌。
 
-#### `public/weibo/singer/romance_hint.webp`
+#### `public/weibo/singer/romance_hint.jpg`（已提供并处理）
 
 深夜录音室里并排放着两副监听耳机，谱架上是没有可读文字的手写旋律线，一把木吉他旁多放了一杯温热饮料；没有人物，克制暧昧，蓝黑环境与暖色桌灯。
 
