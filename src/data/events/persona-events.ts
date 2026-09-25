@@ -404,6 +404,55 @@ export const rivalNamingSmearEvent: GameEvent = {
   ],
 };
 
+export const musicFestivalLipsyncEvent: GameEvent = {
+  id: 'music_festival_lipsync',
+  category: 'crisis',
+  severity: 'high',
+  title: '{name}跨界音乐节被扒假唱',
+  description: '你安排{name}跨界上了某顶流音乐节，本想借势破圈，结果现场收音师把原始音轨传到了网上——耳返里放的是完整成品，麦克风几乎没有声音。#{name}假唱# 半小时冲上热搜第 3。',
+  emoji: '🎤',
+  forArtist: ['idol', 'actor', 'influencer', 'socialite'],
+  minDay: 8,
+  choices: [
+    {
+      id: 'lipsync_admit',
+      text: '坦然承认，公开道歉',
+      subtext: '“身体不适，选择保全演出”',
+      outcome: {
+        narration: '{name}发长文："当天嗓子急性发炎，团队为了不放粉丝鸽子选择了半开麦，是我的失误，向大家道歉。"部分粉丝愿意接受，路人觉得态度可以，但"顶流艺人不会唱"的标签算是钉死了。',
+        statChanges: { fanLoyalty: -6, prRisk: -2, commercialValue: -3 },
+        unlockTag: 'lipsync_admitted',
+      },
+    },
+    {
+      id: 'lipsync_deny',
+      text: '强硬否认',
+      subtext: '甩锅"现场调音故障"',
+      outcome: {
+        narration: '工作室发声明称"调音台故障导致返送异常，艺人为真唱"。三小时后，音乐节技术总监亲自出面辟谣："设备一切正常，是艺人自己要求关麦。"打脸打得当场就响。',
+        statChanges: { fanLoyalty: -12, prRisk: 10, commercialValue: -5 },
+        unlockTag: 'lipsync_lied',
+        twist: {
+          chance: 0.35,
+          narration: '当晚有音乐博主放出对比视频：{name}近三次公开演唱全部对不上口型。"假唱惯犯"上了新热搜。',
+          statChanges: { fanLoyalty: -6, prRisk: 6 },
+        },
+      },
+    },
+    {
+      id: 'lipsync_pivot_training',
+      text: '闭关声乐训练+补一场清唱',
+      subtext: '砸钱做诚意 (-15万)',
+      requireMinMoney: 150000,
+      outcome: {
+        narration: '你安排{name}停工两周，请头部声乐老师封闭训练，两周后放出一段无修音清唱直拍。虽然依旧不算惊艳，但"至少能开口"的诚意换来一波路人回头。',
+        statChanges: { money: -150000, fanLoyalty: 4, prRisk: -4, commercialValue: 2 },
+        unlockTag: 'lipsync_redeemed',
+      },
+    },
+  ],
+};
+
 export const personaEvents: GameEvent[] = [
   personaAnimalOfferEvent,
   personaAnimalCollapseEvent,
@@ -411,4 +460,5 @@ export const personaEvents: GameEvent[] = [
   cpUnbindCrisisEvent,
   careerPivotEvent,
   rivalNamingSmearEvent,
+  musicFestivalLipsyncEvent,
 ];
