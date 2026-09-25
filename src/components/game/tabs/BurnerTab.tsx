@@ -310,7 +310,7 @@ export default function BurnerTab() {
           return (
             <WeiboCard
               key={post.id}
-              avatar={post.avatar}
+              avatar={<DefaultAvatar seed={post.id} />}
               nickname={post.nickname ?? '匿名用户'}
               time={post.time}
               content={artist ? renderWithName(post.content, artist.name) : post.content}
@@ -502,6 +502,35 @@ function DrawerCard({ icon, tone, title, desc, onClick, disabled }: DrawerCardPr
 
 function normalizeCJKSpaces(s: string): string {
   return s.replace(/([\u4e00-\u9fa5，。！？、：；"'）】])\s+([\u4e00-\u9fa5，。！？、：；"'（【])/g, '$1$2');
+}
+
+const AVATAR_GRADIENTS = [
+  'linear-gradient(135deg,#f6c1c8,#f5a1a9)',
+  'linear-gradient(135deg,#c1d5f6,#a1b5f5)',
+  'linear-gradient(135deg,#c8e6c9,#a5d6a7)',
+  'linear-gradient(135deg,#ffe0b2,#ffcc80)',
+  'linear-gradient(135deg,#e1bee7,#ce93d8)',
+  'linear-gradient(135deg,#b3e5fc,#81d4fa)',
+  'linear-gradient(135deg,#fff59d,#ffe082)',
+  'linear-gradient(135deg,#f8bbd0,#f48fb1)',
+  'linear-gradient(135deg,#b2dfdb,#80cbc4)',
+  'linear-gradient(135deg,#d1c4e9,#b39ddb)',
+];
+
+function DefaultAvatar({ seed }: { seed: string }) {
+  const hash = Array.from(seed).reduce((acc, c) => acc + c.charCodeAt(0), 0);
+  const bg = AVATAR_GRADIENTS[hash % AVATAR_GRADIENTS.length];
+  return (
+    <div
+      className="w-full h-full rounded-full flex items-center justify-center"
+      style={{ background: bg }}
+    >
+      <svg viewBox="0 0 24 24" className="w-6 h-6" fill="white" aria-hidden>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8v1H4v-1z" />
+      </svg>
+    </div>
+  );
 }
 
 function renderWithName(raw: string, name: string): React.ReactNode {
