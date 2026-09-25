@@ -345,7 +345,7 @@ export default function BurnerTab() {
                 animate={{ y: 0 }}
                 exit={{ y: '110%' }}
                 transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-                className="absolute bottom-16 left-0 right-0 bg-white rounded-t-3xl ring-1 ring-gray-200/70 shadow-lg pb-3 max-h-[70vh] flex flex-col"
+                className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl ring-1 ring-gray-200/70 shadow-lg pb-6 max-h-[85vh] flex flex-col"
                 onClick={e => e.stopPropagation()}
               >
               <div className="flex items-center justify-between px-5 pt-4 pb-2">
