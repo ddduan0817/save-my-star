@@ -651,9 +651,9 @@ export const useGameStore = create<GameStore>()(
     // 黑对家：小号和大号都能操作；15% 随机翻车
     const backfire = Math.random() < 0.15;
     const templates = [
-      `笑死，${rivalName} 那新剧的评分是靠水军刷的吧，我朋友在业内的都在传😅`,
-      `有一说一 ${rivalName} 这营销做得跟屎一样，还敢出来蹦跶`,
-      `路透 ${rivalName} 现场态度也太差了，工作人员都在吐槽`,
+      `笑死，${rivalName}那新剧的评分是靠水军刷的吧，我朋友在业内的都在传😅`,
+      `有一说一${rivalName}这营销做得跟屎一样，还敢出来蹦跶`,
+      `路透${rivalName}现场态度也太差了，工作人员都在吐槽`,
     ];
     const content = templates[Math.floor(Math.random() * templates.length)];
     const newMental = applyMentalEffect(state.mentalState, { energy: -15 });
