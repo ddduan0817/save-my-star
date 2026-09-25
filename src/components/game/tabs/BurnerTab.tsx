@@ -14,6 +14,14 @@ import { GAME_CONFIG } from '@/data/constants';
 import { weiboPostTemplates } from '@/data/weiboPosts';
 import { sfxClick } from '@/lib/sounds';
 
+const BURNER_NICKNAME_BY_ARTIST: Record<string, string> = {
+  idol: '甄糖的糖罐子',
+  actor: '美丽的候场椅',
+  singer: '糕糕的话筒',
+  influencer: '冰糕的直播灯',
+  socialite: '陌陌的红毯灯',
+};
+
 const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
 const ACTIVE_SUB_TAB = '推荐';
 
@@ -265,7 +273,7 @@ export default function BurnerTab() {
                 likes={Math.floor(Math.random() * 8000) + 2000}
                 comments={Math.floor(Math.random() * 1500) + 300}
                 reposts={Math.floor(Math.random() * 2000) + 400}
-                isSelf
+                selfLabel="艺人"
                 backfired={rec.wasBackfire}
               />
             );
@@ -275,13 +283,13 @@ export default function BurnerTab() {
           <WeiboCard
             key={post.id}
             avatar={artist?.avatar ?? '🕶️'}
-            nickname={artist ? `${artist.name}的小号` : '匿名小号'}
+            nickname={artist ? (BURNER_NICKNAME_BY_ARTIST[artist.id] ?? `${artist.name}的小号`) : '匿名小号'}
             time={post.time}
             content={artist ? renderWithName(post.content, artist.name) : post.content}
             likes={post.likes}
             comments={post.comments}
             reposts={post.reposts}
-            isSelf
+            selfLabel="小号"
             backfired={post.backfired}
           />
         ))}
@@ -492,7 +500,7 @@ interface WeiboCardProps {
   likes: number;
   comments: number;
   reposts: number;
-  isSelf?: boolean;
+  selfLabel?: string;
   backfired?: boolean;
 }
 
@@ -504,7 +512,7 @@ function WeiboCard({
   likes,
   comments,
   reposts,
-  isSelf,
+  selfLabel,
   backfired,
 }: WeiboCardProps) {
   return (
@@ -523,9 +531,9 @@ function WeiboCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
             <span className="text-[14px] font-medium text-gray-900 truncate">{nickname}</span>
-            {isSelf && (
+            {selfLabel && (
               <span className="text-[9px] font-medium text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">
-                本人
+                {selfLabel}
               </span>
             )}
             {backfired && (
