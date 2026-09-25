@@ -300,19 +300,28 @@ export default function BurnerTab() {
             nickPool={artist ? artistNicknames[artist.id] : undefined}
           />
         ))}
-        {voyeurFeed.map(post => (
-          <WeiboCard
-            key={post.id}
-            avatar={post.avatar}
-            nickname={post.nickname ?? '匿名用户'}
-            time={post.time}
-            content={artist ? renderWithName(post.content, artist.name) : post.content}
-            likes={post.likes}
-            comments={post.comments}
-            reposts={Math.floor(post.likes / 8)}
-            nickPool={artist ? artistNicknames[artist.id] : undefined}
-          />
-        ))}
+        {voyeurFeed.map(post => {
+          const authorTagSentiment: 'positive' | 'negative' | 'neutral' =
+            post.authorTag === '塌房粉' || post.authorTag === '对家毒唯' || post.authorTag === '私生'
+              ? 'negative'
+              : post.authorTag === '路人'
+                ? 'neutral'
+                : 'positive';
+          return (
+            <WeiboCard
+              key={post.id}
+              avatar={post.avatar}
+              nickname={post.nickname ?? '匿名用户'}
+              time={post.time}
+              content={artist ? renderWithName(post.content, artist.name) : post.content}
+              likes={post.likes}
+              comments={post.comments}
+              reposts={Math.floor(post.likes / 8)}
+              nickPool={artist ? artistNicknames[artist.id] : undefined}
+              sentiment={authorTagSentiment}
+            />
+          );
+        })}
         {burnerFeed.length === 0 && voyeurFeed.length === 0 && weiboPostHistory.length === 0 && (
           <div className="text-center text-xs text-gray-400 py-12">
             点上方输入框，选「视奸粉圈」刷一波动态
@@ -516,6 +525,7 @@ interface WeiboCardProps {
   selfLabel?: string;
   backfired?: boolean;
   nickPool?: string[];
+  sentiment?: 'positive' | 'negative' | 'neutral';
 }
 
 function WeiboCard({
@@ -529,11 +539,13 @@ function WeiboCard({
   selfLabel,
   backfired,
   nickPool,
+  sentiment,
 }: WeiboCardProps) {
   const [liked, setLiked] = useState(false);
   const [reposted, setReposted] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
-  const commentList = useMemo(() => sampleCommentsForArtist(nickPool ?? GENERIC_NICKS), [nickPool]);
+  const effectiveSentiment = sentiment ?? (backfired ? 'negative' : 'positive');
+  const commentList = useMemo(() => sampleCommentsForArtist(nickPool ?? GENERIC_NICKS, effectiveSentiment), [nickPool, effectiveSentiment]);
 
   return (
     <motion.div
@@ -604,16 +616,28 @@ function WeiboCard({
   );
 }
 
-const GENERIC_COMMENT_TEXTS = [
-  '刚刷到就冲了！！！', '蹲一下正片', '好绝', '姐妹一起磕', '这段真的哭死',
-  '好会营业啊，拿捏了', '细节狂魔', '锁死锁死锁死', '好想去现场',
-  '这镜头感…封神', '姐姐好美，赢麻了', '偷偷收藏了', '嗑到了', '好上头',
-];
 const GENERIC_NICKS = ['甜栗子壳', '路人甲', 'emo酱', '摸鱼中', '蹲个瓜', '看她剪影', '云吸猫'];
 
-function sampleCommentsForArtist(nickPool: string[]): { nick: string; text: string }[] {
+const COMMENT_TEXTS_BY_SENTIMENT: Record<'positive' | 'negative' | 'neutral', string[]> = {
+  positive: [
+    '刚刷到就冲了！！！', '好绝', '姐妹一起磕', '好会营业啊，拿捏了',
+    '细节狂魔', '锁死锁死锁死', '好想去现场', '这镜头感…封神',
+    '姐姐好美，赢麻了', '偷偷收藏了', '嗑到了', '好上头',
+  ],
+  negative: [
+    '脱粉了，真的累', '爬墙+1', '这波真的让我心寒', '塌房实锤了？',
+    '感觉团队真的不行', '别再营业了求求了', 'BYE，追不动了', '直接举报',
+    '这也能洗？', '道歉都没有诚意', '再也不追了',
+  ],
+  neutral: [
+    '蹲一下正片', '路过看看', '瓜什么瓜', '前排等更新', '这啥情况',
+    '路人观望中', '蹲后续', '有一说一…', '让子弹飞会儿',
+  ],
+};
+
+function sampleCommentsForArtist(nickPool: string[], sentiment: 'positive' | 'negative' | 'neutral' = 'positive'): { nick: string; text: string }[] {
   const nicks = [...nickPool, ...GENERIC_NICKS].sort(() => Math.random() - 0.5).slice(0, 3);
-  const texts = [...GENERIC_COMMENT_TEXTS].sort(() => Math.random() - 0.5).slice(0, 3);
+  const texts = [...COMMENT_TEXTS_BY_SENTIMENT[sentiment]].sort(() => Math.random() - 0.5).slice(0, 3);
   return nicks.map((n, i) => ({
     nick: n.replace(/\{name\}/g, ''),
     text: texts[i],
