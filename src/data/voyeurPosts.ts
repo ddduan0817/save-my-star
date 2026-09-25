@@ -2,6 +2,7 @@
 // 每次调用 rollVoyeurFeed(name, rivalName) 返回 3-5 条随机粉圈发言
 // 文案参考豆瓣鹅组 / 微博超话 / 兔区常见语气：黑话密集、断句碎、阴阳怪气
 
+import type { ArtistArchetype } from '@/types/game';
 import { pickNickname, pickAvatar } from './nicknames';
 
 export interface VoyeurPost {
@@ -21,6 +22,8 @@ export interface VoyeurPost {
   isIntel: boolean;
   /** 真实网名（UI 层用来替代 匿名{authorTag}） */
   nickname?: string;
+  /** 仅对特定艺人身份出现（不填 = 对所有身份可见） */
+  archetypes?: ArtistArchetype[];
 }
 
 const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
@@ -51,6 +54,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 1567,
     comments: 402,
     isIntel: false,
+    archetypes: ['actor', 'idol', 'socialite'],
   },
   {
     authorTag: '唯粉',
@@ -203,6 +207,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 456,
     comments: 623,
     isIntel: false,
+    archetypes: ['actor', 'idol', 'socialite'],
   },
   {
     authorTag: '路人',
@@ -357,6 +362,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 890,
     comments: 234,
     isIntel: false,
+    archetypes: ['actor'],
   },
   {
     authorTag: '塌房粉',
@@ -375,6 +381,7 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
     likes: 456,
     comments: 34,
     isIntel: false,
+    archetypes: ['actor', 'idol', 'socialite'],
   },
   {
     authorTag: '毒唯',
@@ -633,19 +640,22 @@ const POOL_REACTIVE: ReactivePost[] = [
   },
 ];
 
-// MVP：先只用通用池；后续可以按 artist archetype 分池
+// MVP：通用池 + 响应池；按艺人身份过滤剧集/演技等身份专属内容
 export function rollVoyeurFeed(
   artistName: string,
   count = 4,
-  ctx?: { fanLoyalty: number; prRisk: number; commercialValue: number; tags: string[] },
+  ctx?: { fanLoyalty: number; prRisk: number; commercialValue: number; tags: string[]; artistId?: ArtistArchetype },
 ): VoyeurPost[] {
-  // 命中响应池的先入选，再从通用池补齐
+  const artistId = ctx?.artistId;
+  const archetypeOk = (arche?: ArtistArchetype[]) => !arche || !artistId || arche.includes(artistId);
+
   const reactiveHits: Omit<VoyeurPost, 'id'>[] = ctx
-    ? POOL_REACTIVE.filter(p => p.matches(ctx)).map(({ matches, ...rest }) => rest)
+    ? POOL_REACTIVE.filter(p => archetypeOk(p.archetypes) && p.matches(ctx)).map(({ matches, ...rest }) => rest)
     : [];
   const reactivePicked = reactiveHits.sort(() => Math.random() - 0.5).slice(0, Math.min(3, count));
   const remain = count - reactivePicked.length;
-  const universalShuffled = [...POOL_UNIVERSAL].sort(() => Math.random() - 0.5).slice(0, remain);
+  const universalPool = POOL_UNIVERSAL.filter(p => archetypeOk(p.archetypes));
+  const universalShuffled = [...universalPool].sort(() => Math.random() - 0.5).slice(0, remain);
   const combined = [...reactivePicked, ...universalShuffled].sort(() => Math.random() - 0.5);
 
   return combined.map((post, idx) => ({

@@ -63,6 +63,7 @@ export default function BurnerTab() {
     prRisk: stats.prRisk,
     commercialValue: stats.commercialValue,
     tags: activeTags,
+    artistId: artist?.id,
   });
 
   useEffect(() => {
