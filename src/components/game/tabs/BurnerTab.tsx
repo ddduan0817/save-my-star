@@ -179,8 +179,12 @@ export default function BurnerTab() {
       <div className="border-b-8 border-gray-50 px-4 py-3">
         <div className="flex items-center gap-3">
           <button onClick={toggleIdentity} className="relative shrink-0 active:scale-95 transition-transform">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-xl shadow-sm">
-              {burnerIdentity === 'self' ? '🕶️' : (artist?.avatar ?? '✨')}
+            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-xl shadow-sm overflow-hidden">
+              {burnerIdentity === 'self'
+                ? <span>🕶️</span>
+                : (artist
+                  ? <img src={`./artists/${artist.id}.png`} alt="" className="w-full h-full object-cover" />
+                  : <span>✨</span>)}
             </div>
             <span className={cn(
               'absolute -bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-bold px-1.5 py-0.5 rounded-full whitespace-nowrap ring-2 ring-white',
