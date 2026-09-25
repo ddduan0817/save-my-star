@@ -96,7 +96,9 @@ export type WeiboCommentRole =
   | 'fansite'
   | 'cp_fan'
   | 'anti'
-  | 'former_fan';
+  | 'former_fan'
+  | 'rival_fan'
+  | 'sasaeng';
 export type WeiboCommentStance =
   | 'supportive'
   | 'skeptical'
@@ -379,10 +381,12 @@ export const COMMENT_NICK_POOLS: Record<WeiboCommentRole, string[]> = {
   cp_fan: [],
   anti: [],
   former_fan: [],
+  rival_fan: [],
+  sasaeng: [],
 };
 ```
 
-Populate every scene with at least 12 entries and three roles. Include separate outcome-compatible reactions. Populate every role nickname pool with at least eight matching names. Artist-specific nicknames may only augment `fan`, `data_fan`, `fansite`, and `cp_fan`; `casual`, `anti`, and `former_fan` must use their own role pools. Use direct scene language:
+Populate every scene with at least 12 entries and three roles. Include separate outcome-compatible reactions. Populate every role nickname pool with at least eight matching names. Artist-specific nicknames may only augment `fan`, `data_fan`, `fansite`, and `cp_fan`; `casual`, `anti`, `former_fan`, `sasaeng`, and `rival_fan` must use their own role pools. Rivalry scenes receive the current Rival identity and use dedicated pools for 林C位、晁可爱、葛王、王思琪、顾君庭. Use direct scene language:
 
 ```ts
 fan_brand_sales: [
