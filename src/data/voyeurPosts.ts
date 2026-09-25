@@ -405,15 +405,254 @@ const POOL_UNIVERSAL: Omit<VoyeurPost, 'id'>[] = [
   },
 ];
 
+// 响应式池：根据经纪人近期选择留下的 tag / 数值动态注入的粉圈发言
+// 每条帖子附一个 matches(stats, tags) 门槛，只在命中时才可能被抽到
+type ReactivePost = Omit<VoyeurPost, 'id'> & {
+  matches: (ctx: { fanLoyalty: number; prRisk: number; commercialValue: number; tags: string[] }) => boolean;
+};
+
+const POOL_REACTIVE: ReactivePost[] = [
+  // ===== 高忠诚度 (>=70) 一片彩虹屁 =====
+  {
+    authorTag: '唯粉',
+    avatar: '💖',
+    time: '刚刚',
+    content: '姐妹们，{name} 团队最近这波操作真的是教科书级别，跟着这个经纪人稳赢。',
+    likes: 3200,
+    comments: 421,
+    isIntel: false,
+    matches: ({ fanLoyalty }) => fanLoyalty >= 70,
+  },
+  // ===== 低忠诚度 (<=35) 集体脱粉 =====
+  {
+    authorTag: '塌房粉',
+    avatar: '🥀',
+    time: '10 分钟前',
+    content: '拉黑 {name} 了。经纪团队一次比一次拉，粉丝的耐心不是无限的。爬墙走人。',
+    likes: 2140,
+    comments: 987,
+    isIntel: false,
+    matches: ({ fanLoyalty }) => fanLoyalty <= 35,
+  },
+  // ===== 高舆论风险 (>=65) 吃瓜蹲声明 =====
+  {
+    authorTag: '路人',
+    avatar: '🍿',
+    time: '20 分钟前',
+    content: '蹲一个 {name} 工作室的声明，感觉这次公关又要出昏招。这经纪人拿的什么剧本啊。',
+    likes: 1876,
+    comments: 1234,
+    isIntel: false,
+    matches: ({ prRisk }) => prRisk >= 65,
+  },
+  // ===== 极高舆论风险 (>=85) 塌房实锤 =====
+  {
+    authorTag: '毒唯',
+    avatar: '⚡',
+    time: '刚刚',
+    content: '实锤了实锤了，{name} 这波真的救不回来了，经纪人还在硬撑，笑死。',
+    likes: 5670,
+    comments: 3421,
+    isIntel: false,
+    matches: ({ prRisk }) => prRisk >= 85,
+  },
+  // ===== 商业价值高 (>=70) 商务粉 =====
+  {
+    authorTag: '团粉',
+    avatar: '💼',
+    time: '1 小时前',
+    content: '{name} 商务榜又冲上去了，感谢经纪团队。这一波品牌资源真的看得见。',
+    likes: 1580,
+    comments: 234,
+    isIntel: false,
+    matches: ({ commercialValue }) => commercialValue >= 70,
+  },
+  // ===== 商业价值低 (<=25) 商务寒冬 =====
+  {
+    authorTag: '唯粉',
+    avatar: '💸',
+    time: '30 分钟前',
+    content: '{name} 半年没接过像样的代言了，粉丝焦虑到不行。团队在干嘛？',
+    likes: 890,
+    comments: 456,
+    isIntel: false,
+    matches: ({ commercialValue }) => commercialValue <= 25,
+  },
+  // ===== 动物人设：小狗 =====
+  {
+    authorTag: '唯粉',
+    avatar: '🐶',
+    time: '15 分钟前',
+    content: '天呐 {name} 那个小狗系营业我看了三十遍，脑子里全是"我的狗"三个字。',
+    likes: 4321,
+    comments: 678,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('persona_dog'),
+  },
+  // ===== 动物人设：猫 =====
+  {
+    authorTag: '唯粉',
+    avatar: '🐱',
+    time: '20 分钟前',
+    content: '{name} 猫系人设真的绝，那个傲娇小表情跟我家猫一模一样。',
+    likes: 2890,
+    comments: 340,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('persona_cat'),
+  },
+  // ===== 动物人设：仓鼠 =====
+  {
+    authorTag: '唯粉',
+    avatar: '🐹',
+    time: '25 分钟前',
+    content: '仓鼠八哥的名场面，我求求你们再剪一集，我循环一百遍不够。',
+    likes: 3421,
+    comments: 512,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('persona_hamster'),
+  },
+  // ===== 动物人设：狐狸 =====
+  {
+    authorTag: '路人',
+    avatar: '🦊',
+    time: '半小时前',
+    content: '不得不说 {name} 狐系营业真的会做，粉丝一边骂一边冲销量。',
+    likes: 1780,
+    comments: 421,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('persona_fox'),
+  },
+  // ===== 动物人设：狼 =====
+  {
+    authorTag: '唯粉',
+    avatar: '🐺',
+    time: '10 分钟前',
+    content: '{name} 狼系氛围大片直接封神，这经纪人是懂视觉营销的。',
+    likes: 4102,
+    comments: 623,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('persona_wolf'),
+  },
+  // ===== 拒绝动物塑：神秘感 =====
+  {
+    authorTag: '路人',
+    avatar: '🕶️',
+    time: '半小时前',
+    content: '{name} 团队最近很克制，不接综艺不炒人设，反而路人缘挺好。',
+    likes: 987,
+    comments: 234,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('persona_mysterious'),
+  },
+  // ===== 崩人设 =====
+  {
+    authorTag: '塌房粉',
+    avatar: '💔',
+    time: '5 分钟前',
+    content: '{name} 人设崩了这波实在是骗不下去了，我今天正式脱粉。',
+    likes: 2340,
+    comments: 890,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('persona_broken'),
+  },
+  // ===== CP 卖腐营业中 =====
+  {
+    authorTag: 'CP粉',
+    avatar: '💞',
+    time: '20 分钟前',
+    content: '今天这波糖我磕到了，{name} 你别管我磕的对不对，团队多发点物料！',
+    likes: 5210,
+    comments: 1103,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('cp_active'),
+  },
+  {
+    authorTag: '唯粉',
+    avatar: '😡',
+    time: '25 分钟前',
+    content: '{name} 团队最近发糖发上瘾了是吧？我们唯粉的感受你们考虑过吗！',
+    likes: 3140,
+    comments: 2450,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('cp_active'),
+  },
+  // ===== 主动解绑 =====
+  {
+    authorTag: '唯粉',
+    avatar: '🌸',
+    time: '半小时前',
+    content: '{name} 主动解绑那条长文我看哭了，这才是真正为艺人考虑的团队。',
+    likes: 3890,
+    comments: 456,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('cp_unbound_active'),
+  },
+  // ===== 被动解绑 =====
+  {
+    authorTag: 'CP粉',
+    avatar: '😤',
+    time: '15 分钟前',
+    content: '被解绑的是 {name} 我笑死，配不上就是配不上，别演了。',
+    likes: 2100,
+    comments: 1780,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('cp_dumped'),
+  },
+  // ===== 转型演员 =====
+  {
+    authorTag: '路人',
+    avatar: '🎬',
+    time: '1 小时前',
+    content: '{name} 下海演戏了？看片花有点尴尬，但也别太苛刻，第一部嘛。',
+    likes: 1240,
+    comments: 780,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('career_actor_pivot'),
+  },
+  // ===== 转型综艺 =====
+  {
+    authorTag: '团粉',
+    avatar: '🎪',
+    time: '40 分钟前',
+    content: '{name} 这波综艺常驻真的是选对了，商务肉眼可见地在起飞。',
+    likes: 2340,
+    comments: 341,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('career_variety_pivot'),
+  },
+  // ===== 黑称被玩梗 =====
+  {
+    authorTag: '路人',
+    avatar: '🎯',
+    time: '刚刚',
+    content: '{name} 自己转发对家给的外号，笑死我了，这经纪人是不是学过传播学。',
+    likes: 4560,
+    comments: 1230,
+    isIntel: false,
+    matches: ({ tags }) => tags.includes('rival_meme_flipped'),
+  },
+];
+
 // MVP：先只用通用池；后续可以按 artist archetype 分池
-export function rollVoyeurFeed(artistName: string, count = 4): VoyeurPost[] {
-  const shuffled = [...POOL_UNIVERSAL].sort(() => Math.random() - 0.5);
-  const picked = shuffled.slice(0, count);
-  return picked.map((post, idx) => ({
+export function rollVoyeurFeed(
+  artistName: string,
+  count = 4,
+  ctx?: { fanLoyalty: number; prRisk: number; commercialValue: number; tags: string[] },
+): VoyeurPost[] {
+  // 命中响应池的先入选，再从通用池补齐
+  const reactiveHits: Omit<VoyeurPost, 'id'>[] = ctx
+    ? POOL_REACTIVE.filter(p => p.matches(ctx)).map(({ matches, ...rest }) => rest)
+    : [];
+  const reactivePicked = reactiveHits.sort(() => Math.random() - 0.5).slice(0, Math.min(3, count));
+  const remain = count - reactivePicked.length;
+  const universalShuffled = [...POOL_UNIVERSAL].sort(() => Math.random() - 0.5).slice(0, remain);
+  const combined = [...reactivePicked, ...universalShuffled].sort(() => Math.random() - 0.5);
+
+  return combined.map((post, idx) => ({
     ...post,
     id: `voyeur_${Date.now()}_${idx}`,
     nickname: pickNickname(),
     avatar: pickAvatar(),
-    content: post.content.replace(/\{name\}/g, artistName),
+    content: post.content.replace(/ ?\{name\} ?/g, artistName),
   }));
 }

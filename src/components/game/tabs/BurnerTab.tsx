@@ -6,6 +6,7 @@ import { Search, Eye, Zap, Frown, Repeat2, MessageCircle, Heart, Bell, X, Flame 
 import { useGameStore } from '@/stores/gameStore';
 import { cn } from '@/lib/utils';
 import { rollVoyeurFeed, type VoyeurPost } from '@/data/voyeurPosts';
+import { GAME_CONFIG } from '@/data/constants';
 import WeiboCompose from '@/components/game/features/WeiboCompose';
 
 const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
@@ -13,7 +14,9 @@ const SUB_TABS = ['推荐', '热门', '关注', '同城'] as const;
 export default function BurnerTab() {
   const artist = useGameStore(s => s.artist);
   const mentalEnergy = useGameStore(s => s.mentalState.energy);
-  const dailyVoyeurUsed = useGameStore(s => s.dailyVoyeurUsed);
+  const stats = useGameStore(s => s.stats);
+  const activeTags = useGameStore(s => s.activeTags);
+  const dailyVoyeurCount = useGameStore(s => s.dailyVoyeurCount);
   const dailyBurnerActionUsed = useGameStore(s => s.dailyBurnerActionUsed);
   const burnerFeed = useGameStore(s => s.burnerFeed);
   const consumeVoyeur = useGameStore(s => s.consumeVoyeur);
@@ -28,9 +31,19 @@ export default function BurnerTab() {
   const [subTab, setSubTab] = useState<typeof SUB_TABS[number]>('推荐');
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const voyeurLimit = GAME_CONFIG.VOYEUR_DAILY_LIMIT;
+  const voyeurExhausted = dailyVoyeurCount >= voyeurLimit;
+
+  const buildVoyeurCtx = () => ({
+    fanLoyalty: stats.fanLoyalty,
+    prRisk: stats.prRisk,
+    commercialValue: stats.commercialValue,
+    tags: activeTags,
+  });
+
   useEffect(() => {
-    if (!dailyVoyeurUsed && voyeurFeed.length === 0 && artist) {
-      setVoyeurFeed(rollVoyeurFeed(artist.name, 6));
+    if (dailyVoyeurCount === 0 && voyeurFeed.length === 0 && artist) {
+      setVoyeurFeed(rollVoyeurFeed(artist.name, 6, buildVoyeurCtx()));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [artist?.name]);
@@ -43,13 +56,13 @@ export default function BurnerTab() {
   const handleLurk = () => {
     if (!artist) return;
     setDrawerOpen(false);
-    if (dailyVoyeurUsed) {
+    if (voyeurExhausted) {
       showToast('今日视奸额度已用完');
       return;
     }
     const ok = consumeVoyeur();
     if (ok) {
-      setVoyeurFeed(rollVoyeurFeed(artist.name, 6));
+      setVoyeurFeed(rollVoyeurFeed(artist.name, 6, buildVoyeurCtx()));
       showToast('刷新了一批粉圈动态');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -260,9 +273,9 @@ export default function BurnerTab() {
                   tone="blue"
                   title="视奸粉圈"
                   desc="免费围观粉丝群组动态，刷新信息流"
-                  hint={dailyVoyeurUsed ? '今日已用' : '免费 · 每日 1 次'}
+                  hint={voyeurExhausted ? '今日已用完' : `免费 · 今日 ${dailyVoyeurCount}/${voyeurLimit}`}
                   onClick={handleLurk}
-                  disabled={dailyVoyeurUsed}
+                  disabled={voyeurExhausted}
                 />
                 <DrawerRow
                   icon={<Zap size={18} strokeWidth={2.2} />}

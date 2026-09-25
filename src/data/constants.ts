@@ -26,6 +26,9 @@ export const GAME_CONFIG = {
   HIGH_LOYALTY_RISK_REDUCTION: 0.5,
   HIGH_LOYALTY_THRESHOLD: 80,
   HIGH_RISK_THRESHOLD: 80,
+
+  // Burner tab: 视奸粉圈每日次数上限
+  VOYEUR_DAILY_LIMIT: 3,
 } as const;
 
 /**

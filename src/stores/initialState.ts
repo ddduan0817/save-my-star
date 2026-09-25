@@ -104,7 +104,7 @@ export function makeFreshGameState(): GameState {
     tutorialSeen: false,
 
     // 黑粉小号
-    dailyVoyeurUsed: false,
+    dailyVoyeurCount: 0,
     burnerFeed: [],
     dailyBurnerActionUsed: false,
     burnerIdentity: 'self',

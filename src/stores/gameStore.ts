@@ -609,8 +609,9 @@ export const useGameStore = create<GameStore>()(
   },
 
   consumeVoyeur: () => {
-    if (get().dailyVoyeurUsed) return false;
-    set({ dailyVoyeurUsed: true });
+    const { dailyVoyeurCount } = get();
+    if (dailyVoyeurCount >= GAME_CONFIG.VOYEUR_DAILY_LIMIT) return false;
+    set({ dailyVoyeurCount: dailyVoyeurCount + 1 });
     return true;
   },
 

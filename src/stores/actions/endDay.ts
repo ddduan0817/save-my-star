@@ -392,7 +392,7 @@ export function createEndDayAction(get: Getter, set: Setter): () => boolean {
       showDayBanner: !phoneCall, // don't show day banner if phone call is pending (will show after call ends)
       dailyPostUsed: false,
       showPostResult: false,
-      dailyVoyeurUsed: false,
+      dailyVoyeurCount: 0,
       dailyBurnerActionUsed: false,
       rival: newRival,
       rivalActionNarration: rivalNarration,

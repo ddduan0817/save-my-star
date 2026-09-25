@@ -182,8 +182,8 @@ export interface GameState {
   tutorialSeen: boolean;
 
   // ===== 黑粉小号系统（MVP：仅视奸粉圈信息流）=====
-  /** 今日是否已使用视奸（每日 endDay 重置） */
-  dailyVoyeurUsed: boolean;
+  /** 今日已使用的视奸次数（每日 endDay 重置，上限 VOYEUR_DAILY_LIMIT） */
+  dailyVoyeurCount: number;
   /** 玩家用小号发出去的帖子（黑对家 / 反串黑），倒序渲染 */
   burnerFeed: BurnerPost[];
   /** 今日是否已使用小号操作（黑对家 / 反串黑，共享一个每日额度） */
