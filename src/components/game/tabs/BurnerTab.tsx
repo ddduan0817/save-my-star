@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, Eye, Zap, Bell, X, Flame,
@@ -519,6 +519,11 @@ function WeiboCard({
   selfLabel,
   backfired,
 }: WeiboCardProps) {
+  const [liked, setLiked] = useState(false);
+  const [reposted, setReposted] = useState(false);
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const commentList = useMemo(() => sampleComments(), []);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 4 }}
@@ -529,7 +534,7 @@ function WeiboCard({
       )}
     >
       <div className="flex items-start gap-3">
-        <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-lg">
+        <div className="shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-orange-100 to-orange-200 flex items-center justify-center text-lg overflow-hidden">
           {avatar}
         </div>
         <div className="flex-1 min-w-0">
@@ -551,19 +556,81 @@ function WeiboCard({
             {content}
           </p>
           <div className="flex items-center mt-2.5 -mx-2">
-            <FooterAction icon={<Repeat2 size={15} strokeWidth={2} />} value={reposts} />
-            <FooterAction icon={<MessageCircle size={15} strokeWidth={2} />} value={comments} />
-            <FooterAction icon={<Heart size={15} strokeWidth={2} />} value={likes} />
+            <FooterAction
+              icon={<Repeat2 size={15} strokeWidth={2} className={reposted ? 'text-green-500' : ''} />}
+              value={reposts + (reposted ? 1 : 0)}
+              active={reposted}
+              activeColor="text-green-500"
+              onClick={() => setReposted(v => !v)}
+            />
+            <FooterAction
+              icon={<MessageCircle size={15} strokeWidth={2} />}
+              value={comments}
+              active={commentsOpen}
+              activeColor="text-sky-500"
+              onClick={() => setCommentsOpen(v => !v)}
+            />
+            <FooterAction
+              icon={<Heart size={15} strokeWidth={2} fill={liked ? '#ff2d55' : 'none'} className={liked ? 'text-[#ff2d55]' : ''} />}
+              value={likes + (liked ? 1 : 0)}
+              active={liked}
+              activeColor="text-[#ff2d55]"
+              onClick={() => setLiked(v => !v)}
+            />
           </div>
+          {commentsOpen && (
+            <div className="mt-2 rounded-xl bg-gray-50 px-3 py-2 space-y-1.5">
+              {commentList.map((c, i) => (
+                <div key={i} className="text-[12px] text-gray-700 leading-snug">
+                  <span className="text-gray-500 mr-1">{c.nick}：</span>{c.text}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </motion.div>
   );
 }
 
-function FooterAction({ icon, value }: { icon: React.ReactNode; value: number }) {
+const COMMENT_POOL: { nick: string; text: string }[] = [
+  { nick: '甜栗子壳', text: '刚刷到就冲了！！！' },
+  { nick: '路人甲', text: '有点意思，蹲一下正片' },
+  { nick: '晚风与鼓点', text: '这段真的哭死了' },
+  { nick: '一寸山河', text: '好会营业啊，拿捏了' },
+  { nick: '看她剪影', text: '细节狂魔' },
+  { nick: '一颗甄糖', text: '锁死锁死锁死' },
+  { nick: '副歌起风了', text: '好想去现场' },
+  { nick: '半张银幕', text: '这镜头感……封神' },
+  { nick: '暖光里的姐', text: '姐姐好美，赢麻了' },
+  { nick: 'emo酱', text: '偷偷收藏了' },
+];
+function sampleComments() {
+  const shuffled = [...COMMENT_POOL].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 3);
+}
+
+function FooterAction({
+  icon,
+  value,
+  active,
+  activeColor,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  value: number;
+  active?: boolean;
+  activeColor?: string;
+  onClick?: () => void;
+}) {
   return (
-    <button className="flex-1 flex items-center justify-center gap-1 py-1 text-gray-500 hover:text-[#ff8200] transition-colors">
+    <button
+      onClick={onClick}
+      className={cn(
+        'flex-1 flex items-center justify-center gap-1 py-1 transition-colors',
+        active ? activeColor : 'text-gray-500 hover:text-[#ff8200]',
+      )}
+    >
       {icon}
       <span className="text-[12px] tabular-nums">{value > 0 ? value : ''}</span>
     </button>
