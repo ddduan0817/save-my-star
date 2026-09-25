@@ -272,24 +272,25 @@ export default function BurnerTab() {
         )}
       </div>
 
-      {/* 底部抽屉 */}
+      {/* 底部抽屉 —— 约束在手机框内 */}
       <AnimatePresence>
         {drawerOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-40 bg-transparent"
+            className="fixed inset-0 z-40 bg-transparent flex justify-center pointer-events-none"
             onClick={() => setDrawerOpen(false)}
           >
-            <motion.div
-              initial={{ y: '100%' }}
-              animate={{ y: 0 }}
-              exit={{ y: '100%' }}
-              transition={{ type: 'spring', stiffness: 320, damping: 32 }}
-              className="absolute bottom-0 left-0 right-0 bg-white rounded-t-3xl ring-1 ring-gray-200/70 pb-6"
-              onClick={e => e.stopPropagation()}
-            >
+            <div className="relative w-full max-w-[440px] pointer-events-auto" onClick={() => setDrawerOpen(false)}>
+              <motion.div
+                initial={{ y: '110%' }}
+                animate={{ y: 0 }}
+                exit={{ y: '110%' }}
+                transition={{ type: 'spring', stiffness: 320, damping: 32 }}
+                className="absolute bottom-16 left-0 right-0 bg-white rounded-t-3xl ring-1 ring-gray-200/70 shadow-lg pb-4"
+                onClick={e => e.stopPropagation()}
+              >
               <div className="flex items-center justify-between px-5 pt-4 pb-2">
                 <div className="text-[15px] font-semibold text-gray-800">今天想做点什么？</div>
                 <button
@@ -338,7 +339,8 @@ export default function BurnerTab() {
                   })}
                 </div>
               </div>
-            </motion.div>
+              </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -350,7 +352,7 @@ export default function BurnerTab() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-6"
+            className="fixed inset-0 z-50 flex items-center justify-center px-6 pointer-events-none"
             onClick={dismissPostResult}
           >
             <motion.div
@@ -358,7 +360,7 @@ export default function BurnerTab() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95 }}
               transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-              className="bg-white rounded-3xl p-5 shadow-xl w-full max-w-sm ring-1 ring-gray-200/60"
+              className="bg-white rounded-3xl p-5 shadow-xl w-full max-w-sm ring-1 ring-gray-200/60 pointer-events-auto"
               onClick={e => e.stopPropagation()}
             >
               <div className="text-xs text-gray-300 font-medium tracking-wider mb-2">微博已发出</div>
