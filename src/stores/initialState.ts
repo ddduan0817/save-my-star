@@ -109,5 +109,6 @@ export function makeFreshGameState(): GameState {
     voyeurFeed: [],
     dailyBurnerActionUsed: false,
     burnerIdentity: 'self',
+    weiboInteractions: {},
   };
 }

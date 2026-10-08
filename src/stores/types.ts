@@ -39,6 +39,7 @@ import type {
 } from '@/types/new_systems';
 import type { SeasonalModifier } from '@/data/seasonalModifiers';
 import type { VoyeurPost } from '@/data/voyeurPosts';
+import type { WeiboInteractionInput } from '@/engine/weiboInteraction';
 
 export interface GameState {
   // Core state
@@ -195,6 +196,15 @@ export interface GameState {
   dailyBurnerActionUsed: boolean;
   /** 当前发博身份：小号 or 艺人大号（大号发黑话会误操作翻车） */
   burnerIdentity: 'self' | 'artist';
+  /** 按账号和帖子隔离的点赞/转发状态及一次性结算标记 */
+  weiboInteractions: Record<string, WeiboInteractionState>;
+}
+
+export interface WeiboInteractionState {
+  liked: boolean;
+  reposted: boolean;
+  likeSettled: boolean;
+  repostSettled: boolean;
 }
 
 export interface BurnerPost {
@@ -261,6 +271,12 @@ export interface GameActions {
   reverseAttack: () => { ok: boolean; backfire?: boolean; reason?: string };
   /** 切换发博身份（小号 / 艺人大号） */
   switchBurnerIdentity: (id: 'self' | 'artist') => void;
+  /** 切换点赞/转发，并在首次开启时结算一次后果 */
+  interactWithWeiboPost: (input: WeiboInteractionInput) => {
+    active: boolean;
+    settled: boolean;
+    feedback: string;
+  };
 }
 
 export type GameStore = GameState & GameActions;

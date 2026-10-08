@@ -112,4 +112,82 @@ describe('gameStore Weibo identity routing', () => {
     expect(state.weiboPostHistory[0].content).not.toContain('粉丝直接炸了');
     expect(state.weiboPostHistory[0].engagement).toBeDefined();
   });
+
+  it('settles an artist-account interaction once and never rolls it back', () => {
+    useGameStore.setState({ burnerIdentity: 'artist' });
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    const input = {
+      postId: 'hostile-feed-post',
+      action: 'like' as const,
+      authorAccount: 'external' as const,
+      sceneId: 'fan_fandom_conflict' as const,
+      stance: 'hostile' as const,
+    };
+
+    const first = useGameStore.getState().interactWithWeiboPost(input);
+    const afterFirst = { ...useGameStore.getState().stats };
+    expect(first).toMatchObject({ active: true, settled: true });
+    expect(afterFirst.prRisk).toBeGreaterThan(artist.initialStats.prRisk);
+
+    const cancel = useGameStore.getState().interactWithWeiboPost(input);
+    expect(cancel).toMatchObject({ active: false, settled: false });
+    expect(cancel.feedback).toContain('不会撤销');
+    expect(useGameStore.getState().stats).toEqual(afterFirst);
+
+    const reactivate = useGameStore.getState().interactWithWeiboPost(input);
+    expect(reactivate).toMatchObject({ active: true, settled: false });
+    expect(reactivate.feedback).toContain('不会重复结算');
+    expect(useGameStore.getState().stats).toEqual(afterFirst);
+    expect(useGameStore.getState().weiboInteractions['artist:hostile-feed-post'])
+      .toMatchObject({ liked: true, likeSettled: true });
+  });
+
+  it('isolates interaction state by account and keeps burner actions effect-free', () => {
+    useGameStore.setState({ burnerIdentity: 'artist' });
+    vi.spyOn(Math, 'random').mockReturnValue(0.99);
+    const input = {
+      postId: 'supportive-feed-post',
+      action: 'repost' as const,
+      authorAccount: 'external' as const,
+      sceneId: 'fan_support_campaign' as const,
+      stance: 'supportive' as const,
+    };
+
+    useGameStore.getState().interactWithWeiboPost(input);
+    const afterArtist = { ...useGameStore.getState().stats };
+    expect(useGameStore.getState().weiboInteractions['artist:supportive-feed-post'])
+      .toMatchObject({ reposted: true, repostSettled: true });
+
+    useGameStore.getState().switchBurnerIdentity('self');
+    const burnerResult = useGameStore.getState().interactWithWeiboPost(input);
+
+    expect(burnerResult).toMatchObject({ active: true, settled: true });
+    expect(burnerResult.feedback).toContain('小号');
+    expect(useGameStore.getState().stats).toEqual(afterArtist);
+    expect(useGameStore.getState().weiboInteractions['self:supportive-feed-post'])
+      .toMatchObject({ reposted: true, repostSettled: true });
+  });
+
+  it('adds a hot-search entry when the artist account amplifies a smear', () => {
+    useGameStore.setState({ burnerIdentity: 'artist' });
+    const input = {
+      postId: 'rival-smear-post',
+      action: 'repost' as const,
+      authorAccount: 'external' as const,
+      sceneId: 'burner_rival_smear' as const,
+      stance: 'hostile' as const,
+    };
+
+    const result = useGameStore.getState().interactWithWeiboPost(input);
+    const state = useGameStore.getState();
+
+    expect(result.settled).toBe(true);
+    expect(state.weiboTrends[0]).toMatchObject({
+      rank: 1,
+      isHot: true,
+      sentiment: 'negative',
+    });
+    expect(state.weiboTrends[0].title).toContain('甄帅');
+    expect(state.weiboTrends[0].title).toContain('转发');
+  });
 });

@@ -21,8 +21,10 @@ import {
   inferLegacySceneId,
   selectNicknameForRole,
 } from '@/engine/weiboContent';
+import type { WeiboPostAuthorAccount } from '@/engine/weiboInteraction';
 import type {
   ArtistArchetype,
+  WeiboCommentStance,
   WeiboOutcome,
   WeiboSceneId,
 } from '@/types/game';
@@ -302,6 +304,13 @@ export default function BurnerTab() {
                 nickPool={artistNicknames[artist.id]}
                 rivalName={rival?.name}
                 imageSrc={hydrated.imageKey}
+                authorAccount={isLegacyLeakedBurner ? 'self' : 'artist'}
+                authorStance={
+                  isLegacyLeakedBurner || hydrated.outcome !== 'success'
+                    ? 'hostile'
+                    : 'supportive'
+                }
+                onFeedback={showToast}
               />
             );
           })}
@@ -335,6 +344,15 @@ export default function BurnerTab() {
               nickPool={artist ? artistNicknames[artist.id] : undefined}
               rivalName={rival?.name}
               imageSrc={post.imageKey}
+              authorAccount="self"
+              authorStance={
+                post.action === 'reverse_attack' && !post.backfired
+                  ? 'supportive'
+                  : post.action === 'smear_rival' || post.backfired
+                    ? 'hostile'
+                    : 'neutral'
+              }
+              onFeedback={showToast}
             />
           );
         })}
@@ -369,6 +387,9 @@ export default function BurnerTab() {
               nickPool={artistNickPool}
               rivalName={rival?.name}
               showOutcomeBadge={false}
+              authorAccount="external"
+              authorStance={post.stance}
+              onFeedback={showToast}
             />
           );
         })}
@@ -611,6 +632,9 @@ interface WeiboCardProps {
   rivalName?: string;
   showOutcomeBadge?: boolean;
   imageSrc?: string;
+  authorAccount: WeiboPostAuthorAccount;
+  authorStance: WeiboCommentStance;
+  onFeedback: (message: string) => void;
 }
 
 function WeiboCard({
@@ -631,10 +655,17 @@ function WeiboCard({
   rivalName,
   showOutcomeBadge = true,
   imageSrc,
+  authorAccount,
+  authorStance,
+  onFeedback,
 }: WeiboCardProps) {
-  const [liked, setLiked] = useState(false);
-  const [reposted, setReposted] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
+  const interaction = useGameStore(
+    state => state.weiboInteractions?.[`${state.burnerIdentity}:${postId}`],
+  );
+  const interactWithWeiboPost = useGameStore(state => state.interactWithWeiboPost);
+  const liked = interaction?.liked ?? false;
+  const reposted = interaction?.reposted ?? false;
   const backfired = showOutcomeBadge && outcome !== 'success';
   const commentList = useMemo(
     () => generateSceneComments({
@@ -648,6 +679,16 @@ function WeiboCard({
     }),
     [artistId, artistName, nickPool, outcome, postId, rivalName, sceneId],
   );
+  const handleInteraction = (action: 'like' | 'repost') => {
+    const result = interactWithWeiboPost({
+      postId,
+      action,
+      authorAccount,
+      sceneId,
+      stance: authorStance,
+    });
+    onFeedback(result.feedback);
+  };
 
   return (
     <motion.div
@@ -697,7 +738,7 @@ function WeiboCard({
               value={reposts + (reposted ? 1 : 0)}
               active={reposted}
               activeColor="text-green-500"
-              onClick={() => setReposted(v => !v)}
+              onClick={() => handleInteraction('repost')}
             />
             <FooterAction
               icon={<MessageCircle size={15} strokeWidth={2} />}
@@ -711,7 +752,7 @@ function WeiboCard({
               value={likes + (liked ? 1 : 0)}
               active={liked}
               activeColor="text-[#ff2d55]"
-              onClick={() => setLiked(v => !v)}
+              onClick={() => handleInteraction('like')}
             />
           </div>
           {commentsOpen && (
@@ -745,6 +786,7 @@ function FooterAction({
   return (
     <button
       onClick={onClick}
+      aria-pressed={active}
       className={cn(
         'flex-1 flex items-center justify-center gap-1 py-1 transition-colors',
         active ? activeColor : 'text-gray-500 hover:text-[#ff8200]',

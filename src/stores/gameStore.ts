@@ -34,6 +34,7 @@ import {
   createStableEngagement,
   selectArtistPostContent,
 } from '@/engine/weiboContent';
+import { resolveWeiboInteraction } from '@/engine/weiboInteraction';
 import { initializeRival } from '@/engine/rivalEngine';
 import { cosmeticProcedures } from '@/data/cosmetics';
 import { resolveProcedure, getAppearanceMultiplier } from '@/engine/cosmeticEngine';
@@ -865,6 +866,103 @@ export const useGameStore = create<GameStore>()(
 
   switchBurnerIdentity: (id) => {
     set({ burnerIdentity: id });
+  },
+
+  interactWithWeiboPost: (input) => {
+    let result = {
+      active: false,
+      settled: false,
+      feedback: '',
+    };
+
+    set((state) => {
+      const account = state.burnerIdentity;
+      const interactionKey = `${account}:${input.postId}`;
+      const interactions = state.weiboInteractions ?? {};
+      const previous = interactions[interactionKey] ?? {
+        liked: false,
+        reposted: false,
+        likeSettled: false,
+        repostSettled: false,
+      };
+      const activeKey = input.action === 'like' ? 'liked' : 'reposted';
+      const settledKey = input.action === 'like' ? 'likeSettled' : 'repostSettled';
+      const actionLabel = input.action === 'like' ? '点赞' : '转发';
+
+      if (previous[activeKey]) {
+        result = {
+          active: false,
+          settled: false,
+          feedback: `已取消${actionLabel}，但截图可能已经留下，此前影响不会撤销`,
+        };
+        return {
+          weiboInteractions: {
+            ...interactions,
+            [interactionKey]: {
+              ...previous,
+              [activeKey]: false,
+            },
+          },
+        };
+      }
+
+      if (previous[settledKey]) {
+        result = {
+          active: true,
+          settled: false,
+          feedback: `已重新${actionLabel}，此前后果不会重复结算`,
+        };
+        return {
+          weiboInteractions: {
+            ...interactions,
+            [interactionKey]: {
+              ...previous,
+              [activeKey]: true,
+            },
+          },
+        };
+      }
+
+      const resolution = resolveWeiboInteraction({
+        ...input,
+        account,
+        artistName: state.artist?.name ?? '艺人',
+      });
+      const newStats = applyStatChanges(
+        state.stats,
+        resolution.statChanges,
+        state.artist?.id,
+      );
+      const nextTrends = resolution.trend
+        ? [
+            { rank: 1, ...resolution.trend },
+            ...state.weiboTrends
+              .map((trend, index) => ({ ...trend, rank: index + 2 }))
+              .slice(0, 9),
+          ]
+        : state.weiboTrends;
+
+      result = {
+        active: true,
+        settled: true,
+        feedback: resolution.feedback,
+      };
+      return {
+        stats: newStats,
+        peakRisk: Math.max(state.peakRisk, newStats.prRisk),
+        weiboTrends: nextTrends,
+        weiboInteractions: {
+          ...interactions,
+          [interactionKey]: {
+            ...previous,
+            [activeKey]: true,
+            [settledKey]: true,
+          },
+        },
+      };
+    });
+
+    return result;
   },
 
   loadCollection: () => {
